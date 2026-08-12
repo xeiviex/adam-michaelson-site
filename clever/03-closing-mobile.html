@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Closing — Mobile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2563EB;
+    --blue-dark: #1D4ED8;
+    --green: #10B981;
+    --blue-light: #EFF6FF;
+    --gray-bg: #F8FAFC;
+    --border: #E5E7EB;
+    --text: #111827;
+    --text-body: #4B5563;
+    --text-muted: #9CA3AF;
+    --white: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #E7EAEE;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 24px 0;
+  }
+  h1, h2, h3, .brand { font-family: 'Poppins', sans-serif; }
+
+  .device {
+    width: 393px; height: 852px; background: #000; border-radius: 55px; padding: 14px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.35); position: relative;
+  }
+  .screen {
+    width: 100%; height: 100%; background: var(--gray-bg); border-radius: 42px;
+    overflow: hidden; position: relative; display: flex; flex-direction: column;
+  }
+  .notch {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 30px; background: #000; border-radius: 20px; z-index: 100;
+  }
+
+  header {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 52px 18px 12px; flex-shrink: 0;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--blue); }
+  .brand .dot {
+    width: 24px; height: 24px; border-radius: 7px; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;
+  }
+  .breadcrumb-mini {
+    font-size: 11px; color: var(--text-muted); margin-top: 4px; margin-left: 32px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .breadcrumb-mini .current { color: var(--text-body); font-weight: 600; }
+
+  main { flex: 1; overflow-y: auto; padding: 18px 18px 90px; -webkit-overflow-scrolling: touch; }
+
+  .page-head { margin-bottom: 18px; }
+  .page-head h1 { font-size: 19px; font-weight: 700; margin-bottom: 5px; }
+  .page-head p { font-size: 12.5px; color: var(--text-body); line-height: 1.5; }
+
+  .step-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+  .step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: white;
+    font-size: 11.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .step-head h2 { font-size: 14.5px; font-weight: 600; }
+  .step-head .step-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  .readonly-summary { background: var(--gray-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
+  .rs-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 12px; border-bottom: 1px solid #EEF0F3; }
+  .rs-row:last-child { border-bottom: none; }
+  .rs-label { color: var(--text-muted); }
+  .rs-value { font-weight: 600; text-align: right; }
+
+  .field-group { margin-bottom: 13px; }
+  .field-group label { display: block; font-size: 11.5px; font-weight: 600; margin-bottom: 5px; }
+  .field-group input, .field-group select, .field-group textarea {
+    width: 100%; border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px;
+    font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--text); outline: none;
+  }
+  .field-group input:focus, .field-group select:focus, .field-group textarea:focus { border-color: var(--blue); }
+  .field-hint { font-size: 10.5px; color: var(--text-muted); margin-top: 4px; }
+  textarea { resize: vertical; min-height: 60px; font-family: 'Inter', sans-serif; }
+
+  .connect-btn {
+    display: inline-flex; align-items: center; gap: 8px; background: var(--white); border: 1px solid var(--border);
+    border-radius: 9px; padding: 10px 14px; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600;
+    color: var(--blue-dark); cursor: pointer;
+  }
+  .connect-btn .bank-icon { font-size: 14px; }
+
+  .cta-bar { margin-top: 20px; }
+  .btn {
+    width: 100%; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14.5px; padding: 13px;
+    border-radius: 10px; border: none; cursor: pointer;
+  }
+  .btn.primary { background: var(--green); color: white; }
+  .cta-note { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px; }
+
+  /* ---------- AI drawer (collapsed mini-bar, consistent with screen 1) ---------- */
+  .drawer {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 58px;
+    background: var(--white); border-top-left-radius: 22px; border-top-right-radius: 22px;
+    box-shadow: 0 -8px 30px rgba(15,23,42,0.12); z-index: 50;
+  }
+  .drawer-handle-zone { padding: 9px 0 4px; display: flex; justify-content: center; }
+  .drawer-handle { width: 40px; height: 5px; border-radius: 999px; background: #D1D5DB; }
+  .drawer-collapsed-label { display: flex; align-items: center; gap: 12px; padding: 4px 18px 14px; }
+  .mini-avatar {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--blue); color: white;
+    font-weight: 700; font-size: 12.5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .mini-title { font-size: 13.5px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="notch"></div>
+  <div class="screen">
+    <header>
+      <div class="brand"><span class="dot">C</span>Clever Offers</div>
+      <div class="breadcrumb-mini">Meridian Home Buyers / <span class="current">Closing</span></div>
+    </header>
+
+    <main>
+      <div class="page-head">
+        <h1>Let's get your contract ready</h1>
+        <p>Confirm the details below, then we'll verify your identity and generate your purchase agreement.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div>
+            <h2>Confirm contract details</h2>
+            <div class="step-sub">This is what your agreement will use</div>
+          </div>
+        </div>
+
+        <div class="readonly-summary">
+          <div class="rs-row"><span class="rs-label">Selling to</span><span class="rs-value">Meridian Home Buyers</span></div>
+          <div class="rs-row"><span class="rs-label">Offer amount</span><span class="rs-value">$470,000</span></div>
+          <div class="rs-row"><span class="rs-label">Financing</span><span class="rs-value">Cash</span></div>
+          <div class="rs-row"><span class="rs-label">Earnest money</span><span class="rs-value">$10,000</span></div>
+        </div>
+
+        <div class="field-group">
+          <label>Legal name</label>
+          <input type="text" value="Adam H. Michaelson" />
+        </div>
+
+        <div class="field-group">
+          <label>Deposit account</label>
+          <button class="connect-btn"><span class="bank-icon">🏦</span>Connect Bank Account</button>
+          <div class="field-hint">Secured through Plaid.</div>
+        </div>
+
+        <div class="field-group">
+          <label>Preferred closing date</label>
+          <input type="text" placeholder="Select a date" />
+          <div class="field-hint">As early as Aug 27</div>
+        </div>
+
+        <div class="field-group">
+          <label>Possession date</label>
+          <select>
+            <option>Same as closing</option>
+            <option>A few days after</option>
+            <option>I need more time</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>Notes for buyer (optional)</label>
+          <textarea placeholder="e.g. move-out timing…"></textarea>
+        </div>
+
+        <div class="cta-bar">
+          <button class="btn primary">Continue to Identity Verification</button>
+          <div class="cta-note">Step 1 of 3</div>
+        </div>
+      </div>
+    </main>
+
+    <div class="drawer">
+      <div class="drawer-handle-zone"><div class="drawer-handle"></div></div>
+      <div class="drawer-collapsed-label">
+        <div class="mini-avatar">AI</div>
+        <div class="mini-title">Clever Assistant</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

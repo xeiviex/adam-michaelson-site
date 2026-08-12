@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Contract — Clever Offers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Georgia&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2563EB;
+    --blue-dark: #1D4ED8;
+    --gray-bg: #F8FAFC;
+    --border: #E5E7EB;
+    --text: #111827;
+    --text-body: #4B5563;
+    --text-muted: #9CA3AF;
+    --white: #FFFFFF;
+    --ds-yellow: #FFC72C;
+    --ds-yellow-dark: #E0A800;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--gray-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, .brand { font-family: 'Poppins', sans-serif; }
+
+  /* ---------- Clever chrome ---------- */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--blue); }
+  .brand .dot {
+    width: 28px; height: 28px; border-radius: 8px; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .address-context { font-size: 13px; color: var(--text-muted); margin-left: 4px; font-weight: 400; }
+  .user-chip { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--text-body); }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: #EFF6FF; color: var(--blue);
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;
+  }
+
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--text-muted);
+    padding: 20px 32px 0;
+  }
+  .breadcrumb .sep { color: #D1D5DB; }
+  .breadcrumb .current { color: var(--text-body); font-weight: 500; }
+
+  .page-wrap { max-width: 900px; margin: 0 auto; padding: 18px 32px 60px; }
+
+  /* ---------- DocuSign embedded frame ---------- */
+  .ds-frame {
+    background: var(--white);
+    border: 1px solid #D8DCE3;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(15,23,42,0.06);
+  }
+  .ds-toolbar {
+    background: #F4F5F7;
+    border-bottom: 1px solid #E1E4E9;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .ds-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: #2E3A87; }
+  .ds-logo .ds-mark {
+    width: 24px; height: 24px; border-radius: 5px; background: #2E3A87; color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+  }
+  .ds-toolbar-right { display: flex; align-items: center; gap: 14px; }
+  .ds-other-actions {
+    font-size: 12.5px; font-weight: 600; color: #374151; display: flex; align-items: center; gap: 5px; cursor: pointer;
+  }
+  .ds-finish-btn {
+    background: var(--ds-yellow); color: #1F2937; font-weight: 700; font-size: 13px;
+    border: none; border-radius: 6px; padding: 9px 22px; cursor: pointer;
+  }
+
+  .ds-subbar {
+    background: var(--white);
+    border-bottom: 1px solid #E1E4E9;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .ds-progress { display: flex; align-items: center; gap: 8px; }
+  .ds-progress .env-icon { color: #9CA3AF; }
+  .ds-next-tag {
+    background: var(--ds-yellow); color: #1F2937; font-weight: 700; font-size: 11px;
+    padding: 3px 10px; border-radius: 4px; display: flex; align-items: center; gap: 4px;
+  }
+
+  /* ---------- Document body ---------- */
+  .doc-scroll { background: #E9EBEF; padding: 32px 24px; }
+  .doc-page {
+    background: white;
+    max-width: 700px;
+    margin: 0 auto 20px;
+    padding: 56px 60px;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #1F2937;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    position: relative;
+  }
+  .doc-page .doc-title {
+    text-align: center; font-size: 16px; font-weight: 700; letter-spacing: 0.02em;
+    margin-bottom: 4px; text-transform: uppercase;
+  }
+  .doc-page .doc-sub { text-align: center; font-size: 11.5px; color: #6B7280; margin-bottom: 28px; }
+  .doc-page h3 {
+    font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+    margin: 22px 0 8px; border-bottom: 1px solid #D1D5DB; padding-bottom: 4px;
+  }
+  .doc-page p { margin-bottom: 10px; }
+  .doc-page .parties-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 6px;
+  }
+  .doc-page .party-label { font-size: 10.5px; text-transform: uppercase; color: #6B7280; margin-bottom: 3px; }
+  .doc-page .party-value { font-weight: 700; margin-bottom: 10px; }
+  .doc-page .terms-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+  .doc-page .terms-table td { padding: 6px 0; border-bottom: 1px solid #EEF0F3; font-size: 12.5px; }
+  .doc-page .terms-table td:first-child { color: #6B7280; width: 45%; }
+  .doc-page .terms-table td:last-child { font-weight: 700; text-align: right; }
+
+  /* Sign here tags */
+  .sig-block { margin-top: 40px; display: flex; gap: 40px; align-items: flex-end; }
+  .sig-field { flex: 1; }
+  .sig-line { border-bottom: 1.5px solid #1F2937; height: 34px; position: relative; margin-bottom: 4px; }
+  .sig-tag {
+    position: absolute; left: 0; top: -4px;
+    background: var(--ds-yellow); border: 1px solid var(--ds-yellow-dark);
+    border-radius: 3px; padding: 4px 10px 4px 8px;
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; color: #1F2937;
+    cursor: pointer;
+  }
+  .sig-tag::before { content: "✎"; font-size: 12px; }
+  .sig-caption { font-size: 10.5px; color: #6B7280; margin-top: 4px; }
+  .date-line { width: 130px; }
+
+  .initial-tag {
+    position: absolute; top: 50%; right: -6px; transform: translateY(-50%);
+    background: var(--ds-yellow); border: 1px solid var(--ds-yellow-dark); border-radius: 3px;
+    padding: 3px 8px; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700; color: #1F2937;
+    cursor: pointer; white-space: nowrap;
+  }
+  .doc-page.page2 { position: relative; }
+
+  .page-footer { text-align: center; font-size: 10px; color: #9CA3AF; margin-top: 8px; }
+
+  @media (max-width: 480px) {
+    header { padding: 12px 16px; }
+    .address-context { display: none; }
+    .breadcrumb { padding: 12px 16px 0; font-size: 11px; flex-wrap: wrap; }
+    .page-wrap { padding: 12px 12px 40px; }
+    .ds-toolbar { padding: 10px 14px; }
+    .ds-logo { font-size: 13px; }
+    .ds-finish-btn { padding: 8px 14px; font-size: 12px; }
+    .ds-other-actions { font-size: 11px; }
+    .ds-subbar { padding: 8px 14px; font-size: 10.5px; flex-wrap: wrap; gap: 6px; }
+    .doc-scroll { padding: 16px 8px; }
+    .doc-page { padding: 26px 20px; font-size: 12px; max-width: 100%; }
+    .doc-page .doc-title { font-size: 14px; }
+    .parties-grid { grid-template-columns: 1fr; gap: 10px; }
+    .sig-block { flex-direction: column; gap: 20px; align-items: stretch; }
+    .date-line { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="dot">C</span>
+    Clever Offers
+    <span class="address-context">— 3734 E Royal Troon Dr, Eagle Mountain, UT</span>
+  </div>
+  <div class="user-chip">
+    <div class="avatar">A</div>
+    Adam
+  </div>
+</header>
+
+<div class="breadcrumb">
+  <span>All Offers</span>
+  <span class="sep">/</span>
+  <span>Meridian Home Buyers</span>
+  <span class="sep">/</span>
+  <span>Closing</span>
+  <span class="sep">/</span>
+  <span class="current">Sign Contract</span>
+</div>
+
+<div class="page-wrap">
+  <div class="ds-frame">
+    <div class="ds-toolbar">
+      <div class="ds-logo">
+        <span class="ds-mark">D</span>
+        DocuSign
+      </div>
+      <div class="ds-toolbar-right">
+        <div class="ds-other-actions">Other Actions ▾</div>
+        <a href="06-waiting-for-funds.html" style="text-decoration:none;"><button class="ds-finish-btn">FINISH</button></a>
+      </div>
+    </div>
+    <div class="ds-subbar">
+      <div class="ds-progress">
+        <span class="env-icon">✉</span>
+        Real Estate Purchase Agreement — 3734 E Royal Troon Dr
+      </div>
+      <div class="ds-next-tag">✎ Start</div>
+    </div>
+
+    <div class="doc-scroll">
+      <div class="doc-page">
+        <div class="doc-title">Real Estate Purchase Agreement</div>
+        <div class="doc-sub">Prepared via Clever Offers · Envelope ID: 8F2A-491C-7D3E</div>
+
+        <h3>Parties</h3>
+        <div class="parties-grid">
+          <div>
+            <div class="party-label">Seller</div>
+            <div class="party-value">Adam H. Michaelson</div>
+          </div>
+          <div>
+            <div class="party-label">Buyer</div>
+            <div class="party-value">Meridian Home Buyers, LLC</div>
+          </div>
+        </div>
+
+        <h3>Property</h3>
+        <p>The real property located at <strong>3734 E Royal Troon Dr, Eagle Mountain, UT 84005</strong>, together with all improvements, fixtures, and appurtenances thereto (the "Property").</p>
+
+        <h3>Terms of Sale</h3>
+        <table class="terms-table">
+          <tr><td>Purchase Price</td><td>$470,000.00</td></tr>
+          <tr><td>Earnest Money Deposit</td><td>$10,000.00</td></tr>
+          <tr><td>Financing</td><td>Cash — no financing contingency</td></tr>
+          <tr><td>Inspection Contingency</td><td>Waived</td></tr>
+          <tr><td>Closing Date</td><td>On or before August 27, 2026</td></tr>
+          <tr><td>Possession</td><td>Same as Closing</td></tr>
+        </table>
+
+        <h3>Acknowledgment</h3>
+        <p>By signing below, Seller agrees to convey the Property to Buyer under the terms set forth in this Agreement, subject to a clear and marketable title report to be delivered prior to Closing.</p>
+
+        <div class="sig-block">
+          <div class="sig-field">
+            <div class="sig-line">
+              <div class="sig-tag">Sign Here</div>
+            </div>
+            <div class="sig-caption">Adam H. Michaelson, Seller</div>
+          </div>
+          <div class="sig-field date-line">
+            <div class="sig-line"></div>
+            <div class="sig-caption">Date</div>
+          </div>
+        </div>
+
+        <div class="page-footer">Page 1 of 2</div>
+      </div>
+
+      <div class="doc-page page2">
+        <h3>Additional Provisions</h3>
+        <p>1. Seller represents that Seller has good and marketable title to the Property, free and clear of all liens and encumbrances except as disclosed in the title report.</p>
+        <p>2. Buyer's earnest money deposit shall be held in escrow and applied toward the Purchase Price at Closing.</p>
+        <p>3. This Agreement, together with any addenda referenced herein, constitutes the entire agreement between the parties.</p>
+
+        <div style="margin-top: 30px; padding-right: 24px; position: relative; display: inline-block;">
+          <span style="font-size: 11.5px; color: #6B7280;">Seller Initials: ____</span>
+          <div class="initial-tag">Initial</div>
+        </div>
+
+        <div class="page-footer" style="margin-top: 50px;">Page 2 of 2</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

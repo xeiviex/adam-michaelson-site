@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Processing — Mobile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="module" src="https://unpkg.com/@lottiefiles/dotlottie-wc@latest/dist/dotlottie-wc.js"></script>
+<style>
+  :root {
+    --blue: #2563EB;
+    --green: #10B981;
+    --green-dark: #0F9F76;
+    --green-light: #D1FAE5;
+    --blue-light: #EFF6FF;
+    --gray-bg: #F8FAFC;
+    --border: #E5E7EB;
+    --text: #111827;
+    --text-body: #4B5563;
+    --text-muted: #9CA3AF;
+    --white: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #E7EAEE;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 24px 0;
+  }
+  h1, .brand { font-family: 'Poppins', sans-serif; }
+
+  .device {
+    width: 393px; height: 852px; background: #000; border-radius: 55px; padding: 14px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.35); position: relative;
+  }
+  .screen {
+    width: 100%; height: 100%; background: var(--gray-bg); border-radius: 42px;
+    overflow: hidden; position: relative; display: flex; flex-direction: column;
+  }
+  .notch {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 30px; background: #000; border-radius: 20px; z-index: 100;
+  }
+
+  header {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 52px 18px 12px; flex-shrink: 0;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--blue); }
+  .brand .dot {
+    width: 24px; height: 24px; border-radius: 7px; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;
+  }
+
+  .preview-toggle {
+    display: flex; justify-content: center; gap: 6px; padding: 10px 12px;
+    background: #F1F3F6; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .preview-toggle button {
+    font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 600; padding: 5px 10px;
+    border-radius: 999px; border: 1px solid var(--border); background: white; color: var(--text-body); cursor: pointer;
+  }
+  .preview-toggle button.active { background: var(--blue); color: white; border-color: var(--blue); }
+
+  .stage {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px 20px; text-align: center; overflow-y: auto;
+  }
+
+  .flight-box {
+    position: relative; width: 190px; height: 130px; margin: 0 auto 26px;
+  }
+  .flight-point {
+    position: absolute; width: 38px; height: 38px; border-radius: 11px;
+    background: var(--white); box-shadow: 0 4px 14px rgba(15,23,42,0.08);
+    display: flex; align-items: center; justify-content: center; font-size: 17px; z-index: 2;
+  }
+  .flight-point.end { right: 0; top: 0; }
+
+  .send-lottie {
+    position: absolute; left: 0; bottom: 0; width: 110px; height: 110px; display: none;
+  }
+  [data-state="sending"] .send-lottie { display: block; }
+
+  .fly-item { position: absolute; font-size: 16px; opacity: 0; z-index: 1; display: none; }
+  .fly-cash { right: 12px; top: 12px; animation: flyToStart 2.4s ease-in-out infinite; }
+  .fly-cash:nth-of-type(2) { animation-delay: 0.8s; }
+  .fly-cash:nth-of-type(3) { animation-delay: 1.6s; }
+  [data-state="funding"] .fly-cash { display: block; }
+
+  @keyframes flyToStart {
+    0% { right: 12px; top: 12px; opacity: 0; transform: rotate(6deg) scale(0.85); }
+    12% { opacity: 1; }
+    88% { opacity: 1; }
+    100% { right: calc(100% - 28px); top: calc(100% - 28px); opacity: 0; transform: rotate(-4deg) scale(1); }
+  }
+
+  .stage h1 { font-size: 19px; font-weight: 700; margin-bottom: 8px; }
+  .stage .sub { font-size: 13px; color: var(--text-body); max-width: 300px; margin-bottom: 24px; line-height: 1.55; }
+
+  .checklist {
+    display: flex; flex-direction: column; gap: 9px; background: var(--white);
+    border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; width: 100%; max-width: 300px;
+  }
+  .check-item { display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+  .check-icon {
+    width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; flex-shrink: 0;
+  }
+  .check-icon.done { background: var(--green-light); color: var(--green-dark); }
+  .check-icon.active { background: var(--blue-light); color: var(--blue); }
+  .check-icon.active .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+  .check-icon.pending { background: #F3F4F6; color: var(--text-muted); }
+  .check-label.done, .check-label.active { color: var(--text); font-weight: 500; }
+  .check-label.pending { color: var(--text-muted); }
+
+  .note { margin-top: 22px; font-size: 11.5px; color: var(--text-muted); max-width: 290px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="notch"></div>
+  <div class="screen">
+    <header>
+      <div class="brand"><span class="dot">C</span>Clever Offers</div>
+    </header>
+
+    <div class="stage" id="stage" data-state="sending">
+      <div class="flight-box">
+        <div class="flight-point end">🏦</div>
+
+        <dotlottie-wc class="send-lottie" src="https://lottie.host/c89db8de-bbfc-4046-9cb6-98bed6f1ee8f/eOucyVJJ7k.lottie" autoplay loop></dotlottie-wc>
+
+        <div class="fly-item fly-cash">💵</div>
+        <div class="fly-item fly-cash">💵</div>
+        <div class="fly-item fly-cash">💵</div>
+      </div>
+
+      <h1 id="headline">Your contract is signed</h1>
+      <p class="sub" id="subtext">We're sending it to Meridian for acceptance. Usually just a few minutes.</p>
+
+      <div class="checklist" id="checklist">
+        <div class="check-item"><div class="check-icon done">✓</div><div class="check-label done">Contract signed</div></div>
+        <div class="check-item"><div class="check-icon active"><div class="pulse-dot"></div></div><div class="check-label active">Sending for acceptance</div></div>
+        <div class="check-item"><div class="check-icon pending"></div><div class="check-label pending">Funds transferred</div></div>
+      </div>
+
+      <p class="note" id="footnote">No action needed — we'll text and email you the moment there's an update.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setState(state) {
+    document.getElementById('stage').dataset.state = state;
+    document.getElementById('btn-sending').classList.toggle('active', state === 'sending');
+    document.getElementById('btn-funding').classList.toggle('active', state === 'funding');
+
+    if (state === 'sending') {
+      document.getElementById('headline').textContent = 'Your contract is signed';
+      document.getElementById('subtext').textContent = "We're sending it to Meridian for acceptance. Usually just a few minutes.";
+      document.getElementById('footnote').textContent = "No action needed — we'll text and email you the moment there's an update.";
+      document.getElementById('checklist').innerHTML = `
+        <div class="check-item"><div class="check-icon done">✓</div><div class="check-label done">Contract signed</div></div>
+        <div class="check-item"><div class="check-icon active"><div class="pulse-dot"></div></div><div class="check-label active">Sending for acceptance</div></div>
+        <div class="check-item"><div class="check-icon pending"></div><div class="check-label pending">Funds transferred</div></div>
+      `;
+    } else {
+      document.getElementById('headline').textContent = 'Meridian accepted — funding your sale';
+      document.getElementById('subtext').textContent = "Transferring $470,000 to your account ending in •••• 4821. Usually within 1 business day.";
+      document.getElementById('footnote').textContent = "You'll get a text and email the moment funds land in your account.";
+      document.getElementById('checklist').innerHTML = `
+        <div class="check-item"><div class="check-icon done">✓</div><div class="check-label done">Contract signed</div></div>
+        <div class="check-item"><div class="check-icon done">✓</div><div class="check-label done">Contract accepted</div></div>
+        <div class="check-item"><div class="check-icon active"><div class="pulse-dot"></div></div><div class="check-label active">Funds transferring</div></div>
+      `;
+    }
+  }
+</script>
+
+</body>
+</html>

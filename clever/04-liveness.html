@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Identity Verification — Powered by DocuSign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cobalt: #1D4FD8;
+    --inkwell: #10151F;
+    --ecru: #F5F1E8;
+    --mist: #C9CFE0;
+    --poppy: #E23F32;
+    --white: #FFFFFF;
+    --text-muted: #6B7280;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--inkwell);
+    color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Minimal chrome — this is a partner takeover, not the host app ---------- */
+  .partner-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .host-context {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+  }
+  .host-context .host-dot {
+    width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;
+  }
+  .docusign-badge {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,0.75);
+  }
+  .docusign-badge .ds-mark {
+    width: 22px; height: 22px; border-radius: 5px; background: var(--cobalt);
+    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white;
+  }
+
+  /* ---------- Main capture stage ---------- */
+  .stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+  }
+  .step-tag {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--mist); margin-bottom: 10px;
+  }
+  .stage h1 {
+    font-size: 22px; font-weight: 600; margin-bottom: 8px;
+  }
+  .stage .instruction {
+    font-size: 14.5px; color: rgba(255,255,255,0.6); max-width: 340px; margin-bottom: 32px;
+  }
+
+  .camera-frame {
+    position: relative;
+    width: 340px;
+    height: 340px;
+    border-radius: 24px;
+    background: radial-gradient(ellipse at center, #2A3142 0%, #171B26 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .face-oval {
+    width: 190px;
+    height: 250px;
+    border-radius: 50%;
+    border: 3px solid var(--cobalt);
+    box-shadow: 0 0 0 4px rgba(29, 79, 216, 0.18);
+    position: relative;
+  }
+  .face-oval::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #7C9BFF;
+    animation: spin 2.4s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .face-icon {
+    font-size: 68px;
+    opacity: 0.35;
+  }
+  .rotate-hint {
+    position: absolute;
+    bottom: 14px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.5);
+  }
+  .rotate-hint span { display: flex; align-items: center; gap: 4px; }
+
+  .rec-controls { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .rec-button {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--poppy);
+    border: 4px solid rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .rec-button .dot { width: 22px; height: 22px; border-radius: 50%; background: white; }
+  .rec-label { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.85); }
+
+  .progress-dots { display: flex; gap: 8px; margin-top: 28px; }
+  .progress-dots .dot-step {
+    width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2);
+  }
+  .progress-dots .dot-step.active { background: var(--cobalt); width: 22px; border-radius: 4px; }
+  .progress-dots .dot-step.done { background: #34C77B; }
+
+  .privacy-note {
+    margin-top: 34px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    max-width: 380px;
+    line-height: 1.5;
+  }
+  .privacy-note strong { color: rgba(255,255,255,0.6); }
+
+  @media (max-width: 480px) {
+    .partner-bar { padding: 14px 16px; }
+    .host-context span:not(.host-dot) { display: none; }
+    .stage { padding: 16px; }
+    .camera-frame { width: 260px; height: 260px; }
+    .face-oval { width: 145px; height: 190px; }
+    .stage h1 { font-size: 19px; }
+    .stage .instruction { font-size: 13px; max-width: 280px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="partner-bar">
+  <div class="host-context">
+    <span class="host-dot">C</span>
+    Continuing your closing with Clever Offers
+  </div>
+  <div class="docusign-badge">
+    <span class="ds-mark">D</span>
+    Verified by DocuSign
+  </div>
+</div>
+
+<div class="stage">
+  <div class="step-tag">Step 2 of 3 · Identity Verification</div>
+  <h1>Record a quick video</h1>
+  <p class="instruction">Position your face within the frame, then slowly turn your head from left to right when recording starts.</p>
+
+  <div class="camera-frame">
+    <div class="face-oval">
+      <div class="rotate-hint">
+        <span>← turn</span><span>turn →</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rec-controls">
+    <a href="05-contract.html" style="text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:14px;">
+      <div class="rec-button"><div class="dot"></div></div>
+      <div class="rec-label">Start Recording</div>
+    </a>
+  </div>
+
+  <div class="progress-dots">
+    <div class="dot-step done"></div>
+    <div class="dot-step active"></div>
+    <div class="dot-step"></div>
+  </div>
+
+  <p class="privacy-note">
+    <strong>Your video is used only to verify your identity</strong> and confirm you're a real person, not a photo or recording. It's never shared with the buyer and is processed securely by DocuSign.
+  </p>
+</div>
+
+</body>
+</html>

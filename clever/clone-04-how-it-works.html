@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clever Offers — How It Works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2563EB;
+    --blue-dark: #1D4ED8;
+    --text: #111827;
+    --text-body: #4B5563;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+    --white: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, .logo-text { font-family: 'Poppins', sans-serif; }
+  a { text-decoration: none; color: inherit; }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 28px; border-bottom: 1px solid var(--border);
+  }
+  .header-side { display: flex; align-items: center; gap: 16px; width: 90px; }
+  .header-side.right { justify-content: flex-end; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: var(--text); font-size: 16px; cursor: pointer; border: none; background: transparent;
+  }
+  .icon-btn:hover { background: #F3F4F6; }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-mark {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .logo-text { line-height: 1.1; }
+  .logo-text .l1 { font-weight: 700; font-size: 16px; color: var(--blue); }
+  .logo-text .l2 { font-size: 9px; font-weight: 600; color: var(--blue); letter-spacing: 0.12em; }
+
+  .progress-track { height: 4px; background: #EEF0F3; }
+  .progress-fill { height: 100%; width: 19%; background: var(--blue); }
+
+  .stage { max-width: 560px; margin: 0 auto; padding: 56px 24px 70px; }
+  .stage h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+  .stage .sub { font-size: 15px; color: var(--text-body); margin-bottom: 36px; }
+
+  .step-row { display: flex; gap: 16px; margin-bottom: 26px; align-items: flex-start; }
+  .step-num {
+    width: 30px; height: 30px; border-radius: 50%; background: var(--blue); color: white;
+    font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .step-row h3 { font-size: 16.5px; font-weight: 700; margin-bottom: 5px; }
+  .step-row p { font-size: 14px; color: var(--text-body); line-height: 1.55; }
+
+  .info-box {
+    background: linear-gradient(135deg, #EEF2FF, #F5F3FF);
+    border-radius: 12px; padding: 18px 22px; font-size: 13.5px; color: var(--text-body);
+    line-height: 1.55; margin: 30px 0 40px;
+  }
+
+  .next-btn {
+    display: inline-block; width: 100%; background: var(--blue); color: white;
+    font-weight: 700; font-size: 16px; padding: 15px; border-radius: 10px; border: none; cursor: pointer;
+  }
+  .next-btn:hover { background: var(--blue-dark); }
+
+  @media (max-width: 480px) {
+    header { padding: 14px 16px; }
+    .stage { padding: 32px 18px 50px; }
+    .stage h1 { font-size: 22px; }
+    .stage .sub { font-size: 13.5px; }
+    .step-row h3 { font-size: 15px; }
+    .step-row p { font-size: 13px; }
+    .info-box { padding: 14px 16px; font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-side">
+    <a href="clone-03-neighbors-map.html"><button class="icon-btn" title="Back">←</button></a>
+  </div>
+  <a href="clone-01-homepage.html" class="logo">
+    <div class="logo-mark">C</div>
+    <div class="logo-text">
+      <div class="l1">clever</div>
+      <div class="l2">OFFERS</div>
+    </div>
+  </a>
+  <div class="header-side right">
+    <button class="icon-btn" title="Call us">📞</button>
+    <a href="clone-01-homepage.html"><button class="icon-btn" title="Close">✕</button></a>
+  </div>
+</header>
+
+<div class="progress-track"><div class="progress-fill"></div></div>
+
+<div class="stage">
+  <h1>How Clever Offers works for you 🏠</h1>
+  <p class="sub">Get cash offers for your home in 3 simple steps.</p>
+
+  <div class="step-row">
+    <div class="step-num">1</div>
+    <div>
+      <h3>Tell us about your home</h3>
+      <p>Answer a few quick questions about your property so we can find the best cash offer partners.</p>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">2</div>
+    <div>
+      <h3>Compare competing cash offers</h3>
+      <p>We bring you offers from multiple trusted investors, iBuyers, and vetted cash buyers so you can compare side by side.</p>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num">3</div>
+    <div>
+      <h3>Choose your best option and close fast</h3>
+      <p>Pick the offer that works for you. Close in as little as 5 days with no showings, no repairs, and no hassle.</p>
+    </div>
+  </div>
+
+  <div class="info-box">
+    💡 Clever Offers is 100% free with no obligation. You're never locked in – explore your options and decide what's best for you.
+  </div>
+
+  <a href="clone-05-property-type.html">
+    <button class="next-btn">Next</button>
+  </a>
+</div>
+
+</body>
+</html>

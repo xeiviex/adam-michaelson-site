@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Cash Offers — Clever Offers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2563EB;
+    --blue-dark: #1D4ED8;
+    --navy: #0F172A;
+    --orange: #F59E0B;
+    --orange-dark: #D97706;
+    --green: #10B981;
+    --green-dark: #0F9F76;
+    --green-light: #D1FAE5;
+    --blue-light: #EFF6FF;
+    --blue-light-border: #BFDBFE;
+    --gray-bg: #F8FAFC;
+    --border: #E5E7EB;
+    --text: #111827;
+    --text-body: #4B5563;
+    --text-muted: #9CA3AF;
+    --white: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--gray-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .brand {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--blue);
+  }
+  .brand .dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .address-context {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-left: 4px;
+    font-weight: 400;
+  }
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-body);
+  }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--blue-light);
+    color: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 0;
+    min-height: calc(100vh - 65px);
+  }
+  main {
+    padding: 40px 48px;
+    max-width: 900px;
+  }
+  .page-head { margin-bottom: 32px; }
+  .page-head h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .page-head p {
+    font-size: 15px;
+    color: var(--text-body);
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    margin-top: 40px;
+  }
+  .section-label:first-of-type { margin-top: 0; }
+  .section-label h2 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .section-label .count-pill {
+    background: var(--blue-light);
+    color: var(--blue-dark);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  /* ---------- Offer cards ---------- */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .card:hover {
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+    border-color: #D1D9E6;
+  }
+  .card-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .card-icon.instant { background: var(--blue-light); color: var(--blue); }
+  .card-icon.agent { background: #FEF3E2; color: var(--orange-dark); }
+
+  .card-body { flex: 1; min-width: 0; }
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .card-top .buyer-name {
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .badge.instant { background: var(--blue-light); color: var(--blue-dark); }
+  .badge.agent { background: #FEF3E2; color: var(--orange-dark); }
+
+  .card-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .card-meta strong { color: var(--text-body); font-weight: 500; }
+
+  .card-amount {
+    text-align: right;
+    flex-shrink: 0;
+    padding: 0 6px;
+  }
+  .card-amount .amt {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .card-amount .label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: filter 0.15s ease;
+  }
+  .btn:hover { filter: brightness(0.94); }
+  .btn.primary { background: var(--green); color: white; }
+  .btn.secondary { background: var(--orange); color: white; }
+
+  /* ---------- Pending review ---------- */
+  .pending-card {
+    background: var(--white);
+    border: 1px dashed #D1D5DB;
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .pending-card .card-icon {
+    background: #F3F4F6;
+    color: var(--text-muted);
+  }
+  .pending-card .card-body h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .pending-card .card-body p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .pending-count {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* ---------- AI Sidebar ---------- */
+  aside {
+    background: var(--gray-bg);
+    border-left: 1px solid var(--border);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .ai-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .ai-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .ai-header .name {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .ai-header .role {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .ai-bubble {
+    background: var(--white);
+    border-radius: 14px;
+    border-top-left-radius: 4px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text-body);
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+  }
+  .ai-bubble strong { color: var(--text); }
+  .ai-bubble ul {
+    margin: 8px 0 0 18px;
+    padding: 0;
+  }
+  .ai-bubble li { margin-bottom: 4px; }
+
+  .ai-tip {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(37,99,235,0.15);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    color: var(--blue-dark);
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .ai-footer {
+    margin-top: auto;
+    padding-top: 16px;
+  }
+  .ai-input-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px 4px 4px 14px;
+  }
+  .ai-input-wrap input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    padding: 8px 0;
+    background: transparent;
+  }
+  .ai-input-wrap input::placeholder { color: var(--text-muted); }
+  .ai-send {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--blue);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { border-left: none; border-top: 1px solid var(--border); }
+    main { padding: 28px 20px; }
+    .card { flex-wrap: wrap; }
+    .card-amount { text-align: left; }
+  }
+  @media (max-width: 480px) {
+    header { padding: 12px 16px; }
+    .address-context { display: none; }
+    main { padding: 20px 14px; }
+    .page-head h1 { font-size: 22px; }
+    .card { padding: 16px; gap: 14px; }
+    .card-amount .amt { font-size: 20px; }
+    .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="dot">C</span>
+    Clever Offers
+    <span class="address-context">— 3734 E Royal Troon Dr, Eagle Mountain, UT</span>
+  </div>
+  <div class="user-chip">
+    <div class="avatar">A</div>
+    Adam
+  </div>
+</header>
+
+<div class="layout">
+  <main>
+    <div class="page-head">
+      <h1>Here are your cash offers</h1>
+      <p>Compare instant offers below, or work with a local agent if you'd rather have someone handle it for you. Nothing here is final until you accept.</p>
+    </div>
+
+    <div class="section-label">
+      <h2>Instant Offers</h2>
+      <span class="count-pill">2 ready now</span>
+    </div>
+
+    <div class="card">
+      <div class="card-icon instant">⚡</div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="buyer-name">Meridian Home Buyers</span>
+          <span class="badge instant">Instant Offer</span>
+        </div>
+        <div class="card-meta">
+          <span>Expires in <strong>6 days</strong></span>
+          <span>Close in <strong>as little as 10 days</strong></span>
+          <span>Cash · <strong>no financing contingency</strong></span>
+        </div>
+      </div>
+      <div class="card-amount">
+        <div class="amt">$470,000</div>
+        <div class="label">Offer</div>
+      </div>
+      <a href="02-offer-details.html"><button class="btn primary">See Details</button></a>
+    </div>
+
+    <div class="card">
+      <div class="card-icon instant">⚡</div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="buyer-name">BC Enterprises</span>
+          <span class="badge instant">Instant Offer</span>
+        </div>
+        <div class="card-meta">
+          <span>Expires in <strong>4 days</strong></span>
+          <span>Close in <strong>14–21 days</strong></span>
+          <span>Note: <strong>"Flexible on closing date"</strong></span>
+        </div>
+      </div>
+      <div class="card-amount">
+        <div class="amt">$458,500</div>
+        <div class="label">Offer</div>
+      </div>
+      <button class="btn primary">See Details</button>
+    </div>
+
+    <div class="section-label">
+      <h2>Prefer a Person to Handle This?</h2>
+    </div>
+
+    <div class="card">
+      <div class="card-icon agent">🧑‍💼</div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="buyer-name">Work With a Local Agent</span>
+          <span class="badge agent">Agent-Assisted</span>
+        </div>
+        <div class="card-meta">
+          <span>A licensed local agent runs a <strong>7-day competitive bidding process</strong></span>
+          <span>Typically the <strong>highest offers</strong></span>
+        </div>
+      </div>
+      <button class="btn secondary">Talk to an Agent</button>
+    </div>
+
+    <div class="section-label">
+      <h2>Still Coming In</h2>
+    </div>
+
+    <div class="pending-card">
+      <div class="card-icon">⏳</div>
+      <div class="card-body">
+        <h3>3 more investors are reviewing your property</h3>
+        <p>These investors match your property's buy box criteria and have been notified. We'll let you know the moment any of them extend an offer — no action needed from you.</p>
+      </div>
+      <div class="pending-count">3</div>
+    </div>
+  </main>
+
+  <aside>
+    <div class="ai-header">
+      <div class="ai-avatar">AI</div>
+      <div>
+        <div class="name">Clever Assistant</div>
+        <div class="role">Here to help you decide</div>
+      </div>
+    </div>
+
+    <div class="ai-bubble">
+      You've got <strong>2 instant offers</strong> ready to compare, plus <strong>3 more investors</strong> still reviewing your property. Here's what I'd look at first:
+      <ul>
+        <li>Compare the <strong>amount and closing timeline</strong> together — a faster close is sometimes worth more than a slightly higher offer</li>
+        <li>Check each offer's <strong>expiration</strong> so you don't miss a window</li>
+        <li>The agent option usually takes longer, but often nets a <strong>higher final price</strong></li>
+      </ul>
+    </div>
+
+    <div class="ai-tip">
+      💡 Tip: You're not locked into anything until you click "Accept" on an offer.
+    </div>
+
+    <div class="ai-footer">
+      <div class="ai-input-wrap">
+        <input type="text" placeholder="Ask me anything about your offers…" />
+        <button class="ai-send">→</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+</body>
+</html>

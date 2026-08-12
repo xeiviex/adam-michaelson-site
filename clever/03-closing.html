@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Closing — Clever Offers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2563EB;
+    --blue-dark: #1D4ED8;
+    --navy: #0F172A;
+    --orange: #F59E0B;
+    --orange-dark: #D97706;
+    --green: #10B981;
+    --green-dark: #0F9F76;
+    --green-light: #D1FAE5;
+    --blue-light: #EFF6FF;
+    --blue-light-border: #BFDBFE;
+    --gray-bg: #F8FAFC;
+    --border: #E5E7EB;
+    --text: #111827;
+    --text-body: #4B5563;
+    --text-muted: #9CA3AF;
+    --white: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--gray-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .brand { font-family: 'Poppins', sans-serif; }
+
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--blue); }
+  .brand .dot {
+    width: 28px; height: 28px; border-radius: 8px; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .address-context { font-size: 13px; color: var(--text-muted); margin-left: 4px; font-weight: 400; }
+  .user-chip { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--text-body); }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--blue-light); color: var(--blue);
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;
+  }
+
+  .layout { display: grid; grid-template-columns: 1fr 380px; min-height: calc(100vh - 65px); }
+  main { padding: 32px 48px 60px; max-width: 720px; }
+
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--text-muted); margin-bottom: 20px;
+  }
+  .breadcrumb .sep { color: #D1D5DB; }
+  .breadcrumb .current { color: var(--text-body); font-weight: 500; }
+
+  .page-head { margin-bottom: 24px; }
+  .page-head h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .page-head p { font-size: 14.5px; color: var(--text-body); }
+
+  /* ---------- Section cards ---------- */
+  .step-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 16px;
+    padding: 26px 28px; margin-bottom: 18px;
+  }
+  .step-card.complete { border-color: #B7E4CF; }
+  .step-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--blue); color: white;
+    font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .step-num.done { background: var(--green); }
+  .step-head h2 { font-size: 16.5px; font-weight: 600; }
+  .step-head .step-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 2px; }
+
+  .connect-btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: var(--white); border: 1px solid var(--border); border-radius: 10px;
+    padding: 11px 16px; font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600;
+    color: var(--blue-dark); cursor: pointer;
+  }
+  .connect-btn:hover { border-color: var(--blue); background: var(--blue-light); }
+  .connect-btn .bank-icon {
+    width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+
+  .readonly-summary {
+    background: #F8FAFC; border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px;
+    margin-bottom: 18px;
+  }
+  .readonly-summary .rs-row {
+    display: flex; justify-content: space-between; padding: 7px 0; font-size: 13.5px;
+    border-bottom: 1px solid #EEF0F3;
+  }
+  .readonly-summary .rs-row:last-child { border-bottom: none; }
+  .readonly-summary .rs-label { color: var(--text-muted); }
+  .readonly-summary .rs-value { font-weight: 600; color: var(--text); text-align: right; }
+
+  .field-group { margin-bottom: 16px; }
+  .field-group label {
+    display: block; font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 6px;
+  }
+  .field-group input, .field-group select, .field-group textarea {
+    width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px;
+    font-family: 'Inter', sans-serif; font-size: 16px; color: var(--text); outline: none;
+  }
+  .field-group input:focus, .field-group select:focus, .field-group textarea:focus { border-color: var(--blue); }
+  .field-group input[readonly] { background: #F8FAFC; color: var(--text-muted); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field-hint { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; }
+  textarea { resize: vertical; min-height: 70px; font-family: 'Inter', sans-serif; }
+
+  .cta-bar {
+    display: flex; gap: 12px; align-items: center; margin-top: 8px;
+  }
+  .btn {
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; padding: 13px 26px; border-radius: 10px;
+    border: none; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  }
+  .btn.primary { background: var(--green); color: white; }
+  .btn.primary:disabled { background: #D1D5DB; color: #9CA3AF; cursor: not-allowed; }
+  .cta-note { font-size: 12.5px; color: var(--text-muted); }
+
+  /* ---------- Right sidebar ---------- */
+  aside {
+    background: var(--gray-bg);
+    border-left: 1px solid var(--border);
+    padding: 24px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .offer-pin {
+    background: linear-gradient(155deg, #FAFAFB 0%, #F2F2F4 55%, #ECECEF 100%);
+    border: 1px solid #DEDEE2; border-radius: 14px; padding: 18px 20px;
+  }
+  .offer-pin .pin-label {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted);
+    margin-bottom: 10px; font-weight: 600;
+  }
+  .offer-pin .pin-buyer { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .offer-pin .pin-icon {
+    width: 34px; height: 34px; border-radius: 9px; background: var(--blue-light); color: var(--blue);
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .offer-pin .pin-name { font-size: 14px; font-weight: 700; }
+  .offer-pin .pin-badge {
+    font-size: 10px; font-weight: 600; color: var(--blue-dark); text-transform: uppercase;
+  }
+  .offer-pin .pin-amt { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+  .offer-pin .pin-facts { font-size: 12px; color: var(--text-muted); line-height: 1.7; border-top: 1px solid #E3E3E7; padding-top: 10px; }
+  .offer-pin .pin-facts strong { color: var(--text-body); font-weight: 500; }
+
+  .ai-panel { display: flex; flex-direction: column; flex: 1; }
+  .ai-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .ai-avatar {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--blue); display: flex;
+    align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .ai-header .name { font-weight: 600; font-size: 13.5px; }
+  .ai-header .role { font-size: 11.5px; color: var(--text-muted); }
+
+  .ai-bubble {
+    background: var(--white); border-radius: 14px; border-top-left-radius: 4px; padding: 14px 16px;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-body);
+    box-shadow: 0 1px 3px rgba(15,23,42,0.04); min-height: 90px;
+  }
+  .ai-bubble strong { color: var(--text); }
+  .type-cursor {
+    display: inline-block; width: 2px; height: 14px; background: var(--blue-dark);
+    margin-left: 2px; vertical-align: text-bottom; animation: blink 0.9s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .ai-footer { margin-top: auto; padding-top: 16px; }
+  .ai-input-wrap {
+    display: flex; align-items: center; background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 4px 4px 4px 14px;
+  }
+  .ai-input-wrap input {
+    flex: 1; border: none; outline: none; font-family: 'Inter', sans-serif; font-size: 13.5px;
+    padding: 8px 0; background: transparent;
+  }
+  .ai-input-wrap input::placeholder { color: var(--text-muted); }
+  .ai-send {
+    width: 32px; height: 32px; border-radius: 8px; background: var(--blue); border: none; color: white;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 14px;
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { border-left: none; border-top: 1px solid var(--border); }
+    main { padding: 24px 20px; }
+    .upload-row, .field-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    header { padding: 12px 16px; }
+    .address-context { display: none; }
+    main { padding: 20px 14px; }
+    .page-head h1 { font-size: 22px; }
+    .step-card { padding: 18px; }
+    .offer-pin { padding: 16px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="dot">C</span>
+    Clever Offers
+    <span class="address-context">— 3734 E Royal Troon Dr, Eagle Mountain, UT</span>
+  </div>
+  <div class="user-chip">
+    <div class="avatar">A</div>
+    Adam
+  </div>
+</header>
+
+<div class="layout">
+  <main>
+    <div class="breadcrumb">
+      <span>All Offers</span>
+      <span class="sep">/</span>
+      <span>Meridian Home Buyers</span>
+      <span class="sep">/</span>
+      <span class="current">Closing</span>
+    </div>
+
+    <div class="page-head">
+      <h1>Let's get your contract ready</h1>
+      <p>Confirm the details below, then we'll verify your identity and generate your purchase agreement automatically.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-head">
+        <div class="step-num">1</div>
+        <div>
+          <h2>Confirm contract details</h2>
+          <div class="step-sub">Everything below is what your purchase agreement will use</div>
+        </div>
+      </div>
+
+      <div class="readonly-summary">
+        <div class="rs-row"><span class="rs-label">Selling to</span><span class="rs-value">Meridian Home Buyers</span></div>
+        <div class="rs-row"><span class="rs-label">Offer amount</span><span class="rs-value">$470,000</span></div>
+        <div class="rs-row"><span class="rs-label">Property</span><span class="rs-value">3734 E Royal Troon Dr, Eagle Mountain, UT</span></div>
+        <div class="rs-row"><span class="rs-label">Financing</span><span class="rs-value">Cash — no contingency</span></div>
+        <div class="rs-row"><span class="rs-label">Earnest money</span><span class="rs-value">$10,000</span></div>
+      </div>
+
+      <div class="field-group">
+        <label>Legal name (as it appears on your ID)</label>
+        <input type="text" value="Adam H. Michaelson" />
+      </div>
+
+      <div class="field-group">
+        <label>Deposit account — where your funds will be sent</label>
+        <button class="connect-btn">
+          <span class="bank-icon">🏦</span>
+          Connect Bank Account
+        </button>
+        <div class="field-hint">Secured through Plaid. Clever never sees or stores your login credentials.</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label>Preferred closing date</label>
+          <input type="text" placeholder="Select a date" />
+          <div class="field-hint">Meridian's offer allows closing as early as Aug 27</div>
+        </div>
+        <div class="field-group">
+          <label>Possession date</label>
+          <select>
+            <option>Same as closing</option>
+            <option>A few days after closing</option>
+            <option>I need more time</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Anything else the buyer should know? (optional)</label>
+        <textarea placeholder="e.g. specific move-out timing, items you're leaving behind…"></textarea>
+      </div>
+    </div>
+
+    <div class="cta-bar">
+      <a href="04-liveness.html"><button class="btn primary">Continue to Identity Verification</button></a>
+      <span class="cta-note">Step 1 of 3 — next you'll verify your identity, then sign</span>
+    </div>
+  </main>
+
+  <aside>
+    <div class="offer-pin">
+      <div class="pin-label">Offer You're Accepting</div>
+      <div class="pin-buyer">
+        <div class="pin-icon">⚡</div>
+        <div>
+          <div class="pin-name">Meridian Home Buyers</div>
+          <div class="pin-badge">Instant Offer</div>
+        </div>
+      </div>
+      <div class="pin-amt">$470,000</div>
+      <div class="pin-facts">
+        Closing: <strong>as early as 10 days</strong><br>
+        Financing: <strong>cash, no contingency</strong><br>
+        Inspection: <strong>waived</strong>
+      </div>
+    </div>
+
+    <div class="ai-panel">
+      <div class="ai-header">
+        <div class="ai-avatar">AI</div>
+        <div>
+          <div class="name">Clever Assistant</div>
+          <div class="role">Walking you through closing</div>
+        </div>
+      </div>
+
+      <div class="ai-bubble" id="typingBubble"></div>
+
+      <div class="ai-footer">
+        <div class="ai-input-wrap">
+          <input type="text" placeholder="Ask about the closing process…" />
+          <button class="ai-send">→</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+  const fullText = "This is everything that'll go into your purchase agreement — take a look and make sure it's accurate. Once you connect a deposit account and confirm your closing date, you'll move on to a quick identity verification, then straight to signing. No paperwork to fill out by hand.";
+  const el = document.getElementById('typingBubble');
+  let i = 0;
+  function typeNext() {
+    if (i <= fullText.length) {
+      el.innerHTML = fullText.slice(0, i) + '<span class="type-cursor"></span>';
+      i++;
+      setTimeout(typeNext, 14);
+    } else {
+      el.innerHTML = fullText;
+    }
+  }
+  typeNext();
+</script>
+
+</body>
+</html>

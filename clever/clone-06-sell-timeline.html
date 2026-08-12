@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clever Offers — Selling Timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2563EB;
+    --blue-dark: #1D4ED8;
+    --blue-light: #EFF6FF;
+    --text: #111827;
+    --text-body: #4B5563;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+    --white: #FFFFFF;
+    --trustpilot-green: #00B67A;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, .logo-text { font-family: 'Poppins', sans-serif; }
+  a { text-decoration: none; color: inherit; }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 28px; border-bottom: 1px solid var(--border);
+  }
+  .header-side { display: flex; align-items: center; gap: 16px; width: 90px; }
+  .header-side.right { justify-content: flex-end; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: var(--text); font-size: 16px; cursor: pointer; border: none; background: transparent;
+  }
+  .icon-btn:hover { background: #F3F4F6; }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-mark {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .logo-text { line-height: 1.1; }
+  .logo-text .l1 { font-weight: 700; font-size: 16px; color: var(--blue); }
+  .logo-text .l2 { font-size: 9px; font-weight: 600; color: var(--blue); letter-spacing: 0.12em; }
+
+  .progress-track { height: 4px; background: #EEF0F3; }
+  .progress-fill { height: 100%; width: 33%; background: var(--blue); }
+
+  .layout { display: grid; grid-template-columns: 1fr 340px; gap: 60px; max-width: 940px; margin: 0 auto; padding: 56px 24px 70px; }
+
+  .main h1 { font-size: 26px; font-weight: 800; margin-bottom: 28px; }
+
+  .option-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 34px; }
+  .option-card {
+    border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+    display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+    font-size: 14.5px; font-weight: 500; transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .option-card:hover { border-color: var(--blue); }
+  .option-card.selected { background: var(--blue-light); border-color: var(--blue); }
+  .radio-dot {
+    width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; position: relative;
+  }
+  .option-card.selected .radio-dot { border-color: var(--blue); }
+  .option-card.selected .radio-dot::after {
+    content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--blue);
+  }
+
+  .next-btn {
+    display: inline-block; width: 100%; background: var(--blue); color: white;
+    font-weight: 700; font-size: 16px; padding: 15px; border-radius: 10px; border: none; cursor: pointer;
+  }
+  .next-btn:hover { background: var(--blue-dark); }
+
+  .sidebar-card {
+    background: linear-gradient(135deg, #EEF2FF, #F5F3FF); border-radius: 14px; padding: 22px 24px;
+    text-align: center; margin-bottom: 20px;
+  }
+  .sidebar-card .avatar {
+    width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 14px;
+    background: linear-gradient(135deg, #F3A683, #EAB89A);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+    border: 3px solid white; box-shadow: 0 2px 8px rgba(15,23,42,0.1);
+  }
+  .sidebar-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+  .sidebar-card p { font-size: 13px; color: var(--text-body); line-height: 1.55; }
+
+  .testimonial-box {
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px;
+  }
+  .testimonial-box .stars { color: var(--trustpilot-green); letter-spacing: 2px; font-size: 13px; margin-bottom: 10px; }
+  .testimonial-box p { font-size: 13px; color: var(--text-body); line-height: 1.55; margin-bottom: 8px; }
+  .testimonial-box .show-more { font-size: 12.5px; color: var(--blue); font-weight: 600; cursor: pointer; margin-bottom: 12px; display: inline-block; }
+  .testimonial-box .author { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; }
+  .testimonial-box .author .initial-badge {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;
+  }
+
+  .carousel-nav { display: flex; justify-content: center; gap: 10px; }
+  .carousel-nav button {
+    width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); background: white;
+    color: var(--text-muted); cursor: pointer; font-size: 13px;
+  }
+  .carousel-nav button:hover { border-color: var(--blue); color: var(--blue); }
+
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    header { padding: 12px 14px; }
+    .header-side { width: 40px; }
+    .logo-text .l1 { font-size: 14px; }
+    .layout { padding: 32px 16px 50px; gap: 30px; }
+    .main h1 { font-size: 21px; }
+    .option-card { padding: 13px 14px; font-size: 13.5px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-side">
+    <a href="clone-05-property-type.html"><button class="icon-btn" title="Back">←</button></a>
+  </div>
+  <a href="clone-01-homepage.html" class="logo">
+    <div class="logo-mark">C</div>
+    <div class="logo-text">
+      <div class="l1">clever</div>
+      <div class="l2">OFFERS</div>
+    </div>
+  </a>
+  <div class="header-side right">
+    <button class="icon-btn" title="Call us">📞</button>
+    <a href="clone-01-homepage.html"><button class="icon-btn" title="Close">✕</button></a>
+  </div>
+</header>
+
+<div class="progress-track"><div class="progress-fill"></div></div>
+
+<div class="layout">
+  <div class="main">
+    <h1>How quickly do you need to sell? ⏰</h1>
+
+    <div class="option-list" id="optionList">
+      <div class="option-card" data-value="ASAP"><span>ASAP</span><div class="radio-dot"></div></div>
+      <div class="option-card" data-value="1 to 3 Months"><span>1 to 3 Months</span><div class="radio-dot"></div></div>
+      <div class="option-card" data-value="3 to 6 Months"><span>3 to 6 Months</span><div class="radio-dot"></div></div>
+      <div class="option-card" data-value="6 to 12 Months"><span>6 to 12 Months</span><div class="radio-dot"></div></div>
+      <div class="option-card" data-value="More than 12 Months"><span>More than 12 Months</span><div class="radio-dot"></div></div>
+      <div class="option-card" data-value="Not sure"><span>Not sure</span><div class="radio-dot"></div></div>
+    </div>
+
+    <a href="clone-07-home-value.html">
+      <button class="next-btn">Next</button>
+    </a>
+  </div>
+
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="avatar">👩</div>
+      <h3>Why do we ask this?</h3>
+      <p>Knowing your timeline helps us prioritize the best options – whether you need to sell fast or can wait for the best price.</p>
+    </div>
+
+    <div class="testimonial-box">
+      <div class="stars">★★★★★</div>
+      <p>I had tried other cash buyers and the experience was not good, to say the least. Clever contacted me quickly and I was struck by how professional and…</p>
+      <span class="show-more">Show more</span>
+      <div class="author"><span class="initial-badge">C</span> Chris H.</div>
+    </div>
+
+    <div class="carousel-nav">
+      <button>‹</button>
+      <button>›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.option-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+    });
+  });
+</script>
+
+</body>
+</html>

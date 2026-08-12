@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clever Offers — Almost There</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2563EB;
+    --blue-dark: #1D4ED8;
+    --text: #111827;
+    --text-body: #4B5563;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+    --white: #FFFFFF;
+    --trustpilot-green: #00B67A;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--white);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, .logo-text { font-family: 'Poppins', sans-serif; }
+  a { text-decoration: none; color: inherit; }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 28px; border-bottom: 1px solid var(--border);
+  }
+  .header-side { display: flex; align-items: center; gap: 16px; width: 90px; }
+  .header-side.right { justify-content: flex-end; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: var(--text); font-size: 16px; cursor: pointer; border: none; background: transparent;
+  }
+  .icon-btn:hover { background: #F3F4F6; }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-mark {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .logo-text { line-height: 1.1; }
+  .logo-text .l1 { font-weight: 700; font-size: 16px; color: var(--blue); }
+  .logo-text .l2 { font-size: 9px; font-weight: 600; color: var(--blue); letter-spacing: 0.12em; }
+
+  .progress-track { height: 4px; background: #EEF0F3; }
+  .progress-fill { height: 100%; width: 60%; background: var(--blue); }
+
+  .layout { display: grid; grid-template-columns: 1fr 340px; gap: 60px; max-width: 940px; margin: 0 auto; padding: 56px 24px 70px; }
+
+  .main h1 { font-size: 26px; font-weight: 800; margin-bottom: 28px; line-height: 1.3; }
+
+  .field-group { margin-bottom: 18px; }
+  .field-group label { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 8px; }
+  .field-group input {
+    width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px;
+    font-family: 'Inter', sans-serif; font-size: 16px; color: var(--text); outline: none;
+  }
+  .field-group input:focus { border-color: var(--blue); }
+
+  .next-btn {
+    display: inline-block; width: 100%; background: var(--blue); color: white;
+    font-weight: 700; font-size: 16px; padding: 15px; border-radius: 10px; border: none; cursor: pointer;
+    margin-top: 8px; margin-bottom: 16px;
+  }
+  .next-btn:hover { background: var(--blue-dark); }
+
+  .legal-text { font-size: 11.5px; color: var(--text-muted); line-height: 1.55; }
+  .legal-text a { color: var(--text-body); text-decoration: underline; }
+
+  .sidebar-card {
+    background: linear-gradient(135deg, #EEF2FF, #F5F3FF); border-radius: 14px; padding: 22px 24px;
+    text-align: center; margin-bottom: 20px;
+  }
+  .sidebar-card .avatar {
+    width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 14px;
+    background: linear-gradient(135deg, #F3A683, #EAB89A);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+    border: 3px solid white; box-shadow: 0 2px 8px rgba(15,23,42,0.1);
+  }
+  .sidebar-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+  .sidebar-card p { font-size: 13px; color: var(--text-body); line-height: 1.55; }
+
+  .trust-row {
+    display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;
+    font-size: 12.5px; color: var(--text-body); flex-wrap: wrap;
+  }
+  .trust-row .stars { color: var(--trustpilot-green); letter-spacing: 1px; }
+  .trust-row .tp-mark { font-weight: 700; display: inline-flex; align-items: center; gap: 3px; }
+  .trust-row .tp-mark .tp-star { color: var(--trustpilot-green); }
+
+  .testimonial-box {
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px;
+  }
+  .testimonial-box .stars { color: var(--trustpilot-green); letter-spacing: 2px; font-size: 13px; margin-bottom: 10px; }
+  .testimonial-box p { font-size: 13px; color: var(--text-body); line-height: 1.55; margin-bottom: 12px; }
+  .testimonial-box .author { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; }
+  .testimonial-box .author .initial-badge {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;
+  }
+
+  .dot-nav { display: flex; justify-content: center; gap: 6px; }
+  .dot-nav .d { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+  .dot-nav .d.active { background: var(--blue); }
+
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    header { padding: 12px 14px; }
+    .header-side { width: 40px; }
+    .logo-text .l1 { font-size: 14px; }
+    .layout { padding: 32px 16px 50px; gap: 30px; }
+    .main h1 { font-size: 21px; }
+    .legal-text { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-side">
+    <a href="clone-09-address.html"><button class="icon-btn" title="Back">←</button></a>
+  </div>
+  <a href="clone-01-homepage.html" class="logo">
+    <div class="logo-mark">C</div>
+    <div class="logo-text">
+      <div class="l1">clever</div>
+      <div class="l2">OFFERS</div>
+    </div>
+  </a>
+  <div class="header-side right">
+    <button class="icon-btn" title="Call us">📞</button>
+    <a href="clone-01-homepage.html"><button class="icon-btn" title="Close">✕</button></a>
+  </div>
+</header>
+
+<div class="progress-track"><div class="progress-fill"></div></div>
+
+<div class="layout">
+  <div class="main">
+    <h1>Perfect! Clever Offers is available in your area. 🎉</h1>
+
+    <div class="field-group">
+      <label>Full name</label>
+      <input type="text" placeholder="" />
+    </div>
+    <div class="field-group">
+      <label>Email</label>
+      <input type="email" placeholder="" />
+    </div>
+    <div class="field-group">
+      <label>Mobile number</label>
+      <input type="tel" placeholder="" />
+    </div>
+
+    <a href="01-view-offers.html">
+      <button class="next-btn">Get cash offers</button>
+    </a>
+
+    <p class="legal-text">
+      By clicking "Get cash offers", you agree to receive recurring marketing calls, emails, and SMS at this phone number from Clever and its affiliates via an autodialer or using prerecorded/artificial voices regardless of whether your number is on any Do Not Call list. Consent is not a condition of use. Message/data rates may apply. Text STOP to cancel. You further agree to Clever's <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.
+    </p>
+  </div>
+
+  <div class="sidebar">
+    <div class="sidebar-card">
+      <div class="avatar">👩</div>
+      <h3>Did you know?</h3>
+      <p>Clever Offers is 100% free with no obligation to move forward. You'll get to compare multiple competing offers side by side.</p>
+    </div>
+
+    <div class="trust-row">
+      <strong>Excellent</strong>
+      <span class="stars">★★★★★</span>
+      <span>4,000+ reviews on</span>
+      <span class="tp-mark"><span class="tp-star">★</span> Trustpilot</span>
+    </div>
+
+    <div class="testimonial-box">
+      <div class="stars">★★★★★</div>
+      <p>They got me the best price for the house. And were thorough with all the paperwork. Very good.</p>
+      <div class="author"><span class="initial-badge">W</span> William K.</div>
+    </div>
+
+    <div class="dot-nav">
+      <div class="d active"></div><div class="d"></div><div class="d"></div><div class="d"></div><div class="d"></div><div class="d"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

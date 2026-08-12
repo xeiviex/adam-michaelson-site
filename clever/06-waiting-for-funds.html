@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Processing — Clever Offers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="module" src="https://unpkg.com/@lottiefiles/dotlottie-wc@latest/dist/dotlottie-wc.js"></script>
+<style>
+  :root {
+    --blue: #2563EB;
+    --blue-dark: #1D4ED8;
+    --green: #10B981;
+    --green-dark: #0F9F76;
+    --green-light: #D1FAE5;
+    --blue-light: #EFF6FF;
+    --gray-bg: #F8FAFC;
+    --border: #E5E7EB;
+    --text: #111827;
+    --text-body: #4B5563;
+    --text-muted: #9CA3AF;
+    --white: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--gray-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, .brand { font-family: 'Poppins', sans-serif; }
+
+  header {
+    background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--blue); }
+  .brand .dot {
+    width: 28px; height: 28px; border-radius: 8px; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .address-context { font-size: 13px; color: var(--text-muted); margin-left: 4px; font-weight: 400; }
+  .user-chip { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--text-body); }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--blue-light); color: var(--blue);
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;
+  }
+
+  /* ---------- Preview toggle (mockup aid, not part of the real product) ---------- */
+  .preview-toggle {
+    display: flex; justify-content: center; gap: 8px; padding: 14px; background: #F1F3F6;
+    border-bottom: 1px solid var(--border); font-size: 12px;
+  }
+  .preview-toggle span { color: var(--text-muted); align-self: center; margin-right: 4px; font-weight: 600; }
+  .preview-toggle button {
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 6px 14px;
+    border-radius: 999px; border: 1px solid var(--border); background: white; color: var(--text-body); cursor: pointer;
+  }
+  .preview-toggle button.active { background: var(--blue); color: white; border-color: var(--blue); }
+
+  .stage {
+    min-height: calc(100vh - 130px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 20px; text-align: center;
+  }
+
+  /* ---------- Flight-path animation ---------- */
+  .flight-box {
+    position: relative; width: 220px; height: 150px; margin: 0 auto 32px;
+  }
+  .flight-point {
+    position: absolute; width: 44px; height: 44px; border-radius: 12px;
+    background: var(--white); box-shadow: 0 4px 14px rgba(15,23,42,0.08);
+    display: flex; align-items: center; justify-content: center; font-size: 20px; z-index: 2;
+  }
+  .flight-point.end { right: 0; top: 0; }
+
+  .send-lottie {
+    position: absolute; left: 0; bottom: 0; width: 130px; height: 130px; display: none;
+  }
+  [data-state="sending"] .send-lottie { display: block; }
+
+  .fly-item {
+    position: absolute; font-size: 18px; opacity: 0; z-index: 1; display: none;
+  }
+  .fly-cash {
+    right: 14px; top: 14px; animation: flyToStart 2.4s ease-in-out infinite;
+  }
+  .fly-cash:nth-of-type(2) { animation-delay: 0.8s; }
+  .fly-cash:nth-of-type(3) { animation-delay: 1.6s; }
+
+  [data-state="funding"] .fly-cash { display: block; }
+
+  @keyframes flyToStart {
+    0% { right: 14px; top: 14px; opacity: 0; transform: rotate(6deg) scale(0.85); }
+    12% { opacity: 1; }
+    88% { opacity: 1; }
+    100% { right: calc(100% - 32px); top: calc(100% - 32px); opacity: 0; transform: rotate(-4deg) scale(1); }
+  }
+
+  .stage h1 { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+  .stage .sub { font-size: 14.5px; color: var(--text-body); max-width: 420px; margin-bottom: 32px; line-height: 1.55; }
+
+  /* ---------- Checklist ---------- */
+  .checklist {
+    display: flex; flex-direction: column; gap: 10px; background: var(--white);
+    border: 1px solid var(--border); border-radius: 14px; padding: 20px 26px; width: 100%; max-width: 320px;
+  }
+  .check-item { display: flex; align-items: center; gap: 12px; font-size: 13.5px; }
+  .check-icon {
+    width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .check-icon.done { background: var(--green-light); color: var(--green-dark); }
+  .check-icon.active { background: var(--blue-light); color: var(--blue); }
+  .check-icon.active .pulse-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--blue); animation: pulse 1.3s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+  .check-icon.pending { background: #F3F4F6; color: var(--text-muted); }
+  .check-label.done, .check-label.active { color: var(--text); font-weight: 500; }
+  .check-label.pending { color: var(--text-muted); }
+
+  .note {
+    margin-top: 28px; font-size: 12.5px; color: var(--text-muted); max-width: 380px; line-height: 1.5;
+  }
+
+  @media (max-width: 480px) {
+    header { padding: 12px 16px; }
+    .address-context { display: none; }
+    .preview-toggle { flex-wrap: wrap; padding: 10px; }
+    .stage { padding: 24px 16px; }
+    .flight-box { width: 170px; height: 130px; }
+    .flight-point { width: 36px; height: 36px; font-size: 16px; }
+    .stage h1 { font-size: 20px; }
+    .stage .sub { font-size: 13px; }
+    .checklist { padding: 16px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="dot">C</span>
+    Clever Offers
+    <span class="address-context">— 3734 E Royal Troon Dr, Eagle Mountain, UT</span>
+  </div>
+  <div class="user-chip">
+    <div class="avatar">A</div>
+    Adam
+  </div>
+</header>
+
+<div class="stage" id="stage" data-state="sending">
+
+  <div class="flight-box">
+    <div class="flight-point end">🏦</div>
+
+    <dotlottie-wc class="send-lottie" src="https://lottie.host/c89db8de-bbfc-4046-9cb6-98bed6f1ee8f/eOucyVJJ7k.lottie" autoplay loop></dotlottie-wc>
+
+    <div class="fly-item fly-cash">💵</div>
+    <div class="fly-item fly-cash">💵</div>
+    <div class="fly-item fly-cash">💵</div>
+  </div>
+
+  <h1 id="headline">Your contract is signed</h1>
+  <p class="sub" id="subtext">We're sending it to Meridian Home Buyers for acceptance. This usually takes just a few minutes — we'll notify you the moment it's confirmed.</p>
+
+  <div class="checklist" id="checklist">
+    <div class="check-item">
+      <div class="check-icon done">✓</div>
+      <div class="check-label done">Contract signed</div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon active"><div class="pulse-dot"></div></div>
+      <div class="check-label active">Sending for acceptance</div>
+    </div>
+    <div class="check-item">
+      <div class="check-icon pending"></div>
+      <div class="check-label pending">Funds transferred</div>
+    </div>
+  </div>
+
+  <p class="note" id="footnote">No action needed from you right now — feel free to close this tab. We'll email and text you as soon as there's an update.</p>
+
+  <a href="07-funding-complete.html" style="display:inline-block; margin-top:28px; font-size:12px; color:var(--text-muted); border:1px dashed var(--border); border-radius:8px; padding:8px 16px;">
+    (Demo only — this screen normally has no CTA) Continue to Funded →
+  </a>
+</div>
+
+<script>
+  function setState(state) {
+    document.getElementById('stage').dataset.state = state;
+    document.getElementById('btn-sending').classList.toggle('active', state === 'sending');
+    document.getElementById('btn-funding').classList.toggle('active', state === 'funding');
+
+    if (state === 'sending') {
+      document.getElementById('headline').textContent = 'Your contract is signed';
+      document.getElementById('subtext').textContent = "We're sending it to Meridian Home Buyers for acceptance. This usually takes just a few minutes — we'll notify you the moment it's confirmed.";
+      document.getElementById('footnote').textContent = "No action needed from you right now — feel free to close this tab. We'll email and text you as soon as there's an update.";
+      document.getElementById('checklist').innerHTML = `
+        <div class="check-item"><div class="check-icon done">✓</div><div class="check-label done">Contract signed</div></div>
+        <div class="check-item"><div class="check-icon active"><div class="pulse-dot"></div></div><div class="check-label active">Sending for acceptance</div></div>
+        <div class="check-item"><div class="check-icon pending"></div><div class="check-label pending">Funds transferred</div></div>
+      `;
+    } else {
+      document.getElementById('headline').textContent = 'Meridian accepted — funding your sale';
+      document.getElementById('subtext').textContent = "We're transferring $470,000 to your account ending in •••• 4821. This typically completes within 1 business day.";
+      document.getElementById('footnote').textContent = "You'll get an email and text the moment funds land in your account. Nothing further needed from you.";
+      document.getElementById('checklist').innerHTML = `
+        <div class="check-item"><div class="check-icon done">✓</div><div class="check-label done">Contract signed</div></div>
+        <div class="check-item"><div class="check-icon done">✓</div><div class="check-label done">Contract accepted</div></div>
+        <div class="check-item"><div class="check-icon active"><div class="pulse-dot"></div></div><div class="check-label active">Funds transferring</div></div>
+      `;
+    }
+  }
+</script>
+
+</body>
+</html>

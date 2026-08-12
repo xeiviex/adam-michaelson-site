@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Contract — Mobile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600;700&family=Georgia&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #2563EB;
+    --gray-bg: #F8FAFC;
+    --border: #E5E7EB;
+    --text: #111827;
+    --text-muted: #9CA3AF;
+    --white: #FFFFFF;
+    --ds-yellow: #FFC72C;
+    --ds-yellow-dark: #E0A800;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #E7EAEE;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 24px 0;
+  }
+  .brand { font-family: 'Poppins', sans-serif; }
+
+  .device {
+    width: 393px; height: 852px; background: #000; border-radius: 55px; padding: 14px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.35); position: relative;
+  }
+  .screen {
+    width: 100%; height: 100%; background: var(--gray-bg); border-radius: 42px;
+    overflow: hidden; position: relative; display: flex; flex-direction: column;
+  }
+  .notch {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 30px; background: #000; border-radius: 20px; z-index: 100;
+  }
+
+  header {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 52px 18px 12px; flex-shrink: 0;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14.5px; color: var(--blue); }
+  .brand .dot {
+    width: 22px; height: 22px; border-radius: 6px; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;
+  }
+  .breadcrumb-mini { font-size: 10.5px; color: var(--text-muted); margin-top: 4px; margin-left: 30px; }
+
+  .ds-toolbar {
+    background: #F4F5F7; border-bottom: 1px solid #E1E4E9; padding: 10px 16px;
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .ds-logo { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13px; color: #2E3A87; }
+  .ds-logo .ds-mark {
+    width: 20px; height: 20px; border-radius: 4px; background: #2E3A87; color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;
+  }
+  .ds-menu-dots { font-size: 16px; color: #6B7280; padding: 4px; }
+
+  .doc-scroll { flex: 1; overflow-y: auto; background: #E9EBEF; padding: 16px 12px 100px; -webkit-overflow-scrolling: touch; }
+  .doc-page {
+    background: white; margin: 0 auto 14px; padding: 26px 20px;
+    font-family: Georgia, 'Times New Roman', serif; font-size: 10.5px; line-height: 1.55; color: #1F2937;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08); position: relative; max-width: 340px;
+  }
+  .doc-title { text-align: center; font-size: 13px; font-weight: 700; margin-bottom: 3px; text-transform: uppercase; }
+  .doc-sub { text-align: center; font-size: 9px; color: #6B7280; margin-bottom: 18px; }
+  .doc-page h3 {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
+    margin: 16px 0 6px; border-bottom: 1px solid #D1D5DB; padding-bottom: 3px;
+  }
+  .doc-page p { margin-bottom: 8px; }
+  .parties-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 4px; }
+  .party-label { font-size: 8.5px; text-transform: uppercase; color: #6B7280; margin-bottom: 2px; }
+  .party-value { font-weight: 700; margin-bottom: 8px; font-size: 10.5px; }
+  .terms-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  .terms-table td { padding: 5px 0; border-bottom: 1px solid #EEF0F3; font-size: 10px; }
+  .terms-table td:first-child { color: #6B7280; width: 48%; }
+  .terms-table td:last-child { font-weight: 700; text-align: right; }
+
+  .sig-block { margin-top: 28px; }
+  .sig-field { margin-bottom: 20px; }
+  .sig-line { border-bottom: 1.5px solid #1F2937; height: 30px; position: relative; margin-bottom: 4px; }
+  .sig-tag {
+    position: absolute; left: 0; top: -2px; background: var(--ds-yellow); border: 1px solid var(--ds-yellow-dark);
+    border-radius: 3px; padding: 4px 9px 4px 7px; display: flex; align-items: center; gap: 4px;
+    font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700; color: #1F2937;
+  }
+  .sig-tag::before { content: "✎"; font-size: 11px; }
+  .sig-caption { font-size: 9px; color: #6B7280; margin-top: 3px; }
+  .page-footer { text-align: center; font-size: 9px; color: #9CA3AF; margin-top: 20px; }
+
+  /* ---------- Mobile-specific: floating bottom action bar (real DocuSign mobile pattern) ---------- */
+  .ds-bottom-bar {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: var(--white); border-top: 1px solid var(--border);
+    padding: 12px 16px; padding-bottom: max(16px, env(safe-area-inset-bottom));
+    display: flex; align-items: center; justify-content: space-between; z-index: 50;
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.08);
+  }
+  .ds-bottom-info { font-size: 10.5px; color: var(--text-muted); }
+  .ds-bottom-info strong { color: var(--text); display: block; font-size: 12px; }
+  .ds-next-btn {
+    background: var(--ds-yellow); color: #1F2937; font-weight: 700; font-size: 13px;
+    border: none; border-radius: 8px; padding: 11px 22px; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="notch"></div>
+  <div class="screen">
+    <header>
+      <div class="brand"><span class="dot">C</span>Clever Offers</div>
+      <div class="breadcrumb-mini">Closing / Sign Contract</div>
+    </header>
+
+    <div class="ds-toolbar">
+      <div class="ds-logo"><span class="ds-mark">D</span>DocuSign</div>
+      <div class="ds-menu-dots">⋮</div>
+    </div>
+
+    <div class="doc-scroll">
+      <div class="doc-page">
+        <div class="doc-title">Real Estate Purchase Agreement</div>
+        <div class="doc-sub">Envelope ID: 8F2A-491C-7D3E</div>
+
+        <h3>Parties</h3>
+        <div class="parties-grid">
+          <div>
+            <div class="party-label">Seller</div>
+            <div class="party-value">Adam H. Michaelson</div>
+          </div>
+          <div>
+            <div class="party-label">Buyer</div>
+            <div class="party-value">Meridian Home Buyers, LLC</div>
+          </div>
+        </div>
+
+        <h3>Property</h3>
+        <p>3734 E Royal Troon Dr, Eagle Mountain, UT 84005, together with all improvements, fixtures, and appurtenances thereto (the "Property").</p>
+
+        <h3>Terms of Sale</h3>
+        <table class="terms-table">
+          <tr><td>Purchase Price</td><td>$470,000.00</td></tr>
+          <tr><td>Earnest Money</td><td>$10,000.00</td></tr>
+          <tr><td>Financing</td><td>Cash</td></tr>
+          <tr><td>Inspection</td><td>Waived</td></tr>
+          <tr><td>Closing Date</td><td>On/before Aug 27, 2026</td></tr>
+        </table>
+
+        <h3>Acknowledgment</h3>
+        <p>By signing below, Seller agrees to convey the Property to Buyer under the terms set forth in this Agreement.</p>
+
+        <div class="sig-block">
+          <div class="sig-field">
+            <div class="sig-line"><div class="sig-tag">Sign Here</div></div>
+            <div class="sig-caption">Adam H. Michaelson, Seller</div>
+          </div>
+          <div class="sig-field" style="max-width: 120px;">
+            <div class="sig-line"></div>
+            <div class="sig-caption">Date</div>
+          </div>
+        </div>
+
+        <div class="page-footer">Page 1 of 2</div>
+      </div>
+    </div>
+
+    <div class="ds-bottom-bar">
+      <div class="ds-bottom-info">
+        <strong>1 field remaining</strong>
+        Tap to sign
+      </div>
+      <button class="ds-next-btn">✎ Sign</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

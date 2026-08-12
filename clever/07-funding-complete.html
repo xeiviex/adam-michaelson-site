@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funding Complete — Clever Offers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="module" src="https://unpkg.com/@lottiefiles/dotlottie-wc@latest/dist/dotlottie-wc.js"></script>
+<style>
+  :root {
+    --blue: #2563EB;
+    --blue-dark: #1D4ED8;
+    --orange: #F59E0B;
+    --green: #10B981;
+    --green-dark: #0F9F76;
+    --green-light: #D1FAE5;
+    --blue-light: #EFF6FF;
+    --gray-bg: #F8FAFC;
+    --border: #E5E7EB;
+    --text: #111827;
+    --text-body: #4B5563;
+    --text-muted: #9CA3AF;
+    --white: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--gray-bg);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, .brand { font-family: 'Poppins', sans-serif; }
+
+  header {
+    background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 10;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--blue); }
+  .brand .dot {
+    width: 28px; height: 28px; border-radius: 8px; background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .address-context { font-size: 13px; color: var(--text-muted); margin-left: 4px; font-weight: 400; }
+  .user-chip { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--text-body); }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--blue-light); color: var(--blue);
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;
+  }
+
+  /* ---------- Confetti ---------- */
+  .confetti-layer {
+    position: fixed; inset: 0; pointer-events: none; z-index: 5; overflow: hidden;
+  }
+  .confetti {
+    position: absolute; top: -20px; width: 9px; height: 14px; opacity: 0.9;
+    animation: fall linear infinite;
+  }
+  @keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(540deg); opacity: 0.6; }
+  }
+
+  .stage {
+    position: relative; z-index: 6;
+    min-height: calc(100vh - 65px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 20px; text-align: center;
+  }
+
+  .success-badge {
+    width: 180px; height: 180px; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .success-badge .success-lottie { width: 100%; height: 100%; }
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .eyebrow { font-size: 12.5px; font-weight: 600; color: var(--green-dark); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .stage h1 { font-size: 30px; font-weight: 700; margin-bottom: 10px; }
+  .stage .sub { font-size: 15px; color: var(--text-body); max-width: 440px; margin-bottom: 32px; line-height: 1.55; }
+  .stage .sub strong { color: var(--text); }
+
+  .summary-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px 28px; width: 100%; max-width: 380px; margin-bottom: 28px; text-align: left;
+  }
+  .summary-row {
+    display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px;
+    border-bottom: 1px solid #F1F3F5; gap: 12px;
+  }
+  .summary-row .value { text-align: right; }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .label { color: var(--text-muted); }
+  .summary-row .value { font-weight: 600; }
+  .summary-row.total .label { color: var(--text); font-weight: 600; }
+  .summary-row.total .value { color: var(--green-dark); font-size: 18px; font-weight: 700; }
+
+  .cta-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; justify-content: center; }
+  .btn {
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14.5px; padding: 12px 24px;
+    border-radius: 10px; border: none; cursor: pointer; white-space: nowrap;
+  }
+  .btn.primary { background: var(--blue); color: white; }
+  .btn.ghost { background: transparent; color: var(--text-body); border: 1px solid var(--border); }
+
+  .review-note {
+    font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;
+  }
+  .review-note a { color: var(--blue); font-weight: 600; text-decoration: none; }
+
+  @media (max-width: 480px) {
+    header { padding: 12px 16px; }
+    .address-context { display: none; }
+    .stage { padding: 28px 16px; }
+    .success-badge { width: 76px; height: 76px; }
+    .success-badge .check { width: 54px; height: 54px; font-size: 26px; }
+    .stage h1 { font-size: 24px; }
+    .stage .sub { font-size: 13.5px; }
+    .summary-card { padding: 18px 20px; }
+    .cta-row { flex-direction: column; width: 100%; }
+    .btn { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="dot">C</span>
+    Clever Offers
+    <span class="address-context">— 3734 E Royal Troon Dr, Eagle Mountain, UT</span>
+  </div>
+  <div class="user-chip">
+    <div class="avatar">A</div>
+    Adam
+  </div>
+</header>
+
+<div class="confetti-layer" id="confetti"></div>
+
+<div class="stage">
+  <div class="success-badge">
+    <dotlottie-wc class="success-lottie" src="https://lottie.host/e267e133-2e33-4f6f-9e0c-2f22815e622d/sPSI5dbviM.lottie" autoplay></dotlottie-wc>
+  </div>
+
+  <div class="eyebrow">Sale Complete</div>
+  <h1>You're all set, Adam!</h1>
+  <p class="sub">Your funds have been deposited to your account ending in <strong>•••• 4821</strong>. Congratulations on selling your home — from listing to funded in just 9 days.</p>
+
+  <div class="summary-card">
+    <div class="summary-row"><span class="label">Property</span><span class="value">3734 E Royal Troon Dr</span></div>
+    <div class="summary-row"><span class="label">Sold to</span><span class="value">Meridian Home Buyers</span></div>
+    <div class="summary-row"><span class="label">Closing date</span><span class="value">Aug 27, 2026</span></div>
+    <div class="summary-row total"><span class="label">Total deposited</span><span class="value">$470,000</span></div>
+  </div>
+
+  <div class="cta-row">
+    <button class="btn primary">View Your Dashboard</button>
+    <button class="btn ghost">Download Closing Documents</button>
+  </div>
+
+  <div class="review-note">
+    ⭐ Mind sharing how it went? <a href="#">Leave a review on Trustpilot</a>
+  </div>
+</div>
+
+<script>
+  const colors = ['#2563EB', '#F59E0B', '#10B981', '#1D4ED8', '#F59E0B'];
+  const layer = document.getElementById('confetti');
+  const count = 45;
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.animationDuration = (3 + Math.random() * 2.5) + 's';
+    el.style.animationDelay = (Math.random() * 2) + 's';
+    el.style.width = (6 + Math.random() * 5) + 'px';
+    el.style.height = (10 + Math.random() * 6) + 'px';
+    el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    layer.appendChild(el);
+  }
+</script>
+
+</body>
+</html>
