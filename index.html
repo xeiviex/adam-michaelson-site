@@ -38,12 +38,18 @@
   #stage.fade { transition: opacity 2.6s ease; }
 
   #quote {
+    position: relative;
     font-style: italic;
     font-weight: 400;
-    font-size: clamp(1.7rem, 4.4vw, 3.25rem);
+    font-size: clamp(1.5rem, 3.5vw, 2.6rem);
     line-height: 1.3;
     letter-spacing: 0.005em;
   }
+  /* .ghost reserves the full final footprint (invisible) so nothing that is
+     already typed reflows, re-wraps, or shifts as more letters appear. The
+     visible ".typed" layer is overlaid exactly on top of it. */
+  #quote .ghost { visibility: hidden; }
+  #quote .typed { position: absolute; top: 0; left: 0; width: 100%; }
 
   #caret {
     display: none;
@@ -76,7 +82,7 @@
 <body>
 
   <div id="stage">
-    <blockquote id="quote"><span id="qtext"></span><span id="caret"></span></blockquote>
+    <div id="quote"><span class="ghost" id="ghost"></span><span class="typed"><span id="qtext"></span><span id="caret"></span></span></div>
     <div id="author"></div>
   </div>
 
@@ -85,7 +91,7 @@
   const TYPE_SPEED = 42;   // base delay per character
   const HOLD_MS    = 20000; // how long a finished quote stays on screen
   const FADE_MS    = 2600;  // how long the fade-to-black takes
-  const GAP_MS     = 5000;  // black pause before the next quote
+  const GAP_MS     = 3000;  // black pause before the next quote
   const START_MS   = 600;   // small breath before the very first quote
 
   const quotes = [
@@ -242,6 +248,7 @@
   ];
 
   const stage  = document.getElementById('stage');
+  const ghost  = document.getElementById('ghost');
   const qtext  = document.getElementById('qtext');
   const caret  = document.getElementById('caret');
   const author = document.getElementById('author');
@@ -286,11 +293,19 @@
     // Reset instantly on black, then reveal.
     stage.classList.remove('fade');
     stage.style.opacity = '1';
+
+    // Reserve the full footprint up front: the invisible ghost holds the
+    // quote's final size/wrapping, and the author line is placed (invisible)
+    // so its space is held too. Nothing shifts once typing begins.
+    ghost.textContent = item.q;
+    qtext.textContent = '';
+
+    author.style.transition = 'none';
     author.style.opacity = '0';
-    author.textContent = '';
+    author.textContent = '— ' + item.a;   // em dash + space
 
     typeQuote(item.q, function () {
-      author.textContent = '-- ' + item.a;
+      author.style.transition = 'opacity 0.9s ease';
       requestAnimationFrame(function () { author.style.opacity = '1'; });
 
       setTimeout(function () {
