@@ -69,6 +69,16 @@
 .adj-field .adj-body { display: flex; align-items: center; gap: 8px; }
 .adj-field input { flex: 1; }
 
+/* Confirm page: no boxes/strokes around the data — values read as clean text,
+   editable on click (border only appears on focus). */
+.pulled-card.confirm-clean { border: none; background: transparent; padding: 0; }
+.confirm-clean .adj-field { padding: 12px 0; border-top: none; }
+.confirm-clean .adj-field input {
+  border-color: transparent; background: transparent; padding-left: 2px; font-weight: 600;
+}
+.confirm-clean .adj-field input:hover { background: #F3F4F6; }
+.confirm-clean .adj-field input:focus { border-color: var(--blue); background: var(--white); padding-left: 14px; }
+
 /* ============================================================
    INVESTOR PORTAL (dashboard)
    ============================================================ */

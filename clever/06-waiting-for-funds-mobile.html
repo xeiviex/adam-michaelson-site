@@ -130,7 +130,6 @@
 
     <div class="stage" id="stage" data-state="sending">
       <div class="flight-box">
-        <div class="flight-point end">🏦</div>
 
         <dotlottie-wc class="send-lottie" src="https://lottie.host/c89db8de-bbfc-4046-9cb6-98bed6f1ee8f/eOucyVJJ7k.lottie" autoplay loop></dotlottie-wc>
 
@@ -156,8 +155,6 @@
 <script>
   function setState(state) {
     document.getElementById('stage').dataset.state = state;
-    document.getElementById('btn-sending').classList.toggle('active', state === 'sending');
-    document.getElementById('btn-funding').classList.toggle('active', state === 'funding');
 
     if (state === 'sending') {
       document.getElementById('headline').textContent = 'Your contract is signed';
@@ -179,6 +176,10 @@
       `;
     }
   }
+
+  // Show the funding state part-way through, then advance to the funded screen at 5s.
+  setTimeout(function () { setState('funding'); }, 2500);
+  setTimeout(function () { window.location.href = '07-funding-complete-mobile.html'; }, 5000);
 </script>
 
 </body>

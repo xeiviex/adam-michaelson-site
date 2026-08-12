@@ -196,8 +196,21 @@ header {
   width: 34px; height: 34px; border-radius: 50%; background: var(--blue); color: white;
   display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12.5px; flex-shrink: 0;
 }
-.ai-note p { font-size: 13.5px; color: var(--text-body); line-height: 1.55; }
+.ai-note p { font-size: 13.5px; color: var(--text-body); line-height: 1.55; visibility: hidden; }
 .ai-note strong { color: var(--text); }
+
+/* Pulled photo gallery (build-03). Tiles use background-image, so a missing
+   file degrades to a captioned colored tile rather than a broken-image icon. */
+.photo-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 76px; gap: 8px; margin-top: 12px; }
+.ph-tile {
+  position: relative; border-radius: 10px; overflow: hidden;
+  background: linear-gradient(135deg, #DCE3EC, #C7D2E0); background-size: cover; background-position: center;
+}
+.ph-tile.big { grid-column: span 2; grid-row: span 2; }
+.ph-cap {
+  position: absolute; left: 7px; bottom: 6px; font-size: 10px; font-weight: 600; color: #fff;
+  background: rgba(15,23,42,0.55); padding: 2px 7px; border-radius: 5px;
+}
 
 /* ---------- Actions ---------- */
 .actions {

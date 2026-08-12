@@ -55,21 +55,19 @@
   <div class="pulled-card">
     <div class="p-row">
       <div class="p-main">
-        <span class="p-label">Interior photos</span>
-        <span class="p-value">9 photos <span class="sub">· &lt; 30 days old</span> <a class="src-chip zillow" href="https://www.zillow.com/" target="_blank" rel="noopener">Zillow <span class="ext">↗</span></a></span>
-        <button class="comment-btn" type="button" aria-label="Add a note"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></button>
-      </div>
-      <div class="note-wrap" hidden><textarea placeholder="Add a note about this…"></textarea><button class="save-note" type="button">Save note</button></div>
-    </div>
-
-    <div class="p-row">
-      <div class="p-main">
-        <span class="p-label">Exterior photos</span>
-        <span class="p-value">3 photos <a class="src-chip google" href="https://www.google.com/streetview/" target="_blank" rel="noopener">Street View <span class="ext">↗</span></a></span>
+        <span class="p-label">Photos</span>
+        <span class="p-value">12 found <span class="sub">· recency check passed</span> <a class="src-chip zillow" href="https://www.zillow.com/" target="_blank" rel="noopener">Zillow <span class="ext">↗</span></a> <a class="src-chip google" href="https://www.google.com/streetview/" target="_blank" rel="noopener">Street View <span class="ext">↗</span></a></span>
         <button class="comment-btn active" type="button" aria-label="Add a note"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></button>
       </div>
+      <div class="photo-grid">
+        <div class="ph-tile big" style="background-image:url('photos/3734-exterior.jpg')"><span class="ph-cap">Exterior · Street View</span></div>
+        <div class="ph-tile" style="background-image:url('photos/3734-living.jpg')"><span class="ph-cap">Living</span></div>
+        <div class="ph-tile" style="background-image:url('photos/3734-dining.jpg')"><span class="ph-cap">Dining</span></div>
+        <div class="ph-tile" style="background-image:url('photos/3734-kitchen.jpg')"><span class="ph-cap">Kitchen</span></div>
+        <div class="ph-tile" style="background-image:url('photos/3734-yard.jpg')"><span class="ph-cap">Backyard</span></div>
+      </div>
       <div class="note-wrap" hidden><textarea placeholder="Add a note about this…"></textarea><button class="save-note" type="button">Save note</button></div>
-      <div class="saved-note"><span class="saved-note-tag">Your note</span>The Street View image is a couple years old — the exterior was repainted last spring.</div>
+      <div class="saved-note"><span class="saved-note-tag">Your note</span>The Street View exterior is a couple years old — the exterior was repainted last spring.</div>
     </div>
 
     <div class="p-row">
@@ -90,5 +88,6 @@
 </div>
 
 <script src="build.js"></script>
+<script src="type-ai.js"></script>
 </body>
 </html>
