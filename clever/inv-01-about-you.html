@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investor Sign-up — About You — Clever Offers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="build.css">
+<link rel="stylesheet" href="invest.css">
+</head>
+<body>
+
+<header>
+  <div class="brand"><span class="dot">C</span>Clever Offers</div>
+  <div class="user-chip" style="color:var(--text-muted);font-weight:500;">Investor sign-up</div>
+</header>
+<div class="progress-track"><div class="progress-fill" style="width:16.6%"></div></div>
+
+<div class="stage">
+  <div class="step-eyebrow">Step 1 of 6 · About you</div>
+  <h1>Let's set up your investor profile</h1>
+  <p class="lead">A few basics and a quick identity check. From there we'll pull your entity and funding details automatically — you'll just review them.</p>
+
+  <div class="field">
+    <label>Full legal name</label>
+    <input type="text" value="Marcus Reed" />
+  </div>
+  <div class="field">
+    <label>Work email</label>
+    <input type="email" value="marcus@meridianhomebuyers.com" />
+    <div class="hint">We'll send a verification link here.</div>
+  </div>
+  <div class="field">
+    <label>Mobile number</label>
+    <input type="tel" value="(512) 555-0193" />
+    <div class="hint">We'll text a one-time code to confirm it.</div>
+  </div>
+
+  <div class="section-label">Verify your identity</div>
+  <p class="lead" style="margin-bottom:16px;">Clever verifies every investor before you can make offers — it's the safeguard sellers rely on. A photo ID and a quick selfie.</p>
+  <button class="connect-btn" type="button">🪪 Verify with Stripe Identity</button>
+  <div class="hint" style="margin-top:8px;">Powered by <a href="https://stripe.com/identity" target="_blank" rel="noopener" style="color:var(--text-body);text-decoration:underline;">Stripe Identity</a>. Clever never stores your ID document.</div>
+
+  <div class="actions">
+    <a href="clone-01-homepage.html" class="btn ghost">Back</a>
+    <a href="inv-02-your-business.html" class="btn primary">Next</a>
+  </div>
+</div>
+
+<script src="build.js"></script>
+<script src="invest.js"></script>
+</body>
+</html>

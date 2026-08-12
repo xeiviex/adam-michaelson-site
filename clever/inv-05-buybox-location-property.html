@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investor Sign-up — Buy Box: Location &amp; Property — Clever Offers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="build.css">
+<link rel="stylesheet" href="invest.css">
+</head>
+<body>
+
+<header>
+  <div class="brand"><span class="dot">C</span>Clever Offers</div>
+  <div class="user-chip" style="color:var(--text-muted);font-weight:500;">Investor sign-up</div>
+</header>
+<div class="progress-track"><div class="progress-fill" style="width:83.3%"></div></div>
+
+<div class="stage">
+  <div class="step-eyebrow">Step 5 of 6 · Buy box (1 of 2)</div>
+  <h1>Build your buy box</h1>
+  <p class="lead">Your buy box is the criteria we match seller listings against. Matches are sent to you automatically. This is your first — you can add more anytime.</p>
+
+  <div class="field">
+    <label>Buy box name</label>
+    <input type="text" value="Utah Front Range — SFR &amp; small multi" />
+  </div>
+
+  <div class="subsec">
+    <h3>Location</h3>
+    <div class="subsec-hint">Where you'll buy. Pick markets, or target specific ZIPs / a radius below.</div>
+    <div class="chip-group" data-multi="markets">
+      <div class="chip selected"><span class="tick">✓</span>Utah (state)</div>
+      <div class="chip selected"><span class="tick">✓</span>Salt Lake County</div>
+      <div class="chip selected"><span class="tick">✓</span>Utah County</div>
+      <div class="chip selected"><span class="tick">✓</span>Salt Lake City metro</div>
+      <div class="chip selected"><span class="tick">✓</span>Provo–Orem metro</div>
+      <div class="chip"><span class="tick">✓</span>Davis County</div>
+      <div class="chip"><span class="tick">✓</span>Weber County</div>
+      <div class="chip"><span class="tick">✓</span>Phoenix metro</div>
+    </div>
+    <div class="field" style="margin-top:16px;">
+      <label>Or target specific ZIPs / radius <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+      <input type="text" placeholder="e.g. 84005, or “25 mi around 84043”" value="84005, 84043, 84020" />
+    </div>
+  </div>
+
+  <div class="subsec">
+    <h3>Property characteristics</h3>
+    <div class="subsec-hint">The kinds of homes you want matched.</div>
+
+    <div class="field">
+      <label>Property types</label>
+      <div class="chip-group" data-multi="ptypes">
+        <div class="chip selected"><span class="tick">✓</span>Single-family</div>
+        <div class="chip selected"><span class="tick">✓</span>2–4 unit multi-family</div>
+        <div class="chip selected"><span class="tick">✓</span>Condo</div>
+        <div class="chip"><span class="tick">✓</span>Land</div>
+        <div class="chip"><span class="tick">✓</span>New construction</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="field"><label>Beds (minimum)</label><input type="number" value="3" /></div>
+      <div class="field"><label>Baths (minimum)</label><input type="number" value="2" /></div>
+    </div>
+
+    <div class="field">
+      <label>Square footage (min / max)</label>
+      <div class="range-row">
+        <div class="suffix" data-suffix="sq ft"><input type="number" value="1400" /></div>
+        <span class="sep">to</span>
+        <div class="suffix" data-suffix="sq ft"><input type="number" value="4000" /></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="field"><label>Lot size (max)</label><div class="suffix" data-suffix="acres"><input type="number" step="0.05" value="0.50" /></div></div>
+      <div class="field"><label>Year built (nothing older than)</label><input type="number" value="2000" /></div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <a href="inv-04-confirm-details.html" class="btn ghost">Back</a>
+    <a href="inv-06-buybox-economics-mechanics.html" class="btn primary">Next</a>
+  </div>
+</div>
+
+<script src="build.js"></script>
+<script src="invest.js"></script>
+</body>
+</html>

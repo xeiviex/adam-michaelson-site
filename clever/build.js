@@ -14,7 +14,8 @@ document.querySelectorAll('[data-opt-group]').forEach(function (group) {
 
 // Comment affordance
 document.querySelectorAll('.comment-btn').forEach(function (btn) {
-  var row  = btn.closest('.p-row');
+  var row  = btn.closest('.p-row, .adj-field');
+  if (!row) return;
   var wrap = row.querySelector('.note-wrap');
   if (!wrap) return;
 

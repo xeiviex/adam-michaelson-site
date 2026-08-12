@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investor Sign-up — Buy Box: Economics &amp; Mechanics — Clever Offers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="build.css">
+<link rel="stylesheet" href="invest.css">
+</head>
+<body>
+
+<header>
+  <div class="brand"><span class="dot">C</span>Clever Offers</div>
+  <div class="user-chip" style="color:var(--text-muted);font-weight:500;">Investor sign-up</div>
+</header>
+<div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+
+<div class="stage">
+  <div class="step-eyebrow">Step 6 of 6 · Buy box (2 of 2)</div>
+  <h1>Deal economics &amp; mechanics</h1>
+  <p class="lead">The numbers and terms that decide whether a match becomes an offer. Then you're done — this takes you to your dashboard.</p>
+
+  <div class="subsec">
+    <h3>Deal economics</h3>
+    <div class="field">
+      <label>Purchase price range (min / max)</label>
+      <div class="range-row">
+        <div class="money"><input type="number" value="250000" /></div>
+        <span class="sep">to</span>
+        <div class="money"><input type="number" value="600000" /></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Max rehab budget you'll take on</label>
+      <div class="money"><input type="number" value="40000" /></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="field">
+        <label>Min spread vs. ARV</label>
+        <div class="suffix" data-suffix="%"><input type="number" value="12" /></div>
+        <div class="hint">Or set a target ROI instead.</div>
+      </div>
+      <div class="field">
+        <label>Min cap rate / cash-on-cash</label>
+        <div class="suffix" data-suffix="%"><input type="number" value="6.0" step="0.1" /></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsec">
+    <h3>Deal mechanics</h3>
+
+    <div class="field">
+      <label>Rehab tolerance</label>
+      <div class="opt-grid" data-opt-group="rehab">
+        <div class="opt" data-value="Turnkey only"><span>Turnkey only</span><div class="radio-dot"></div></div>
+        <div class="opt selected" data-value="Light rehab"><span>Light rehab</span><div class="radio-dot"></div></div>
+        <div class="opt" data-value="Heavy / distressed"><span>Heavy / distressed</span><div class="radio-dot"></div></div>
+        <div class="opt" data-value="Any condition"><span>Any condition</span><div class="radio-dot"></div></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Occupancy preference</label>
+      <div class="opt-list" data-opt-group="occupancy">
+        <div class="opt" data-value="Vacant only"><span>Vacant only</span><div class="radio-dot"></div></div>
+        <div class="opt selected" data-value="Will take tenant-occupied"><span>Will take tenant-occupied</span><div class="radio-dot"></div></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="field">
+        <label>Closing timeline</label>
+        <div class="opt-list" data-opt-group="timeline">
+          <div class="opt selected" data-value="Can close in 7 days"><span>Can close in 7 days</span><div class="radio-dot"></div></div>
+          <div class="opt" data-value="Needs 30+ days"><span>Needs 30+ days</span><div class="radio-dot"></div></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Financing</label>
+        <div class="opt-list" data-opt-group="financing">
+          <div class="opt selected" data-value="Cash"><span>Cash</span><div class="radio-dot"></div></div>
+          <div class="opt" data-value="Financed"><span>Financed</span><div class="radio-dot"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsec">
+    <h3>Instant funding</h3>
+    <div class="switch-row" style="margin-top:6px;">
+      <div class="switch-copy">
+        <div class="t">Fund matching deals automatically</div>
+        <div class="d">When on, a matched deal funds the moment the seller signs — no review needed. When off, every deal waits in your portal for you to approve, counter-sign, and release funds.</div>
+      </div>
+      <div class="switch on" role="switch" aria-checked="true" tabindex="0"><span class="track"></span><span class="thumb"></span></div>
+    </div>
+    <div class="hint" style="margin-top:8px;">Instant funding requires the connected funding account and a signed master agreement — both already set.</div>
+  </div>
+
+  <div class="actions">
+    <a href="inv-05-buybox-location-property.html" class="btn ghost">Back</a>
+    <a href="inv-dashboard.html" class="btn primary go">Finish &amp; go to my dashboard</a>
+  </div>
+</div>
+
+<script src="build.js"></script>
+<script src="invest.js"></script>
+</body>
+</html>

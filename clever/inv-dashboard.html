@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investor Dashboard — Clever Offers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="build.css">
+<link rel="stylesheet" href="invest.css">
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <nav class="sidenav">
+    <div class="side-brand">
+      <span class="dot">C</span>
+      <span>clever<span class="l2">INVESTOR</span></span>
+    </div>
+    <a href="inv-dashboard.html" class="active"><span class="ic">▤</span> Dashboard</a>
+    <a href="#" onclick="return false;"><span class="ic">◎</span> Buy boxes</a>
+    <a href="#" onclick="return false;"><span class="ic">⌂</span> Properties</a>
+    <a href="#" onclick="return false;"><span class="ic">⇄</span> Deals</a>
+    <a href="#" onclick="return false;"><span class="ic">👤</span> Profile</a>
+    <div class="side-foot">
+      <div class="side-user">
+        <div class="av">M</div>
+        <div>
+          <div class="nm">Marcus Reed</div>
+          <div class="sub">Meridian Home Buyers</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ MAIN ============ -->
+  <main class="dash">
+    <div class="topbar">
+      <div>
+        <h1>Welcome back, Marcus</h1>
+        <div class="sub">Meridian Home Buyers, LLC · investor since 2019</div>
+      </div>
+      <div class="filter">All buy boxes · August 2025 ▾</div>
+    </div>
+
+    <!-- KPI tiles -->
+    <div class="kpi-grid">
+      <div class="kpi"><div class="k-label">Active buy boxes</div><div class="k-num">2</div><div class="k-delta flat">unchanged</div></div>
+      <div class="kpi"><div class="k-label">Open matches</div><div class="k-num">46</div><div class="k-delta up">▲ 18% vs Jul</div></div>
+      <div class="kpi"><div class="k-label">Deals in progress</div><div class="k-num">3</div><div class="k-delta up">▲ 1 vs Jul</div></div>
+      <div class="kpi"><div class="k-label">Properties owned</div><div class="k-num">47</div><div class="k-delta up">▲ 6 YTD</div></div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Funnel -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>This month's funnel</h2>
+          <span class="link">vs. July ▾</span>
+        </div>
+        <div class="funnel">
+          <div class="funnel-step">
+            <div class="fs-top"><span class="fs-label">Total matches</span><span class="fs-vals"><span class="n">128</span><span class="d up">▲ 18%</span></span></div>
+            <div class="funnel-bar"><span style="width:100%"></span></div>
+          </div>
+          <div class="funnel-step">
+            <div class="fs-top"><span class="fs-label">Offers published</span><span class="fs-vals"><span class="n">41</span><span class="d up">▲ 9%</span></span></div>
+            <div class="funnel-bar"><span style="width:58%"></span></div>
+          </div>
+          <div class="funnel-step">
+            <div class="fs-top"><span class="fs-label">Offers accepted</span><span class="fs-vals"><span class="n">9</span><span class="d up">▲ 2</span></span></div>
+            <div class="funnel-bar"><span style="width:30%"></span></div>
+          </div>
+          <div class="funnel-step">
+            <div class="fs-top"><span class="fs-label">Deals closed</span><span class="fs-vals"><span class="n">6</span><span class="d up">▲ 1</span></span></div>
+            <div class="funnel-bar"><span style="width:22%"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Properties purchased -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Properties purchased</h2>
+          <span class="link">Filter ▾</span>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut">
+            <div class="donut-center"><div class="dc-num">47</div><div class="dc-lbl">homes</div></div>
+          </div>
+          <div class="legend" style="flex:1;">
+            <div class="lg"><span class="sw" style="background:var(--blue)"></span> Single-family <span class="pct">62%</span></div>
+            <div class="lg"><span class="sw" style="background:var(--green)"></span> 2–4 unit <span class="pct">23%</span></div>
+            <div class="lg"><span class="sw" style="background:var(--orange)"></span> Condo <span class="pct">15%</span></div>
+            <div class="lg" style="margin-top:6px;border-top:1px solid var(--border);padding-top:10px;"><span style="color:var(--text-muted)">Total value</span> <span class="pct" style="color:var(--text);font-size:15px;">$19.8M</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active deals -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Active deals</h2>
+        <span class="link">View all deals →</span>
+      </div>
+      <div class="deal-row">
+        <div class="d-icon">🏡</div>
+        <div class="d-body">
+          <div class="d-addr">3734 E Royal Troon Dr, Eagle Mountain, UT</div>
+          <div class="d-meta">Utah Front Range · seller accepted your instant offer</div>
+        </div>
+        <div class="d-amt">$470,000</div>
+        <span class="status fund">Funding in progress</span>
+      </div>
+      <div class="deal-row">
+        <div class="d-icon">🏡</div>
+        <div class="d-body">
+          <div class="d-addr">812 W Center St, Provo, UT</div>
+          <div class="d-meta">Utah Front Range · title clear, closing scheduled</div>
+        </div>
+        <div class="d-amt">$362,000</div>
+        <span class="status close">Ready to close</span>
+      </div>
+      <div class="deal-row">
+        <div class="d-icon">🏢</div>
+        <div class="d-body">
+          <div class="d-addr">145 S 500 E, Orem, UT</div>
+          <div class="d-meta">Utah Front Range · 2-unit · contract sent</div>
+        </div>
+        <div class="d-amt">$298,500</div>
+        <span class="status sign">Out for signature</span>
+      </div>
+      <div class="deal-row">
+        <div class="d-icon" style="background:var(--violet-light);color:var(--violet);">↩</div>
+        <div class="d-body">
+          <div class="d-addr">1 offer from another investor on a property you own</div>
+          <div class="d-meta">920 N 1200 W, Lehi, UT · review in Deals</div>
+        </div>
+        <div class="d-amt">$284,000</div>
+        <span class="status done">New offer</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Buy boxes -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Your buy boxes</h2>
+          <span class="link">+ Add buy box</span>
+        </div>
+        <div class="bb-grid">
+          <div class="bb-card">
+            <div class="bb-name">Utah Front Range <span class="link" style="font-size:12px;">Edit</span></div>
+            <div class="bb-matches">34</div>
+            <div class="bb-sub">open matches · instant funding on</div>
+            <div class="bb-tags"><span class="bb-tag">SFR · 2–4 · Condo</span><span class="bb-tag">$250K–$600K</span><span class="bb-tag">Cash · 7-day</span></div>
+          </div>
+          <div class="bb-card">
+            <div class="bb-name">Phoenix — 2–4 value-add <span class="link" style="font-size:12px;">Edit</span></div>
+            <div class="bb-matches">12</div>
+            <div class="bb-sub">open matches · manual review</div>
+            <div class="bb-tags"><span class="bb-tag">2–4 unit</span><span class="bb-tag">$300K–$750K</span><span class="bb-tag">Heavy rehab OK</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Geography -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Where you own</h2>
+          <span class="link">Expand map →</span>
+        </div>
+        <div class="map-card">
+          <svg viewBox="0 0 400 190" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Map of owned properties in Utah and Arizona">
+            <rect width="400" height="190" fill="#EAF0F7"/>
+            <rect x="58" y="26" width="96" height="128" rx="12" fill="#D7E3F5"/>
+            <text x="106" y="150" font-size="12" fill="#64748B" text-anchor="middle" font-family="Inter, sans-serif">Utah</text>
+            <rect x="182" y="66" width="120" height="96" rx="12" fill="#E1EAF4"/>
+            <text x="242" y="158" font-size="12" fill="#64748B" text-anchor="middle" font-family="Inter, sans-serif">Arizona</text>
+            <circle cx="98" cy="66" r="6" fill="#2563EB"/><circle cx="116" cy="96" r="9" fill="#2563EB"/><circle cx="92" cy="118" r="5" fill="#2563EB"/><circle cx="128" cy="120" r="6" fill="#2563EB"/>
+            <circle cx="232" cy="108" r="6" fill="#10B981"/><circle cx="256" cy="132" r="5" fill="#10B981"/><circle cx="214" cy="134" r="4" fill="#10B981"/>
+          </svg>
+          <div class="map-note">47 homes · Utah &amp; Arizona</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="build.js"></script>
+<script src="invest.js"></script>
+</body>
+</html>
