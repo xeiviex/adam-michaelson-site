@@ -4,35 +4,305 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Adam Michaelson</title>
-<meta name="description" content="Adam Michaelson — Product Executive.">
+<meta name="description" content="Adam Michaelson">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --bg: #000000;
+    --ink: #f4f2ea;       /* soft white for the quote */
+    --muted: #b7b4a8;     /* dimmer white for the attribution */
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body {
-    height: 100%;
-    background: #08080808;
-    background: #080808;
-  }
-  .hero {
-    position: relative;
-    height: 100vh;
-    width: 100%;
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 7vh 8vw;
     overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
-  .hero img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: left top;
+
+  #stage {
+    max-width: min(880px, 88vw);
+    opacity: 1;
+  }
+  /* Only the fade-OUT is slow; the fade back in for a new quote is instant. */
+  #stage.fade { transition: opacity 2.6s ease; }
+
+  #quote {
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.7rem, 4.4vw, 3.25rem);
+    line-height: 1.3;
+    letter-spacing: 0.005em;
+  }
+
+  #caret {
+    display: none;
+    width: 0.06em;
+    height: 1.02em;
+    background: currentColor;
+    margin-left: 0.04em;
+    vertical-align: -0.12em;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  #author {
+    margin-top: 1.5rem;
+    text-align: right;
+    font-style: normal;
+    font-weight: 400;
+    color: var(--muted);
+    font-size: clamp(1rem, 1.6vw, 1.35rem);
+    letter-spacing: 0.02em;
+    opacity: 0;
+    transition: opacity 0.9s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #caret { display: none !important; }
   }
 </style>
 </head>
 <body>
 
-<section class="hero">
-  <img src="hero-bw.jpg" alt="Adam Michaelson" />
-</section>
+  <div id="stage">
+    <blockquote id="quote"><span id="qtext"></span><span id="caret"></span></blockquote>
+    <div id="author"></div>
+  </div>
+
+<script>
+  // ---- Tunable timing (milliseconds) ----
+  const TYPE_SPEED = 42;   // base delay per character
+  const HOLD_MS    = 20000; // how long a finished quote stays on screen
+  const FADE_MS    = 2600;  // how long the fade-to-black takes
+  const GAP_MS     = 5000;  // black pause before the next quote
+  const START_MS   = 600;   // small breath before the very first quote
+
+  const quotes = [
+    {q:`“Waste no more time arguing what a good man should be. Be one.”`, a:`Marcus Aurelius`},
+    {q:`“The happiness of your life depends upon the quality of your thoughts.”`, a:`Marcus Aurelius`},
+    {q:`“You have power over your mind—not outside events. Realize this, and you will find strength.”`, a:`Marcus Aurelius`},
+    {q:`“If it is not right, do not do it; if it is not true, do not say it.”`, a:`Marcus Aurelius`},
+    {q:`“He who has a why to live for can bear almost any how.”`, a:`Friedrich Nietzsche`},
+    {q:`“It is not the critic who counts.”`, a:`Theodore Roosevelt`},
+    {q:`“Do what you can, with what you have, where you are.”`, a:`Theodore Roosevelt`},
+    {q:`“Courage is not the absence of fear, but the triumph over it.”`, a:`Nelson Mandela`},
+    {q:`“Success is not final, failure is not fatal: it is the courage to continue that counts.”`, a:`Winston Churchill`},
+    {q:`“The best way out is always through.”`, a:`Robert Frost`},
+    {q:`“What you do speaks so loudly that I cannot hear what you say.”`, a:`Ralph Waldo Emerson`},
+    {q:`“Nothing great was ever achieved without enthusiasm.”`, a:`Ralph Waldo Emerson`},
+    {q:`“It is never too late to be what you might have been.”`, a:`George Eliot`},
+    {q:`“Act as if what you do makes a difference. It does.”`, a:`William James`},
+    {q:`“The greatest discovery of my generation is that a human being can alter his life by altering his attitudes.”`, a:`William James`},
+    {q:`“We are what we repeatedly do. Excellence, then, is not an act, but a habit.”`, a:`Will Durant, summarizing Aristotle`},
+    {q:`“Discipline is choosing between what you want now and what you want most.”`, a:`commonly attributed to Abraham Lincoln`},
+    {q:`“The impediment to action advances action. What stands in the way becomes the way.”`, a:`Marcus Aurelius`},
+    {q:`“Difficulties strengthen the mind, as labor does the body.”`, a:`Seneca`},
+    {q:`“Luck is what happens when preparation meets opportunity.”`, a:`commonly attributed to Seneca`},
+    {q:`“No man is more unhappy than he who never faces adversity. For he is not permitted to prove himself.”`, a:`Seneca`},
+    {q:`“We suffer more often in imagination than in reality.”`, a:`Seneca`},
+    {q:`“First say to yourself what you would be; and then do what you have to do.”`, a:`Epictetus`},
+    {q:`“No man is free who is not master of himself.”`, a:`Epictetus`},
+    {q:`“Between stimulus and response there is a space. In that space is our power to choose our response.”`, a:`commonly associated with Viktor Frankl and popularized by Stephen R. Covey`},
+    {q:`“Most people do not listen with the intent to understand; they listen with the intent to reply.”`, a:`Stephen R. Covey`},
+    {q:`“The main thing is to keep the main thing the main thing.”`, a:`Stephen R. Covey`},
+    {q:`“Strength lies in differences, not in similarities.”`, a:`Stephen R. Covey`},
+    {q:`“You can’t go back and change the beginning, but you can start where you are and change the ending.”`, a:`commonly attributed to C. S. Lewis`},
+    {q:`“Courage, dear heart.”`, a:`C. S. Lewis`},
+    {q:`“Humility is not thinking less of yourself, but thinking of yourself less.”`, a:`commonly attributed to C. S. Lewis`},
+    {q:`“Integrity is doing the right thing, even when no one is watching.”`, a:`commonly attributed to C. S. Lewis`},
+    {q:`“It is our choices that show what we truly are, far more than our abilities.”`, a:`J. K. Rowling`},
+    {q:`“There is some good in this world, and it’s worth fighting for.”`, a:`Samwise Gamgee, The Two Towers, J. R. R. Tolkien`},
+    {q:`“All we have to decide is what to do with the time that is given us.”`, a:`Gandalf, The Fellowship of the Ring, J. R. R. Tolkien`},
+    {q:`“Not all those who wander are lost.”`, a:`J. R. R. Tolkien`},
+    {q:`“A man who dares to waste one hour of time has not discovered the value of life.”`, a:`Charles Darwin`},
+    {q:`“Far and away the best prize that life offers is the chance to work hard at work worth doing.”`, a:`Theodore Roosevelt`},
+    {q:`“The credit belongs to the man who is actually in the arena.”`, a:`Theodore Roosevelt`},
+    {q:`“The only way to do great work is to love what you do.”`, a:`Steve Jobs`},
+    {q:`“Your time is limited, so don’t waste it living someone else’s life.”`, a:`Steve Jobs`},
+    {q:`“The most important thing a father can do for his children is to love their mother.”`, a:`Theodore Hesburgh`},
+    {q:`“No other success can compensate for failure in the home.”`, a:`David O. McKay`},
+    {q:`“The most important of the Lord’s work you will ever do will be the work you do within the walls of your own home.”`, a:`Harold B. Lee`},
+    {q:`“God does notice us, and he watches over us. But it is usually through another person that he meets our needs.”`, a:`Spencer W. Kimball`},
+    {q:`“Generally, the most miserable people I know are those who are obsessed with themselves; the happiest people I know are those who lose themselves in the service of others.”`, a:`Gordon B. Hinckley`},
+    {q:`“Faith in God includes faith in His timing.”`, a:`Neal A. Maxwell`},
+    {q:`“The submission of one’s will is really the only uniquely personal thing we have to place on God’s altar.”`, a:`Neal A. Maxwell`},
+    {q:`“The joy we feel has little to do with the circumstances of our lives and everything to do with the focus of our lives.”`, a:`Russell M. Nelson`},
+    {q:`“Perfect love casteth out fear.”`, a:`1 John 4:18`},
+    {q:`“Be still, and know that I am God.”`, a:`Psalm 46:10`},
+    {q:`“This is the day which the Lord hath made; we will rejoice and be glad in it.”`, a:`Psalm 118:24`},
+    {q:`“Weeping may endure for a night, but joy cometh in the morning.”`, a:`Psalm 30:5`},
+    {q:`“Create in me a clean heart, O God; and renew a right spirit within me.”`, a:`Psalm 51:10`},
+    {q:`“Thy word is a lamp unto my feet, and a light unto my path.”`, a:`Psalm 119:105`},
+    {q:`“They that wait upon the Lord shall renew their strength; they shall mount up with wings as eagles.”`, a:`Isaiah 40:31`},
+    {q:`“Fear thou not; for I am with thee: be not dismayed; for I am thy God.”`, a:`Isaiah 41:10`},
+    {q:`“To every thing there is a season, and a time to every purpose under the heaven.”`, a:`Ecclesiastes 3:1`},
+    {q:`“He hath made every thing beautiful in his time.”`, a:`Ecclesiastes 3:11`},
+    {q:`“A soft answer turneth away wrath: but grievous words stir up anger.”`, a:`Proverbs 15:1`},
+    {q:`“As iron sharpeneth iron; so a man sharpeneth the countenance of his friend.”`, a:`Proverbs 27:17`},
+    {q:`“Where your treasure is, there will your heart be also.”`, a:`Jesus Christ, Matthew 6:21`},
+    {q:`“Blessed are the peacemakers: for they shall be called the children of God.”`, a:`Jesus Christ, Matthew 5:9`},
+    {q:`“Whosoever will be chief among you, let him be your servant.”`, a:`Jesus Christ, Matthew 20:27`},
+    {q:`“In the world ye shall have tribulation: but be of good cheer; I have overcome the world.”`, a:`Jesus Christ, John 16:33`},
+    {q:`“Be not overcome of evil, but overcome evil with good.”`, a:`Paul, Romans 12:21`},
+    {q:`“Whatsoever things are true, whatsoever things are honest, whatsoever things are just, whatsoever things are pure…think on these things.”`, a:`Paul, Philippians 4:8`},
+    {q:`“God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.”`, a:`Paul, 2 Timothy 1:7`},
+    {q:`“Faith without works is dead.”`, a:`James 2:26`},
+    {q:`“Men are, that they might have joy.”`, a:`Lehi, 2 Nephi 2:25`},
+    {q:`“It is by grace that we are saved, after all we can do.”`, a:`Nephi, 2 Nephi 25:23`},
+    {q:`“When ye are in the service of your fellow beings ye are only in the service of your God.”`, a:`King Benjamin, Mosiah 2:17`},
+    {q:`“See that all these things are done in wisdom and order.”`, a:`King Benjamin, Mosiah 4:27`},
+    {q:`“By small and simple things are great things brought to pass.”`, a:`Alma, Alma 37:6`},
+    {q:`“Wickedness never was happiness.”`, a:`Alma, Alma 41:10`},
+    {q:`“Counsel with the Lord in all thy doings, and he will direct thee for good.”`, a:`Alma, Alma 37:37`},
+    {q:`“Charity is the pure love of Christ, and it endureth forever.”`, a:`Mormon, Moroni 7:47`},
+    {q:`“If men come unto me I will show unto them their weakness.”`, a:`Jesus Christ, Ether 12:27`},
+    {q:`“Look unto me in every thought; doubt not, fear not.”`, a:`Jesus Christ, Doctrine & Covenants 6:36`},
+    {q:`“Let us cheerfully do all things that lie in our power.”`, a:`Joseph Smith, Doctrine & Covenants 123:17`},
+    {q:`“Intelligence, or the light of truth, was not created or made, neither indeed can be.”`, a:`Doctrine & Covenants 93:29`},
+    {q:`“The glory of God is intelligence, or, in other words, light and truth.”`, a:`Doctrine & Covenants 93:36`},
+    {q:`“Whatever principle of intelligence we attain unto in this life, it will rise with us in the resurrection.”`, a:`Doctrine & Covenants 130:18`},
+    {q:`“There is a law, irrevocably decreed in heaven…upon which all blessings are predicated.”`, a:`Doctrine & Covenants 130:20`},
+    {q:`“All things denote there is a God; yea, even the earth, and all things that are upon the face of it.”`, a:`Alma, Alma 30:44`},
+    {q:`“A man is not called wise because he talks and talks again; but if he is peaceful, loving and fearless then he is in truth called wise.”`, a:`Dhammapada`},
+    {q:`“Hatred does not cease by hatred, but only by love; this is the eternal rule.”`, a:`Dhammapada`},
+    {q:`“Whoever saves one life, it is as if he had saved all mankind.”`, a:`Qur’an 5:32`},
+    {q:`“Indeed, with hardship comes ease.”`, a:`Qur’an 94:6`},
+    {q:`“Who is strong? He who conquers his evil inclination.”`, a:`Pirkei Avot 4:1`},
+    {q:`“To strive, to seek, to find, and not to yield.”`, a:`Alfred, Lord Tennyson, Ulysses`},
+    {q:`“Come, my friends, ’tis not too late to seek a newer world.”`, a:`Alfred, Lord Tennyson, Ulysses`},
+    {q:`“I am a part of all that I have met.”`, a:`Alfred, Lord Tennyson, Ulysses`},
+    {q:`“Though much is taken, much abides.”`, a:`Alfred, Lord Tennyson, Ulysses`},
+    {q:`“Hope is the thing with feathers that perches in the soul.”`, a:`Emily Dickinson`},
+    {q:`“Forever is composed of nows.”`, a:`Emily Dickinson`},
+    {q:`“Tell me, what is it you plan to do with your one wild and precious life?”`, a:`Mary Oliver, The Summer Day`},
+    {q:`“Instructions for living a life: Pay attention. Be astonished. Tell about it.”`, a:`Mary Oliver`},
+    {q:`“I believe in kindness. Also in mischief. Also in singing, especially when singing is not necessarily prescribed.”`, a:`Mary Oliver`},
+    {q:`“What will you do with your one wild and precious life?”`, a:`Mary Oliver, The Summer Day`},
+    {q:`“Two roads diverged in a wood, and I—I took the one less traveled by.”`, a:`Robert Frost, The Road Not Taken`},
+    {q:`“The woods are lovely, dark and deep, but I have promises to keep.”`, a:`Robert Frost, Stopping by Woods on a Snowy Evening`},
+    {q:`“And miles to go before I sleep.”`, a:`Robert Frost, Stopping by Woods on a Snowy Evening`},
+    {q:`“Home is the place where, when you have to go there, they have to take you in.”`, a:`Robert Frost, The Death of the Hired Man`},
+    {q:`“Nothing gold can stay.”`, a:`Robert Frost`},
+    {q:`“I took a deep breath and listened to the old brag of my heart: I am, I am, I am.”`, a:`Sylvia Plath, The Bell Jar`},
+    {q:`“There is a crack in everything. That’s how the light gets in.”`, a:`Leonard Cohen, Anthem`},
+    {q:`“Ring the bells that still can ring. Forget your perfect offering.”`, a:`Leonard Cohen, Anthem`},
+    {q:`“The best lack all conviction, while the worst are full of passionate intensity.”`, a:`W. B. Yeats, The Second Coming`},
+    {q:`“Tread softly because you tread on my dreams.”`, a:`W. B. Yeats, Aedh Wishes for the Cloths of Heaven`},
+    {q:`“Think where man’s glory most begins and ends, and say my glory was I had such friends.”`, a:`W. B. Yeats`},
+    {q:`“I have spread my dreams under your feet; tread softly because you tread on my dreams.”`, a:`W. B. Yeats`},
+    {q:`“What is our life, but a succession of preludes to that unknown song whose first solemn note is sounded by death?”`, a:`Alphonse de Lamartine`},
+    {q:`“If Winter comes, can Spring be far behind?”`, a:`Percy Bysshe Shelley, Ode to the West Wind`},
+    {q:`“The child is father of the man.”`, a:`William Wordsworth, My Heart Leaps Up`},
+    {q:`“Come forth into the light of things, let Nature be your teacher.”`, a:`William Wordsworth`},
+    {q:`“Though nothing can bring back the hour of splendour in the grass, of glory in the flower; we will grieve not.”`, a:`William Wordsworth`},
+    {q:`“To me the meanest flower that blows can give thoughts that do often lie too deep for tears.”`, a:`William Wordsworth`},
+    {q:`“A thing of beauty is a joy for ever.”`, a:`John Keats, Endymion`},
+    {q:`“Beauty is truth, truth beauty.”`, a:`John Keats, Ode on a Grecian Urn`},
+    {q:`“If you can meet with Triumph and Disaster and treat those two impostors just the same.”`, a:`Rudyard Kipling, If—`},
+    {q:`“If you can keep your head when all about you are losing theirs and blaming it on you.”`, a:`Rudyard Kipling, If—`},
+    {q:`“If you can dream—and not make dreams your master; if you can think—and not make thoughts your aim.”`, a:`Rudyard Kipling, If—`},
+    {q:`“Yours is the Earth and everything that’s in it, and—which is more—you’ll be a Man, my son!”`, a:`Rudyard Kipling, If—`},
+    {q:`“I am the master of my fate: I am the captain of my soul.”`, a:`William Ernest Henley, Invictus`},
+    {q:`“My head is bloody, but unbowed.”`, a:`William Ernest Henley, Invictus`},
+    {q:`“I celebrate myself, and sing myself.”`, a:`Walt Whitman, Song of Myself`},
+    {q:`“The powerful play goes on, and you may contribute a verse.”`, a:`Walt Whitman, O Me! O Life!`},
+    {q:`“I am large, I contain multitudes.”`, a:`Walt Whitman, Song of Myself`},
+    {q:`“Keep your face always toward the sunshine—and shadows will fall behind you.”`, a:`commonly attributed to Walt Whitman`},
+    {q:`“There is no frigate like a book to take us lands away.”`, a:`Emily Dickinson`},
+    {q:`“If I can stop one heart from breaking, I shall not live in vain.”`, a:`Emily Dickinson`},
+    {q:`“The Moving Finger writes; and, having writ, moves on.”`, a:`Omar Khayyám, Rubáiyát, trans. Edward FitzGerald`},
+    {q:`“Be like the sun for grace and mercy. Be like the night to cover others’ faults.”`, a:`commonly attributed to Rumi`},
+    {q:`“The wound is the place where the Light enters you.”`, a:`Rumi, popular English rendering`},
+    {q:`“What you seek is seeking you.”`, a:`commonly attributed to Rumi`},
+    {q:`“Out beyond ideas of wrongdoing and rightdoing, there is a field. I’ll meet you there.”`, a:`Rumi, trans. Coleman Barks`},
+    {q:`“Let the beauty we love be what we do.”`, a:`Rumi, trans. Coleman Barks`},
+    {q:`“Your children are not your children. They are the sons and daughters of Life’s longing for itself.”`, a:`Kahlil Gibran, The Prophet`},
+    {q:`“Work is love made visible.”`, a:`Kahlil Gibran, The Prophet`},
+    {q:`“The deeper that sorrow carves into your being, the more joy you can contain.”`, a:`Kahlil Gibran, The Prophet`},
+    {q:`“For life and death are one, even as the river and the sea are one.”`, a:`Kahlil Gibran, The Prophet`},
+    {q:`“And forget not that the earth delights to feel your bare feet and the winds long to play with your hair.”`, a:`Kahlil Gibran, The Prophet`},
+    {q:`“Do not go where the path may lead, go instead where there is no path and leave a trail.”`, a:`Muriel Strode`},
+    {q:`“It matters not how strait the gate, how charged with punishments the scroll.”`, a:`William Ernest Henley, Invictus`},
+    {q:`“Grow old along with me! The best is yet to be.”`, a:`Robert Browning, Rabbi Ben Ezra`},
+    {q:`“A man’s reach should exceed his grasp, or what’s a heaven for?”`, a:`Robert Browning, Andrea del Sarto`},
+    {q:`“God’s in His heaven—all’s right with the world!”`, a:`Robert Browning, Pippa Passes`},
+    {q:`“Hope smiles from the threshold of the year to come, whispering, ‘It will be happier.’”`, a:`attributed to Alfred, Lord Tennyson`},
+    {q:`“He prayeth best, who loveth best all things both great and small.”`, a:`Samuel Taylor Coleridge, The Rime of the Ancient Mariner`}
+  ];
+
+  const stage  = document.getElementById('stage');
+  const qtext  = document.getElementById('qtext');
+  const caret  = document.getElementById('caret');
+  const author = document.getElementById('author');
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let last = -1;
+
+  function pick() {
+    let i;
+    do { i = Math.floor(Math.random() * quotes.length); }
+    while (i === last && quotes.length > 1);
+    last = i;
+    return quotes[i];
+  }
+
+  // Slightly longer pauses after punctuation give a natural typewriter cadence.
+  function delayFor(ch) {
+    if ('.!?…'.indexOf(ch) !== -1) return 300;
+    if (',;:—'.indexOf(ch) !== -1) return 150;
+    return TYPE_SPEED;
+  }
+
+  function typeQuote(text, done) {
+    qtext.textContent = '';
+    if (reduce) { qtext.textContent = text; done(); return; }
+    caret.style.display = 'inline-block';
+    let i = 0;
+    (function step() {
+      if (i < text.length) {
+        const ch = text[i++];
+        qtext.textContent += ch;
+        setTimeout(step, delayFor(ch));
+      } else {
+        caret.style.display = 'none';
+        done();
+      }
+    })();
+  }
+
+  function cycle() {
+    const item = pick();
+    // Reset instantly on black, then reveal.
+    stage.classList.remove('fade');
+    stage.style.opacity = '1';
+    author.style.opacity = '0';
+    author.textContent = '';
+
+    typeQuote(item.q, function () {
+      author.textContent = '-- ' + item.a;
+      requestAnimationFrame(function () { author.style.opacity = '1'; });
+
+      setTimeout(function () {
+        stage.classList.add('fade');
+        stage.style.opacity = '0';
+        setTimeout(cycle, FADE_MS + GAP_MS);
+      }, HOLD_MS);
+    });
+  }
+
+  setTimeout(cycle, START_MS);
+</script>
 
 </body>
 </html>
