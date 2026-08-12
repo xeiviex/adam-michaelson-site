@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About You — Clever Offers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="build.css">
+</head>
+<body>
+
+<header>
+  <div class="brand"><span class="dot">C</span>Clever Offers</div>
+  <div class="user-chip"><div class="avatar">A</div>Adam</div>
+</header>
+<div class="progress-track"><div class="progress-fill" style="width:16.6%"></div></div>
+
+<div class="stage">
+  <div class="step-eyebrow">Step 1 of 6 · About you</div>
+  <h1>First, a little about you</h1>
+  <p class="lead">We only ask for what we can't find on our own. Everything else, we'll pull for you as we go.</p>
+
+  <div class="field">
+    <label>Full legal name</label>
+    <input type="text" value="Adam H. Michaelson" />
+    <div class="hint">As it appears on your ID — we'll match it to the property records.</div>
+  </div>
+  <div class="field">
+    <label>Email</label>
+    <input type="email" value="adam.h.michaelson@gmail.com" />
+  </div>
+  <div class="field">
+    <label>Mobile number</label>
+    <input type="tel" value="(801) 555-0148" />
+  </div>
+
+  <div class="section-label">Verify your identity</div>
+  <p class="lead" style="margin-bottom:16px;">A quick photo ID and selfie. This protects your sale from bad actors — it's the one step buyers count on.</p>
+  <button class="connect-btn" type="button">🪪 Verify with Stripe Identity</button>
+  <div class="hint" style="margin-top:8px;">Powered by <a href="https://stripe.com/identity" target="_blank" rel="noopener" style="color:var(--text-body);text-decoration:underline;">Stripe Identity</a>. Clever never sees your ID document.</div>
+
+  <div class="actions">
+    <a href="clone-04-how-it-works.html" class="btn ghost">Back</a>
+    <a href="build-02-your-property.html" class="btn primary">Next</a>
+  </div>
+</div>
+
+<script src="build.js"></script>
+</body>
+</html>
