@@ -8,6 +8,18 @@ without reading another thread's conversation. Keep newest at top. Distinguish *
 
 ## 2026-08-14
 
+**PENDING — Data model iteration.** Stress-tested Adam's 13-object draft against the vision, KPIs,
+and use cases; new open questions logged in `product/data-model.md` (Claude's reactions, 2026-08-14).
+Headline items awaiting Adam's calls: (1) **definition-vs-performed-instance** split for
+`Workout`/`Exercise` as the first decision (ripples into `Set`, history, logs); (2) `Exercise`
+carries derived per-user metrics (1RM/PR/logs) that belong on the performed side; (3) thin
+marketplace chain — likely need `Order`/`Transaction` + a first-class **commission/conversion**
+between `Offer` and `Payment` (KPI-critical); (4) `Plan` (Atlas-side) vs `Membership` (gym-side)
+naming overload; (5) `Organization` split into **claimed tenant** vs **discovered catalog place**
+(where caching/licensing lives); (6) `Goal` + `Measurement`/`Vital` (health-app source) as top-tier
+for "better off"; (7) Activity Log → split user-facing timeline (composed) from audit event store.
+**No objects added to the model** — reactions/questions only, per the working agreement.
+
 **DECIDED — Docs-as-shared-memory structure.** Atlas is organized under `atlas/` with one doc per
 topic; `CLAUDE.md` (auto-loaded) carries the working agreement + the read-on-entry / write-on-exit
 discipline. Rationale: separate threads don't share live memory, so the committed docs are the only
