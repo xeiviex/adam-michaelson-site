@@ -8,6 +8,19 @@ without reading another thread's conversation. Keep newest at top. Distinguish *
 
 ## 2026-08-14
 
+**RESEARCH SAVED — Competitive landscape.** See `research/competitive-landscape.md`. Bottom line:
+no company does Atlas's exact integrated tri-sided (consumer app + gym SaaS + marketplace + neutral
+AI) vision. Closest = Playlist (Mindbody+ClassPass+EGYM, ~$7.5B, merged Mar 2026) and Wellhub. The
+identified **whitespace = genuinely unified, AI-personalized, incentive-aligned tri-sided architecture**
+(incumbents integrate by acquisition, not architecture; their AI is a workout coach, not a neutral
+recommender; and they're split by who-pays). Caveat: mature, PE-consolidated market — a hard,
+execution-and-trust wedge, not an empty field.
+
+**PENDING — Product name.** Round-1/2 brainstorm + prevalence scans done (see chat; not yet saved to
+a doc pending finalists). "Atlas" is crowded in consumer fitness apps and collides with Peloton-owned
+Atlas Wearables + Atlas Bar. Current finalists under **deep clearance scan**: **Tonova, Valen, Aptus**.
+On naming a winner, Adam will rebrand all assets (repo/docs/branch) from "atlas" to the chosen name.
+
 **PENDING — Data model iteration.** Stress-tested Adam's 13-object draft against the vision, KPIs,
 and use cases; new open questions logged in `product/data-model.md` (Claude's reactions, 2026-08-14).
 Headline items awaiting Adam's calls: (1) **definition-vs-performed-instance** split for
