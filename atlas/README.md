@@ -37,7 +37,7 @@ written down.**
 
 - **Vision:** captured (constitution complete). ✅
 - **Use cases:** first batch enumerated; not yet prioritized.
-- **Data model:** first draft (13 objects); iteration in progress; open questions logged.
+- **Data model:** iterating object-by-object. `User` resolved (2026-08-14); rest are draft + open questions.
 - **Data sources:** research complete (food / exercise / places); selection **not yet decided**.
 - **Prototype:** not started. Candidate first wedge: consumer workout loop.
 - **GTM / UX style guide:** not started.

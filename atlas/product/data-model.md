@@ -19,6 +19,48 @@
 - **Membership/contract**
 - **Payment**
 
+## Resolved objects
+
+> Decisions Adam has made, object by object. The draft above stays verbatim; this section is the
+> settled model as it firms up. Each entry dates the calls made.
+
+### User — resolved 2026-08-14
+
+**Shape.** `User` = one human **identity** (one real person, one login). Everything else — being an
+admin, being a gym member, being on a plan — hangs off it via relationships. A person who only works
+out or logs food needs no admin anything.
+
+**No `type` field — persona is *derived*, not stored:**
+- **Person** = a `User` with no staff affiliation to an Organization.
+- **Admin** (gym admin / provider admin) = a `User` who holds a **Role at an Organization**. "Admin"
+  is a role, only ever at an org; the gym-vs-provider distinction comes from the *Org's* type, not
+  from the user.
+
+**Two distinct `User`↔`Organization` relationships (never conflated):**
+1. **Staff / admin** — User *works for* an Org with a Role (owner, manager, front-desk, trainer).
+   Grants permissions. Scoped to (User, Org); a User can be staff at more than one org.
+2. **Member / customer** — a person *is a member of* a gym. This is the `Membership/contract`
+   object (money, not permissions).
+
+**Access rule** (formalizes "person by plan; admin by plan + role"):
+- **Person access = their consumer `Plan`** (what the person bought from Atlas).
+- **Admin access = the Org's `Plan` ∩ the user's `Role`** (features the gym bought, intersected with
+  what the role is allowed to touch).
+- `Plan` is **typed by subscriber** — a personal-fitness-app subscription, an organization
+  subscription, etc. (strata for each). A person reads their *own* plan; an admin reads the *org's*
+  plan. (Plan internals are nailed under `Plan`.)
+
+**Auth & lifecycle** (from the onboarding use cases): passkey; email verification (admins);
+invitation → onboard; connect-to-health-app as an external identity link; a `status` lifecycle
+(e.g. invited → verified → active).
+
+**Profile fields — static identity only:** name, date of birth, sex, locale, units preference
+(lb/kg). **Weight is *not* here** — it's a time series in `Measurement`/`Vital`; only static
+identity/profile lives on `User`.
+
+**Deferred to their own passes:** `Role` internals (role catalog vs. the staff assignment),
+`Plan` internals (types / strata / entitlements), `Membership/contract`, `Measurement`/`Vital`.
+
 ## Open questions (raised, not decided)
 
 1. **Activity Log — one log or many?** (Adam's own open question.) Also: which of these is it meant

@@ -8,6 +8,16 @@ without reading another thread's conversation. Keep newest at top. Distinguish *
 
 ## 2026-08-14
 
+**DECIDED — `User` object.** `User` = one human identity (one person, one login); no `type` field —
+persona is *derived*: a **person** is a User with no org staff affiliation; an **admin** is a User with
+a **Role at an Organization** (admin is a role, only ever at an org; gym-vs-provider comes from the
+Org's type). Two distinct User↔Org links: **staff/admin** (Role → permissions) vs **member/customer**
+(`Membership/contract` → money). Access: person = their consumer `Plan`; admin = Org's `Plan` ∩ Role.
+`Plan` is typed by subscriber (personal-app subscription, org subscription, …). Static profile only on
+User (name, DOB, sex, locale, units); **weight lives in `Measurement`**, not User. Auth/lifecycle:
+passkey, email verification, invitation→onboard, health-app link, status. Role/Plan/Membership/
+Measurement internals deferred to their own passes. (See `product/data-model.md` → Resolved objects.)
+
 **RESEARCH SAVED — Competitive landscape.** See `research/competitive-landscape.md`. Bottom line:
 no company does Atlas's exact integrated tri-sided (consumer app + gym SaaS + marketplace + neutral
 AI) vision. Closest = Playlist (Mindbody+ClassPass+EGYM, ~$7.5B, merged Mar 2026) and Wellhub. The
