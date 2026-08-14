@@ -13,9 +13,15 @@ topic; `CLAUDE.md` (auto-loaded) carries the working agreement + the read-on-ent
 discipline. Rationale: separate threads don't share live memory, so the committed docs are the only
 durable shared context.
 
-**PENDING — Food data source.** Research complete (`research/data-sources.md`). Leading options: free
-backbone = USDA FoodData Central + Open Food Facts; turnkey commercial = FatSecret or Nutritionix.
-Not yet chosen.
+**DECIDED — Food data source: FatSecret + USDA.** FatSecret is the verified backbone (best barcode
+hit rate >90%, purpose-built for food tracking, free to start — Basic 5k calls/day, or Premier-Free
+= unlimited if we qualify); USDA FoodData Central is the free fallback for generics/whole foods and
+micronutrients (public domain, no attribution). Rationale: barcode-first "scan and it just works" UX
+plus the "most reputable sources / Costco" principle, at **$0 to build and run** for US-only. First
+real cost is only global/international data (FatSecret Premier, quote-only). Nutritionix (best
+restaurant/branded coverage, but $50–$2,000+/mo) deferred — reconsider if restaurant-menu depth
+becomes an early priority. Open Food Facts available as a secondary free barcode fallback if needed.
+(Adam decided 2026-08-14.)
 
 **PENDING — Exercise data source.** Research complete. Key finding: the ubiquitous animated-GIF sets
 trace to Gym Visual's commercial media; free GitHub mirrors are a licensing risk. Leading approach:

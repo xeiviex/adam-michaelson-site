@@ -37,6 +37,7 @@ written down.**
 - **Vision:** captured (constitution complete). ✅
 - **Use cases:** first batch enumerated; not yet prioritized.
 - **Data model:** first draft (13 objects); iteration in progress; open questions logged.
-- **Data sources:** research complete (food / exercise / places); selection **not yet decided**.
+- **Data sources:** research complete. **Food selected: FatSecret (backbone) + USDA (fallback).** ✅
+  Exercise / places selection **not yet decided**.
 - **Prototype:** not started. Candidate first wedge: consumer workout loop.
 - **GTM / UX style guide:** not started.

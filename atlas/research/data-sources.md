@@ -15,6 +15,10 @@
 
 ## 1. Food & Nutrition
 
+> **✅ SELECTED (2026-08-14): FatSecret (verified backbone) + USDA FoodData Central (free fallback).**
+> Barcode-first UX + "most reputable sources" principle; $0 to build/run for US-only. See
+> `../decisions-log.md`.
+
 ### Shortlist
 
 | Source | Cost | Barcode/UPC | Coverage strength | Free & always-updated? |
