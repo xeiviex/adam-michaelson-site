@@ -26,10 +26,14 @@ identified **whitespace = genuinely unified, AI-personalized, incentive-aligned 
 recommender; and they're split by who-pays). Caveat: mature, PE-consolidated market — a hard,
 execution-and-trust wedge, not an empty field.
 
-**PENDING — Product name.** Round-1/2 brainstorm + prevalence scans done (see chat; not yet saved to
-a doc pending finalists). "Atlas" is crowded in consumer fitness apps and collides with Peloton-owned
-Atlas Wearables + Atlas Bar. Current finalists under **deep clearance scan**: **Tonova, Valen, Aptus**.
-On naming a winner, Adam will rebrand all assets (repo/docs/branch) from "atlas" to the chosen name.
+**PENDING — Product name.** Full naming exploration saved to `research/naming.md` (~60 names
+screened, 7 deep-scanned). **Working codename: "Atlas"** (not cleared). **Leading real candidate:
+Setpace (CAUTION → GO)** — the only name to survive a deep scan; blockers are practical (`setpace.com`
+dormant; pending SETSPACE mark; "pace" leans cardio), not a Class-9 wall. Deep-scanned AVOID/CAUTION:
+Aptus, Valen, Tonova, Lucen, Veron, Stelaris (all hit Class 9). Coined shortlist not yet deep-scanned:
+Lodova, Impeta, Brioza, Vivane, Tonvel, Sthenova, Trueset. Lesson: category saturated; coined is the
+clean path; a trademark attorney must do final clearance. On naming a winner, Adam rebrands all assets
+(repo/docs/branch) from "atlas" to the chosen name.
 
 **PENDING — Data model iteration.** Stress-tested Adam's 13-object draft against the vision, KPIs,
 and use cases; new open questions logged in `product/data-model.md` (Claude's reactions, 2026-08-14).

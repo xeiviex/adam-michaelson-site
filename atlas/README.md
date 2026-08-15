@@ -29,6 +29,7 @@ written down.**
 | `product/data-model.md` | Object model (Adam's, verbatim) + open questions. |
 | `research/data-sources.md` | Food / exercise / places data-source evaluation. |
 | `research/competitive-landscape.md` | Who's building integrated fitness platforms; the whitespace. |
+| `research/naming.md` | Name search: candidates, deep-scan verdicts, current leader (Setpace). |
 | `strategy/gtm.md` | Go-to-market strategy (stub). |
 | `design/ux-style-guide.md` | UX principles and style guide (stub). |
 | `prototype/README.md` | Prototype notes; code lands here (stub). |
