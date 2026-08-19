@@ -9,7 +9,8 @@ Full background: `docs/HANDOFF.md`. Read it before touching anything in
 ## Layout
 
     public/                     everything served on the domain
-      index.html                home page (quote typer, black background)
+      index.html                home page: quote typer plus the #colophon
+                                footer that answers Twilio error 30489
       hero-bw.jpg               unreferenced; intended for a future home page
       clever/                   Clever portfolio case study, reachable at /clever/
       sms-optin/                opt-in form
@@ -65,3 +66,18 @@ here cannot list Pages projects.
 `public/sms-optin-evidence/optin-completed.png` — screenshot of a completed
 opt-in. Adam has it locally. The evidence page renders a broken image without
 it, and the page is the primary artifact a carrier reviewer looks at.
+
+## Home page colophon
+
+`public/index.html` ends with a deliberately quiet fixed footer: Adam's name,
+one line of what he does, his email, and links to Privacy and SMS Terms. It is
+there because Twilio error 30489 requires the site to show a description of
+services and contact information, and the root URL is where a reviewer lands.
+
+The design constraint is that the quote still owns the page — the footer sits
+at 0.42 opacity and brightens on hover. Verified with headless Chromium at
+320x480, 360x560, 390x660, 768x500 and 1440x700 using the longest quote in the
+deck: no collision with the quote at any of them.
+
+The descriptor line is the one sentence a compliance reviewer actually weighs.
+Keep it true.

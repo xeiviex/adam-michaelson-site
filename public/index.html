@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Adam Michaelson</title>
-<meta name="description" content="Adam Michaelson">
+<meta name="description" content="Adam Michaelson — product and operations, Salt Lake City. Contact: adam.h.michaelson@gmail.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 7vh 8vw;
+    padding: 7vh 8vw max(14vh, 7rem);
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -76,6 +76,31 @@
 
   @media (prefers-reduced-motion: reduce) {
     #caret { display: none !important; }
+  }
+
+  /* Identity and contact, kept deliberately quiet so the quote still carries
+     the page. It is also what tells a carrier compliance reviewer who runs
+     this site and how to reach him (Twilio error 30489). */
+  #colophon {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    padding: 1.4rem 8vw 1.6rem;
+    text-align: center;
+    font-size: clamp(0.72rem, 1.05vw, 0.84rem);
+    line-height: 1.7;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    opacity: 0.42;
+    transition: opacity 0.4s ease;
+  }
+  #colophon:hover, #colophon:focus-within { opacity: 0.9; }
+  #colophon a { color: inherit; text-decoration: none; border-bottom: 1px solid currentColor; }
+  #colophon a:hover, #colophon a:focus-visible { color: var(--ink); }
+  #colophon .who { display: block; }
+  #colophon .sep { padding: 0 0.45em; opacity: 0.6; }
+  @media (max-width: 30rem) {
+    #colophon { padding-bottom: 1.1rem; letter-spacing: 0.02em; }
+    #colophon .sep { padding: 0 0.3em; }
   }
 </style>
 </head>
@@ -318,6 +343,15 @@
 
   setTimeout(cycle, START_MS);
 </script>
+
+  <footer id="colophon">
+    <span class="who">Adam Michaelson &mdash; product and operations, Salt Lake City</span>
+    <a href="mailto:adam.h.michaelson@gmail.com">adam.h.michaelson@gmail.com</a>
+    <span class="sep">&middot;</span>
+    <a href="/privacy">Privacy</a>
+    <span class="sep">&middot;</span>
+    <a href="/sms-terms">SMS Terms</a>
+  </footer>
 
 </body>
 </html>

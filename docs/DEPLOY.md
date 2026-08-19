@@ -2,17 +2,16 @@
 
 One repo, one Pages project, one build output. `public/` is the whole site.
 
-## Before the first deploy from this repo
+## Target
 
-Confirm what currently serves the domain. It is either the Pages project
-`adam-michaelson-site` or the Worker `withered-flower-841b`; a previous session
-deployed this repo's static assets onto that Worker, so the answer may have
-changed. Cloudflare dashboard: **Compute → Workers & Pages**.
+The Pages project `adam-michaelson-site`. Everything here is built for that.
 
-- If **Pages** serves it, the commands below are correct as written.
-- If a **Worker** serves it, stop. `functions/` is a Pages concept and will not
-  run under a static-asset Worker; `/api/sms-optin` would 404 and the opt-in
-  form would break. Decide the target first.
+One sanity check before the first deploy: confirm in **Compute → Workers &
+Pages** that the Pages project — not the Worker `withered-flower-841b` — still
+holds the `adam-michaelson.com` custom domain. A previous session deployed this
+repo's static assets onto that Worker on Aug 19. If a Worker holds the domain,
+stop: `functions/` is a Pages concept and will not run under a static-asset
+Worker, so `/api/sms-optin` would 404 and the opt-in form would break.
 
 ## Deploy
 
@@ -52,8 +51,9 @@ deployment against a scratch database.
 1. All six URLs above return what they should.
 2. `public/sms-optin-evidence/optin-completed.png` is in place — the evidence
    page is meaningless without it.
-3. The home page satisfies error 30489 (site established and active: a
-   description of services and contact information). See docs/HANDOFF.md 6.2 —
-   this conflicts with the intended minimal design and is an open decision.
+3. The home page carries the colophon that answers error 30489 — name, one
+   line of what Adam does, email, and links to Privacy and SMS Terms, all on
+   the root URL where the reviewer lands. Confirm the descriptor line still
+   reads true before submitting; it is the one sentence a reviewer weighs.
 
 Reusable submission copy is in docs/HANDOFF.md section 10.
