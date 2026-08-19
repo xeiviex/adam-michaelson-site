@@ -1,0 +1,12 @@
+{
+  // Static-asset Worker serving adam-michaelson.com straight out of this repo.
+  // Name must match the existing Worker so the custom domain keeps pointing here.
+  "name": "withered-flower-841b",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    "directory": "./",
+    // Serve /clever/ from clever/index.html, and /foo from foo.html.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  }
+}
