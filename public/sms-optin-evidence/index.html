@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SMS Opt-In Evidence — Household Budget Summary</title>
+<meta name="robots" content="noindex">
+<style>
+ body{margin:0;background:#fff;color:#111;font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+ main{max-width:46rem;margin:0 auto;padding:4rem 1.5rem 6rem}
+ h1{font-size:1.6rem;margin:0 0 .25rem;letter-spacing:-.01em}
+ h2{font-size:1rem;margin:2.5rem 0 .5rem;text-transform:uppercase;letter-spacing:.06em}
+ .meta{color:#666;font-size:.875rem;margin:0 0 2rem}
+ p{margin:0 0 1rem}
+ a{color:#111}
+ figure{margin:1.5rem 0;padding:0}
+ figure img{max-width:100%;height:auto;border:1px solid #ddd;border-radius:6px;display:block}
+ figcaption{color:#666;font-size:.8125rem;margin-top:.5rem}
+ .placeholder{border:1px dashed #bbb;border-radius:6px;padding:3rem 1.5rem;text-align:center;color:#888;font-size:.9375rem}
+ blockquote{margin:1rem 0;padding:1rem 1.25rem;border-left:3px solid #111;background:#fafafa;font-size:.9375rem}
+ hr{border:0;border-top:1px solid #ddd;margin:2.5rem 0}
+ .foot{color:#666;font-size:.8125rem}
+</style>
+</head>
+<body>
+<main>
+<h1>Opt-In Evidence</h1>
+<p class="meta">Household Budget Summary &middot; Operated by Adam Michaelson, sole proprietor</p>
+
+<p>This page exists so that a carrier or messaging-compliance reviewer can see the
+complete consent experience for this messaging program without needing an account
+or login. It documents the only opt-in method in use.</p>
+
+<h2>Opt-in method</h2>
+<p>Web form only. Prospective recipients visit
+<a href="/sms-optin">adam-michaelson.com/sms-optin</a>, enter their full name and
+mobile number, and affirmatively check a consent checkbox that is
+<strong>unchecked by default</strong>. The form cannot be submitted without checking it.
+There is no other opt-in path.</p>
+
+<h2>Exact consent language shown on the form</h2>
+<blockquote>
+I agree to receive one automated daily household budget summary text message from
+Adam Michaelson. Message frequency is approximately 1 message per day. Message and
+data rates may apply. Reply STOP to cancel, HELP for help.
+</blockquote>
+
+<p>Directly beneath the submit button, the form displays links to the
+<a href="/sms-terms">SMS Terms of Service</a> and the
+<a href="/privacy">SMS Privacy Policy</a>, along with the disclosure that mobile
+information is never shared with or sold to third parties, that message and data
+rates may apply, and that recipients may reply STOP to cancel or HELP for help.</p>
+
+<h2>Screenshot of a completed opt-in</h2>
+<figure>
+  <img src="optin-completed.png" alt="The SMS opt-in form with a completed submission and confirmation message">
+  <figcaption>The opt-in form at adam-michaelson.com/sms-optin, showing the consent
+  checkbox as presented (unchecked by default) and the confirmation returned after a
+  recipient submits. Each submission is recorded with a UTC timestamp, the verbatim
+  consent language displayed, and the originating IP address.</figcaption>
+</figure>
+
+<h2>Consent record keeping</h2>
+<p>Every submission is written to an append-only consent ledger. Each record stores
+the timestamp, the mobile number in E.164 format, the full name, the verbatim consent
+language displayed at the moment of consent, the program name, the stated message
+frequency, the privacy policy and terms URLs in effect, and the originating IP address
+and user agent. Consent records are never overwritten; opt-outs and resubscribes are
+appended as separate events.</p>
+
+<h2>Sample message</h2>
+<blockquote>
+Household Budget Summary 8/16: $142.18 spent (Groceries $88.40, Gas (auto) $53.78).
+Month to date: $4,210.55 of $9,400.00. Reply STOP to cancel.
+</blockquote>
+
+<hr>
+<p class="foot">
+  <a href="/sms-optin">Opt-in form</a> &middot;
+  <a href="/privacy">SMS Privacy Policy</a> &middot;
+  <a href="/sms-terms">SMS Terms of Service</a> &middot;
+  <a href="mailto:adam.h.michaelson@gmail.com">adam.h.michaelson@gmail.com</a>
+</p>
+</main>
+</body>
+</html>

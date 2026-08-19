@@ -1,0 +1,20 @@
+# adam-michaelson.com — Cloudflare Pages
+#
+# One project, one build output. Everything served from `public/`; Pages
+# Functions live in `functions/` (a sibling of the output dir, never inside it).
+#
+# This layout exists because the previous setup deployed two different local
+# folders into the same Pages project. A Pages deploy replaces the entire site,
+# so the second deploy erased the first. See docs/HANDOFF.md section 4.
+
+name                    = "adam-michaelson-site"
+compatibility_date      = "2026-08-17"
+pages_build_output_dir  = "public"
+
+# Consent ledger for the Household Budget Summary SMS program.
+# Applied by wrangler at deploy time; the dashboard binding UI goes read-only
+# once a wrangler config is present.
+[[d1_databases]]
+binding       = "SMS_OPTIN_DB"
+database_name = "sms-optin"
+database_id   = "26b61a0c-ed3b-43ce-97c5-45528a08c61b"
