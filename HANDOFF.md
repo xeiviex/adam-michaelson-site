@@ -13,8 +13,8 @@ Updated 2026-10-02.
 - `/bio/ai-demo`, `/bio/lendio-case-study`, `/bio/customer-discovery`, `/bio/leadership` — placeholder pages using only facts from the bio, marked "Full write-up in progress."
 
 ## In progress
-- The commit that restructures this repo under `public/` and adds `/bio` needs to be pushed (GitHub login on the laptop had expired). Until pushed, the live site still runs the older direct-upload version without `/bio`.
-- After pushing: check the Cloudflare build succeeds, then check `/`, `/bio/`, `/clever/` and `/sms-optin/` live.
+- Nothing. `/bio` is live (pushed 2026-10-02, Cloudflare build passed; `/`, `/bio/`, `/clever/`, `/sms-optin/` all return 200).
+- If `git push` fails: an invalid `GITHUB_TOKEN` in the shell overrides `gh` login — `unset GITHUB_TOKEN` first.
 
 ## Next
 - Write real content for the four `/bio/*` sub-pages (demo video/link, Lendio case study, customer discovery, leadership).
