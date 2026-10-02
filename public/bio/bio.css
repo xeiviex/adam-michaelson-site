@@ -147,32 +147,6 @@ a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 2
 }
 .card .what { font-size: 13px; color: var(--body); display: block; margin-top: 6px; }
 
-/* Glass shimmer: a soft diagonal band of light that sweeps left → right.
-   JS adds .sweep on a fixed schedule (see bio.js). */
-.card::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  bottom: -20%;
-  left: 0;
-  width: 60%;
-  background: linear-gradient(105deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.00) 30%,
-    rgba(255, 255, 255, 0.10) 47%,
-    rgba(255, 255, 255, 0.16) 50%,
-    rgba(255, 255, 255, 0.10) 53%,
-    rgba(255, 255, 255, 0.00) 70%,
-    transparent 100%);
-  transform: translateX(-120%);
-  pointer-events: none;
-}
-.card.sweep::after { animation: sweep 1.2s ease-in-out; }
-@keyframes sweep {
-  from { transform: translateX(-120%); }
-  to   { transform: translateX(220%); }
-}
-
 /* ---------- Sections ---------- */
 .sections { padding-bottom: clamp(24px, 4vw, 48px); }
 .section { padding: clamp(22px, 3vw, 34px) 0; }

@@ -9,7 +9,7 @@ Updated 2026-10-02.
 
 ## Built
 - Homepage (typed quotes), `/clever` prototypes, SMS opt-in, privacy and terms pages.
-- `/bio` — executive bio adapted from the 2026 PDF: black theme, responsive down to phone width, animated load (header fades in, then metric cards one by one, then each section header types and its paragraph fades in), glass shimmer on each card every 10s staggered 0.5s.
+- `/bio` — executive bio adapted from the 2026 PDF: black theme, responsive down to phone width, animated load (header fades in, then metric cards one by one, then each section header types and its paragraph fades in).
 - `/bio/ai-demo`, `/bio/lendio-case-study`, `/bio/customer-discovery`, `/bio/leadership` — placeholder pages using only facts from the bio, marked "Full write-up in progress."
 
 ## In progress

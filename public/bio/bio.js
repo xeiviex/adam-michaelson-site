@@ -2,14 +2,12 @@
 //   1. photo + header fade in
 //   2. metric cards fade in one at a time, left → right
 //   3. each section header types out, then its paragraph fades in
-//   4. each card shimmers 10s after it appears, then every 10s
 (function () {
   // ---- Tunable timing (milliseconds) ----
   const TYPE_SPEED   = 42;   // same cadence as the homepage quotes
   const HEAD_MS      = 150;  // header fade starts
   const CARDS_MS     = 900;  // first card fades in
-  const CARD_STEP_MS = 500;  // gap between cards (also the shimmer offset)
-  const SHIMMER_MS   = 10000;
+  const CARD_STEP_MS = 500;  // gap between cards
   const BODY_HOLD_MS = 700;  // pause after a paragraph before the next header
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -80,22 +78,6 @@
   // 2. Cards fade in left → right
   cards.forEach((card, i) => {
     setTimeout(() => show(card), CARDS_MS + i * CARD_STEP_MS);
-  });
-
-  // 4. Shimmer: card i sweeps at its fade-in + 10s, then every 10s.
-  // Scheduled against one clock so the 0.5s offsets never drift.
-  const t0 = performance.now() + CARDS_MS;
-  function sweep(card) {
-    card.classList.remove('sweep');
-    void card.offsetWidth; // restart the animation
-    card.classList.add('sweep');
-  }
-  cards.forEach((card, i) => {
-    let k = 1;
-    (function next() {
-      const at = t0 + i * CARD_STEP_MS + k * SHIMMER_MS;
-      setTimeout(() => { sweep(card); k++; next(); }, Math.max(0, at - performance.now()));
-    })();
   });
 
   // 3. Sections, strictly in order
