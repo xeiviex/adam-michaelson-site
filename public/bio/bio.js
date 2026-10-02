@@ -1,0 +1,111 @@
+// Entrance choreography for /bio:
+//   1. photo + header fade in
+//   2. metric cards fade in one at a time, left → right
+//   3. each section header types out, then its paragraph fades in
+//   4. each card shimmers 10s after it appears, then every 10s
+(function () {
+  // ---- Tunable timing (milliseconds) ----
+  const TYPE_SPEED   = 42;   // same cadence as the homepage quotes
+  const HEAD_MS      = 150;  // header fade starts
+  const CARDS_MS     = 900;  // first card fades in
+  const CARD_STEP_MS = 500;  // gap between cards (also the shimmer offset)
+  const SHIMMER_MS   = 10000;
+  const BODY_HOLD_MS = 700;  // pause after a paragraph before the next header
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+  const show = (el) => el.classList.add('in');
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  const heads = $$('.section h2');
+  const cards = $$('.card');
+
+  // Build each header: an invisible ghost holds the final footprint so
+  // nothing shifts while the visible layer types over it.
+  heads.forEach((h) => {
+    const n = h.dataset.n, t = h.dataset.t;
+    h.setAttribute('aria-label', n + ' ' + t);
+    h.innerHTML =
+      '<span class="ghost" aria-hidden="true"><span class="n">' + n + '</span>&nbsp;&nbsp;' + escape(t) + '</span>' +
+      '<span class="typed" aria-hidden="true"><span class="n"></span><span class="t"></span></span>';
+  });
+
+  if (reduce) {
+    $$('.reveal').forEach(show);
+    heads.forEach((h) => {
+      h.querySelector('.typed .n').textContent = h.dataset.n;
+      h.querySelector('.typed .t').textContent = '  ' + h.dataset.t;
+    });
+    return;
+  }
+
+  function escape(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // Slightly longer pauses after punctuation give a natural typewriter cadence.
+  function delayFor(ch) {
+    if ('.!?…'.indexOf(ch) !== -1) return 300;
+    if (',;:—'.indexOf(ch) !== -1) return 150;
+    return TYPE_SPEED;
+  }
+
+  function typeInto(el, text, caret) {
+    return new Promise((done) => {
+      el.after(caret);
+      let i = 0;
+      (function step() {
+        if (i < text.length) {
+          const ch = text[i++];
+          el.textContent += ch;
+          setTimeout(step, delayFor(ch));
+        } else done();
+      })();
+    });
+  }
+
+  async function typeHeader(h) {
+    const caret = document.createElement('span');
+    caret.className = 'caret';
+    await typeInto(h.querySelector('.typed .n'), h.dataset.n, caret);
+    await typeInto(h.querySelector('.typed .t'), '  ' + h.dataset.t, caret);
+    caret.remove();
+  }
+
+  // 1. Header
+  setTimeout(() => $$('[data-step="head"]').forEach(show), HEAD_MS);
+
+  // 2. Cards fade in left → right
+  cards.forEach((card, i) => {
+    setTimeout(() => show(card), CARDS_MS + i * CARD_STEP_MS);
+  });
+
+  // 4. Shimmer: card i sweeps at its fade-in + 10s, then every 10s.
+  // Scheduled against one clock so the 0.5s offsets never drift.
+  const t0 = performance.now() + CARDS_MS;
+  function sweep(card) {
+    card.classList.remove('sweep');
+    void card.offsetWidth; // restart the animation
+    card.classList.add('sweep');
+  }
+  cards.forEach((card, i) => {
+    let k = 1;
+    (function next() {
+      const at = t0 + i * CARD_STEP_MS + k * SHIMMER_MS;
+      setTimeout(() => { sweep(card); k++; next(); }, Math.max(0, at - performance.now()));
+    })();
+  });
+
+  // 3. Sections, strictly in order
+  (async function () {
+    await wait(CARDS_MS + cards.length * CARD_STEP_MS + 300);
+    for (const h of heads) {
+      await typeHeader(h);
+      show(h.nextElementSibling);
+      await wait(BODY_HOLD_MS);
+    }
+    $$('[data-step="foot"]').forEach(show);
+  })();
+})();

@@ -1,0 +1,273 @@
+/* Shared styles for /bio and its sub-pages. */
+:root {
+  --bg: #000000;
+  --panel: #0b0b0c;
+  --ink: #f4f2ea;        /* soft white, matches the homepage */
+  --body: #c9c7c0;       /* paragraph gray */
+  --muted: #8a8882;      /* labels, numbers, footer */
+  --faint: #55534f;
+  --line: rgba(255, 255, 255, 0.10);
+  --glass: rgba(255, 255, 255, 0.035);
+  --link: #a9a7a0;
+  --link-hover: #ffffff;
+  --max: 1160px;
+  --gutter: clamp(16px, 4vw, 48px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { background: var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection { background: #3a3a3a; color: #fff; }
+a { color: inherit; text-decoration: none; }
+
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* ---------- Header ---------- */
+.masthead {
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #0d0d0e 0%, #000 100%);
+}
+.masthead .wrap {
+  display: grid;
+  grid-template-columns: minmax(200px, 300px) 1fr;
+  gap: clamp(28px, 5vw, 64px);
+  align-items: center;
+  padding-top: clamp(32px, 6vw, 72px);
+  padding-bottom: clamp(32px, 6vw, 72px);
+}
+.portrait {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 6px;
+  filter: saturate(0.85);
+  display: block;
+}
+.eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display: block;
+}
+.name {
+  font-size: clamp(36px, 5.2vw, 60px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+.title {
+  font-size: clamp(17px, 1.9vw, 22px);
+  font-weight: 500;
+  color: var(--body);
+  margin-bottom: 22px;
+}
+.title .sep { color: var(--faint); padding: 0 0.35em; }
+.meta { font-size: 15px; color: var(--muted); line-height: 1.8; }
+.contact { display: flex; flex-wrap: wrap; gap: 4px 24px; margin-top: 4px; }
+
+/* ---------- Links ---------- */
+.link {
+  color: var(--link);
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: color 0.25s ease, background-size 0.35s ease;
+}
+.link:hover, .link:focus-visible { color: var(--link-hover); background-size: 100% 1px; }
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--link);
+  transition: color 0.25s ease;
+}
+.more .arrow { display: inline-block; transition: transform 0.25s ease; }
+.more:hover, .more:focus-visible { color: var(--link-hover); }
+.more:hover .arrow, .more:focus-visible .arrow { transform: translateX(5px); }
+
+a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 2px; }
+
+/* ---------- Metric cards ---------- */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  padding: clamp(32px, 5vw, 56px) 0 clamp(16px, 3vw, 32px);
+  list-style: none;
+}
+.card {
+  position: relative;
+  overflow: hidden;
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 20px 20px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.card .org {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 8px;
+}
+.card .num {
+  font-size: clamp(20px, 2.1vw, 26px);
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  display: block;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.card .what { font-size: 13px; color: var(--body); display: block; margin-top: 6px; }
+
+/* Glass shimmer: a soft diagonal band of light that sweeps left → right.
+   JS adds .sweep on a fixed schedule (see bio.js). */
+.card::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 60%;
+  background: linear-gradient(105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.00) 30%,
+    rgba(255, 255, 255, 0.10) 47%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(255, 255, 255, 0.10) 53%,
+    rgba(255, 255, 255, 0.00) 70%,
+    transparent 100%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.card.sweep::after { animation: sweep 1.2s ease-in-out; }
+@keyframes sweep {
+  from { transform: translateX(-120%); }
+  to   { transform: translateX(220%); }
+}
+
+/* ---------- Sections ---------- */
+.sections { padding-bottom: clamp(24px, 4vw, 48px); }
+.section { padding: clamp(22px, 3vw, 34px) 0; }
+.section h2 {
+  position: relative;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+.section h2 .ghost { visibility: hidden; }
+.section h2 .typed { position: absolute; inset: 0; }
+.section h2 .n { color: var(--faint); font-weight: 500; }
+.section p { color: var(--body); max-width: 78ch; }
+.section .links { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px 28px; }
+
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: currentColor;
+  margin-left: 3px;
+  vertical-align: -0.2em;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- Footer ---------- */
+.foot {
+  border-top: 1px solid var(--line);
+  padding: 28px 0 48px;
+  font-size: 13px;
+  color: var(--faint);
+}
+.foot .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; }
+.foot .dot { padding: 0 0.6em; }
+
+/* ---------- Entrance states (JS adds .js to <html>) ---------- */
+.js .reveal { opacity: 0; transform: translateY(8px); }
+.reveal.in { opacity: 1; transform: none; transition: opacity 0.8s ease, transform 0.8s ease; }
+
+/* ---------- Sub-pages ---------- */
+.crumbs { padding-top: clamp(28px, 5vw, 56px); font-size: 14px; }
+.sub { padding: clamp(28px, 5vw, 56px) 0 clamp(48px, 8vw, 96px); }
+.sub h1 {
+  font-size: clamp(32px, 4.6vw, 52px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  max-width: 20ch;
+}
+.sub .lede { font-size: clamp(17px, 1.8vw, 20px); color: var(--body); max-width: 64ch; margin-bottom: 40px; }
+.sub h2 {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 36px 0 12px;
+}
+.sub p, .sub li { color: var(--body); max-width: 72ch; }
+.sub ul { padding-left: 1.1em; }
+.sub li { margin-bottom: 6px; }
+.sub .note {
+  margin-top: 40px;
+  padding: 16px 20px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 72ch;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1020px) {
+  .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  .masthead .wrap { grid-template-columns: 1fr; gap: 24px; }
+  .portrait { max-width: 200px; border-radius: 50%; }
+  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .metrics .card:last-child { grid-column: 1 / -1; }
+  .card { padding: 14px 16px 16px; }
+  .card .org { letter-spacing: 0.06em; font-size: 10.5px; }
+  .card .num { font-size: 19px; }
+  .section h2 { font-size: 13px; letter-spacing: 0.16em; }
+  .contact { flex-direction: column; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal { opacity: 1; transform: none; }
+  .card::after, .caret { display: none; }
+  .link, .more, .more .arrow { transition: none; }
+}

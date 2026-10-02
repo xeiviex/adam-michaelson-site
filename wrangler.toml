@@ -1,0 +1,8 @@
+name = "adam-michaelson-site"
+compatibility_date = "2026-08-17"
+pages_build_output_dir = "public"
+
+[[d1_databases]]
+binding       = "SMS_OPTIN_DB"
+database_name = "sms-optin"
+database_id   = "26b61a0c-ed3b-43ce-97c5-45528a08c61b"

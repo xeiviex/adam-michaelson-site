@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SMS Opt-In — Household Budget Summary</title>
+<meta name="description" content="Opt in to receive the daily Household Budget Summary text message.">
+<style>
+  :root { --ink:#111; --muted:#666; --line:#ddd; --bg:#fff; --accent:#111; }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  main { max-width:38rem; margin:0 auto; padding:4rem 1.5rem 6rem; }
+  h1 { font-size:1.6rem; line-height:1.25; margin:0 0 .5rem; letter-spacing:-.01em; }
+  .lede { color:var(--muted); margin:0 0 2.5rem; }
+  fieldset { border:0; padding:0; margin:0 0 1.5rem; }
+  label.field { display:block; margin-bottom:1.25rem; }
+  label.field span { display:block; font-weight:600; font-size:.875rem; margin-bottom:.35rem; }
+  input[type=text], input[type=tel] {
+    width:100%; padding:.7rem .8rem; font-size:1rem; font-family:inherit;
+    border:1px solid var(--line); border-radius:6px; background:#fff; color:var(--ink);
+  }
+  input:focus { outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent); }
+  .hint { color:var(--muted); font-size:.8125rem; margin-top:.3rem; }
+  .consent {
+    display:flex; gap:.75rem; align-items:flex-start;
+    border:1px solid var(--line); border-radius:6px; padding:1rem; margin-bottom:1.5rem;
+  }
+  .consent input { margin-top:.3rem; width:1.05rem; height:1.05rem; flex:0 0 auto; }
+  .consent label { font-size:.9375rem; }
+  button {
+    width:100%; padding:.85rem 1rem; font-size:1rem; font-family:inherit; font-weight:600;
+    background:var(--accent); color:#fff; border:0; border-radius:6px; cursor:pointer;
+  }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  .disclosures { font-size:.8125rem; color:var(--muted); margin-top:1.5rem; }
+  .disclosures a { color:var(--muted); }
+  #result { margin-top:1.5rem; padding:1rem; border-radius:6px; font-size:.9375rem; display:none; }
+  #result.ok  { display:block; border:1px solid #1a7f37; background:#f2fbf4; color:#12602a; }
+  #result.err { display:block; border:1px solid #b42318; background:#fef3f2; color:#8a2019; }
+  .hp { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+  hr { border:0; border-top:1px solid var(--line); margin:2.5rem 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Household Budget Summary</h1>
+  <p class="lede">
+    A once-daily text message summarizing the prior day's household transactions and
+    month-to-date budget progress. Enrollment is limited to members of the Michaelson
+    household.
+  </p>
+
+  <form id="optin" novalidate>
+    <label class="field">
+      <span>Full name</span>
+      <input type="text" id="full_name" name="full_name" autocomplete="name" required>
+    </label>
+
+    <label class="field">
+      <span>Mobile number</span>
+      <input type="tel" id="phone" name="phone" autocomplete="tel"
+             inputmode="tel" placeholder="801 555 0123" required>
+      <span class="hint">US mobile numbers only.</span>
+    </label>
+
+    <!-- Honeypot: real people never see or fill this. -->
+    <div class="hp" aria-hidden="true">
+      <label>Company <input type="text" name="company" tabindex="-1" autocomplete="off"></label>
+    </div>
+
+    <div class="consent">
+      <input type="checkbox" id="consent" name="consent">
+      <label for="consent" id="consent_text">I agree to receive one automated daily household budget summary text message from Adam Michaelson. Message frequency is approximately 1 message per day. Message and data rates may apply. Reply STOP to cancel, HELP for help.</label>
+    </div>
+
+    <button type="submit" id="submit">Opt in to daily summaries</button>
+  </form>
+
+  <div id="result" role="status" aria-live="polite"></div>
+
+  <p class="disclosures">
+    By opting in you agree to the
+    <a href="/sms-terms">SMS Terms of Service</a> and the
+    <a href="/privacy">Privacy Policy</a>.
+    Mobile information is never shared with or sold to third parties.
+    Message and data rates may apply. Reply STOP to cancel at any time,
+    or HELP for help. Consent is not a condition of any purchase.
+  </p>
+
+  <hr>
+  <p class="disclosures">
+    Operated by Adam Michaelson, sole proprietor &middot;
+    <a href="mailto:adam.h.michaelson@gmail.com">adam.h.michaelson@gmail.com</a>
+  </p>
+</main>
+
+<script>
+(function () {
+  var form = document.getElementById('optin');
+  var out  = document.getElementById('result');
+  var btn  = document.getElementById('submit');
+
+  function show(kind, msg) {
+    out.className = kind;
+    out.textContent = msg;
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    out.className = '';
+
+    var name    = document.getElementById('full_name').value.trim();
+    var phone   = document.getElementById('phone').value.trim();
+    var consent = document.getElementById('consent').checked;
+
+    if (!name)    return show('err', 'Please enter your full name.');
+    if (!phone)   return show('err', 'Please enter your mobile number.');
+    if (!consent) return show('err', 'You must check the consent box to opt in.');
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    try {
+      var res = await fetch('/api/sms-optin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: name,
+          phone: phone,
+          consent: true,
+          consent_text: document.getElementById('consent_text').textContent.trim(),
+          company: form.company.value
+        })
+      });
+      var data = await res.json();
+
+      if (res.ok) {
+        form.reset();
+        show('ok', data.message || 'You are opted in. Recorded ' + data.recorded_at + '.');
+      } else {
+        show('err', data.error || 'Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      show('err', 'Network error. Please try again.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Opt in to daily summaries';
+    }
+  });
+})();
+</script>
+</body>
+</html>

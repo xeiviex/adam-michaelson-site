@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A working product demo — Adam Michaelson</title>
+<meta name="description" content="A working AI product demo built by Adam Michaelson.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/bio/bio.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<main class="wrap">
+  <nav class="crumbs reveal"><a class="more" href="/bio/"><span class="arrow" aria-hidden="true">←</span> Executive Bio</a></nav>
+  <article class="sub reveal">
+    <span class="eyebrow">Hands-On AI Leadership</span>
+    <h1>A working product demo</h1>
+    <p class="lede">Adam prototypes and ships daily. This page walks through a working product he built end to end.</p>
+    <h2>What you’ll see</h2>
+    <ul>
+      <li>The problem the product solves and who it’s for</li>
+      <li>A live walkthrough of the core flow</li>
+      <li>How it was built, and where AI does the work</li>
+    </ul>
+    <p class="note">Full write-up in progress.</p>
+  </article>
+</main>
+<footer class="foot">
+  <div class="wrap">
+    <span>Executive Bio<span class="dot">·</span><a class="link" href="/">Adam Michaelson</a></span>
+    <span>Updated October 2026</span>
+  </div>
+</footer>
+<script>
+  requestAnimationFrame(function () {
+    document.querySelectorAll('.reveal').forEach(function (el, i) {
+      setTimeout(function () { el.classList.add('in'); }, 120 + i * 250);
+    });
+  });
+</script>
+</body>
+</html>
