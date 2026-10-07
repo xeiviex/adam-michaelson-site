@@ -30,9 +30,54 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Portrait: fades to black on all four edges via a mask. Layout is chosen
+     with ?layout=left (default) | right | backdrop for comparison. */
+  #portrait {
+    position: fixed;
+    z-index: 0;
+    pointer-events: none;
+    background: url('/home-portrait.jpg') center / cover no-repeat;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 28%, #000 72%, transparent),
+                        linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, transparent, #000 28%, #000 72%, transparent),
+                linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
+    mask-composite: intersect;
+    opacity: 0;
+    animation: portrait-in 2.4s ease 0.2s forwards;
+  }
+  @keyframes portrait-in { to { opacity: 1; } }
+
   #stage {
+    position: relative;
+    z-index: 1;
     max-width: min(880px, 88vw);
     opacity: 1;
+  }
+
+  /* left: photo left, quotes smaller and shifted right */
+  body.layout-left { justify-content: flex-end; padding-right: 6vw; }
+  body.layout-left #portrait { left: 0; top: 50%; transform: translateY(-50%); width: min(56vw, 100vh); aspect-ratio: 1; }
+  body.layout-left #stage { width: 40vw; max-width: 560px; }
+  body.layout-left #quote { font-size: clamp(1.15rem, 2.1vw, 1.8rem); }
+  body.layout-left #author { font-size: clamp(.9rem, 1.15vw, 1.1rem); }
+
+  /* right: mirror image, quotes on the left */
+  body.layout-right { justify-content: flex-start; padding-left: 6vw; }
+  body.layout-right #portrait { right: 0; top: 50%; transform: translateY(-50%); width: min(56vw, 100vh); aspect-ratio: 1; }
+  body.layout-right #stage { width: 40vw; max-width: 560px; }
+  body.layout-right #quote { font-size: clamp(1.15rem, 2.1vw, 1.8rem); }
+  body.layout-right #author { font-size: clamp(.9rem, 1.15vw, 1.1rem); }
+
+  /* backdrop: large, dimmed photo centered behind full-size quotes */
+  body.layout-backdrop #portrait { inset: 0; margin: auto; width: min(100vw, 120vh); aspect-ratio: 1; filter: brightness(.45); }
+
+  /* phones: photo on top, quotes below */
+  @media (max-width: 760px) {
+    body.layout-left, body.layout-right { flex-direction: column; justify-content: flex-end; padding: 4vh 7vw 8vh; }
+    body.layout-left #portrait, body.layout-right #portrait { left: 0; right: 0; top: 0; transform: none; width: 100vw; }
+    body.layout-left #stage, body.layout-right #stage { width: 100%; max-width: none; }
+    body.layout-left #quote, body.layout-right #quote { font-size: clamp(1.15rem, 5vw, 1.5rem); }
   }
   /* Only the fade-OUT is slow; the fade back in for a new quote is instant. */
   #stage.fade { transition: opacity 2.6s ease; }
@@ -79,7 +124,9 @@
   }
 </style>
 </head>
-<body>
+<body class="layout-left">
+
+  <div id="portrait" role="img" aria-label="Portrait of Adam Michaelson"></div>
 
   <div id="stage">
     <div id="quote"><span class="ghost" id="ghost"></span><span class="typed"><span id="qtext"></span><span id="caret"></span></span></div>
@@ -246,6 +293,9 @@
     {q:`“Hope smiles from the threshold of the year to come, whispering, ‘It will be happier.’”`, a:`attributed to Alfred, Lord Tennyson`},
     {q:`“He prayeth best, who loveth best all things both great and small.”`, a:`Samuel Taylor Coleridge, The Rime of the Ancient Mariner`}
   ];
+
+  const lay = new URLSearchParams(location.search).get('layout');
+  document.body.className = 'layout-' + (['left','right','backdrop'].includes(lay) ? lay : 'left');
 
   const stage  = document.getElementById('stage');
   const ghost  = document.getElementById('ghost');
