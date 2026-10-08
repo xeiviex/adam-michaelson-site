@@ -69,10 +69,10 @@ a { color: inherit; }
 .bubble.long b { font-weight: 600; display: block; margin-bottom: 4px; }
 .bubble.long ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 6px; }
 .bubble.long .tagline { font-size: .78rem; opacity: .78; }
-.bubble { background: var(--accent); color: var(--on-accent); padding: 12px 26px; border-radius: 999px; font-size: .98rem; line-height: 1.45; max-width: 86%; min-width: 0; overflow-wrap: anywhere; }
+.bubble { background: var(--accent); color: #fff; padding: 12px 26px; border-radius: 999px; font-size: .98rem; line-height: 1.45; max-width: 86%; min-width: 0; overflow-wrap: anywhere; }
 .row.user .bubble { background: #f2f2f2; color: var(--chat-ink); }
 .dots { display: inline-flex; gap: 5px; padding: 6px 2px; }
-.dots i { width: 7px; height: 7px; border-radius: 50%; background: #7a7a7a; animation: bounce 1.2s infinite; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: bounce 1.2s infinite; }
 .dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
 @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: .4; } 30% { transform: translateY(-4px); opacity: 1; } }
 .sample { font-size: .74rem; color: var(--muted); padding: 0 20px 12px; }

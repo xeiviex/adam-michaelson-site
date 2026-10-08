@@ -21,17 +21,16 @@
   // Build each header: an invisible ghost holds the final footprint so
   // nothing shifts while the visible layer types over it.
   heads.forEach((h) => {
-    const n = h.dataset.n, t = h.dataset.t;
-    h.setAttribute('aria-label', n + ' ' + t);
+    const t = h.dataset.t;
+    h.setAttribute('aria-label', t);
     h.innerHTML =
-      '<span class="ghost" aria-hidden="true"><span class="n">' + n + '</span>&nbsp;&nbsp;' + escape(t) + '</span>' +
-      '<span class="typed" aria-hidden="true"><span class="n"></span><span class="t"></span></span>';
+      '<span class="ghost" aria-hidden="true">' + escape(t) + '</span>' +
+      '<span class="typed" aria-hidden="true"><span class="t"></span></span>';
   });
 
   if (reduce) {
     $$('.reveal').forEach(show);
     heads.forEach((h) => {
-      h.querySelector('.typed .n').textContent = h.dataset.n;
       h.querySelector('.typed .t').textContent = '  ' + h.dataset.t;
     });
     return;
@@ -67,7 +66,6 @@
   async function typeHeader(h) {
     const caret = document.createElement('span');
     caret.className = 'caret';
-    await typeInto(h.querySelector('.typed .n'), h.dataset.n, caret);
     await typeInto(h.querySelector('.typed .t'), '  ' + h.dataset.t, caret);
     caret.remove();
   }
