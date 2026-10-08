@@ -31,7 +31,7 @@
   if (reduce) {
     $$('.reveal').forEach(show);
     heads.forEach((h) => {
-      h.querySelector('.typed .t').textContent = '  ' + h.dataset.t;
+      h.querySelector('.typed .t').textContent = h.dataset.t;
     });
     return;
   }
@@ -66,7 +66,7 @@
   async function typeHeader(h) {
     const caret = document.createElement('span');
     caret.className = 'caret';
-    await typeInto(h.querySelector('.typed .t'), '  ' + h.dataset.t, caret);
+    await typeInto(h.querySelector('.typed .t'), h.dataset.t, caret);
     caret.remove();
   }
 
