@@ -1,6 +1,6 @@
 # Handoff — adam-michaelson.com
 
-Updated 2026-10-02.
+Updated 2026-10-08.
 
 ## How the site works
 - This repo is the full source. Cloudflare Pages project `adam-michaelson-site` (account adam.h.michaelson@gmail.com) builds from `main` and serves `public/` at adam-michaelson.com.
@@ -8,6 +8,9 @@ Updated 2026-10-02.
 - Pushing to `main` deploys. A manual `wrangler pages deploy public --project-name adam-michaelson-site` also works, but replaces the whole site.
 
 ## Built
+- New homepage (2026-10-08): `public/index.html`, `home.css`, `home.js`. Name, three CTAs (Work with me -> `/bio/`, Product and Get to know me scroll to teaser sections), chat widget, photo, three scroll-in teaser sections. Default accent is Deep Caribbean blue; the other Deep colors (green, yellow, orange, red, indigo) stay in `home.css` as `[data-accent]` options.
+- The chat and the "Check my fit" modal are front-end only. They validate links and reply that the feature isn't live, pointing to email. Real versions need a server function (Cloudflare Pages Function) that calls the model; safety rules are in the plan.
+- `/me/mission-and-beliefs/` holds the typed quotes that used to be the homepage (`public/quotes.js`).
 - Homepage (typed quotes), `/clever` prototypes, SMS opt-in, privacy and terms pages.
 - `/bio` — executive bio adapted from the 2026 PDF: black theme, responsive down to phone width, animated load (header fades in, then metric cards one by one, then each section header types and its paragraph fades in).
 - `/bio/ai-demo`, `/bio/lendio-case-study`, `/bio/customer-discovery`, `/bio/leadership` — placeholder pages using only facts from the bio, marked "Full write-up in progress."

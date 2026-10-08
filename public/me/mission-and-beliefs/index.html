@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mission and beliefs | Adam Michaelson</title>
+<meta name="description" content="Adam Michaelson: mission and beliefs.">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #000000; --ink: #f2f6fb; --muted: #a9b4c4; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 9vh 8vw; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  .back { position: fixed; top: 20px; left: clamp(16px, 5vw, 64px); font: 400 .85rem 'Inter', system-ui, sans-serif; color: var(--muted); text-decoration: none; z-index: 2; }
+  .back:hover, .back:focus-visible { color: var(--ink); }
+  #stage { max-width: min(880px, 88vw); opacity: 1; }
+  #stage.fade { transition: opacity 2.6s ease; }
+  #quote { position: relative; font-style: italic; font-weight: 400; font-size: clamp(1.5rem, 3.5vw, 2.6rem); line-height: 1.3; letter-spacing: .005em; }
+  #quote .ghost { visibility: hidden; }
+  #quote .typed { position: absolute; top: 0; left: 0; width: 100%; }
+  #caret { display: none; width: .06em; height: 1.02em; background: currentColor; margin-left: .04em; vertical-align: -.12em; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  #author { margin-top: 1.5rem; text-align: right; color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.35rem); letter-spacing: .02em; opacity: 0; transition: opacity .9s ease; }
+  @media (prefers-reduced-motion: reduce) { #caret { display: none !important; } }
+</style>
+</head>
+<body>
+  <a class="back" href="/">&lsaquo; Back</a>
+  <div id="stage">
+    <div id="quote"><span class="ghost" id="ghost"></span><span class="typed"><span id="qtext"></span><span id="caret"></span></span></div>
+    <div id="author"></div>
+  </div>
+<script src="/quotes.js?v=1"></script>
+<script>
+  // Timing matches the previous homepage.
+  var TYPE_SPEED = 42, HOLD_MS = 20000, FADE_MS = 2600, GAP_MS = 3000, START_MS = 600;
+  var stage = document.getElementById('stage'), ghost = document.getElementById('ghost'),
+      qtext = document.getElementById('qtext'), caret = document.getElementById('caret'), author = document.getElementById('author');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches, last = -1;
+  function pick() { var i; do { i = Math.floor(Math.random() * QUOTES.length); } while (i === last && QUOTES.length > 1); last = i; return QUOTES[i]; }
+  function delayFor(ch) { if ('.!?\u2026'.indexOf(ch) !== -1) return 300; if (',;:\u2014'.indexOf(ch) !== -1) return 150; return TYPE_SPEED; }
+  function typeQuote(text, done) {
+    qtext.textContent = '';
+    if (reduce) { qtext.textContent = text; done(); return; }
+    caret.style.display = 'inline-block';
+    var i = 0;
+    (function step() {
+      if (i < text.length) { var ch = text[i++]; qtext.textContent += ch; setTimeout(step, delayFor(ch)); }
+      else { caret.style.display = 'none'; done(); }
+    })();
+  }
+  function cycle() {
+    var item = pick();
+    stage.classList.remove('fade'); stage.style.opacity = '1';
+    ghost.textContent = item.q; qtext.textContent = '';
+    author.style.transition = 'none'; author.style.opacity = '0'; author.textContent = '\u2014 ' + item.a;
+    typeQuote(item.q, function () {
+      author.style.transition = 'opacity 0.9s ease';
+      requestAnimationFrame(function () { author.style.opacity = '1'; });
+      setTimeout(function () { stage.classList.add('fade'); stage.style.opacity = '0'; setTimeout(cycle, FADE_MS + GAP_MS); }, HOLD_MS);
+    });
+  }
+  setTimeout(cycle, START_MS);
+</script>
+</body>
+</html>
