@@ -1,5 +1,6 @@
 (function () {
   var $ = function (id) { return document.getElementById(id); };
+  try { var tq = new URLSearchParams(location.search).get('trace'); if (tq) document.documentElement.setAttribute('data-trace', tq); } catch (e) {}
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var openers = [
     "Hi, I'm Adam. Ask me whatever you're curious about, about my work or about me.",
@@ -50,7 +51,7 @@
     var b = row(false, lg); b.innerHTML = '<span class="dots"><i></i><i></i><i></i></span>';
     setTimeout(function () {
       if (ok && !ok()) { return; }
-      ding(); setText(b, text); b.classList.add('pop'); if (!lg._hold) lg.scrollTop = lg.scrollHeight;
+      ding(); setText(b, text); b.classList.add('pop'); if (!reduce) { b.classList.add('trace'); setTimeout(function () { b.classList.remove('trace'); }, 1900); } if (!lg._hold) lg.scrollTop = lg.scrollHeight;
     }, reduce ? 0 : wait);
     return b;
   }

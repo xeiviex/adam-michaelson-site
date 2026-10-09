@@ -71,6 +71,23 @@ a { color: inherit; }
 .bubble.long .tagline { font-size: .78rem; opacity: .78; }
 .bubble { background: var(--accent); color: #fff; padding: 12px 26px; border-radius: 999px; font-size: .98rem; line-height: 1.45; max-width: 86%; min-width: 0; overflow-wrap: anywhere; }
 .row.user .bubble { background: #f2f2f2; color: var(--chat-ink); }
+/* One-time travelling outline around a new reply from Adam (single Deep color). */
+/* Outline color: Deep green by default. Try another with ?trace=yellow|orange|red|indigo|blue on the URL. */
+:root { --trace-color: #1fa878; }
+:root[data-trace="yellow"] { --trace-color: #dccb3f; } :root[data-trace="orange"] { --trace-color: #e8692e; }
+:root[data-trace="red"] { --trace-color: #cf2748; } :root[data-trace="indigo"] { --trace-color: #6258d8; } :root[data-trace="blue"] { --trace-color: #0089c4; }
+@property --trace { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.bubble { position: relative; }
+.bubble.trace::after {
+  content: ''; position: absolute; inset: -4px; border-radius: inherit; padding: 3px; pointer-events: none;
+  background: conic-gradient(from var(--trace), transparent 0deg, color-mix(in srgb, var(--trace-color) 35%, transparent) 120deg, var(--trace-color) 300deg, transparent 330deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--trace-color) 60%, transparent));
+  animation: trace 1.8s cubic-bezier(.45, .05, .35, 1) forwards;
+}
+@keyframes trace { 0% { --trace: 0deg; opacity: 1; } 85% { opacity: 1; } 100% { --trace: 360deg; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .bubble.trace::after { display: none; } }
 .dots { display: inline-flex; gap: 5px; padding: 6px 2px; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: bounce 1.2s infinite; }
 .dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
