@@ -94,9 +94,13 @@
   if (!('IntersectionObserver' in window) || reduce) {
     items.forEach(function (el) { el.classList.add('in'); });
   } else {
+    /* animate in at 18% visible; reset once fully back below the viewport so it replays on the next scroll down */
     var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { threshold: 0.18, rootMargin: '0px 0px -6% 0px' });
+      es.forEach(function (e) {
+        if (e.intersectionRatio >= 0.18) e.target.classList.add('in');
+        else if (!e.isIntersecting && e.boundingClientRect.top > 0) e.target.classList.remove('in');
+      });
+    }, { threshold: [0, 0.18], rootMargin: '0px 0px -6% 0px' });
     items.forEach(function (el) { io.observe(el); });
   }
 
