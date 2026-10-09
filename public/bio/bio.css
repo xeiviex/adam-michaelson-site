@@ -10,9 +10,18 @@
   --glass: rgba(255, 255, 255, 0.035);
   --link: #a9a7a0;
   --link-hover: #ffffff;
+  /* Per-page accent: set <html data-accent="..."> to pick this page's color. Same Deep set as home.css; default is Caribbean blue. */
+  --accent-text: #0089c4;
   --max: 1160px;
   --gutter: clamp(16px, 4vw, 48px);
 }
+:root[data-accent="green"]  { --accent-text: #1fa878; }
+:root[data-accent="yellow"] { --accent-text: #dccb3f; }
+:root[data-accent="orange"] { --accent-text: #e8692e; }
+:root[data-accent="red"]    { --accent-text: #e5546e; }
+:root[data-accent="blue"]   { --accent-text: #0089c4; }
+:root[data-accent="indigo"] { --accent-text: #8178ec; }
+
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -140,7 +149,7 @@ a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 2
   font-size: clamp(20px, 2.1vw, 26px);
   font-weight: 650;
   letter-spacing: -0.015em;
-  color: var(--ink);
+  color: var(--accent-text);
   display: block;
   line-height: 1.2;
   white-space: nowrap;
