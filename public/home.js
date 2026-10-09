@@ -50,7 +50,7 @@
     var b = row(false, lg); b.innerHTML = '<span class="dots"><i></i><i></i><i></i></span>';
     setTimeout(function () {
       if (ok && !ok()) { return; }
-      ding(); setText(b, text); b.classList.add('pop'); if (!lg._hold) lg.scrollTop = lg.scrollHeight;
+      ding(); setText(b, text); b.classList.add('pop'); if (!reduce) { b.classList.add('trace'); setTimeout(function () { b.classList.remove('trace'); }, 1900); } if (!lg._hold) lg.scrollTop = lg.scrollHeight;
     }, reduce ? 0 : wait);
     return b;
   }
