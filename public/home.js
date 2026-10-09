@@ -1,5 +1,6 @@
 (function () {
   var $ = function (id) { return document.getElementById(id); };
+  try { var tq = new URLSearchParams(location.search).get('trace'); if (tq) document.documentElement.setAttribute('data-trace', tq); } catch (e) {}
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var openers = [
     "Hi, I'm Adam. Ask me whatever you're curious about, about my work or about me.",
