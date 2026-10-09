@@ -56,6 +56,64 @@
     return b;
   }
 
+  /* Idle check-ins: after a minute of no visitor activity in the chat, up to three nudges
+     (check-in, a different prompt, an open close), each picked at random from its own list.
+     Any activity restarts the sequence at the first. */
+  var IDLE_MS = 60000;
+  var idleLines = [
+    [
+      "Are you there?",
+      "Still with me?",
+      "Hey, are you still around?",
+      "Everything okay on your end?",
+      "Did I lose you?",
+      "Just checking, are you still there?",
+      "Anyone home?",
+      "Still there?",
+      "Hello? Did I catch you at a bad moment?",
+      "Hey, you still with me?"
+    ],
+    [
+      "Ready when you are.",
+      "No rush. Ask me whenever you're ready.",
+      "Whenever you're ready, I'm here.",
+      "Got a question in mind? I'm ready for it.",
+      "Say the word and we'll get started.",
+      "When you've got something, send it over.",
+      "I'm ready if you are.",
+      "Whenever something comes to mind, go ahead and type it.",
+      "Plenty of room for your question whenever you have one.",
+      "Start anywhere you like. I'm ready."
+    ],
+    [
+      "Take your time, I'll be here.",
+      "No pressure at all. I'll be here if you want to chat.",
+      "If now's not the moment, that's fine. The door's open.",
+      "I'll be here if you decide you want to talk.",
+      "Feel free to look around. Come back and ask anything you like.",
+      "No need to answer. I'm around if something comes up.",
+      "Go explore the rest of the site, and find me here if you have a question.",
+      "Totally fine if you'd rather just browse. I'm here whenever.",
+      "Take your time. If you want to talk, just type.",
+      "No worries if you're busy. I'll be here."
+    ]
+  ];
+  var idleStage = 0, idleTimer = null;
+  function idleReset() {
+    clearTimeout(idleTimer); idleStage = 0;
+    if (!$('chat').classList.contains('in')) return;
+    idleTimer = setTimeout(idleFire, IDLE_MS);
+  }
+  function idleFire() {
+    var list = idleLines[idleStage];
+    botSay(list[Math.floor(Math.random() * list.length)], 1200);
+    idleStage++;
+    if (idleStage < idleLines.length) idleTimer = setTimeout(idleFire, IDLE_MS);
+  }
+  ['input', 'keydown', 'pointerdown', 'focusin', 'submit'].forEach(function (ev) {
+    $('chat').addEventListener(ev, idleReset, true);
+  });
+
   /* ---- load sequence ---- */
   var ctas = Array.prototype.slice.call(document.querySelectorAll('.cta'));
   var STEP = 650, t0 = reduce ? 0 : 350;
@@ -65,6 +123,7 @@
   setTimeout(function () {
     $('chat').classList.add('in'); whoosh();
     botSay(openers[Math.floor(Math.random() * openers.length)], 2800);
+    idleReset();
   }, chatAt);
 
   /* ---- highlight cycle: 3s on each CTA, hover or focus pauses it ---- */
