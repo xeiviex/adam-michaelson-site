@@ -176,6 +176,11 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 56px; display: f
   .photo img { height: auto; aspect-ratio: 4 / 5; min-height: 0; }
   .lead { grid-template-columns: 1fr; padding-block: 64px; }
 }
+/* Phones: wrapped text in a full pill sits against the curved ends, so use a softer radius (single lines still read as pills) and a little more side padding. */
+@media (max-width: 620px) {
+  .bubble { border-radius: 26px; padding: 13px 28px; }
+  .bubble.long { padding: 18px 28px; }
+}
 @media (prefers-reduced-motion: reduce) { .js .rv { opacity: 1; transform: none; } * { animation: none !important; transition: none !important; } .cta, .chat, .photo { opacity: 1; transform: none; } }
 
 .btn.soon { border-color: var(--line); color: var(--muted); cursor: default; }
