@@ -9,7 +9,7 @@
     "Not sure where to start? Tell me what you're looking for and I'll point you there.",
     "Hello. I build products, mostly with AI these days. What would you like to know?"
   ];
-  var log = $('log'), EMAIL = 'hello@adam-michaelson.com';
+  var log = $('log'), EMAIL = 'hello@adam-michaelson.com', PHONE = '801-822-9045';
 
   /* ---- sound: two soft notes, only after the browser allows audio ---- */
   var ctx = null, soundOn = true;
@@ -39,11 +39,15 @@
     lg.appendChild(r); if (!lg._hold) lg.scrollTop = lg.scrollHeight; return b;
   }
   function setText(b, text) {
-    var k = text.indexOf(EMAIL);
-    if (k < 0) { b.textContent = text; return; }
-    b.textContent = text.slice(0, k);
-    var a = document.createElement('a'); a.href = 'mailto:' + EMAIL; a.textContent = EMAIL; a.style.color = 'inherit';
-    b.appendChild(a); b.appendChild(document.createTextNode(text.slice(k + EMAIL.length)));
+    b.textContent = '';
+    var re = new RegExp('(' + EMAIL.replace(/[.]/g, '\\.') + '|\\(?801\\)?[-. ]?822[-. ]?9045)', 'g'), last = 0, m;
+    while ((m = re.exec(text))) {
+      b.appendChild(document.createTextNode(text.slice(last, m.index)));
+      var a = document.createElement('a'); a.style.color = 'inherit'; a.textContent = m[0];
+      a.href = m[0] === EMAIL ? 'mailto:' + EMAIL : 'tel:+1' + PHONE.replace(/\D/g, '');
+      b.appendChild(a); last = m.index + m[0].length;
+    }
+    b.appendChild(document.createTextNode(text.slice(last)));
   }
   /* Adam's reply: dots bubble for a few seconds, then the full message pops in. */
   function botSay(text, wait, lg, ok) {
@@ -55,6 +59,52 @@
     }, reduce ? 0 : wait);
     return b;
   }
+
+  /* Real replies: POST /api/chat, streamed back as server-sent events. */
+  function newSession() {
+    var a = new Uint8Array(16);
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    return Array.prototype.map.call(a, function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+  }
+  var FAIL = "Sorry, I couldn't answer that just now. Call me at " + PHONE + " or email " + EMAIL + ".";
+  function askAdam(mode, sessionId, message, lg, ok, done) {
+    var b = row(false, lg); b.innerHTML = '<span class="dots"><i></i><i></i><i></i></span>';
+    var text = '', started = false;
+    function show(t) {
+      if (ok && !ok()) return;
+      if (!started) { started = true; ding(); b.classList.add('pop'); }
+      setText(b, t); if (!lg._hold) lg.scrollTop = lg.scrollHeight;
+    }
+    function finish() { if (done) done(); }
+    fetch('/api/chat', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId: sessionId, mode: mode, message: message })
+    }).then(function (res) {
+      var type = res.headers.get('Content-Type') || '';
+      if (type.indexOf('text/event-stream') < 0 || !res.body) {
+        return res.json().catch(function () { return {}; }).then(function (j) {
+          if (j.human) { b.parentNode && b.parentNode.remove(); return; }
+          show(j.error || FAIL);
+        });
+      }
+      var reader = res.body.getReader(), dec = new TextDecoder(), buf = '';
+      function pump() {
+        return reader.read().then(function (r) {
+          if (r.done) return;
+          buf += dec.decode(r.value, { stream: true });
+          var parts = buf.split('\n\n'); buf = parts.pop();
+          parts.forEach(function (p) {
+            if (p.indexOf('data: ') !== 0) return;
+            var ev; try { ev = JSON.parse(p.slice(6)); } catch (e) { return; }
+            if (ev.t) { text += ev.t; show(text); }
+          });
+          return pump();
+        });
+      }
+      return pump();
+    }).catch(function () { if (!text) show(FAIL); }).then(finish);
+  }
+  var introSession = newSession(), introBusy = false;
 
   /* Idle check-ins: after a minute of no visitor activity in the chat, up to three nudges
      (check-in, a different prompt, an open close), each picked at random from its own list.
@@ -163,34 +213,15 @@
     items.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---- Check my fit: a chat in a modal. Links are validated here, but the posting is not read
-         yet: a server function has to do that. Until then the reply points to email. ---- */
-  var flog = $('flog'), fmsg = $('fmsg'), ffield = $('ffield'), fgen = 0, fcount = 0, lastFocus = null, FMAX = 5;
+  /* ---- Check my fit: a chat in a modal. The visitor pastes a job description (links are not read yet). ---- */
+  var flog = $('flog'), fmsg = $('fmsg'), ffield = $('ffield'), fgen = 0, lastFocus = null, fSession = newSession(), fBusy = false;
   function fgrow() { fmsg.style.height = 'auto'; fmsg.style.height = Math.min(fmsg.scrollHeight, 128) + 'px'; ffield.classList.toggle('has', !!fmsg.value.trim()); }
   function fok(g) { return function () { return g === fgen; }; }
-  function checkLink(raw) {
-    var t = raw.trim();
-    function no(why) { return { ok: false, why: why }; }
-    if (!t) return no('');
-    if (t.length > 2048) return no("That link is too long for me to open.");
-    if (/\s/.test(t)) return no("Please paste just the link, one at a time, with nothing else.");
-    var u;
-    try { u = new URL(/^[a-z][a-z0-9+.-]*:/i.test(t) ? t : 'https://' + t); } catch (e) { return no("That doesn't look like a web link. Try pasting the full address of the posting."); }
-    if (u.protocol !== 'https:') return no("I can only open secure (https) links to job postings.");
-    if (u.username || u.password) return no("I can't open links that contain a username or password.");
-    if (u.port && u.port !== '443') return no("I can only open standard web addresses.");
-    var h = u.hostname.toLowerCase();
-    if (h.indexOf('.') < 0 || h.indexOf(':') > -1 || /^[\d.]+$/.test(h)) return no("Please use a normal website address, not an IP address.");
-    if (/(^|\.)(localhost|local|internal|intranet|lan|home|corp|onion|test|invalid|example)$/.test(h)) return no("That address isn't a public website I can open.");
-    if (h.indexOf('xn--') > -1) return no("I can't open links with look-alike characters in the address.");
-    if (/\.(exe|msi|bat|cmd|sh|js|jar|zip|rar|7z|dmg|apk|iso|scr)$/i.test(u.pathname)) return no("That link goes to a file, not a job posting.");
-    return { ok: true, url: u };
-  }
   function openFit() {
     lastFocus = document.activeElement; fgen++; var g = fgen;
-    flog.innerHTML = ''; flog._hold = false; fmsg.value = ''; fgrow(); fcount = 0;
+    flog.innerHTML = ''; flog._hold = false; fmsg.value = ''; fgrow(); fSession = newSession(); fBusy = false;
     $('fscrim').classList.add('on'); $('fdlg').classList.add('on'); document.body.style.overflow = 'hidden';
-    botSay("Paste a link to a job posting or description, and I'll tell you honestly how I fit.", 1800, flog, fok(g));
+    botSay("Paste the text of a job description, and I'll tell you honestly how I fit.", 1800, flog, fok(g));
     setTimeout(function () { fmsg.focus(); }, 60);
   }
   function closeFit() {
@@ -205,15 +236,12 @@
   fmsg.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); $('fform').requestSubmit(); } });
   $('fform').addEventListener('submit', function (e) {
     e.preventDefault();
-    var v = fmsg.value.trim(); if (!v) return;
-    var g = fgen, res = checkLink(v);
+    var v = fmsg.value.trim(); if (!v || fBusy) return;
+    var g = fgen;
     flog._hold = false;
     row(true, flog).textContent = v.length > 90 ? v.slice(0, 87) + '...' : v;
-    fmsg.value = ''; fgrow();
-    if (!res.ok) { botSay(res.why, 1200, flog, fok(g)); return; }
-    if (fcount >= FMAX) { botSay("I've reached my limit for this visit. Email me and I'll go through it with you myself.", 1200, flog, fok(g)); return; }
-    fcount++;
-    botSay("Thanks. The fit check isn't live yet, so I can't read that posting. Send the link to " + EMAIL + " and I'll go through it with you myself.", 2400, flog, fok(g));
+    fmsg.value = ''; fgrow(); fBusy = true;
+    askAdam('fit', fSession, v, flog, fok(g), function () { fBusy = false; });
   });
   $('fdlg').addEventListener('keydown', function (e) {
     if (e.key !== 'Tab') return;
@@ -260,9 +288,9 @@
 
   $('form').addEventListener('submit', function (e) {
     e.preventDefault();
-    var v = msg.value.trim(); if (!v) return;
-    row(true).textContent = v; msg.value = ''; grow();
-    botSay("I can't answer in chat just yet. Email me at " + EMAIL + " and I'll reply myself.", 2400);
+    var v = msg.value.trim(); if (!v || introBusy) return;
+    row(true).textContent = v; msg.value = ''; grow(); introBusy = true;
+    askAdam('intro', introSession, v, log, null, function () { introBusy = false; });
   });
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a');
