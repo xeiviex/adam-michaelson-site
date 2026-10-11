@@ -9,7 +9,9 @@ const MAX_BYTES = 1_500_000;
 const MAX_REDIRECTS = 3;
 const UA = "Mozilla/5.0 (compatible; AdamMichaelsonSiteBot/1.0; +https://adam-michaelson.com)";
 
-export class PostingError extends Error {}
+export class PostingError extends Error {
+  constructor(message, detail) { super(message); this.detail = detail || ""; }
+}
 
 /** True when the whole message is a single link (scheme optional). */
 export function looksLikeUrl(text) {
@@ -123,23 +125,23 @@ export async function fetchPosting(raw, { fetchImpl = fetch, maxChars = 20000 } 
         headers: { "User-Agent": UA, Accept: "text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.1", "Accept-Language": "en-US,en;q=0.9" },
         signal: AbortSignal.timeout(8000),
       });
-    } catch {
-      throw new PostingError(CANT_READ);
+    } catch (e) {
+      throw new PostingError(CANT_READ, "fetch failed: " + String((e && e.message) || e).slice(0, 120));
     }
     if (res.status >= 300 && res.status < 400 && res.headers.get("location")) {
-      if (hop >= MAX_REDIRECTS) throw new PostingError(CANT_READ);
+      if (hop >= MAX_REDIRECTS) throw new PostingError(CANT_READ, "too many redirects");
       url = validateUrl(new URL(res.headers.get("location"), url).toString());
       continue;
     }
     break;
   }
-  if (!res.ok) throw new PostingError(CANT_READ);
+  if (!res.ok) throw new PostingError(CANT_READ, `HTTP ${res.status} from ${url.hostname}`);
   const type = (res.headers.get("content-type") || "").toLowerCase();
-  if (!/text\/html|application\/xhtml|text\/plain/.test(type)) throw new PostingError("That link doesn't go to a web page I can read.");
+  if (!/text\/html|application\/xhtml|text\/plain/.test(type)) throw new PostingError("That link doesn't go to a web page I can read.", "content-type " + type.slice(0, 60));
   const html = await readCapped(res);
   const structured = extractJobPosting(html);
   let text = structured || htmlToText(html);
-  if (text.length < 300) throw new PostingError(CANT_READ);
+  if (text.length < 300) throw new PostingError(CANT_READ, `only ${text.length} chars of text from ${url.hostname}${structured ? "" : " (no JobPosting data)"}`);
   if (text.length > maxChars) text = text.slice(0, maxChars);
   return { url: url.toString(), text };
 }

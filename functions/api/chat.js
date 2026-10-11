@@ -98,6 +98,10 @@ export async function onRequestPost({ request, env, waitUntil }) {
       await db.prepare("INSERT INTO chat_attachments (session_id, message_id, url, content, created_at) VALUES (?1,?2,?3,?4,?5)")
         .bind(sessionId, messageId, posting.url, posting.text, now()).run();
     } catch (e) {
+      try {
+        await db.prepare("INSERT INTO chat_errors (created_at, session_id, status, message) VALUES (?1,?2,NULL,?3)")
+          .bind(now(), sessionId, "link fetch: " + ((e && e.detail) || (e && e.message) || "error")).run();
+      } catch {}
       return cannedReply(e instanceof PostingError ? e.message : "I couldn't read that page. Could you paste the text of the job description here instead?");
     }
   }
