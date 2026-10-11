@@ -167,3 +167,22 @@ test("fit chat: a pasted link is fetched, stored, and sent to the model as untru
     globalThis.fetch = realFetch;
   }
 });
+
+test("fit chat: a posting read once is reused for a week, even if the site later refuses us", async () => {
+  const realFetch = globalThis.fetch;
+  let hits = 0, block = false;
+  const page = `<script type="application/ld+json">${JSON.stringify({ "@type": "JobPosting", title: "PM Agents", description: "<p>" + "Own the agent evaluation roadmap. ".repeat(30) + "</p>" })}</script>`;
+  globalThis.fetch = async (url, init) => {
+    if (String(url).startsWith("https://jobs.cache-test.com/")) { hits++; return block ? new Response("no", { status: 403 }) : new Response(page, { status: 200, headers: { "content-type": "text/html" } }); }
+    return realFetch(url, init);
+  };
+  try {
+    await (await call({ sessionId: "cache1aaaaaaaaaaaaaa", mode: "fit", message: "https://jobs.cache-test.com/pm?utm_source=email&utm_campaign=x" })).text();
+    assert.equal(hits, 1);
+    block = true;
+    const res = await call({ sessionId: "cache2bbbbbbbbbbbbbb", mode: "fit", message: "https://jobs.cache-test.com/pm?utm_source=other" });
+    await res.text();
+    assert.equal(hits, 1);
+    assert.match(requests.at(-1).messages.at(-1).content, /Title: PM Agents/);
+  } finally { globalThis.fetch = realFetch; }
+});

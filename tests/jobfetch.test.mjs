@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { greenhouseTarget, looksLikeUrl, validateUrl, htmlToText, extractJobPosting, fetchPosting, PostingError } from "../functions/_lib/jobfetch.js";
+import { cacheKey, greenhouseTarget, looksLikeUrl, validateUrl, htmlToText, extractJobPosting, fetchPosting, PostingError } from "../functions/_lib/jobfetch.js";
 
 test("looksLikeUrl only accepts a lone link", () => {
   assert.ok(looksLikeUrl("https://boards.greenhouse.io/acme/jobs/1"));
@@ -89,4 +89,9 @@ test("a posting link that redirects to a listing page is treated as closed", asy
   // a link without a job id is read as is
   const ok = await fetchPosting("https://boards.acme.com/", { fetchImpl: async () => new Response(listing, { status: 200, headers: { "content-type": "text/html" } }) });
   assert.ok(ok.text.length > 300);
+});
+
+test("cacheKey drops tracking parameters and fragments", () => {
+  assert.equal(cacheKey("https://acme.com/job/1?utm_source=x&gclid=1&id=7#top"), "https://acme.com/job/1?id=7");
+  assert.equal(cacheKey("acme.com/job/1"), "https://acme.com/job/1");
 });
