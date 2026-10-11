@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { looksLikeUrl, validateUrl, htmlToText, extractJobPosting, fetchPosting, PostingError } from "../functions/_lib/jobfetch.js";
+import { greenhouseTarget, looksLikeUrl, validateUrl, htmlToText, extractJobPosting, fetchPosting, PostingError } from "../functions/_lib/jobfetch.js";
 
 test("looksLikeUrl only accepts a lone link", () => {
   assert.ok(looksLikeUrl("https://boards.greenhouse.io/acme/jobs/1"));
@@ -53,4 +53,29 @@ test("fetchPosting caps the amount of text", async () => {
   const big = "<p>" + "word ".repeat(10000) + "</p>";
   const r = await fetchPosting("https://acme.com/job", { fetchImpl: async () => html(big), maxChars: 5000 });
   assert.equal(r.text.length, 5000);
+});
+
+test("greenhouseTarget finds board and job id from the common link shapes", () => {
+  const T = (u) => greenhouseTarget(new URL(u));
+  assert.deepEqual(T("https://job-boards.greenhouse.io/bamboohr/jobs/6186937004"), { boards: ["bamboohr"], id: "6186937004" });
+  assert.deepEqual(T("https://boards.greenhouse.io/embed/job_app?for=acme&token=12345678"), { boards: ["acme"], id: "12345678" });
+  assert.deepEqual(T("https://www.bamboohr.com/careers/application?gh_jid=6186937004"), { boards: ["bamboohr"], id: "6186937004" });
+  assert.equal(T("https://acme.com/careers"), null);
+  assert.equal(T("https://acme.com/careers?gh_jid=abc"), null);
+});
+
+test("fetchPosting uses the Greenhouse API for embedded links and falls back to the page", async () => {
+  const content = "&lt;p&gt;" + "Lead the product organization and own strategy. ".repeat(12) + "&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Ten years leading PMs&lt;/li&gt;&lt;/ul&gt;";
+  const calls = [];
+  const gh = async (url) => {
+    calls.push(url);
+    if (url === "https://boards-api.greenhouse.io/v1/boards/acme/jobs/12345678")
+      return new Response(JSON.stringify({ title: "VP Product", location: { name: "Remote" }, content }), { status: 200, headers: { "content-type": "application/json" } });
+    return new Response("<p>Sign in</p>", { status: 200, headers: { "content-type": "text/html" } });
+  };
+  const r = await fetchPosting("https://www.acme.com/careers/application?gh_jid=12345678", { fetchImpl: gh });
+  assert.match(r.text, /Title: VP Product/); assert.match(r.text, /Location: Remote/); assert.match(r.text, /- Ten years leading PMs/);
+  assert.doesNotMatch(r.text, /&lt;|<p>/);
+  // unknown job id: the API 404s, the page has nothing, so the visitor is asked to paste
+  await assert.rejects(fetchPosting("https://www.acme.com/careers/application?gh_jid=99999999", { fetchImpl: gh }), /paste the text/);
 });

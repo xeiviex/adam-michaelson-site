@@ -40,7 +40,7 @@ export function validateUrl(raw) {
 }
 
 const ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", ndash: "-", mdash: "-", rsquo: "'", lsquo: "'", ldquo: '"', rdquo: '"', bull: "-", hellip: "..." };
-function decode(s) {
+export function decode(s) {
   return s
     .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Math.min(+n, 0x10ffff)))
     .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(Math.min(parseInt(n, 16), 0x10ffff)))
@@ -112,11 +112,65 @@ async function readCapped(res) {
   return new TextDecoder("utf-8", { fatal: false }).decode(buf);
 }
 
+
+/** Greenhouse postings: direct board links, embed links, and company pages carrying ?gh_jid=. */
+export function greenhouseTarget(u) {
+  const h = u.hostname.toLowerCase();
+  const num = /^\d{3,15}$/;
+  const token = /^[a-z0-9_-]{1,64}$/i;
+  if (/(^|\.)greenhouse\.io$/.test(h)) {
+    const m = /^\/([^/]+)\/jobs\/(\d+)/.exec(u.pathname);
+    if (m && token.test(m[1]) && num.test(m[2])) return { boards: [m[1]], id: m[2] };
+    const f = u.searchParams.get("for"), t = u.searchParams.get("token");
+    if (f && t && token.test(f) && num.test(t)) return { boards: [f], id: t };
+    return null;
+  }
+  const id = u.searchParams.get("gh_jid");
+  if (id && num.test(id)) {
+    // Company career pages usually use the company name as the board token.
+    const labels = h.replace(/^www\./, "").split(".");
+    const sld = labels.length >= 2 ? labels[labels.length - 2] : labels[0];
+    const boards = [sld].filter((b) => token.test(b));
+    return { boards, id };
+  }
+  return null;
+}
+
+async function fetchGreenhouse(target, fetchImpl) {
+  for (const board of target.boards) {
+    try {
+      const res = await fetchImpl(`https://boards-api.greenhouse.io/v1/boards/${board}/jobs/${target.id}`, {
+        headers: { "User-Agent": UA, Accept: "application/json" },
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) continue;
+      const j = JSON.parse(await readCapped(res));
+      if (!j || !j.content) continue;
+      const text = [
+        j.title && `Title: ${j.title}`,
+        `Company: ${board}`,
+        j.location && j.location.name && `Location: ${j.location.name}`,
+        "",
+        htmlToText(decode(String(j.content))),
+      ].filter((x) => typeof x === "string").join("\n").trim();
+      if (text.length >= 300) return text;
+    } catch {
+      /* try the next candidate, then fall back to reading the page */
+    }
+  }
+  return null;
+}
+
 const CANT_READ = "I couldn't read that page. Many job sites block automated readers or need a login. Could you paste the text of the job description here instead?";
 
 /** Returns { url, text }. Throws PostingError with a visitor-safe message. */
 export async function fetchPosting(raw, { fetchImpl = fetch, maxChars = 20000 } = {}) {
   let url = validateUrl(raw);
+  const gh = greenhouseTarget(url);
+  if (gh) {
+    const text = await fetchGreenhouse(gh, fetchImpl);
+    if (text) return { url: url.toString(), text: text.slice(0, maxChars) };
+  }
   let res;
   for (let hop = 0; ; hop++) {
     try {
