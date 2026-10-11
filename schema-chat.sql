@@ -37,3 +37,14 @@ CREATE TABLE IF NOT EXISTS chat_errors (
   status      INTEGER,
   message     TEXT
 );
+
+-- Job posting text fetched from a link the visitor shared in the fit chat.
+CREATE TABLE IF NOT EXISTS chat_attachments (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_id  TEXT NOT NULL,
+  message_id  INTEGER NOT NULL,
+  url         TEXT NOT NULL,
+  content     TEXT NOT NULL,
+  created_at  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_chat_att_msg ON chat_attachments (message_id);

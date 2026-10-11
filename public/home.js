@@ -223,7 +223,7 @@
     lastFocus = document.activeElement; fgen++; var g = fgen;
     flog.innerHTML = ''; flog._hold = false; fmsg.value = ''; fgrow(); fSession = newSession(); fBusy = false;
     $('fscrim').classList.add('on'); $('fdlg').classList.add('on'); document.body.style.overflow = 'hidden';
-    botSay("Paste the text of a job description, and I'll tell you honestly how I fit.", 1800, flog, fok(g));
+    botSay("Paste a job description, or a link to the posting, and I'll tell you honestly how I fit.", 1800, flog, fok(g));
     setTimeout(function () { fmsg.focus(); }, 60);
   }
   function closeFit() {

@@ -10,6 +10,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import knowledge from "../_generated/knowledge.js";
 import { getConfig } from "../_lib/config.js";
 import { buildSystem } from "../_lib/prompts.js";
+import { looksLikeUrl, fetchPosting, PostingError } from "../_lib/jobfetch.js";
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -70,29 +71,55 @@ export async function onRequestPost({ request, env, waitUntil }) {
   }
 
   // Log the visitor message before calling the model.
-  await db.batch([
+  const logged = await db.batch([
     db.prepare("INSERT INTO chat_messages (user_id, session_id, role, content, created_at) VALUES (?1,?2,'visitor',?3,?4)").bind(ip, sessionId, message, ts),
     db.prepare("UPDATE chat_sessions SET last_activity_at = ?2, message_count = message_count + 1 WHERE session_id = ?1").bind(sessionId, ts),
   ]);
+  const messageId = logged[0] && logged[0].meta && logged[0].meta.last_row_id;
 
   // Takeover hook (admin pass): a human is handling this session, so the bot stays quiet.
   if (session.mode === "human") return json({ human: true });
 
+  // Fit chat: a lone link is fetched server-side and its text is stored with the message.
+  const enc = new TextEncoder();
+  const send = (c, o) => c.enqueue(enc.encode(`data: ${JSON.stringify(o)}\n\n`));
+  const cannedReply = async (text) => {
+    const t2 = now();
+    await db.batch([
+      db.prepare("INSERT INTO chat_messages (user_id, session_id, role, content, created_at) VALUES (?1,?2,'bot',?3,?4)").bind(ip, sessionId, text, t2),
+      db.prepare("UPDATE chat_sessions SET last_activity_at = ?2, message_count = message_count + 1 WHERE session_id = ?1").bind(sessionId, t2),
+    ]);
+    const body = new ReadableStream({ start(c) { send(c, { t: text }); send(c, { done: true }); c.close(); } });
+    return new Response(body, { headers: { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store" } });
+  };
+  if (chatType === "fit" && looksLikeUrl(message)) {
+    try {
+      const posting = await fetchPosting(message, { maxChars: cfg.maxMessageChars.fit });
+      await db.prepare("INSERT INTO chat_attachments (session_id, message_id, url, content, created_at) VALUES (?1,?2,?3,?4,?5)")
+        .bind(sessionId, messageId, posting.url, posting.text, now()).run();
+    } catch (e) {
+      return cannedReply(e instanceof PostingError ? e.message : "I couldn't read that page. Could you paste the text of the job description here instead?");
+    }
+  }
+
   // History from D1, merged into strictly alternating turns.
-  const rows = (await db.prepare("SELECT role, content FROM chat_messages WHERE session_id = ?1 AND role IN ('visitor','bot') ORDER BY id DESC LIMIT 40").bind(sessionId).all()).results.reverse();
+  const rows = (await db.prepare(
+    "SELECT m.role, m.content, a.url AS att_url, a.content AS att_text FROM chat_messages m LEFT JOIN chat_attachments a ON a.message_id = m.id " +
+    "WHERE m.session_id = ?1 AND m.role IN ('visitor','bot') ORDER BY m.id DESC LIMIT 40").bind(sessionId).all()).results.reverse();
   const messages = [];
   for (const r of rows) {
     const role = r.role === "visitor" ? "user" : "assistant";
+    const content = r.att_text
+      ? `${r.content}\n\nThe text of that posting, fetched from ${r.att_url}:\n<job_posting>\n${r.att_text}\n</job_posting>`
+      : r.content;
     const last = messages[messages.length - 1];
-    if (last && last.role === role) last.content += "\n\n" + r.content;
-    else messages.push({ role, content: r.content });
+    if (last && last.role === role) last.content += "\n\n" + content;
+    else messages.push({ role, content });
   }
   while (messages.length && messages[0].role !== "user") messages.shift();
 
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
   const system = buildSystem(cfg, chatType, knowledge, env.CHAT_PRIVATE_GUIDANCE);
-  const enc = new TextEncoder();
-  const send = (c, o) => c.enqueue(enc.encode(`data: ${JSON.stringify(o)}\n\n`));
   const FALLBACK = `I can't answer that one here. Text me at ${cfg.contactPhone} or email ${cfg.contactEmail}.`;
 
   const stream = new ReadableStream({
