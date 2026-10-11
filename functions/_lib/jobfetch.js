@@ -163,14 +163,8 @@ async function fetchGreenhouse(target, fetchImpl) {
 
 const CANT_READ = "I couldn't read that page. Many job sites block automated readers or need a login. Could you paste the text of the job description here instead?";
 
-/** Returns { url, text }. Throws PostingError with a visitor-safe message. */
-export async function fetchPosting(raw, { fetchImpl = fetch, maxChars = 20000 } = {}) {
-  let url = validateUrl(raw);
-  const gh = greenhouseTarget(url);
-  if (gh) {
-    const text = await fetchGreenhouse(gh, fetchImpl);
-    if (text) return { url: url.toString(), text: text.slice(0, maxChars) };
-  }
+async function readPage(startUrl, fetchImpl, maxChars) {
+  let url = startUrl;
   let res;
   for (let hop = 0; ; hop++) {
     try {
@@ -196,6 +190,28 @@ export async function fetchPosting(raw, { fetchImpl = fetch, maxChars = 20000 } 
   const structured = extractJobPosting(html);
   let text = structured || htmlToText(html);
   if (text.length < 300) throw new PostingError(CANT_READ, `only ${text.length} chars of text from ${url.hostname}${structured ? "" : " (no JobPosting data)"}`);
-  if (text.length > maxChars) text = text.slice(0, maxChars);
-  return { url: url.toString(), text };
+  return { url: url.toString(), text: text.slice(0, maxChars) };
+}
+
+/** Returns { url, text }. Throws PostingError with a visitor-safe message. */
+export async function fetchPosting(raw, { fetchImpl = fetch, maxChars = 20000 } = {}) {
+  const url = validateUrl(raw);
+  const gh = greenhouseTarget(url);
+  if (gh) {
+    const text = await fetchGreenhouse(gh, fetchImpl);
+    if (text) return { url: url.toString(), text: text.slice(0, maxChars) };
+  }
+  try {
+    return await readPage(url, fetchImpl, maxChars);
+  } catch (e) {
+    // Company career pages that embed Greenhouse: the embed link needs only the job number.
+    if (gh && e instanceof PostingError && !/(^|\.)greenhouse\.io$/.test(url.hostname)) {
+      try {
+        return await readPage(validateUrl("https://job-boards.greenhouse.io/embed/job_app?token=" + gh.id), fetchImpl, maxChars);
+      } catch {
+        /* report the original failure */
+      }
+    }
+    throw e;
+  }
 }
