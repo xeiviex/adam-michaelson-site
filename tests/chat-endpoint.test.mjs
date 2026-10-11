@@ -120,6 +120,7 @@ test("refusal or upstream failure still returns and logs contact info", async ()
   const t = await res.text();
   process.env.ANTHROPIC_BASE_URL = saved;
   assert.match(t, /801-822-9045/);
+  assert.ok(db.prepare("SELECT COUNT(*) n FROM chat_errors WHERE session_id='failure1234567890abc'").get().n >= 1);
   assert.equal(db.prepare("SELECT role FROM chat_messages WHERE session_id='failure1234567890abc' ORDER BY id DESC").get().role, "bot");
 });
 

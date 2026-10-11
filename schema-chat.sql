@@ -28,3 +28,12 @@ CREATE TABLE IF NOT EXISTS chat_messages (
 CREATE INDEX IF NOT EXISTS idx_chat_msg_session ON chat_messages (session_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_chat_msg_user_time ON chat_messages (user_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_chat_msg_time ON chat_messages (created_at);
+
+-- Upstream failures (model errors, refusals) for debugging. No visitor text, no secrets.
+CREATE TABLE IF NOT EXISTS chat_errors (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  created_at  TEXT NOT NULL,
+  session_id  TEXT,
+  status      INTEGER,
+  message     TEXT
+);

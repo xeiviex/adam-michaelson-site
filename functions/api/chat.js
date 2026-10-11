@@ -116,12 +116,20 @@ export async function onRequestPost({ request, env, waitUntil }) {
         const final = await s.finalMessage();
         console.log("chat usage", JSON.stringify({ cache_read: final.usage.cache_read_input_tokens, cache_write: final.usage.cache_creation_input_tokens, input: final.usage.input_tokens, output: final.usage.output_tokens }));
         if (final.stop_reason === "refusal" && !text) {
+          try {
+            await db.prepare("INSERT INTO chat_errors (created_at, session_id, status, message) VALUES (?1,?2,NULL,?3)")
+              .bind(now(), sessionId, "refusal " + JSON.stringify(final.stop_details || {}).slice(0, 300)).run();
+          } catch {}
           text = FALLBACK;
           send(controller, { t: text });
         }
         send(controller, { done: true });
       } catch (e) {
         console.error("chat error", e && e.status, e && e.message);
+        try {
+          await db.prepare("INSERT INTO chat_errors (created_at, session_id, status, message) VALUES (?1,?2,?3,?4)")
+            .bind(now(), sessionId, e && e.status ? e.status : null, String((e && e.message) || e).slice(0, 600)).run();
+        } catch {}
         if (!text) {
           text = FALLBACK;
           send(controller, { t: text });
