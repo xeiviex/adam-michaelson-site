@@ -46,7 +46,7 @@
     while ((m = re.exec(text))) {
       b.appendChild(document.createTextNode(text.slice(last, m.index)));
       var a = document.createElement('a'); a.style.color = 'inherit'; a.textContent = m[0];
-      a.href = m[0] === EMAIL ? 'mailto:' + EMAIL : 'tel:+1' + PHONE.replace(/\D/g, '');
+      a.href = m[0] === EMAIL ? 'mailto:' + EMAIL : 'sms:+1' + PHONE.replace(/\D/g, '');
       b.appendChild(a); last = m.index + m[0].length;
     }
     b.appendChild(document.createTextNode(text.slice(last)));
@@ -68,7 +68,7 @@
     (window.crypto || window.msCrypto).getRandomValues(a);
     return Array.prototype.map.call(a, function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
   }
-  var FAIL = "Sorry, I couldn't answer that just now. Call me at " + PHONE + " or email " + EMAIL + ".";
+  var FAIL = "Sorry, I couldn't answer that just now. Text me at " + PHONE + " or email " + EMAIL + ".";
   function askAdam(mode, sessionId, message, lg, ok, done) {
     var b = row(false, lg); b.innerHTML = '<span class="dots"><i></i><i></i><i></i></span>';
     var text = '', started = false;

@@ -58,7 +58,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   // Abuse limits.
   const visitorTurns = (await db.prepare("SELECT COUNT(*) n FROM chat_messages WHERE session_id = ?1 AND role = 'visitor'").bind(sessionId).first()).n;
   if (visitorTurns >= cfg.maxTurns[chatType]) {
-    return json({ error: `We've reached the limit for this conversation. Call me at ${cfg.contactPhone} or email ${cfg.contactEmail} and we'll pick it up.` }, 429);
+    return json({ error: `We've reached the limit for this conversation. Text me at ${cfg.contactPhone} or email ${cfg.contactEmail} and we'll pick it up.` }, 429);
   }
   const hourAgo = new Date(Date.now() - 3600e3).toISOString();
   const ipCount = (await db.prepare("SELECT COUNT(*) n FROM chat_messages WHERE user_id = ?1 AND role = 'visitor' AND created_at > ?2").bind(ip, hourAgo).first()).n;
@@ -66,7 +66,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const dayAgo = new Date(Date.now() - 86400e3).toISOString();
   const dayCount = (await db.prepare("SELECT COUNT(*) n FROM chat_messages WHERE role = 'visitor' AND created_at > ?1").bind(dayAgo).first()).n;
   if (dayCount >= cfg.dailyLimit) {
-    return json({ error: `I'm at capacity right now. Call me at ${cfg.contactPhone} or email ${cfg.contactEmail}.` }, 503);
+    return json({ error: `I'm at capacity right now. Text me at ${cfg.contactPhone} or email ${cfg.contactEmail}.` }, 503);
   }
 
   // Log the visitor message before calling the model.
@@ -93,7 +93,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const system = buildSystem(cfg, chatType, knowledge, env.CHAT_PRIVATE_GUIDANCE);
   const enc = new TextEncoder();
   const send = (c, o) => c.enqueue(enc.encode(`data: ${JSON.stringify(o)}\n\n`));
-  const FALLBACK = `I can't answer that one here. Call me at ${cfg.contactPhone} or email ${cfg.contactEmail}.`;
+  const FALLBACK = `I can't answer that one here. Text me at ${cfg.contactPhone} or email ${cfg.contactEmail}.`;
 
   const stream = new ReadableStream({
     async start(controller) {
