@@ -50,3 +50,35 @@ Add it to **both** Production and Preview. Redeploy after adding.
 ## Local testing
 
     wrangler pages dev public --d1 SMS_OPTIN_DB=sms-optin
+
+
+## Chat module (/api/chat)
+
+Files: `functions/api/chat.js`, `functions/_lib/{config,prompts}.js`, `scripts/build-knowledge.mjs`,
+`schema-chat.sql`. Generated and never committed: `knowledge.md`, `functions/_generated/knowledge.js`
+(the committed copy is an empty stub).
+
+### One-time setup (Cloudflare Pages -> Settings)
+
+1. Apply the schema: `wrangler d1 execute sms-optin --remote --file=schema-chat.sql`
+2. Build settings: build command `npm install && npm run build`, output directory `public`.
+3. Secrets / variables (Production and Preview):
+
+| Name | Type | Where it is used |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | secret | runtime |
+| `NOTION_TOKEN` | secret | **build** (Notion integration shared with the 7 knowledge pages only, NOT the private notes page) |
+| `CHAT_PRIVATE_GUIDANCE` | secret | runtime. Sensitive-topic rules that would reveal something if published |
+| `KNOWLEDGE_CANARIES` | secret, optional | build. Newline-separated phrases from the private page; the build fails if any appear |
+| `CHAT_MODEL`, `CHAT_EFFORT`, `CONTACT_PHONE`, `CONTACT_EMAIL`, `CHAT_*` limits | optional vars | see `functions/_lib/config.js` |
+
+The D1 binding `SMS_OPTIN_DB` is reused for the conversation log.
+
+### Refresh knowledge after editing Notion
+
+    NOTION_TOKEN=... npm run knowledge        # local check
+    # production: retry the latest Pages deployment (or push), the build re-pulls Notion
+
+### Tests
+
+    npm test

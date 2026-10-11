@@ -9,7 +9,7 @@ Updated 2026-10-08.
 
 ## Built
 - New homepage (2026-10-08): `public/index.html`, `home.css`, `home.js`. Name, three CTAs (Work with me -> `/bio/`, Product and Get to know me scroll to teaser sections), chat widget, photo, three scroll-in teaser sections. Default accent is Deep Caribbean blue; the other Deep colors (green, yellow, orange, red, indigo) stay in `home.css` as `[data-accent]` options.
-- The chat and the "Check my fit" modal are front-end only. They validate links and reply that the feature isn't live, pointing to email. Real versions need a server function (Cloudflare Pages Function) that calls the model; safety rules are in the plan.
+- The chat and the "Check my fit" modal now call `POST /api/chat` (Pages Function, Claude API, prompt caching, D1 logging). See DEPLOY.md > Chat module. Admin console, alerts and Twilio takeover are not built yet.
 - `/me/mission-and-beliefs/` holds the typed quotes that used to be the homepage (`public/quotes.js`).
 - Homepage (typed quotes), `/clever` prototypes, SMS opt-in, privacy and terms pages.
 - `/bio` — executive bio adapted from the 2026 PDF: black theme, responsive down to phone width, animated load (header fades in, then metric cards one by one, then each section header types and its paragraph fades in).
