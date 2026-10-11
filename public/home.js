@@ -36,6 +36,8 @@
     var r = document.createElement('div'); r.className = 'row' + (user ? ' user' : '');
     if (!user) { var a = document.createElement('div'); a.className = 'av'; r.appendChild(a); }
     var b = document.createElement('div'); b.className = 'bubble'; r.appendChild(b);
+    /* a pill shape turns into an oval on tall text, so wrapped bubbles get a normal rounded corner */
+    if (window.ResizeObserver) new ResizeObserver(function () { b.classList.toggle('multi', b.scrollHeight > 60); }).observe(b);
     lg.appendChild(r); if (!lg._hold) lg.scrollTop = lg.scrollHeight; return b;
   }
   function setText(b, text) {

@@ -77,7 +77,8 @@ a { color: inherit; }
 :root[data-trace="yellow"] { --trace-color: #dccb3f; } :root[data-trace="orange"] { --trace-color: #e8692e; }
 :root[data-trace="red"] { --trace-color: #cf2748; } :root[data-trace="indigo"] { --trace-color: #6258d8; } :root[data-trace="blue"] { --trace-color: #0089c4; }
 @property --trace { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
-.bubble { position: relative; }
+.bubble { position: relative; white-space: pre-line; }
+.bubble.multi { border-radius: 22px; }
 .bubble.trace::after {
   content: ''; position: absolute; inset: -4px; border-radius: inherit; padding: 3px; pointer-events: none;
   background: conic-gradient(from var(--trace), transparent 0deg, color-mix(in srgb, var(--trace-color) 35%, transparent) 120deg, var(--trace-color) 300deg, transparent 330deg);
