@@ -163,6 +163,12 @@ async function fetchGreenhouse(target, fetchImpl) {
 
 const CANT_READ = "I couldn't read that page. Many job sites block automated readers or need a login. Could you paste the text of the job description here instead?";
 
+/** The job number or UUID in a posting link, if any. */
+function jobIdOf(u) {
+  const m = /(?:^|[/=_-])(\d{5,}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?=$|[/?&#_-])/i.exec(u.pathname + u.search);
+  return m ? m[1] : null;
+}
+
 async function readPage(startUrl, fetchImpl, maxChars) {
   let url = startUrl;
   let res;
@@ -190,6 +196,10 @@ async function readPage(startUrl, fetchImpl, maxChars) {
   const structured = extractJobPosting(html);
   let text = structured || htmlToText(html);
   if (text.length < 300) throw new PostingError(CANT_READ, `only ${text.length} chars of text from ${url.hostname}${structured ? "" : " (no JobPosting data)"}`);
+  const id = jobIdOf(startUrl);
+  if (id && !url.toString().includes(id)) {
+    throw new PostingError("That link sent me to a page that isn't the job posting, so the role may be closed or moved. Could you paste the text of the job description here instead?", `redirected away from job id ${id} to ${url.hostname}${url.pathname}`);
+  }
   return { url: url.toString(), text: text.slice(0, maxChars) };
 }
 

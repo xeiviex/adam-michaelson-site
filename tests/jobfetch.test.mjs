@@ -79,3 +79,14 @@ test("fetchPosting uses the Greenhouse API for embedded links and falls back to 
   // unknown job id: the API 404s, the page has nothing, so the visitor is asked to paste
   await assert.rejects(fetchPosting("https://www.acme.com/careers/application?gh_jid=99999999", { fetchImpl: gh }), /paste the text/);
 });
+
+test("a posting link that redirects to a listing page is treated as closed", async () => {
+  const listing = "<p>" + "Open roles: engineer, designer, analyst. ".repeat(20) + "</p>";
+  const f = async (url) => url.includes("/jobs/5692813004")
+    ? new Response(null, { status: 302, headers: { location: "https://boards.acme.com/" } })
+    : new Response(listing, { status: 200, headers: { "content-type": "text/html" } });
+  await assert.rejects(fetchPosting("https://boards.acme.com/acme/jobs/5692813004", { fetchImpl: f }), /closed or moved/);
+  // a link without a job id is read as is
+  const ok = await fetchPosting("https://boards.acme.com/", { fetchImpl: async () => new Response(listing, { status: 200, headers: { "content-type": "text/html" } }) });
+  assert.ok(ok.text.length > 300);
+});
