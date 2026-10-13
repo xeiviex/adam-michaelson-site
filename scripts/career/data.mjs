@@ -334,7 +334,8 @@ export const pages = [
   {
     slug: 'bamboohr',
     name: 'BambooHR',
-    accent: 'yellow',
+    accent: 'bamboohr',
+    logo: '/bio/logos/bamboohr.png',
     years: '2016–2019',
     role: 'Director of Product Management',
     facts: 'B2B SaaS · 600 employees · $300M in annual revenue',

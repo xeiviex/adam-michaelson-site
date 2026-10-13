@@ -3,6 +3,7 @@
 
 :root[data-accent="optum"] { --accent-text: #ff612b; } /* matches the Optum logo orange */
 :root[data-accent="workfront"] { --accent-text: #eb1000; } /* matches the Workfront logo red */
+:root[data-accent="bamboohr"] { --accent-text: #72c41b; } /* matches the BambooHR logo green */
 
 /* ---------- Top bar + side dots ---------- */
 .topbar {
