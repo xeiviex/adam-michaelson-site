@@ -10,6 +10,7 @@ export const pages = [
     slug: 'altabank',
     name: 'Alta Bank',
     accent: 'blue',
+    logo: '/bio/logos/altabank.png',
     years: '2001–2005',
     role: 'Online Banking Manager',
     facts: 'Banking · 300 employees · $1B in assets',
