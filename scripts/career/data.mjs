@@ -91,7 +91,8 @@ export const pages = [
   {
     slug: 'optum',
     name: 'Optum Insight',
-    accent: 'orange',
+    accent: 'optum',
+    logo: '/bio/logos/optum.png',
     years: '2006–2008',
     role: 'Senior Project Manager, Release Manager',
     facts: 'Healthtech · 4,500 employees · $1.6B in annual revenue',
