@@ -75,6 +75,13 @@ html { scroll-padding-top: 70px; }
 .block { width: 100%; padding-top: 28px; margin-top: 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
 .block h2 { font-size: clamp(1.5rem, 2.8vw, 2rem); }
 .block .list { margin-top: 4px; }
+.block p, .block li { max-width: 68ch; }
+.block ul { padding-left: 1.2em; display: flex; flex-direction: column; gap: 10px; }
+.block li ul { margin-top: 10px; }
+.block li::marker { color: var(--muted); }
+.block strong { color: var(--ink); font-weight: 600; }
+.block a { color: var(--accent-text); text-underline-offset: 3px; }
+.block a:hover, .block a:focus-visible { color: var(--accent-hover); }
 .stub { color: var(--muted); font-size: .95rem; font-style: italic; }
 
 footer { border-top: 1px solid var(--line); padding-block: 36px 56px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; font-size: .9rem; color: var(--muted); }
