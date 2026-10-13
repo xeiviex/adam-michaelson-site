@@ -1,6 +1,7 @@
 /* Career pages (/bio/<company>/): five full-screen, two-column sections. Builds on bio.css. */
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+:root[data-accent="altabank"] { --accent-text: #276aff; } /* matches the Alta Bank logo blue */
 :root[data-accent="optum"] { --accent-text: #ff612b; } /* matches the Optum logo orange */
 :root[data-accent="workfront"] { --accent-text: #eb1000; } /* matches the Workfront logo red */
 :root[data-accent="bamboohr"] { --accent-text: #72c41b; } /* matches the BambooHR logo green */

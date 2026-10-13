@@ -9,7 +9,7 @@ export const pages = [
   {
     slug: 'altabank',
     name: 'Alta Bank',
-    accent: 'blue',
+    accent: 'altabank',
     logo: '/bio/logos/altabank.png',
     years: '2001–2005',
     role: 'Online Banking Manager',
