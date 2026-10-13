@@ -172,7 +172,8 @@ export const pages = [
   {
     slug: 'workfront',
     name: 'Workfront',
-    accent: 'indigo',
+    accent: 'workfront',
+    logo: '/bio/logos/workfront.png',
     years: '2008–2011',
     role: 'Product Team Lead',
     facts: 'B2B SaaS · 75 to 350 employees · $10M to $100M in annual revenue',

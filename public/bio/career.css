@@ -2,6 +2,7 @@
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 :root[data-accent="optum"] { --accent-text: #ff612b; } /* matches the Optum logo orange */
+:root[data-accent="workfront"] { --accent-text: #eb1000; } /* matches the Workfront logo red */
 
 /* ---------- Top bar + side dots ---------- */
 .topbar {
