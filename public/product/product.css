@@ -75,6 +75,8 @@ html { scroll-padding-top: 70px; }
 .block { width: 100%; padding-top: 28px; margin-top: 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
 .block h2 { font-size: clamp(1.5rem, 2.8vw, 2rem); }
 .block .list { margin-top: 4px; }
+.block h3 { font-family: var(--label); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-text); margin-top: 10px; }
+.block .more a { text-decoration: none; font-weight: 500; }
 .block p, .block li { max-width: 68ch; }
 .block ul { padding-left: 1.2em; display: flex; flex-direction: column; gap: 10px; }
 .block li ul { margin-top: 10px; }

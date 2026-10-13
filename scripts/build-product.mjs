@@ -60,6 +60,26 @@ const PM_COMPETENCIES = [
 const pm = role("pm", "product managers");
 pm.children[0].children = PM_COMPETENCIES.map(([slug, title, lede]) => ({ slug, title, lede, competency: true, content: PM_COMPETENCY_CONTENT[slug] }));
 
+// Outputs & Outcomes page: how a PM works day to day, then each competency's outputs and outcomes.
+const section = (slug, h) => PM_COMPETENCY_CONTENT[slug].find((x) => x.h === h);
+pm.children[1].content = [
+  { h: "Outputs and outcomes", p: "An output is something a product manager delivers: a deliverable, a document, a release. An outcome is what changes because of it, for customers and for the business. Outputs show the work is getting done. Outcomes show it was worth doing. I look at both, for each of the eight competencies." },
+  { h: "The cadence", p: "Great product management is predictable. These outputs happen on a rhythm the whole company can count on.", ul: [
+    "**Weekly:** demos in production that show clear incremental progress toward the monthly release, and regular 1:1s with the team and key stakeholders.",
+    "**Monthly:** a release to customers for each product swimlane (with a plan for warranty, monitoring, iteration and assessment), at least one specification per PM, a synthesis of research shared with the team, validated designs, and a P&L specific to the product.",
+    "**Quarterly:** the product strategy is reviewed, revised as needed, and validated.",
+    "**Annually:** the vision and the research behind it are reviewed, revised as needed, and validated.",
+  ] },
+  ...PM_COMPETENCIES.map(([slug, title]) => ({
+    h: title,
+    groups: [
+      { ...section(slug, "Outputs and deliverables"), h: "Outputs" },
+      { ...section(slug, "Outcomes"), h: "Outcomes" },
+    ],
+    link: [`More on ${title.toLowerCase()}`, `/product/pm/competencies/${slug}/`],
+  })),
+];
+
 const TOPICS = [
   {
     ...pm,
@@ -135,7 +155,7 @@ function shell({ title, description, body, depth }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="${FONTS}" rel="stylesheet">
-<link rel="stylesheet" href="/product/product.css?v=2">
+<link rel="stylesheet" href="/product/product.css?v=3">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -171,11 +191,16 @@ const renderList = (items) =>
     .join("\n")}\n      </ul>`;
 const renderContent = (sections) =>
   sections
-    .map(
-      (sec) => `    <section class="block">
-      <h2>${esc(sec.h)}</h2>${(sec.p ? sec.p.split("\n\n") : []).map((para) => `\n      <p>${inline(para)}</p>`).join("")}${sec.ul ? `\n      ${renderList(sec.ul)}` : ""}
-    </section>`,
-    )
+    .map((sec) => {
+      const paras = (t) => (t ? t.split("\n\n") : []).map((para) => `\n      <p>${inline(para)}</p>`).join("");
+      const groups = (sec.groups || [])
+        .map((g) => `\n      <h3>${esc(g.h)}</h3>${paras(g.p)}${g.ul ? `\n      ${renderList(g.ul)}` : ""}`)
+        .join("");
+      const link = sec.link ? `\n      <p class="more"><a href="${sec.link[1]}">${esc(sec.link[0])} &rarr;</a></p>` : "";
+      return `    <section class="block">
+      <h2>${esc(sec.h)}</h2>${paras(sec.p)}${sec.ul ? `\n      ${renderList(sec.ul)}` : ""}${groups}${link}
+    </section>`;
+    })
     .join("\n");
 
 const href = (path) => "/product/" + (path.length ? path.join("/") + "/" : "");
