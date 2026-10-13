@@ -53,7 +53,7 @@ function render(p, i) {
       <div class="wrap split">
         <div class="copy">
           ${p.logo
-            ? `<img class="logo" src="${p.logo}" alt="${esc(p.name)} logo" height="40">`
+            ? `<a class="logo-link" href="${p.site}" target="_blank" rel="noopener noreferrer" aria-label="Visit the ${esc(p.name)} website (opens in a new tab)"><img class="logo" src="${p.logo}" alt="${esc(p.name)} logo" height="40"></a>`
             : `<div class="logo-ph" role="img" aria-label="${esc(p.name)} logo placeholder"><span>${esc(p.name)}</span><small>Logo placeholder</small></div>`}
           <span class="eyebrow"><span class="n">Chapter ${pad(i + 1)}</span> · ${p.years}</span>
           <h1>${esc(p.name)}</h1>
@@ -98,7 +98,7 @@ function render(p, i) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/bio/bio.css?v=4">
-<link rel="stylesheet" href="/bio/career.css?v=9">
+<link rel="stylesheet" href="/bio/career.css?v=10">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">

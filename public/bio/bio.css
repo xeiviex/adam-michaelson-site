@@ -189,9 +189,21 @@ a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 2
 .roles { list-style: none; max-width: 78ch; border-top: 1px solid var(--line); }
 .role { padding: 22px 0; border-bottom: 1px solid var(--line); }
 .role-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 16px; margin-bottom: 8px; }
+.role-head { transition: color 0.25s ease; }
+.role-head:hover h3, .role-head:focus-visible h3 { color: var(--accent-text); }
 .role h3 { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
 .role-meta { font-size: 13px; color: var(--accent-text); font-variant-numeric: tabular-nums; }
-.role p { margin-bottom: 12px; }
+.role p { margin-bottom: 16px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px 18px; border-radius: 8px;
+  background: var(--accent-text); color: #000;
+  font-size: 15px; font-weight: 600; line-height: 1.2;
+  transition: filter 0.25s ease, transform 0.25s ease;
+}
+.btn .arrow { display: inline-block; transition: transform 0.25s ease; }
+.btn:hover, .btn:focus-visible { filter: brightness(1.12); }
+.btn:hover .arrow, .btn:focus-visible .arrow { transform: translateX(5px); }
 .section .role p { max-width: none; }
 
 /* ---------- Footer ---------- */

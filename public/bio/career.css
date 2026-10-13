@@ -72,7 +72,9 @@
 .logo-ph span { font-size: 18px; font-weight: 650; letter-spacing: -0.01em; color: var(--ink); }
 .logo-ph small { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); }
 
-.logo { display: block; height: clamp(30px, 3.4vw, 40px); width: auto; max-width: 100%; margin-bottom: clamp(18px, 3vw, 32px); }
+.logo-link { display: block; width: fit-content; max-width: 100%; margin-bottom: clamp(18px, 3vw, 32px); border-radius: 6px; transition: opacity 0.25s ease; }
+.logo-link:hover { opacity: 0.8; }
+.logo { display: block; height: clamp(30px, 3.4vw, 40px); width: auto; max-width: 100%; }
 
 .stats { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
 .stats li { background: var(--glass); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
