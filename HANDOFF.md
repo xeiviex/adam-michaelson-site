@@ -16,6 +16,7 @@ Updated 2026-10-08.
 - `/bio/ai-demo`, `/bio/lendio-case-study`, `/bio/customer-discovery`, `/bio/leadership` — placeholder pages using only facts from the bio, marked "Full write-up in progress."
 
 - `/me/` (2026-10-13): hub plus `/me/{history,family,faith,music,outdoors}/`, shared `me.css`/`me.js` (placeholders for missing media, lightbox). Photos and videos still need adding; see `public/me/README.md`. Copy is a first draft to rewrite.
+- `/product/` (2026-10-13): how-I-do-product page with 9 topic lead-ins, each linking to `/product/<topic>/` (pm, ux, eng, leader, research, leveling-up, measuring-success, ai, 30-60-90). pm/ux/eng/leader each have `competencies/` and `outputs+outcomes/`; PM competencies have 8 child pages. Every child page has a video placeholder and stub sections. Scaffolded by `scripts/build-product.mjs` (skips existing pages unless `--force`, so edit the HTML directly once written). Styles in `public/product/product.css`. Homepage Product teaser now links here.
 
 ## In progress
 - Nothing. `/bio` is live (pushed 2026-10-02, Cloudflare build passed; `/`, `/bio/`, `/clever/`, `/sms-optin/` all return 200).
