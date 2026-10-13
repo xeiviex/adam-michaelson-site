@@ -1,6 +1,10 @@
 /* Career pages (/bio/<company>/): five full-screen, two-column sections. Builds on bio.css. */
-html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+:root[data-accent="optum"] { --accent-text: #ff612b; } /* matches the Optum logo orange */
+:root[data-accent="workfront"] { --accent-text: #eb1000; } /* matches the Workfront logo red */
+:root[data-accent="bamboohr"] { --accent-text: #72c41b; } /* matches the BambooHR logo green */
+:root[data-accent="aktify"] { --accent-text: #fa0052; } /* matches the Aktify logo red */
 
 /* ---------- Top bar + side dots ---------- */
 .topbar {
@@ -32,7 +36,6 @@ html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
   display: flex; align-items: center;
   padding: calc(56px + clamp(24px, 4vw, 48px)) 0 clamp(28px, 4vw, 52px);
   border-bottom: 1px solid var(--line);
-  scroll-snap-align: start;
   position: relative;
 }
 .panel:nth-child(even) { background: linear-gradient(180deg, #060607, #000); }
@@ -58,7 +61,7 @@ html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
 .copy .subtitle { color: var(--accent-text); font-size: clamp(16px, 1.5vw, 19px); font-weight: 500; line-height: 1.45; margin-bottom: 20px; max-width: 52ch; }
 .copy p { color: var(--body); max-width: 56ch; margin-bottom: 14px; font-size: clamp(15px, 1.15vw, 17px); }
 .copy p strong { color: var(--ink); font-weight: 600; }
-.copy .role { font-size: clamp(18px, 1.8vw, 24px); font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+.copy .job { font-size: clamp(18px, 1.8vw, 24px); font-weight: 500; color: var(--ink); margin-bottom: 4px; }
 .copy .facts { font-size: 14px; color: var(--muted); margin-bottom: 18px; letter-spacing: 0.01em; }
 
 .logo-ph {
@@ -67,6 +70,8 @@ html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
 }
 .logo-ph span { font-size: 18px; font-weight: 650; letter-spacing: -0.01em; color: var(--ink); }
 .logo-ph small { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); }
+
+.logo { display: block; height: clamp(30px, 3.4vw, 40px); width: auto; max-width: 100%; margin-bottom: clamp(18px, 3vw, 32px); }
 
 .stats { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
 .stats li { background: var(--glass); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
@@ -129,6 +134,5 @@ html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
   .ph figcaption { font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; scroll-snap-type: none; }
   .js .panel .copy, .js .panel .media { opacity: 1; transform: none; }
 }

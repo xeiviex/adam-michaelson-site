@@ -91,7 +91,8 @@ export const pages = [
   {
     slug: 'optum',
     name: 'Optum Insight',
-    accent: 'orange',
+    accent: 'optum',
+    logo: '/bio/logos/optum.png',
     years: '2006–2008',
     role: 'Senior Project Manager, Release Manager',
     facts: 'Healthtech · 4,500 employees · $1.6B in annual revenue',
@@ -171,7 +172,8 @@ export const pages = [
   {
     slug: 'workfront',
     name: 'Workfront',
-    accent: 'indigo',
+    accent: 'workfront',
+    logo: '/bio/logos/workfront.png',
     years: '2008–2011',
     role: 'Product Team Lead',
     facts: 'B2B SaaS · 75 to 350 employees · $10M to $100M in annual revenue',
@@ -251,7 +253,8 @@ export const pages = [
   {
     slug: 'lendio1',
     name: 'Lendio',
-    accent: 'green',
+    accent: 'blue',
+    logo: '/bio/logos/lendio.png',
     years: '2012–2016',
     role: 'COO, Head of Product',
     facts: 'Fintech · 30 to 100 employees · $6M to $20M in annual revenue',
@@ -331,7 +334,8 @@ export const pages = [
   {
     slug: 'bamboohr',
     name: 'BambooHR',
-    accent: 'yellow',
+    accent: 'bamboohr',
+    logo: '/bio/logos/bamboohr.png',
     years: '2016–2019',
     role: 'Director of Product Management',
     facts: 'B2B SaaS · 600 employees · $300M in annual revenue',
@@ -411,7 +415,8 @@ export const pages = [
   {
     slug: 'aktify',
     name: 'Aktify',
-    accent: 'red',
+    accent: 'aktify',
+    logo: '/bio/logos/aktify.png',
     years: '2019–2021',
     role: 'VP of Product',
     facts: 'AI · 70 employees · $20M in annual revenue',
@@ -492,7 +497,8 @@ export const pages = [
   {
     slug: 'lendio2',
     name: 'Lendio',
-    accent: 'green',
+    accent: 'blue',
+    logo: '/bio/logos/lendio.png',
     years: '2022–2026',
     role: 'SVP of Product',
     facts: 'Fintech · 300 employees · $100M in annual revenue',

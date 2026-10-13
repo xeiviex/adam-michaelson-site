@@ -52,10 +52,12 @@ function render(p, i) {
     <section class="panel hero" id="overview" data-label="${labels[0]}">
       <div class="wrap split">
         <div class="copy">
-          <div class="logo-ph" role="img" aria-label="${esc(p.name)} logo placeholder"><span>${esc(p.name)}</span><small>Logo placeholder</small></div>
+          ${p.logo
+            ? `<img class="logo" src="${p.logo}" alt="${esc(p.name)} logo" height="40">`
+            : `<div class="logo-ph" role="img" aria-label="${esc(p.name)} logo placeholder"><span>${esc(p.name)}</span><small>Logo placeholder</small></div>`}
           <span class="eyebrow"><span class="n">Chapter ${pad(i + 1)}</span> · ${p.years}</span>
           <h1>${esc(p.name)}</h1>
-          <p class="role">${esc(p.role)}</p>
+          <p class="job">${esc(p.role)}</p>
           <p class="facts">${esc(p.facts)}</p>
           <p>${esc(p.about)}</p>
           <p>${esc(p.mine)}</p>
@@ -96,7 +98,7 @@ function render(p, i) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/bio/bio.css?v=4">
-<link rel="stylesheet" href="/bio/career.css?v=1">
+<link rel="stylesheet" href="/bio/career.css?v=8">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -130,7 +132,7 @@ ${last}
   </div>
 </footer>
 
-<script src="/bio/career.js?v=1"></script>
+<script src="/bio/career.js?v=2"></script>
 </body>
 </html>
 `;
