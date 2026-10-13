@@ -415,7 +415,8 @@ export const pages = [
   {
     slug: 'aktify',
     name: 'Aktify',
-    accent: 'red',
+    accent: 'aktify',
+    logo: '/bio/logos/aktify.png',
     years: '2019–2021',
     role: 'VP of Product',
     facts: 'AI · 70 employees · $20M in annual revenue',
