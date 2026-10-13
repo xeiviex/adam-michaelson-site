@@ -1,5 +1,4 @@
 /* Career pages (/bio/<company>/): five full-screen, two-column sections. Builds on bio.css. */
-html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ---------- Top bar + side dots ---------- */
@@ -32,7 +31,6 @@ html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
   display: flex; align-items: center;
   padding: calc(56px + clamp(24px, 4vw, 48px)) 0 clamp(28px, 4vw, 52px);
   border-bottom: 1px solid var(--line);
-  scroll-snap-align: start;
   position: relative;
 }
 .panel:nth-child(even) { background: linear-gradient(180deg, #060607, #000); }
@@ -129,6 +127,5 @@ html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
   .ph figcaption { font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; scroll-snap-type: none; }
   .js .panel .copy, .js .panel .media { opacity: 1; transform: none; }
 }

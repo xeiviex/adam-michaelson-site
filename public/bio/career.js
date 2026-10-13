@@ -23,4 +23,12 @@
     });
   }, { threshold: 0.55 });
   panels.forEach((p) => current.observe(p));
+
+  // Side dots scroll smoothly on click only; ordinary scrolling is left to the browser.
+  dots.forEach((d) => d.addEventListener('click', (e) => {
+    const target = document.querySelector(d.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  }));
 })();
