@@ -15,6 +15,8 @@ Updated 2026-10-08.
 - `/bio` — executive bio adapted from the 2026 PDF: black theme, responsive down to phone width, animated load (header fades in, then metric cards one by one, then each section header types and its paragraph fades in).
 - `/bio/ai-demo`, `/bio/lendio-case-study`, `/bio/customer-discovery`, `/bio/leadership` — placeholder pages using only facts from the bio, marked "Full write-up in progress."
 
+- `/me/` (2026-10-13): hub plus `/me/{history,family,faith,music,outdoors}/`, shared `me.css`/`me.js` (placeholders for missing media, lightbox). Photos and videos still need adding; see `public/me/README.md`. Copy is a first draft to rewrite.
+
 ## In progress
 - Nothing. `/bio` is live (pushed 2026-10-02, Cloudflare build passed; `/`, `/bio/`, `/clever/`, `/sms-optin/` all return 200).
 - If `git push` fails: an invalid `GITHUB_TOKEN` in the shell overrides `gh` login — `unset GITHUB_TOKEN` first.
