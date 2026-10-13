@@ -251,7 +251,8 @@ export const pages = [
   {
     slug: 'lendio1',
     name: 'Lendio',
-    accent: 'green',
+    accent: 'blue',
+    logo: '/bio/logos/lendio.png',
     years: '2012–2016',
     role: 'COO, Head of Product',
     facts: 'Fintech · 30 to 100 employees · $6M to $20M in annual revenue',
@@ -492,7 +493,8 @@ export const pages = [
   {
     slug: 'lendio2',
     name: 'Lendio',
-    accent: 'green',
+    accent: 'blue',
+    logo: '/bio/logos/lendio.png',
     years: '2022–2026',
     role: 'SVP of Product',
     facts: 'Fintech · 300 employees · $100M in annual revenue',
