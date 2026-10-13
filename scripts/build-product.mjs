@@ -1,13 +1,16 @@
 // Scaffolds the /product section (public/product/**) as plain static HTML.
 //
-//   node scripts/build-product.mjs           writes only pages that don't exist yet
+//   node scripts/build-product.mjs           writes pages that don't exist yet, and refills pages that are still
+//                                            untouched stubs ("Written content coming") when content now exists
 //   node scripts/build-product.mjs --force   regenerates everything (overwrites hand-written content!)
 //
-// Run it once to stub pages. After that, edit the HTML directly. The default mode never
-// touches a page that already exists, so adding a new topic below is safe.
+// Written content lives in scripts/product-content/. Once a page has real content it is never overwritten
+// without --force, so you can also edit the generated HTML directly.
 import { mkdirSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
+import { PM_COMPETENCY_CONTENT } from "./product-content/pm-competencies.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 const force = process.argv.includes("--force");
@@ -55,7 +58,7 @@ const PM_COMPETENCIES = [
 ];
 
 const pm = role("pm", "product managers");
-pm.children[0].children = PM_COMPETENCIES.map(([slug, title, lede]) => ({ slug, title, lede, competency: true }));
+pm.children[0].children = PM_COMPETENCIES.map(([slug, title, lede]) => ({ slug, title, lede, competency: true, content: PM_COMPETENCY_CONTENT[slug] }));
 
 const TOPICS = [
   {
@@ -132,7 +135,7 @@ function shell({ title, description, body, depth }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="${FONTS}" rel="stylesheet">
-<link rel="stylesheet" href="/product/product.css?v=1">
+<link rel="stylesheet" href="/product/product.css?v=2">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -156,6 +159,24 @@ ${body}
 </html>
 `;
 }
+
+// Inline markup for written content: **bold** and [text](url). Everything else is escaped.
+const inline = (t) =>
+  esc(t)
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\[(.+?)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+const renderList = (items) =>
+  `<ul>\n${items
+    .map((i) => (typeof i === "string" ? `        <li>${inline(i)}</li>` : `        <li>${inline(i.t)}\n        ${renderList(i.sub)}</li>`))
+    .join("\n")}\n      </ul>`;
+const renderContent = (sections) =>
+  sections
+    .map(
+      (sec) => `    <section class="block">
+      <h2>${esc(sec.h)}</h2>${(sec.p ? sec.p.split("\n\n") : []).map((para) => `\n      <p>${inline(para)}</p>`).join("")}${sec.ul ? `\n      ${renderList(sec.ul)}` : ""}
+    </section>`,
+    )
+    .join("\n");
 
 const href = (path) => "/product/" + (path.length ? path.join("/") + "/" : "");
 
@@ -217,7 +238,7 @@ ${node.children.map((c) => `        <a href="${href([...path, c.slug])}"><b>${es
     </section>`
     : "";
 
-  const sections = (node.competency
+  const sections = node.content ? renderContent(node.content) : (node.competency
     ? ["What it is", "What good looks like", "Where it goes wrong", "How I develop it"]
     : trail.length === 1
       ? ["Overview", "How I do it", "Common mistakes"]
@@ -253,9 +274,9 @@ ${sections}
 /* ---------------- Write ---------------- */
 
 let written = 0, skipped = 0;
-function write(path, html) {
+function write(path, html, refill = false) {
   const file = join(root, "product", ...path, "index.html");
-  if (existsSync(file) && !force) { skipped++; return; }
+  if (existsSync(file) && !force && !(refill && readFileSync(file, "utf8").includes('class="stub"'))) { skipped++; return; }
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, html);
   written++;
@@ -265,7 +286,7 @@ write([], indexPage());
 (function walk(nodes, trail) {
   for (const n of nodes) {
     const t = [...trail, n];
-    write(t.map((x) => x.slug), childPage(n, t));
+    write(t.map((x) => x.slug), childPage(n, t), !!n.content);
     if (n.children) walk(n.children, t);
   }
 })(TOPICS, []);
