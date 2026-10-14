@@ -247,7 +247,7 @@ export const pages = [
       ],
       next: {
         slug: 'lendio1',
-        label: 'Lendio · 2012–2016',
+        label: 'Lendio (part 1) · 2012–2016',
         teaser: 'First product hire, then COO: a SaaS product demoed live in six months, and a pivot to a marketplace that reached $100M in loans in two years.',
       },
     },
@@ -257,6 +257,7 @@ export const pages = [
   {
     slug: 'lendio1',
     name: 'Lendio',
+    part: 'part 1',
     accent: 'blue',
     logo: '/bio/logos/lendio.png',
     site: 'https://www.lendio.com',
@@ -494,7 +495,7 @@ export const pages = [
       ],
       next: {
         slug: 'lendio2',
-        label: 'Lendio · 2022–2026',
+        label: 'Lendio (part 2) · 2022–2026',
         teaser: 'Back as SVP of Product to bring banks into the marketplace, which became lender SaaS, embedded lending, and Forward Flow.',
       },
     },
@@ -504,6 +505,7 @@ export const pages = [
   {
     slug: 'lendio2',
     name: 'Lendio',
+    part: 'part 2',
     accent: 'blue',
     logo: '/bio/logos/lendio.png',
     site: 'https://www.lendio.com',

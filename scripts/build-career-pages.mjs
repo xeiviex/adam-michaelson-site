@@ -8,6 +8,7 @@ import { pages } from './career/data.mjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'bio');
 const total = pages.length;
 const pad = (n) => String(n).padStart(2, '0');
+const label = (p) => (p.part ? `${p.name} (${p.part})` : p.name);
 const esc = (s) => s.replace(/&(?!(?:[a-z]+|#\d+);)/g, '&amp;');
 
 const placeholder = (caption, cls = '') => `
@@ -55,7 +56,7 @@ function render(p, i) {
           ${p.logo
             ? `<a class="logo-link" href="${p.site}" target="_blank" rel="noopener noreferrer" aria-label="Visit the ${esc(p.name)} website (opens in a new tab)"><img class="logo" src="${p.logo}" alt="${esc(p.name)} logo" height="40"></a>`
             : `<div class="logo-ph" role="img" aria-label="${esc(p.name)} logo placeholder"><span>${esc(p.name)}</span><small>Logo placeholder</small></div>`}
-          <span class="eyebrow"><span class="n">Chapter ${pad(i + 1)}</span> · ${p.years}</span>
+          <span class="eyebrow"><span class="n">Chapter ${pad(i + 1)}</span>${p.part ? ` · ${p.part}` : ''} · ${p.years}</span>
           <h1>${esc(p.name)}</h1>
           <p class="job">${esc(p.role)}</p>
           <p class="facts">${esc(p.facts)}</p>
@@ -92,7 +93,7 @@ function render(p, i) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${esc(p.name)} (${p.years}) — Adam Michaelson</title>
+<title>${esc(p.part ? `${p.name}, ${p.part}` : p.name)} (${p.years}) — Adam Michaelson</title>
 <meta name="description" content="${esc(p.role)} at ${esc(p.name)}, ${p.years}. ${esc(p.mine)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -110,7 +111,7 @@ function render(p, i) {
 <header class="topbar">
   <div class="wrap">
     <a class="more" href="/bio/"><span class="arrow" aria-hidden="true">←</span> Executive Bio</a>
-    <nav class="chapters" aria-label="Career chapters">${pages.map((q, j) => `<a href="/bio/${q.slug}/"${j === i ? ' aria-current="page"' : ''} title="${esc(q.name)} · ${q.years}"><span class="sr">${esc(q.name)}</span></a>`).join('')}</nav>
+    <nav class="chapters" aria-label="Career chapters">${pages.map((q, j) => `<a href="/bio/${q.slug}/"${j === i ? ' aria-current="page"' : ''} title="${esc(label(q))} · ${q.years}"><span class="sr">${esc(label(q))}</span></a>`).join('')}</nav>
     <span class="count">Chapter ${i + 1} of ${total}</span>
   </div>
 </header>
@@ -128,7 +129,7 @@ ${last}
 <footer class="foot">
   <div class="wrap">
     <span>Executive Bio<span class="dot">·</span><a class="link" href="/">Adam Michaelson</a></span>
-    <span>${prev ? `<a class="link" href="/bio/${prev.slug}/">← ${esc(prev.name)}</a>` : '<a class="link" href="/bio/">← Executive bio</a>'}</span>
+    <span>${prev ? `<a class="link" href="/bio/${prev.slug}/">← ${esc(label(prev))}</a>` : '<a class="link" href="/bio/">← Executive bio</a>'}</span>
   </div>
 </footer>
 
