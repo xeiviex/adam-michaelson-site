@@ -198,6 +198,13 @@ export const pages = [
       { num: '30', label: 'clients and prospects studied on site' },
     ],
     heroPhoto: 'Workfront headquarters, with signage',
+    heroImage: {
+      src: '/bio/photos/workfront-hq.jpg',
+      alt: 'The Adobe Workfront office building in Utah at dusk, a long glass building with the Adobe sign on the upper corner',
+      position: '80% 50%',
+      width: 985,
+      height: 600,
+    },
     s2: {
       title: 'Give the product a point of view',
       sub: 'The charter: vision and strategy for the next phase, in a company that had never had a product manager.',
