@@ -25,6 +25,13 @@ export const pages = [
       { num: '4', label: 'person support team, hired from zero' },
     ],
     heroPhoto: 'Alta Bank headquarters building, with signage',
+    heroImage: {
+      src: '/bio/photos/altabank-hq.jpg',
+      alt: 'The Alta Bank building in Utah: a historic brick bank with a clock on the corner next to the modern Altabank branch, with mountains behind',
+      aspect: '3 / 2',
+      width: 500,
+      height: 333,
+    },
     s2: {
       title: 'Open the bank’s second front door',
       sub: 'The charter: personal and business online banking, and the people to run them.',

@@ -22,8 +22,8 @@ const media = (photos, kind) => `
         </div>`;
 
 const photo = (img) => `
-        <div class="media media-single">
-          <figure class="photo">
+        <div class="media media-single${img.aspect ? ' media-fit' : ''}">
+          <figure class="photo"${img.aspect ? ` style="aspect-ratio: ${img.aspect}"` : ''}>
             <img src="${img.src}" alt="${esc(img.alt)}" width="${img.width}" height="${img.height}" style="object-position: ${img.position || '50% 50%'}" fetchpriority="high">
           </figure>
         </div>`;
@@ -106,7 +106,7 @@ function render(p, i) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/bio/bio.css?v=4">
-<link rel="stylesheet" href="/bio/career.css?v=11">
+<link rel="stylesheet" href="/bio/career.css?v=12">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
