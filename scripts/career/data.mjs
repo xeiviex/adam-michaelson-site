@@ -177,7 +177,7 @@ export const pages = [
     name: 'Workfront',
     accent: 'workfront',
     logo: '/bio/logos/workfront.png',
-    site: 'https://www.workfront.com',
+    site: 'https://business.adobe.com/products/workfront.html',
     years: '2008–2011',
     role: 'Product Team Lead',
     facts: 'B2B SaaS · 75 to 350 employees · $10M to $100M in annual revenue',
@@ -343,7 +343,7 @@ export const pages = [
     logo: '/bio/logos/bamboohr.png',
     site: 'https://www.bamboohr.com',
     years: '2016–2019',
-    role: 'Director of Product Management',
+    role: 'Director of Product',
     facts: 'B2B SaaS · 600 employees · $300M in annual revenue',
     about:
       'HR software for growing companies: employee records, hiring, onboarding, and time off, built for small and mid-sized businesses.',
