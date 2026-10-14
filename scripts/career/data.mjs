@@ -274,6 +274,13 @@ export const pages = [
       { num: '0 → 10', label: 'product team, built from zero' },
     ],
     heroPhoto: 'Lendio headquarters, with signage',
+    heroImage: {
+      src: '/bio/photos/lendio1-hq.jpg',
+      alt: 'The Lendio headquarters office building in Utah, a five-story building with a glass atrium entrance',
+      position: '26% 50%',
+      width: 882,
+      height: 588,
+    },
     s2: {
       title: 'Change the business with product',
       sub: 'The charter: build a SaaS product for lenders, in a company that had never had a product team.',
