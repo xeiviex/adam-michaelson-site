@@ -295,7 +295,7 @@ export const pages = [
       title: 'Research first: options, speed, and trust',
       sub: 'Thirty contextual inquiries, a conference room covered in sticky notes.',
       body: [
-        'With lead designer Adam Tolman and CTO Trent Miskin, I did contextual inquiry with about 30 banks, lenders, and brokers, then spent weeks synthesizing. Every insight went onto a sticky note, the notes covered the conference room, and we grouped them: <strong>options, speed, and trust</strong>.',
+        'With lead designer Adam Tolman and CTO Trent Miskin, I ran contextual research that reached 30 enterprises, 100 personas, and 100 business owners, then spent weeks synthesizing. Every insight went onto a sticky note, the notes covered the conference room, and we grouped them: <strong>options, speed, and trust</strong>.',
         'Two things came out of it. There was clearly an opportunity to organize origination for loan officers and underwriters, which became the SaaS product. And there was an opportunity to help small business owners directly, which became the idea for a marketplace.',
       ],
       quote: null,
@@ -387,7 +387,7 @@ export const pages = [
       title: 'Three new lines of business',
       sub: 'Performance management, engagement, and payroll, each with its own revenue.',
       body: [
-        'Performance management launched as a new add-on product line and reached about $25 million in ARR. The engagement suite (eNPS, Pulse Surveys, and Analytics) added about $10 million. I then took over the integration and migration of the acquired payroll company, distributing the work of shoring up the experience and migrating customers across the PM team, and payroll added about $30 million in ARR.',
+        'Performance management launched as a new add-on product line with a $25 million P&L. The engagement suite (eNPS, Pulse Surveys, and Analytics) added about $10 million. I then took over the integration and migration of the acquired payroll company, distributing the work of shoring up the experience and migrating customers across the PM team, and payroll added about $30 million in ARR.',
         'The company itself ended the period at roughly $300 million in annual revenue.',
       ],
       points: [
@@ -442,7 +442,7 @@ export const pages = [
       sub: 'The charter: a product team, a vision, and a way to train models at scale.',
       body: [
         'I joined as roughly employee number sixteen, recruited by Jason Ferriante, a friend and chief data scientist I had worked with at Lendio. My job was to build the product team and decide where the company was going.',
-        'One thing stood out immediately: the process for training the conversational models did not scale. Accuracy sat in the high 60s to low 70s, and every improvement was hand-built. The people who suffered for it were the clients’ customers, who talked to the agents, often when no human was awake.',
+        'One thing stood out immediately: the process for training the conversational models did not scale. Accuracy sat at 71%, and every improvement was hand-built. The people who suffered for it were the clients’ customers, who talked to the agents, often when no human was awake.',
       ],
       points: [
         { h: 'The problem', t: 'a non-scalable process for curating and training models.' },

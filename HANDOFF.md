@@ -13,7 +13,7 @@ Updated 2026-10-08.
 - `/me/mission-and-beliefs/` holds the typed quotes that used to be the homepage (`public/quotes.js`).
 - Homepage (typed quotes), `/clever` prototypes, SMS opt-in, privacy and terms pages.
 - `/bio` — executive bio adapted from the 2026 PDF: black theme, responsive down to phone width, animated load (header fades in, then metric cards one by one, then each section header types and its paragraph fades in).
-- `/bio/ai-demo`, `/bio/lendio-case-study`, `/bio/customer-discovery`, `/bio/leadership` — placeholder pages using only facts from the bio, marked "Full write-up in progress."
+- `/bio/altabank`, `/optum`, `/workfront`, `/lendio1`, `/bamboohr`, `/aktify`, `/lendio2` — one page per employer: five full-screen sections (overview, charter, approach, outcomes, learnings and next chapter). Content is in `scripts/career/data.mjs`; run `node scripts/build-career-pages.mjs` to regenerate. Logos live in `public/bio/logos/`; photos are still placeholders. The old `/bio/ai-demo`, `/lendio-case-study`, `/customer-discovery` and `/leadership` placeholder pages were deleted.
 
 - `/me/` (2026-10-13): hub plus `/me/{history,family,faith,music,outdoors}/`, shared `me.css`/`me.js` (placeholders for missing media, lightbox). Photos and videos still need adding; see `public/me/README.md`. Copy is a first draft to rewrite.
 - `/product/` (2026-10-13): how-I-do-product page with 9 topic lead-ins, each linking to `/product/<topic>/` (pm, ux, eng, leader, research, leveling-up, measuring-success, ai, 30-60-90). pm/ux/eng/leader each have `competencies/` and `outputs+outcomes/`; PM competencies have 8 child pages. Every child page has a video placeholder and stub sections. Scaffolded by `scripts/build-product.mjs` (skips existing pages unless `--force`, so edit the HTML directly once written). Styles in `public/product/product.css`. Homepage Product teaser now links here.
@@ -23,6 +23,6 @@ Updated 2026-10-08.
 - If `git push` fails: an invalid `GITHUB_TOKEN` in the shell overrides `gh` login — `unset GITHUB_TOKEN` first.
 
 ## Next
-- Write real content for the four `/bio/*` sub-pages (demo video/link, Lendio case study, customer discovery, leadership).
+- Replace the photo placeholders on the seven career pages, and swap in the newer dark Lendio logo (recolored white).
 - Decide whether to delete stray duplicates: `public/00review.html`, `public/clone10contactinfo.html`, `public/clever/00review.html`, `public/clever/clone10contactinfo.html`.
 - Note: this repo is public. Everything in it is already public on the site, except the opt-in handler code and the database schema, neither of which holds secrets.
