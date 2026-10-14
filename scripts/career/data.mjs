@@ -275,7 +275,7 @@ export const pages = [
     ],
     heroPhoto: 'Lendio headquarters, with signage',
     heroImage: {
-      src: '/bio/photos/lendio1-hq.jpg',
+      src: '/bio/photos/lendio1-hq.jpg?v=2',
       alt: 'The Lendio headquarters office building in Utah, a five-story building with a glass atrium entrance',
       position: '26% 50%',
       width: 882,
