@@ -522,6 +522,13 @@ export const pages = [
       { num: '$18M', label: 'annual loans, Embedded lending' },
     ],
     heroPhoto: 'Lendio headquarters, with signage',
+    heroImage: {
+      src: '/bio/photos/lendio2-hq.jpg',
+      alt: 'Lendio headquarters at dusk, with the Lendio sign on the upper wall',
+      position: '46% 50%',
+      width: 1600,
+      height: 1068,
+    },
     s2: {
       title: 'Bring the banks into the marketplace',
       sub: 'The charter: a lender SaaS product that could attract banks and automate their underwriting.',
