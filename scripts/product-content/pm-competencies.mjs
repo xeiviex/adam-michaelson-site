@@ -82,7 +82,7 @@ export const PM_COMPETENCY_CONTENT = {
       "The Battle of Cannae",
       "Chess: win the game, then work backward to strategies",
       "Jack Lengyel (We Are Marshall): didn't have a strong offensive line, so he ran the veer, helped the kids get through, and kept playing",
-      "AtTask: focus on the front-line worker to drive adoption of project management (a 5x increase in adoption)",
+      "AtTask: focus on the front-line worker to drive adoption of project management (validated 4x and 5x adoption by the two key personas)",
       "P.T. Barnum (\"the noblest art is that of making others happy\"): make people happy, because people are fascinated with the exotic and the macabre, so recruit the exotic and macabre and bring it to the people",
       "BambooHR: Complete Solution, Top Quality, Proven Principles, Actual Results",
     ] },
