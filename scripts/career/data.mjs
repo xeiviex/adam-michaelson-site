@@ -384,6 +384,13 @@ export const pages = [
       { num: '+$10M', label: 'ARR from engagement' },
     ],
     heroPhoto: 'BambooHR headquarters, with signage',
+    heroImage: {
+      src: '/bio/photos/bamboohr-hq.jpg',
+      alt: 'The BambooHR headquarters building in Utah: a large dark glass building with the BambooHR sign at the top corner',
+      position: '50% 20%',
+      width: 800,
+      height: 1066,
+    },
     s2: {
       title: 'Grow past core HR',
       sub: 'The charter: new product lines on a platform known for one thing.',
