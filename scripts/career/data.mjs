@@ -109,6 +109,13 @@ export const pages = [
       { num: '$600M', label: 'SaaS revenue booked' },
     ],
     heroPhoto: 'Optum Insight offices, with signage',
+    heroImage: {
+      src: '/bio/photos/optum-hq.jpg',
+      alt: 'The Optum office building in Utah: a three-story building in warm brick tones with a lawn and mature trees in front',
+      position: '46% 50%',
+      width: 716,
+      height: 444,
+    },
     s2: {
       title: 'Twenty-one applications, one calendar',
       sub: 'The charter: bring order to a release process everyone was frustrated with.',
