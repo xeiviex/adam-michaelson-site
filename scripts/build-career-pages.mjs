@@ -21,6 +21,13 @@ const media = (photos, kind) => `
         <div class="media media-${kind}">${photos.map((c, i) => placeholder(c, `ph-${i + 1}`)).join('')}
         </div>`;
 
+const photo = (img) => `
+        <div class="media media-single${img.aspect ? ' media-fit' : ''}">
+          <figure class="photo"${img.aspect ? ` style="aspect-ratio: ${img.aspect}"` : ''}>
+            <img src="${img.src}" alt="${esc(img.alt)}" width="${img.width}" height="${img.height}" style="object-position: ${img.position || '50% 50%'}" fetchpriority="high">
+          </figure>
+        </div>`;
+
 const points = (items) =>
   `<ul class="points">${items.map((p) => `
           <li><strong>${esc(p.h)}</strong> ${esc(p.t)}</li>`).join('')}
@@ -65,7 +72,7 @@ function render(p, i) {
           <ul class="stats">${p.heroStats.map((s) => `
             <li><span class="num">${esc(s.num)}</span><span class="what">${esc(s.label)}</span></li>`).join('')}
           </ul>
-        </div>${media([p.heroPhoto], 'single')}
+        </div>${p.heroImage ? photo(p.heroImage) : media([p.heroPhoto], 'single')}
       </div>
     </section>`;
 
@@ -99,7 +106,7 @@ function render(p, i) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/bio/bio.css?v=4">
-<link rel="stylesheet" href="/bio/career.css?v=10">
+<link rel="stylesheet" href="/bio/career.css?v=12">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">

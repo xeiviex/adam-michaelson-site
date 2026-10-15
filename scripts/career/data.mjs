@@ -25,6 +25,13 @@ export const pages = [
       { num: '4', label: 'person support team, hired from zero' },
     ],
     heroPhoto: 'Alta Bank headquarters building, with signage',
+    heroImage: {
+      src: '/bio/photos/altabank-hq.jpg',
+      alt: 'The Alta Bank building in Utah: a historic brick bank with a clock on the corner next to the modern Altabank branch, with mountains behind',
+      aspect: '3 / 2',
+      width: 500,
+      height: 333,
+    },
     s2: {
       title: 'Open the bank’s second front door',
       sub: 'The charter: personal and business online banking, and the people to run them.',
@@ -109,6 +116,13 @@ export const pages = [
       { num: '$600M', label: 'SaaS revenue booked' },
     ],
     heroPhoto: 'Optum Insight offices, with signage',
+    heroImage: {
+      src: '/bio/photos/optum-hq.jpg',
+      alt: 'The Optum office building in Utah: a three-story building in warm brick tones with a lawn and mature trees in front',
+      position: '46% 50%',
+      width: 716,
+      height: 444,
+    },
     s2: {
       title: 'Twenty-one applications, one calendar',
       sub: 'The charter: bring order to a release process everyone was frustrated with.',
@@ -191,6 +205,13 @@ export const pages = [
       { num: '30', label: 'clients and prospects studied on site' },
     ],
     heroPhoto: 'Workfront headquarters, with signage',
+    heroImage: {
+      src: '/bio/photos/workfront-hq.jpg',
+      alt: 'The Adobe Workfront office building in Utah at dusk, a long glass building with the Adobe sign on the upper corner',
+      position: '80% 50%',
+      width: 985,
+      height: 600,
+    },
     s2: {
       title: 'Give the product a point of view',
       sub: 'The charter: vision and strategy for the next phase, in a company that had never had a product manager.',
@@ -274,6 +295,13 @@ export const pages = [
       { num: '0 → 10', label: 'product team, built from zero' },
     ],
     heroPhoto: 'Lendio headquarters, with signage',
+    heroImage: {
+      src: '/bio/photos/lendio1-hq.jpg?v=3',
+      alt: 'The Lendio headquarters office building in Utah, a five-story building with a glass atrium entrance',
+      position: '26% 50%',
+      width: 882,
+      height: 588,
+    },
     s2: {
       title: 'Change the business with product',
       sub: 'The charter: build a SaaS product for lenders, in a company that had never had a product team.',
@@ -356,6 +384,13 @@ export const pages = [
       { num: '+$10M', label: 'ARR from engagement' },
     ],
     heroPhoto: 'BambooHR headquarters, with signage',
+    heroImage: {
+      src: '/bio/photos/bamboohr-hq.jpg',
+      alt: 'The BambooHR headquarters building in Utah: a large dark glass building with the BambooHR sign at the top corner',
+      position: '50% 20%',
+      width: 800,
+      height: 1066,
+    },
     s2: {
       title: 'Grow past core HR',
       sub: 'The charter: new product lines on a platform known for one thing.',
@@ -522,6 +557,13 @@ export const pages = [
       { num: '$18M', label: 'annual loans, Embedded lending' },
     ],
     heroPhoto: 'Lendio headquarters, with signage',
+    heroImage: {
+      src: '/bio/photos/lendio2-hq.jpg',
+      alt: 'Lendio headquarters at dusk, with the Lendio sign on the upper wall',
+      position: '46% 50%',
+      width: 1600,
+      height: 1068,
+    },
     s2: {
       title: 'Bring the banks into the marketplace',
       sub: 'The charter: a lender SaaS product that could attract banks and automate their underwriting.',
