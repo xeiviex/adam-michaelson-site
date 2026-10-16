@@ -18,12 +18,12 @@ const placeholder = (caption, cls = '') => `
           </figure>`;
 
 const tile = (img, cls) => `
-          <figure class="photo ${cls}">
+          <figure class="photo ${cls}"${img.aspect ? ` style="aspect-ratio: ${img.aspect}"` : ''}>
             <img src="${img.src}" alt="${esc(img.alt)}" width="${img.width}" height="${img.height}" loading="lazy" style="object-position: ${img.position || '50% 50%'}">
           </figure>`;
 
 const media = (photos, kind) => `
-        <div class="media media-${kind}">${photos.map((c, i) => (typeof c === 'string' ? placeholder(c, `ph-${i + 1}`) : tile(c, `ph-${i + 1}`))).join('')}
+        <div class="media media-${kind}${photos.length === 1 && photos[0].aspect ? ' media-fit' : ''}">${photos.map((c, i) => (typeof c === 'string' ? placeholder(c, `ph-${i + 1}`) : tile(c, `ph-${i + 1}`))).join('')}
         </div>`;
 
 const photo = (img) => `
@@ -114,7 +114,7 @@ function render(p, i) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/bio/bio.css?v=4">
-<link rel="stylesheet" href="/bio/career.css?v=14">
+<link rel="stylesheet" href="/bio/career.css?v=15">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
