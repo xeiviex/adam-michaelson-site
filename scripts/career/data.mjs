@@ -588,7 +588,7 @@ export const pages = [
         { src: '/bio/photos/lendio2-lenders.webp?v=2', alt: 'Three community bank officers gather around a table and review a small business loan application together', position: '50% 40%', width: 1145, height: 1374 },
         { src: '/bio/photos/lendio2-sales.webp', alt: 'Lendio sales team members on headsets on a call with a loan applicant, with the Lendio logo on the glass behind them', position: '45% 40%', width: 900, height: 1080 },
       ],
-      photoNote: 'Illustrative scenes (AI-generated), not photographs of actual employees or customers.',
+      photoNote: 'The people depicted here are AI-generated; they are not actual employees or customers.',
     },
     s3: {
       title: 'Take the front line, go from 0 to 1',
@@ -601,7 +601,7 @@ export const pages = [
       photos: [
         { src: '/bio/photos/lendio2-team.webp', alt: 'A product team of four works around a table with laptops and notebooks, with app wireframes and sticky notes on the whiteboard behind them', aspect: '3 / 2', width: 1400, height: 933 },
       ],
-      photoNote: 'Illustrative scene (AI-generated), not a photograph of actual employees.',
+      photoNote: 'The people depicted here are AI-generated; they are not actual employees.',
     },
     s4: {
       title: 'Three new business lines',
@@ -621,7 +621,7 @@ export const pages = [
         { src: '/bio/photos/lendio2-partners.webp', alt: 'A video call with four participants: Adam Michaelson and a bank partner, a capital partner and a lending partner', fit: 'contain', width: 1400, height: 933 },
         'The product team shipping',
       ],
-      photoNote: 'Illustrative scene (AI-generated), not a photograph of actual people.',
+      photoNote: 'Although Adam’s likeness is used, the rest of the people depicted here are AI-generated.',
     },
     s5: {
       title: 'Earn trust, then automate',
@@ -631,11 +631,11 @@ export const pages = [
         'In my last month I shipped 12 production features with Claude Code. I hit the milestones I came to hit, the new lines and the platform behind them were in place, and the team was strong enough to carry the work forward. I was ready for my next adventure.',
       ],
       photos: [
+        { src: '/bio/photos/lendio2-learn-stage.webp', alt: 'Adam Michaelson at a podium with a MacBook, pointing at a large screen showing a dashboard, with an audience in the foreground and a window view of Utah County behind', width: 1400, height: 933 },
         { src: '/bio/photos/lendio2-learn-team.webp', alt: 'Five colleagues gathered around a laptop in a bright office, sharing a quiet moment of satisfaction', position: '50% 40%', width: 1000, height: 1500 },
-        { src: '/bio/photos/lendio2-learn-stage.webp', alt: 'Adam Michaelson at a podium with a MacBook, pointing at a large screen showing a dashboard, with an audience in the foreground and a window view of Utah County behind', fit: 'contain', width: 1400, height: 933 },
         { src: '/bio/photos/lendio2-learn-dashboard.webp', alt: 'A dark dashboard showing a conversion rate line chart rising from January to December', fit: 'contain', width: 1400, height: 933 },
       ],
-      photoNote: 'Illustrative scenes (AI-generated), not photographs of actual people or a real product screen.',
+      photoNote: 'Although Adam’s likeness is used, the rest of the people and product depicted here are AI-generated.',
       next: {
         slug: null,
         label: 'What’s next',
