@@ -598,7 +598,10 @@ export const pages = [
         'I then asked the C-team to let me lead as a front-line leader and pick my own PMs and engineers. I interviewed each of them and told them honestly how hard it would be, a filter in the style of Shackleton, so only people ready for something hard would sign on. We met daily for a month, formed pods, set a beta date, and built for three months.',
       ],
       quote: null,
-      photos: ['The 0-to-1 team in a pod working session, mid-build'],
+      photos: [
+        { src: '/bio/photos/lendio2-team.webp', alt: 'A product team of four works around a table with laptops and notebooks, with app wireframes and sticky notes on the whiteboard behind them', aspect: '3 / 2', width: 1400, height: 933 },
+      ],
+      photoNote: 'Illustrative scene (AI-generated), not a photograph of actual employees.',
     },
     s4: {
       title: 'Three new business lines',
