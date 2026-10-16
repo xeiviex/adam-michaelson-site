@@ -10,7 +10,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import knowledge from "../_generated/knowledge.js";
 import { getConfig } from "../_lib/config.js";
 import { buildSystem } from "../_lib/prompts.js";
-import { looksLikeUrl, fetchPosting, PostingError } from "../_lib/jobfetch.js";
+import { looksLikeUrl, fetchPosting, cacheKey, PostingError } from "../_lib/jobfetch.js";
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -94,9 +94,13 @@ export async function onRequestPost({ request, env, waitUntil }) {
   };
   if (chatType === "fit" && looksLikeUrl(message)) {
     try {
-      const posting = await fetchPosting(message, { maxChars: cfg.maxMessageChars.fit });
-      await db.prepare("INSERT INTO chat_attachments (session_id, message_id, url, content, created_at) VALUES (?1,?2,?3,?4,?5)")
-        .bind(sessionId, messageId, posting.url, posting.text, now()).run();
+      // Reuse a posting already read in the last week: many job sites refuse repeat automated requests.
+      const key = cacheKey(message);
+      const weekAgo = new Date(Date.now() - 7 * 86400e3).toISOString();
+      const cached = await db.prepare("SELECT url, content FROM chat_attachments WHERE source_url = ?1 AND created_at > ?2 ORDER BY id DESC LIMIT 1").bind(key, weekAgo).first();
+      const posting = cached ? { url: cached.url, text: cached.content } : await fetchPosting(message, { maxChars: cfg.maxMessageChars.fit });
+      await db.prepare("INSERT INTO chat_attachments (session_id, message_id, url, content, created_at, source_url) VALUES (?1,?2,?3,?4,?5,?6)")
+        .bind(sessionId, messageId, posting.url, posting.text, now(), key).run();
     } catch (e) {
       try {
         await db.prepare("INSERT INTO chat_errors (created_at, session_id, status, message) VALUES (?1,?2,NULL,?3)")

@@ -39,6 +39,14 @@ export function validateUrl(raw) {
   return u;
 }
 
+/** Stable key for a posting link: tracking parameters and fragments removed. */
+export function cacheKey(raw) {
+  const u = validateUrl(raw);
+  for (const k of [...u.searchParams.keys()]) if (/^(utm_|gclid$|fbclid$|mc_|ref$|src$|source$|trk)/i.test(k)) u.searchParams.delete(k);
+  u.hash = "";
+  return u.toString();
+}
+
 const ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", ndash: "-", mdash: "-", rsquo: "'", lsquo: "'", ldquo: '"', rdquo: '"', bull: "-", hellip: "..." };
 export function decode(s) {
   return s

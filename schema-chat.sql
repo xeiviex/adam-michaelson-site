@@ -45,6 +45,9 @@ CREATE TABLE IF NOT EXISTS chat_attachments (
   message_id  INTEGER NOT NULL,
   url         TEXT NOT NULL,
   content     TEXT NOT NULL,
-  created_at  TEXT NOT NULL
+  created_at  TEXT NOT NULL,
+  source_url  TEXT                                      -- the link as the visitor gave it, tracking params removed; used as a one-week cache key
 );
+-- Existing databases created before source_url was added: ALTER TABLE chat_attachments ADD COLUMN source_url TEXT;
 CREATE INDEX IF NOT EXISTS idx_chat_att_msg ON chat_attachments (message_id);
+CREATE INDEX IF NOT EXISTS idx_chat_att_source ON chat_attachments (source_url, created_at);
