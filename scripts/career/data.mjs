@@ -633,7 +633,7 @@ export const pages = [
       photos: [
         { src: '/bio/photos/lendio2-learn-stage.webp', alt: 'Adam Michaelson at a podium with a MacBook, pointing at a large screen showing a dashboard, with an audience in the foreground and a window view of Utah County behind', width: 1400, height: 933 },
         { src: '/bio/photos/lendio2-learn-team.webp', alt: 'Five colleagues gathered around a laptop in a bright office, sharing a quiet moment of satisfaction', position: '50% 40%', width: 1000, height: 1500 },
-        { src: '/bio/photos/lendio2-learn-dashboard.webp', alt: 'A dark dashboard showing a conversion rate line chart rising from January to December', fit: 'contain', width: 1400, height: 933 },
+        { src: '/bio/photos/lendio2-learn-dashboard.webp?v=2', alt: 'A dark dashboard showing a conversion rate line chart rising from January to December', width: 1122, height: 1402 },
       ],
       photoNote: 'Although Adam’s likeness is used, the rest of the people and product depicted here are AI-generated.',
       next: {
