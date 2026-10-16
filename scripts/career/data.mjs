@@ -473,6 +473,13 @@ export const pages = [
       { num: '24%', label: 'EBITDA, $4.8M annualized' },
     ],
     heroPhoto: 'Aktify offices, with signage',
+    heroImage: {
+      src: '/bio/photos/aktify-hq.jpg',
+      alt: 'The Aktify office building in Utah, a glass office tower with the Aktify sign at the top left and mountains in the distance',
+      aspect: '4 / 3',
+      width: 784,
+      height: 588,
+    },
     s2: {
       title: 'Teach the models, and scale the teaching',
       sub: 'The charter: a product team, a vision, and a way to train models at scale.',
