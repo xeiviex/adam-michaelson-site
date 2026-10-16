@@ -584,10 +584,11 @@ export const pages = [
         { h: 'Marketplace sellers', t: 'wanting better products to offer applicants.' },
       ],
       photos: [
-        'A small business owner at a truck, bakery oven, or shop counter',
-        'A community bank’s lending officers',
-        'The Lendio sales team on a call with an applicant',
+        { src: '/bio/photos/lendio2-owner.webp', alt: 'A small business owner in her bakery, standing at the counter with a notebook and fresh loaves in front of her', position: '50% 38%', width: 800, height: 1920 },
+        { src: '/bio/photos/lendio2-lenders.webp?v=2', alt: 'Three community bank officers gather around a table and review a small business loan application together', position: '50% 40%', width: 1145, height: 1374 },
+        { src: '/bio/photos/lendio2-sales.webp', alt: 'Lendio sales team members on headsets on a call with a loan applicant, with the Lendio logo on the glass behind them', position: '45% 40%', width: 900, height: 1080 },
       ],
+      photoNote: 'Illustrative scenes (AI-generated), not photographs of actual employees or customers.',
     },
     s3: {
       title: 'Take the front line, go from 0 to 1',
