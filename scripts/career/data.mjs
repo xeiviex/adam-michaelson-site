@@ -618,9 +618,10 @@ export const pages = [
       photos: [
         'The lender portal and decisioning screens',
         'A white-labeled application on a partner’s site',
-        'Bank partners and capital sources',
+        { src: '/bio/photos/lendio2-partners.webp', alt: 'A video call with four participants: Adam Michaelson and a bank partner, a capital partner and a lending partner', fit: 'contain', width: 1400, height: 933 },
         'The product team shipping',
       ],
+      photoNote: 'Illustrative scene (AI-generated), not a photograph of actual people.',
     },
     s5: {
       title: 'Earn trust, then automate',
