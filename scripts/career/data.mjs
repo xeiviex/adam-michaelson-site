@@ -588,7 +588,7 @@ export const pages = [
         { src: '/bio/photos/lendio2-lenders.webp?v=2', alt: 'Three community bank officers gather around a table and review a small business loan application together', position: '50% 40%', width: 1145, height: 1374 },
         { src: '/bio/photos/lendio2-sales.webp', alt: 'Lendio sales team members on headsets on a call with a loan applicant, with the Lendio logo on the glass behind them', position: '45% 40%', width: 900, height: 1080 },
       ],
-      photoNote: 'The people depicted here are AI-generated; they are not actual employees or customers.',
+      photoNote: 'Although Adam’s likeness is used, the rest of the people and product depicted here are AI-generated.',
     },
     s3: {
       title: 'Take the front line, go from 0 to 1',
@@ -601,7 +601,7 @@ export const pages = [
       photos: [
         { src: '/bio/photos/lendio2-team.webp', alt: 'A product team of four works around a table with laptops and notebooks, with app wireframes and sticky notes on the whiteboard behind them', aspect: '3 / 2', width: 1400, height: 933 },
       ],
-      photoNote: 'The people depicted here are AI-generated; they are not actual employees.',
+      photoNote: 'Although Adam’s likeness is used, the rest of the people and product depicted here are AI-generated.',
     },
     s4: {
       title: 'Three new business lines',
@@ -621,7 +621,7 @@ export const pages = [
         { src: '/bio/photos/lendio2-partners.webp', alt: 'A video call with four participants: Adam Michaelson and a bank partner, a capital partner and a lending partner', fit: 'contain', width: 1400, height: 933 },
         'The product team shipping',
       ],
-      photoNote: 'Although Adam’s likeness is used, the rest of the people depicted here are AI-generated.',
+      photoNote: 'Although Adam’s likeness is used, the rest of the people and product depicted here are AI-generated.',
     },
     s5: {
       title: 'Earn trust, then automate',
