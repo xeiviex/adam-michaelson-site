@@ -104,6 +104,9 @@
 .media-collage { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
 .media-collage .ph-1 { grid-row: 1 / 3; }
 .media-montage { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+/* One large landscape photo on top, two photos side by side beneath */
+.media-feature { grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr; }
+.media-feature .ph-1 { grid-column: 1 / 3; aspect-ratio: 3 / 2; }
 
 .ph {
   position: relative; margin: 0; min-height: 0; overflow: hidden;
@@ -130,8 +133,8 @@
 .photo.photo-contain img { object-fit: contain; }
 
 /* Photos inside the collage and montage grids fill their tile */
-.media-collage .photo, .media-montage .photo { position: relative; }
-.media-collage .photo img, .media-montage .photo img { position: absolute; inset: 0; }
+.media-collage .photo, .media-montage .photo, .media-feature .photo { position: relative; }
+.media-collage .photo img, .media-montage .photo img, .media-feature .photo img { position: absolute; inset: 0; }
 
 .photo { margin: 0; min-height: 0; overflow: hidden; border-radius: 12px; border: 1px solid var(--line); background: #0b0b0c; }
 .photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -147,6 +150,8 @@
   .media-collage .ph { aspect-ratio: 1; }
   .media-collage .ph-1 { grid-row: auto; grid-column: 1 / 3; aspect-ratio: 16 / 9; }
   .media-collage .photo, .media-montage .photo { aspect-ratio: 1; }
+  .media-feature .photo, .media-feature .ph { aspect-ratio: 4 / 5; }
+  .media-feature .ph-1 { aspect-ratio: 3 / 2; }
   .media-collage .photo.ph-1 { aspect-ratio: 4 / 3; }
   .media-montage .ph { aspect-ratio: 1; }
   .stats { grid-template-columns: 1fr; }
