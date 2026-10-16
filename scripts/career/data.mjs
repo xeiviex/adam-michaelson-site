@@ -601,7 +601,7 @@ export const pages = [
       photos: [
         { src: '/bio/photos/lendio2-team.webp', alt: 'A product team of four works around a table with laptops and notebooks, with app wireframes and sticky notes on the whiteboard behind them', aspect: '3 / 2', width: 1400, height: 933 },
       ],
-      photoNote: 'These images are AI-generated.',
+      photoNote: 'Although Adam’s likeness has been used, the rest is AI generated.',
     },
     s4: {
       title: 'Three new business lines',
