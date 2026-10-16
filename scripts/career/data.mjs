@@ -630,6 +630,11 @@ export const pages = [
         'Banks did not trust full automation at first, so we sequenced the strategy: a lender portal with a clear audit trail of every decision, then, once trust was earned, full automation and Forward Flow. To raise the craft of a 40-person team, I set agreed standards and a 30-, 60-, and 90-day path. Those who delivered called it the biggest leveling up of their careers.',
         'In my last month I shipped 12 production features with Claude Code. I hit the milestones I came to hit, the new lines and the platform behind them were in place, and the team was strong enough to carry the work forward. I was ready for my next adventure.',
       ],
+      photos: [
+        'The moment the milestone landed: the team, together',
+        'Demoing on stage: a floor-to-ceiling window with a westward view over northern Utah County, a large screen showing the demo, and Adam at a minimal podium with a MacBook Air, raising a hand toward the screen (seen from behind the crowd)',
+        'A dark-background dashboard: a jagged line graph of conversion rate over time, trending up and to the right',
+      ],
       next: {
         slug: null,
         label: 'What’s next',
