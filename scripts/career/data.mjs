@@ -635,7 +635,7 @@ export const pages = [
         { src: '/bio/photos/lendio2-learn-team.webp', alt: 'Five colleagues gathered around a laptop in a bright office, sharing a quiet moment of satisfaction', position: '50% 40%', width: 1000, height: 1500 },
         { src: '/bio/photos/lendio2-learn-dashboard.webp', alt: 'A dark dashboard showing a conversion rate line chart rising from January to December', fit: 'contain', width: 1400, height: 933 },
       ],
-      photoNote: 'Although Adam’s likeness is used, the rest of the people depicted here are AI-generated. The dashboard is illustrative, not a real product screen.',
+      photoNote: 'Although Adam’s likeness is used, the rest of the people and product depicted here are AI-generated.',
       next: {
         slug: null,
         label: 'What’s next',
