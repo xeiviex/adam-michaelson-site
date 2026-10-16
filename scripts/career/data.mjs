@@ -624,10 +624,10 @@ export const pages = [
     },
     s5: {
       title: 'Earn trust, then automate',
-      sub: 'What I learned, how the team adapted, and why I moved on.',
+      sub: 'What I learned, how the team adapted, and what came next.',
       body: [
         'Banks did not trust full automation at first, so we sequenced the strategy: a lender portal with a clear audit trail of every decision, then, once trust was earned, full automation and Forward Flow. To raise the craft of a 40-person team, I set agreed standards and a 30-, 60-, and 90-day path. Those who delivered called it the biggest leveling up of their careers.',
-        'In my last month I shipped 12 production features with Claude Code. My milestones were met, but Lendio’s core business was shrinking while the new lines had not yet grown large enough to offset it. Rather than leave my team to carry the cuts, I chose to move on.',
+        'In my last month I shipped 12 production features with Claude Code. I hit the milestones I came to hit, the new lines and the platform behind them were in place, and the team was strong enough to carry the work forward. I was ready for my next adventure.',
       ],
       next: {
         slug: null,
