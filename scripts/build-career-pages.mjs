@@ -99,7 +99,10 @@ function render(p, i) {
             <span class="next-teaser">${esc(next.teaser)}</span>
             <span class="more">${nextCta} <span class="arrow" aria-hidden="true">→</span></span>
           </a>
-        </div>${media(p.s5.photos || ['The moment the milestone landed: the team, together'], (p.s5.photos || []).length === 3 ? 'collage' : 'single')}
+        </div>${(() => { const m = media(p.s5.photos || ['The moment the milestone landed: the team, together'], (p.s5.photos || []).length === 3 ? 'collage' : 'single'); return p.s5.photoNote ? `
+        <div class="media-col">${m}
+          <p class="photo-note">${esc(p.s5.photoNote)}</p>
+        </div>` : m; })()}
       </div>
     </section>`;
 
@@ -114,7 +117,7 @@ function render(p, i) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/bio/bio.css?v=4">
-<link rel="stylesheet" href="/bio/career.css?v=17">
+<link rel="stylesheet" href="/bio/career.css?v=18">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
