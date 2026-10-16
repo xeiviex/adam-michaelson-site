@@ -576,7 +576,7 @@ export const pages = [
       sub: 'The charter: a lender SaaS product that could attract banks and automate their underwriting.',
       body: [
         'Up to then the marketplace offered only sub-prime financing through fintech and alternative lenders. But many of the owners who came to Lendio were prime-qualified. Banks held their deposits, yet generally steered clear of loans under $1 million as too costly and risky to underwrite.',
-        'The strategy was to build a lender SaaS product, a lender tool to help lenders compete in this market. This would drive not only recurring revenue, but also bring bank-quality options to small business owners. This played into the “options” principle that had guided Lendio from the start.',
+        'The strategy was to build a lender SaaS product, a tool to help lenders compete in this market. This would drive not only recurring revenue, but also bring bank-quality options to small business owners. This played into the “options” principle that had guided Lendio from the start.',
       ],
       points: [
         { h: 'Small business owners', t: 'prime-qualified, needing cheaper and larger options.' },
