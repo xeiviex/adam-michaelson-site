@@ -99,7 +99,7 @@ function render(p, i) {
             <span class="next-teaser">${esc(next.teaser)}</span>
             <span class="more">${nextCta} <span class="arrow" aria-hidden="true">→</span></span>
           </a>
-        </div>${media(p.s5.photos || ['The moment the milestone landed: the team, together'], 'single')}
+        </div>${media(p.s5.photos || ['The moment the milestone landed: the team, together'], (p.s5.photos || []).length === 3 ? 'collage' : 'single')}
       </div>
     </section>`;
 
