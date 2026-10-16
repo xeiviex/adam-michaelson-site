@@ -122,6 +122,9 @@
 /* A photo shown uncropped at its own aspect ratio (low-resolution or wide shots) */
 .media-fit { height: auto; align-self: center; }
 .media-fit .photo { height: auto; }
+.media-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.photo-note { font-size: 12px; line-height: 1.4; color: var(--muted); margin: 0; }
+
 /* Photos inside the collage and montage grids fill their tile */
 .media-collage .photo, .media-montage .photo { position: relative; }
 .media-collage .photo img, .media-montage .photo img { position: absolute; inset: 0; }

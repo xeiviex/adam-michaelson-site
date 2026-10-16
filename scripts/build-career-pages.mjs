@@ -50,7 +50,10 @@ function section(id, n, label, s, kind) {
           <p class="subtitle">${esc(s.sub)}</p>
           ${paras(s.body)}
           ${s.points ? points(s.points) : ''}
-        </div>${media(s.photos, kind)}
+        </div>${s.photoNote ? `
+        <div class="media-col">${media(s.photos, kind)}
+          <p class="photo-note">${esc(s.photoNote)}</p>
+        </div>` : media(s.photos, kind)}
       </div>
     </section>`;
 }
@@ -111,7 +114,7 @@ function render(p, i) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/bio/bio.css?v=4">
-<link rel="stylesheet" href="/bio/career.css?v=13">
+<link rel="stylesheet" href="/bio/career.css?v=14">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
