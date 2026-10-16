@@ -555,7 +555,7 @@ export const pages = [
     role: 'SVP of Product',
     facts: 'Fintech · 300 employees · $100M in annual revenue',
     about:
-      'Now the largest online marketplace for small business loans. This time the company had grown to 300 people and $100 million in annual revenue.',
+      'Now the largest online marketplace for small business loans. The company had grown to 300 people and $100 million in annual revenue.',
     mine:
       'Recruited for a second time to lead the product team and create new product lines, with 40 direct and indirect reports across directors, PMs, and UX designers.',
     heroStats: [
@@ -572,11 +572,11 @@ export const pages = [
       height: 1068,
     },
     s2: {
-      title: 'Bring the banks into the marketplace',
+      title: 'Bring on the banks',
       sub: 'The charter: a lender SaaS product that could attract banks and automate their underwriting.',
       body: [
-        'Up to then the marketplace offered mostly fintech and alternative lenders, and Lendio’s loans skewed subprime. But many of the owners who arrived were prime-qualified. Banks held their deposits, yet generally steered clear of loans under $1 million as too costly and risky to underwrite.',
-        'The strategy was to return to the idea behind the original SaaS product, a lender tool with recurring revenue, and to make bank-quality options available to small business owners. It also played into the “options” principle that had guided Lendio from the start.',
+        'Up to then the marketplace offered only sub-prime financing through fintech and alternative lenders. But many of the owners who came to Lendio were prime-qualified. Banks held their deposits, yet generally steered clear of loans under $1 million as too costly and risky to underwrite.',
+        'The strategy was to build a lender SaaS product, a lender tool to help lenders compete in this market. This would drive not only recurring revenue, but also bring bank-quality options to small business owners. This played into the “options” principle that had guided Lendio from the start.',
       ],
       points: [
         { h: 'Small business owners', t: 'prime-qualified, needing cheaper and larger options.' },
@@ -591,10 +591,10 @@ export const pages = [
       photoNote: 'These images are AI-generated.',
     },
     s3: {
-      title: 'Take the front line, go from 0 to 1',
+      title: 'Go from 0 to 1',
       sub: 'When the first approach failed, I asked to lead it myself.',
       body: [
-        'I began by managing from a high level. One group was building an acquired, never-released underwriting tool. It had no roadmap and no release plan, and when the target was missed I stepped in. That effort ended in a total loss that pre-dated me and took about a year to manage out.',
+        'I began by managing from a high level. One group was building on an acquired, never-released underwriting tool. It had no roadmap and no release plan, and when the target was missed I stepped in. That effort ended in a total loss (from decisions that pre-dated me) and took about a year to manage out.',
         'I then asked the C-team to let me lead as a front-line leader and pick my own PMs and engineers. I interviewed each of them and told them honestly how hard it would be, a filter in the style of Shackleton, so only people ready for something hard would sign on. We met daily for a month, formed pods, set a beta date, and built for three months.',
       ],
       quote: null,
@@ -608,12 +608,13 @@ export const pages = [
       sub: 'Intelligent Lending, Embedded Lending, and Forward Flow.',
       body: [
         '<strong>Intelligent Lending</strong> gave banks automated decisioning, a white-labeled application, core-system integration, CRA targeting, and instant offers. We demoed in-house, landed a beta bank, and added a second within a month.',
-        '<strong>Embedded lending</strong> put that application inside the products of Paychex, Lowe’s, and Dun &amp; Bradstreet. <strong>Forward Flow</strong> let a capital source say “fund loans that look like this” while Lendio automated origination and closing, earning on acquisition and on loan performance.',
+        '<strong>Embedded lending</strong> put that application / origination experience inside small business service providers’ logged-in experiences, like Paychex, Lowe’s, and Dun &amp; Bradstreet.',
+        '<strong>Forward Flow</strong> let a capital source say “fund loans that look like this” while Lendio automated origination and closing, earning on acquisition and on loan performance.',
       ],
       points: [
-        { h: 'Lender SaaS', t: 'automated bank origination, $20M in annual loans.' },
-        { h: 'Embedded lending', t: 'small business service providers, $18M in annual loans.' },
-        { h: 'Forward Flow', t: 'AI decisioning and capital deployment, $9B in capital attracted.' },
+        { h: 'Lender SaaS', t: 'automated bank origination, $20M in annual loans, sub-prime bank options for the first time.' },
+        { h: 'Embedded lending', t: 'small business service providers, $18M in annual loans, increased conversion to Lendio.' },
+        { h: 'Forward Flow', t: 'AI decisioning and capital deployment, $9B in capital attracted, ability to craft products with lenders / capital sources.' },
       ],
       photos: [
         'The lender portal and decisioning screens',
@@ -627,8 +628,8 @@ export const pages = [
       title: 'Earn trust, then automate',
       sub: 'What I learned, how the team adapted, and what came next.',
       body: [
-        'Banks did not trust full automation at first, so we sequenced the strategy: a lender portal with a clear audit trail of every decision, then, once trust was earned, full automation and Forward Flow. To raise the craft of a 40-person team, I set agreed standards and a 30-, 60-, and 90-day path. Those who delivered called it the biggest leveling up of their careers.',
-        'In my last month I shipped 12 production features with Claude Code. I hit the milestones I came to hit, the new lines and the platform behind them were in place, and the team was strong enough to carry the work forward. I was ready for my next adventure.',
+        'Banks did not trust full automation at first, so we sequenced the strategy: deterministic logic under a lender portal with a clear audit trail of every decision. Then, once trust was earned, full automation and Forward Flow. To raise the craft of a 40-person team, I set agreed standards and a 30-, 60-, and 90-day path. Those who delivered called it the biggest leveling up of their careers.',
+        'In my last month I shipped 12 production features (60,000 lines of code) with Claude Code. I hit the milestones I came to hit, the new product lines and the platform behind them were in place, and the team was strong enough to carry the work forward. I was ready for my next adventure.',
       ],
       photos: [
         { src: '/bio/photos/lendio2-learn-stage.webp', alt: 'Adam Michaelson at a podium with a MacBook, pointing at a large screen showing a dashboard, with an audience in the foreground and a window view of Utah County behind', width: 1400, height: 933 },
