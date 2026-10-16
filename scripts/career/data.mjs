@@ -584,9 +584,9 @@ export const pages = [
         { h: 'Marketplace sellers', t: 'wanting better products to offer applicants.' },
       ],
       photos: [
-        'A small business owner at a truck, bakery oven, or shop counter',
-        'A community bank’s lending officers',
-        'The Lendio sales team on a call with an applicant',
+        { src: '/bio/photos/lendio2-owner.jpg', alt: 'A small business owner in her bakery, standing at the counter with a notebook and fresh loaves in front of her', position: '50% 38%', width: 800, height: 1920 },
+        { src: '/bio/photos/lendio2-lenders.jpg', alt: 'A community bank lending officer reviews loan paperwork with two small business owners at a table', position: '46% 50%', width: 1100, height: 733 },
+        { src: '/bio/photos/lendio2-sales.jpg', alt: 'Lendio sales team members on headsets on a call with a loan applicant, with the Lendio logo on the glass behind them', position: '45% 40%', width: 900, height: 1080 },
       ],
     },
     s3: {
