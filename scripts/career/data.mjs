@@ -631,10 +631,11 @@ export const pages = [
         'In my last month I shipped 12 production features with Claude Code. I hit the milestones I came to hit, the new lines and the platform behind them were in place, and the team was strong enough to carry the work forward. I was ready for my next adventure.',
       ],
       photos: [
-        'The moment the milestone landed: the team, together',
-        'Demoing on stage: a floor-to-ceiling window with a westward view over northern Utah County, a large screen showing the demo, and Adam at a minimal podium with a MacBook Air, raising a hand toward the screen (seen from behind the crowd)',
-        'A dark-background dashboard: a jagged line graph of conversion rate over time, trending up and to the right',
+        { src: '/bio/photos/lendio2-learn-team.webp', alt: 'Five colleagues gathered around a laptop in a bright office, sharing a quiet moment of satisfaction', position: '50% 40%', width: 1000, height: 1500 },
+        { src: '/bio/photos/lendio2-learn-stage.webp', alt: 'Adam Michaelson at a podium with a MacBook, pointing at a large screen showing a dashboard, with an audience in the foreground and a window view of Utah County behind', fit: 'contain', width: 1400, height: 933 },
+        { src: '/bio/photos/lendio2-learn-dashboard.webp', alt: 'A dark dashboard showing a conversion rate line chart rising from January to December', fit: 'contain', width: 1400, height: 933 },
       ],
+      photoNote: 'Illustrative scenes (AI-generated), not photographs of actual people or a real product screen.',
       next: {
         slug: null,
         label: 'What’s next',
