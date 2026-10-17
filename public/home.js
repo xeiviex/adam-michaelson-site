@@ -294,7 +294,7 @@
   function stopAnim() { if (midAnim) { midAnim.cancel(); midAnim = null; } }
   function hold(chat) {
     if (spacer) return;
-    spacer = document.createElement('div'); spacer.style.cssText = 'flex:none;margin-top:10px;height:' + chat.offsetHeight + 'px';
+    spacer = document.createElement('div'); spacer.style.cssText = 'flex:none;margin-top:10px;height:' + chat.getBoundingClientRect().height + 'px';
     chat.parentNode.insertBefore(spacer, chat);
   }
   function release() { if (spacer) { spacer.remove(); spacer = null; } }
@@ -305,9 +305,9 @@
     if (on) {
       if (!canMid() || chat.classList.contains('max') || !chat.classList.contains('in')) return;
       stopAnim();
-      var h0 = chat.offsetHeight, avail = Math.min(chat.parentNode.getBoundingClientRect().bottom, window.innerHeight) - 100;
+      var w0 = chat.getBoundingClientRect().width, h0 = chat.offsetHeight, avail = Math.min(chat.parentNode.getBoundingClientRect().bottom, window.innerHeight) - 100;
       var h1 = Math.round(Math.max(h0, 380, Math.min(740, avail)));
-      hold(chat); chat.classList.add('mid'); chat.style.height = h1 + 'px'; chat.style.width = chat.parentNode.clientWidth + 'px';
+      hold(chat); chat.classList.add('mid'); chat.style.height = h1 + 'px'; chat.style.width = w0 + 'px';
       if (!reduce && chat.animate) midAnim = chat.animate([{ height: h0 + 'px' }, { height: h1 + 'px' }], { duration: 260, easing: 'cubic-bezier(.2,.8,.2,1)' });
     } else {
       stopAnim(); chat.classList.remove('mid'); chat.style.height = ''; chat.style.width = ''; release();
