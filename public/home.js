@@ -252,11 +252,13 @@
     $('fscrim').classList.add('on'); $('fdlg').classList.add('on'); document.body.style.overflow = 'hidden';
     botSay("Paste a job description, or a link to the posting, and I'll tell you honestly how I fit.", 1800, flog, fok(g));
     setTimeout(function () { fmsg.focus(); }, 60);
+    syncKeyboard();
   }
   function closeFit() {
     if (!$('fdlg').classList.contains('on')) return;
     endSession(fSession); fgen++; fitWatch.stop(); flog.innerHTML = ''; fmsg.value = ''; fgrow();
     $('fscrim').classList.remove('on'); $('fdlg').classList.remove('on'); document.body.style.overflow = '';
+    syncKeyboard();
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
   $('fclose').addEventListener('click', closeFit);
@@ -328,7 +330,22 @@
     $('ico-max').style.display = on ? 'none' : ''; $('ico-min').style.display = on ? '' : 'none';
     log.scrollTop = log.scrollHeight;
     if (on) msg.focus();
+    syncKeyboard();
   }
+  /* On-screen keyboard: phones shrink the visual viewport but not the layout viewport, which hides a bottom-pinned input.
+     On narrow screens, pin the full-screen chat and the fit dialog to the visual viewport so the input rides just above the keyboard. */
+  var vv = window.visualViewport;
+  function syncKeyboard() {
+    var chat = $('chat'), fd = $('fdlg'), narrow = !canMid() && !!vv;
+    if (chat.classList.contains('max') && narrow) {
+      chat.style.top = vv.offsetTop + 'px'; chat.style.height = vv.height + 'px'; log.scrollTop = log.scrollHeight;
+    } else { chat.style.top = ''; if (!chat.classList.contains('mid')) chat.style.height = ''; }
+    if (fd.classList.contains('on') && narrow) {
+      fd.style.top = (vv.offsetTop + vv.height / 2) + 'px'; fd.style.height = Math.min(720, Math.round(vv.height * 0.92)) + 'px';
+      if (!flog._hold) flog.scrollTop = flog.scrollHeight;
+    } else { fd.style.top = ''; fd.style.height = ''; }
+  }
+  if (vv) { vv.addEventListener('resize', syncKeyboard); vv.addEventListener('scroll', syncKeyboard); }
   /* Clicking into the text box opens the mid size; clicking or tabbing away, or Escape, collapses it. */
   msg.addEventListener('focus', function () { if (canMid()) setMid(true); else setMax(true); });
   document.addEventListener('pointerdown', function (e) { if (!$('chat').contains(e.target)) setMid(false); });
