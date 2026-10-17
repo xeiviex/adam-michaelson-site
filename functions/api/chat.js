@@ -149,7 +149,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const stream = new ReadableStream({
     async start(controller) {
       let text = "";
-      const guard = makeNameFilter(cfg.blockedNames);
+      const guard = makeNameFilter(cfg.blockedNames, cfg.allowedNames);
       const emit = (t) => { if (t) { text += t; send(controller, { t }); } };
       try {
         const s = client.messages.stream({

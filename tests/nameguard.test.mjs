@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { blockedNames, redact, makeNameFilter, REPLACEMENT } from "../functions/_lib/nameguard.js";
+import { blockedNames, allowedFullNames, redact, makeNameFilter, REPLACEMENT } from "../functions/_lib/nameguard.js";
 
 test("blockedNames merges the default with CHAT_BLOCKED_NAMES", () => {
   assert.deepEqual(blockedNames({}), ["Joshua"]);
@@ -30,4 +30,19 @@ test("with no names the filter is a pass-through", () => {
   const f = makeNameFilter([]);
   assert.equal(f.push("hello"), "hello");
   assert.equal(f.flush(), "");
+});
+
+test("a colleague who shares a blocked first name is allowed by full name; the child is still blocked", () => {
+  assert.deepEqual(allowedFullNames({}), ["Joshua Steimle"]);
+  assert.deepEqual(allowedFullNames({ CHAT_ALLOWED_NAMES: "Ava Chen" }), ["Joshua Steimle", "Ava Chen"]);
+  const n = ["Joshua", "Ava"], a = ["Joshua Steimle", "Ava Chen"];
+  const text = "I hired Joshua Steimle from MWI. Joshua Steimle's team was great. My son Joshua came along. Ava Chen consulted; Ava did not. Joshua   Steimle too. Joshua Stein is someone else.";
+  assert.equal(redact(text, n, a), `I hired Joshua Steimle from MWI. Joshua Steimle's team was great. My son ${REPLACEMENT} came along. Ava Chen consulted; ${REPLACEMENT} did not. Joshua   Steimle too. ${REPLACEMENT} Stein is someone else.`);
+  for (const split of [1, 2, 3, 5, 9, 200]) {
+    const f = makeNameFilter(n, a);
+    let out = "";
+    for (let i = 0; i < text.length; i += split) out += f.push(text.slice(i, i + split));
+    out += f.flush();
+    assert.equal(out, redact(text, n, a), `split ${split}`);
+  }
 });

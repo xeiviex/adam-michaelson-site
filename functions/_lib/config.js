@@ -1,4 +1,4 @@
-import { blockedNames } from "./nameguard.js";
+import { blockedNames, allowedFullNames } from "./nameguard.js";
 
 /** Chat configuration. Everything overridable by environment variable. */
 export function getConfig(env) {
@@ -8,6 +8,7 @@ export function getConfig(env) {
     contactPhone: env.CONTACT_PHONE || "801-822-9045",
     contactEmail: env.CONTACT_EMAIL || "hello@adam-michaelson.com",
     blockedNames: blockedNames(env),
+    allowedNames: allowedFullNames(env),
     model: env.CHAT_MODEL || "claude-sonnet-5-5",
     effort: env.CHAT_EFFORT || "medium",
     maxTokens: { intro: int(env.CHAT_MAX_TOKENS_INTRO, 1024), fit: int(env.CHAT_MAX_TOKENS_FIT, 1800) },
