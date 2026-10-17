@@ -14,7 +14,7 @@ const requests = [];
 let server, onRequestPost, db;
 let reply = ["Hello ", "from Adam."];
 
-function d1(sqlite) {
+function d1(sqlite) { // eslint-disable-line
   const mk = (sql, args = []) => ({
     bind: (...a) => mk(sql, a),
     first: async () => sqlite.prepare(sql).get(...args) ?? null,
@@ -199,4 +199,50 @@ test("children's names never reach the visitor or the log, even when the model s
     assert.ok(!/Joshua|Ava/.test(bot), bot);
     assert.match(bot, /one of my kids/);
   } finally { reply = saved; }
+});
+
+test("alerts and takeover through the chat endpoint", async () => {
+  const realFetch = globalThis.fetch;
+  const telegram = [];
+  globalThis.fetch = async (url, init) => {
+    if (String(url).startsWith("https://api.telegram.org/")) { telegram.push(JSON.parse(init.body).text); return new Response(JSON.stringify({ ok: true, result: { message_id: 500 + telegram.length } })); }
+    return realFetch(url, init);
+  };
+  const tgEnv = { TELEGRAM_BOT_TOKEN: "tok", TELEGRAM_CHAT_ID: "42", ALERT_QUIET_HOURS: "0-0" };
+  const pending = [];
+  const callBg = (body) => onRequestPost({ request: new Request("https://adam-michaelson.com/api/chat", { method: "POST", headers: { "CF-Connecting-IP": "7.7.7.7" }, body: JSON.stringify(body) }), env: { ANTHROPIC_API_KEY: "test", SMS_OPTIN_DB: d1(db), ...tgEnv }, waitUntil: (p) => pending.push(p) });
+  const sid = "takeover12345678901";
+  try {
+    // first message of a chat: Adam is alerted, the visitor still gets a reply
+    const r1 = await callBg({ sessionId: sid, mode: "intro", message: "Do you do consulting?" });
+    const streamed = (raw) => [...raw.matchAll(/"t":"([^"]*)"/g)].map((m) => m[1]).join("");
+    assert.equal(streamed(await r1.text()), "Hello from Adam.");
+    await Promise.all(pending.splice(0));
+    assert.equal(telegram.length, 1);
+    assert.match(telegram[0], /New chat \[take\] from 7\.7\.7\.7/);
+    assert.match(telegram[0], /Do you do consulting\?/);
+
+    // a second message in the same chat does not alert again
+    await (await callBg({ sessionId: sid, mode: "intro", message: "And fractional work?" })).text();
+    await Promise.all(pending.splice(0));
+    assert.equal(telegram.length, 1);
+
+    // Adam takes over: the bot stays quiet, the visitor's message is forwarded to him
+    db.prepare("UPDATE chat_sessions SET mode = 'human' WHERE session_id = ?").run(sid);
+    db.prepare("INSERT INTO chat_messages (user_id, session_id, role, content, created_at) VALUES ('7.7.7.7', ?, 'adam', 'Yes, I do. What do you need?', ?)").run(sid, new Date().toISOString());
+    const modelCalls = requests.length;
+    const r2 = await callBg({ sessionId: sid, mode: "intro", message: "A product leader for 3 months" });
+    assert.deepEqual(await r2.json(), { human: true });
+    await Promise.all(pending.splice(0));
+    assert.equal(requests.length, modelCalls);
+    assert.equal(telegram.length, 2);
+    assert.match(telegram[1], /\[take\] visitor:\nA product leader for 3 months/);
+
+    // handed back: the bot answers again and knows what Adam said
+    db.prepare("UPDATE chat_sessions SET mode = 'bot' WHERE session_id = ?").run(sid);
+    await (await callBg({ sessionId: sid, mode: "intro", message: "Thanks" })).text();
+    const last = requests.at(-1).messages;
+    assert.ok(JSON.stringify(last).includes("Yes, I do. What do you need?"));
+    for (let i = 1; i < last.length; i++) assert.notEqual(last[i].role, last[i - 1].role);
+  } finally { globalThis.fetch = realFetch; }
 });

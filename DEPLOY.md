@@ -82,3 +82,43 @@ The D1 binding `SMS_OPTIN_DB` is reused for the conversation log.
 ### Tests
 
     npm test
+
+
+## Admin console, alerts and takeover
+
+The console is at `/admin` (not linked anywhere, `noindex`). It answers **404 to everyone** unless the request carries a valid
+Cloudflare Access token for `ADMIN_EMAIL`, so it is closed until the steps below are done.
+
+### 1. Protect it with Cloudflare Access (one time)
+
+1. Cloudflare dashboard -> **Zero Trust** -> **Access** -> **Applications** -> **Add an application** -> **Self-hosted**.
+2. Name: `Chat console`. Add two destinations on `adam-michaelson.com`: path `admin` and path `api/admin`.
+3. Policy: **Allow**, include **Emails** = your email. Save.
+4. Copy the application's **Audience (AUD) tag**, and your team domain (`<team>.cloudflareaccess.com`).
+5. Do **not** put `/api/telegram/webhook` or `/api/chat/*` behind Access (Telegram and visitors must reach them; the webhook checks a secret token).
+
+### 2. Secrets (Pages -> Settings -> Variables and Secrets, Production and Preview)
+
+| Name | Purpose |
+|---|---|
+| `CF_ACCESS_TEAM_DOMAIN` | e.g. `yourteam.cloudflareaccess.com` |
+| `CF_ACCESS_AUD` | the Access application's AUD tag |
+| `ADMIN_EMAIL` | the one email allowed in |
+| `TELEGRAM_BOT_TOKEN` | from @BotFather (`/newbot`) |
+| `TELEGRAM_WEBHOOK_SECRET` | any long random string you make up |
+| `TELEGRAM_CHAT_ID` | your Telegram chat id (step 3) |
+| optional: `ALERT_QUIET_HOURS` (default `22-7`), `ALERT_TZ` (default `America/Denver`), `ALERT_DAILY_CAP` (default 50), `ALERT_PROVIDER` (`telegram`), `ADMIN_BASE_URL` | |
+
+### 3. Connect Telegram
+
+1. Set `TELEGRAM_BOT_TOKEN` and `TELEGRAM_WEBHOOK_SECRET`, redeploy, open `/admin` -> **Settings** -> **Connect Telegram webhook**.
+2. Send any message to your bot in Telegram. It replies with your chat id. Save it as `TELEGRAM_CHAT_ID`, redeploy.
+3. `/admin` -> **Settings** -> **Send test alert**.
+
+### How takeover works
+
+- A new chat sends you an alert (once per chat, silenced during quiet hours, capped per day). A job description or link in the fit chat is a "hot" alert.
+- **Reply to the alert** in Telegram to answer as yourself. The visitor sees your message live, labelled "Live from Adam", and the bot goes quiet.
+  Their replies are forwarded to you. `#a3f2 your message` targets a chat by its code; a plain message goes to the most recent chat that alerted you.
+- `/bot` (or `#a3f2 /bot`) hands the chat back to the assistant, which knows what you said. The console has the same reply box and a **Hand back to bot** button.
+- Twilio SMS is a second provider behind the same interface and stays off until its A2P campaign is approved.

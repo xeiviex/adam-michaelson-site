@@ -107,6 +107,27 @@
     }).catch(function () { if (!text) show(FAIL); }).then(finish);
   }
   var introSession = newSession(), introBusy = false;
+  var introWatch = watcher(function () { return introSession; }, log);
+  /* Live messages from Adam: while a conversation is open, check every few seconds whether he has stepped in. */
+  function watcher(getSid, lg, isOpen) {
+    var lastId = 0, human = false, started = false, t = null;
+    function note(text) { var r = document.createElement('div'); r.className = 'row note'; r.textContent = text; lg.appendChild(r); if (!lg._hold) lg.scrollTop = lg.scrollHeight; }
+    function poll() {
+      var sid = getSid();
+      if (!sid || document.hidden || (isOpen && !isOpen())) return;
+      fetch('/api/chat/poll?sessionId=' + encodeURIComponent(sid) + '&after=' + lastId).then(function (r) { return r.json(); }).then(function (j) {
+        if (isOpen && !isOpen()) return;
+        if (j.mode === 'human' && !human) { human = true; note('Adam has joined the conversation.'); }
+        if (j.mode !== 'human' && human) { human = false; note('Adam has handed you back to the assistant.'); }
+        (j.messages || []).forEach(function (m) { lastId = Math.max(lastId, m.id); var b = row(false, lg); setText(b, m.content); b.classList.add('pop', 'live'); ding(); });
+      }).catch(function () {});
+    }
+    return {
+      start: function () { if (!started) { started = true; t = setInterval(poll, 4000); } },
+      stop: function () { clearInterval(t); started = false; },
+      reset: function () { lastId = 0; human = false; }
+    };
+  }
 
   /* Idle check-ins: after a minute of no visitor activity in the chat, up to three nudges
      (check-in, a different prompt, an open close), each picked at random from its own list.
@@ -217,18 +238,19 @@
 
   /* ---- Check my fit: a chat in a modal. The visitor pastes a job description (links are not read yet). ---- */
   var flog = $('flog'), fmsg = $('fmsg'), ffield = $('ffield'), fgen = 0, lastFocus = null, fSession = newSession(), fBusy = false;
+  var fitWatch = watcher(function () { return fSession; }, flog, function () { return $('fdlg').classList.contains('on'); });
   function fgrow() { fmsg.style.height = 'auto'; fmsg.style.height = Math.min(fmsg.scrollHeight, 128) + 'px'; ffield.classList.toggle('has', !!fmsg.value.trim()); }
   function fok(g) { return function () { return g === fgen; }; }
   function openFit() {
     lastFocus = document.activeElement; fgen++; var g = fgen;
-    flog.innerHTML = ''; flog._hold = false; fmsg.value = ''; fgrow(); fSession = newSession(); fBusy = false;
+    flog.innerHTML = ''; flog._hold = false; fmsg.value = ''; fgrow(); fSession = newSession(); fBusy = false; fitWatch.reset(); fitWatch.stop();
     $('fscrim').classList.add('on'); $('fdlg').classList.add('on'); document.body.style.overflow = 'hidden';
     botSay("Paste a job description, or a link to the posting, and I'll tell you honestly how I fit.", 1800, flog, fok(g));
     setTimeout(function () { fmsg.focus(); }, 60);
   }
   function closeFit() {
     if (!$('fdlg').classList.contains('on')) return;
-    fgen++; flog.innerHTML = ''; fmsg.value = ''; fgrow();
+    fgen++; fitWatch.stop(); flog.innerHTML = ''; fmsg.value = ''; fgrow();
     $('fscrim').classList.remove('on'); $('fdlg').classList.remove('on'); document.body.style.overflow = '';
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
@@ -243,6 +265,7 @@
     flog._hold = false;
     row(true, flog).textContent = v.length > 90 ? v.slice(0, 87) + '...' : v;
     fmsg.value = ''; fgrow(); fBusy = true;
+    fitWatch.start();
     askAdam('fit', fSession, v, flog, fok(g), function () { fBusy = false; });
   });
   $('fdlg').addEventListener('keydown', function (e) {
@@ -292,6 +315,7 @@
     e.preventDefault();
     var v = msg.value.trim(); if (!v || introBusy) return;
     row(true).textContent = v; msg.value = ''; grow(); introBusy = true;
+    introWatch.start();
     askAdam('intro', introSession, v, log, null, function () { introBusy = false; });
   });
   document.addEventListener('click', function (e) {

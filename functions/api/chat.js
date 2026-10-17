@@ -11,6 +11,7 @@ import knowledge from "../_generated/knowledge.js";
 import { getConfig } from "../_lib/config.js";
 import { buildSystem } from "../_lib/prompts.js";
 import { makeNameFilter } from "../_lib/nameguard.js";
+import { alertNewSession, forwardVisitorMessage } from "../_lib/alerts.js";
 import { looksLikeUrl, fetchPosting, cacheKey, PostingError } from "../_lib/jobfetch.js";
 
 const json = (body, status = 200) =>
@@ -23,6 +24,8 @@ const SESSION_RE = /^[A-Za-z0-9_-]{16,64}$/;
 const now = () => new Date().toISOString();
 
 export async function onRequestPost({ request, env, waitUntil }) {
+  // Background work (alerts) must never delay or break the visitor's reply.
+  const background = (p) => { const q = Promise.resolve(p).catch((e) => console.error("background task", e && e.message)); if (waitUntil) waitUntil(q); };
   const cfg = getConfig(env);
   if (!env.ANTHROPIC_API_KEY || !env.SMS_OPTIN_DB) return json({ error: "Chat is not configured." }, 503);
   if (!knowledge) return json({ error: "Chat knowledge has not been built." }, 503);
@@ -78,8 +81,16 @@ export async function onRequestPost({ request, env, waitUntil }) {
   ]);
   const messageId = logged[0] && logged[0].meta && logged[0].meta.last_row_id;
 
-  // Takeover hook (admin pass): a human is handling this session, so the bot stays quiet.
-  if (session.mode === "human") return json({ human: true });
+  // First message of a new chat: tell Adam (a job description or link in the fit chat is a "hot" alert).
+  if (visitorTurns === 0) {
+    background(alertNewSession({ db, env, sessionId, chatType, ip, text: message, hot: chatType === "fit" && (looksLikeUrl(message) || message.length > 400) }));
+  }
+
+  // Takeover: Adam is in this conversation, so the bot stays quiet and the message goes to him.
+  if (session.mode === "human") {
+    background(forwardVisitorMessage({ db, env, sessionId, text: message }));
+    return json({ human: true });
+  }
 
   // Fit chat: a lone link is fetched server-side and its text is stored with the message.
   const enc = new TextEncoder();
@@ -114,10 +125,10 @@ export async function onRequestPost({ request, env, waitUntil }) {
   // History from D1, merged into strictly alternating turns.
   const rows = (await db.prepare(
     "SELECT m.role, m.content, a.url AS att_url, a.content AS att_text FROM chat_messages m LEFT JOIN chat_attachments a ON a.message_id = m.id " +
-    "WHERE m.session_id = ?1 AND m.role IN ('visitor','bot') ORDER BY m.id DESC LIMIT 40").bind(sessionId).all()).results.reverse();
+    "WHERE m.session_id = ?1 AND m.role IN ('visitor','bot','adam') ORDER BY m.id DESC LIMIT 40").bind(sessionId).all()).results.reverse();
   const messages = [];
   for (const r of rows) {
-    const role = r.role === "visitor" ? "user" : "assistant";
+    const role = r.role === "visitor" ? "user" : "assistant"; // Adam's own messages count as assistant turns so the bot knows what was said
     const content = r.att_text
       ? `${r.content}\n\nThe text of that posting, fetched from ${r.att_url}:\n<job_posting>\n${r.att_text}\n</job_posting>`
       : r.content;

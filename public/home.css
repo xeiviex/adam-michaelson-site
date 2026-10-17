@@ -189,3 +189,7 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 56px; display: f
 .lead { scroll-margin-top: 54px; }
 .sample a { color: inherit; }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* live messages from Adam and conversation notices */
+.bubble.live::before { content: "Live from Adam"; display: block; font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; opacity: .8; margin-bottom: 2px; }
+.row.note { justify-content: center; font-size: .8rem; opacity: .75; padding: 2px 0; }
