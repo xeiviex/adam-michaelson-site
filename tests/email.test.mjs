@@ -167,3 +167,97 @@ test("/api/cron/sweep needs the secret", async () => {
     assert.deepEqual(await ok.json(), { checked: 1, sent: 1 });
   });
 });
+
+/* ---------------- Gmail provider ---------------- */
+import { buildMime, emailProvider, resetEmailTokenCache } from "../functions/_lib/email.js";
+
+const GENV = { GOOGLE_CLIENT_ID: "cid", GOOGLE_CLIENT_SECRET: "csec", GOOGLE_REFRESH_TOKEN: "rtok", EMAIL_TO: "adam+chats@example.com" };
+
+function fakeGoogle({ tokenFail, sendStatus = 200 } = {}) {
+  const calls = { token: 0, sent: [] };
+  const fetchImpl = async (url, init) => {
+    const u = String(url);
+    if (u === "https://oauth2.googleapis.com/token") {
+      calls.token++;
+      const form = new URLSearchParams(init.body);
+      assert.equal(form.get("grant_type"), "refresh_token");
+      assert.equal(form.get("refresh_token"), "rtok");
+      return tokenFail ? new Response(JSON.stringify({ error: tokenFail }), { status: 400 }) : new Response(JSON.stringify({ access_token: "at-" + calls.token, expires_in: 3600 }));
+    }
+    if (u === "https://gmail.googleapis.com/gmail/v1/users/me/messages/send") {
+      assert.match(init.headers.Authorization, /^Bearer at-/);
+      calls.sent.push(JSON.parse(init.body).raw);
+      return sendStatus === 200 ? new Response("{}") : new Response("denied", { status: sendStatus });
+    }
+    throw new Error("unexpected " + u);
+  };
+  return { calls, fetchImpl };
+}
+
+const decodeRaw = (raw) => Buffer.from(raw, "base64url").toString("utf8");
+const bodyPart = (mime, type) => {
+  const m = new RegExp(`Content-Type: ${type}; charset=UTF-8\\r\\nContent-Transfer-Encoding: base64\\r\\n\\r\\n([\\s\\S]*?)\\r\\n--`).exec(mime);
+  return Buffer.from(m[1].replace(/\r\n/g, ""), "base64").toString("utf8");
+};
+
+test("provider choice: Gmail when its credentials exist, Resend otherwise, or forced by EMAIL_PROVIDER", () => {
+  assert.equal(emailProvider({}), null);
+  assert.equal(emailProvider({ RESEND_API_KEY: "x" }), "resend");
+  assert.equal(emailProvider(GENV), "gmail");
+  assert.equal(emailProvider({ ...GENV, RESEND_API_KEY: "x" }), "gmail");
+  assert.equal(emailProvider({ ...GENV, RESEND_API_KEY: "x", EMAIL_PROVIDER: "resend" }), "resend");
+  assert.equal(emailProvider({ GOOGLE_CLIENT_ID: "a", GOOGLE_CLIENT_SECRET: "b" }), null); // missing refresh token
+  assert.equal(emailConfigured({ ...GENV, EMAIL_TO: "" }), false); // no recipient
+  assert.equal(emailConfigured(GENV), true);
+});
+
+test("buildMime: valid multipart, UTF-8, long bodies, and no header injection from the subject", () => {
+  const evil = "Hello\r\nBcc: attacker@evil.example\r\nX-Injected: 1 — café 😀";
+  const long = "line of text ".repeat(20000);
+  const mime = buildMime({ from: "Chat <me@example.com>", to: "adam@example.com", subject: evil, text: long + " café", html: "<p>é</p>" });
+  const headers = mime.split("\r\n\r\n")[0];
+  assert.doesNotMatch(headers, /^Bcc:/m);
+  assert.doesNotMatch(headers, /^X-Injected:/m);
+  assert.match(headers, /^From: Chat <me@example\.com>$/m);
+  assert.match(headers, /^To: adam@example\.com$/m);
+  const subj = /Subject: =\?UTF-8\?B\?([^?]+)\?=/.exec(headers)[1];
+  assert.equal(Buffer.from(subj, "base64").toString("utf8"), "Hello Bcc: attacker@evil.example X-Injected: 1 — café 😀");
+  assert.equal(bodyPart(mime, "text/plain"), long + " café");
+  assert.equal(bodyPart(mime, "text/html"), "<p>é</p>");
+  assert.ok(!buildMime({ to: "a@b.c", subject: "s", text: "t", html: "h" }).includes("From:"));
+});
+
+test("Gmail send: refreshes the access token once, reuses it, and sends a valid raw message to the alias", async () => {
+  resetEmailTokenCache();
+  const g = fakeGoogle();
+  const msg = { subject: "Chat transcript", text: "hello é", html: "<p>hello</p>" };
+  assert.deepEqual(await sendEmail(GENV, msg, g.fetchImpl), { ok: true });
+  assert.deepEqual(await sendEmail(GENV, msg, g.fetchImpl), { ok: true });
+  assert.equal(g.calls.token, 1);
+  assert.equal(g.calls.sent.length, 2);
+  const mime = decodeRaw(g.calls.sent[0]);
+  assert.match(mime, /^To: adam\+chats@example\.com\r\n/m);
+  assert.equal(bodyPart(mime, "text/plain"), "hello é");
+});
+
+test("Gmail failures are reported with a clear reason and never throw", async () => {
+  resetEmailTokenCache();
+  const revoked = await sendEmail(GENV, { subject: "s", text: "t", html: "h" }, fakeGoogle({ tokenFail: "invalid_grant" }).fetchImpl);
+  assert.equal(revoked.ok, false);
+  assert.match(revoked.error, /refresh token was rejected/);
+  resetEmailTokenCache();
+  const denied = await sendEmail(GENV, { subject: "s", text: "t", html: "h" }, fakeGoogle({ sendStatus: 403 }).fetchImpl);
+  assert.equal(denied.ok, false);
+  assert.match(denied.error, /Gmail HTTP 403/);
+});
+
+test("transcripts go out through Gmail end to end", async () => {
+  resetEmailTokenCache();
+  const { sqlite, db } = await setup();
+  const g = fakeGoogle();
+  seed(sqlite, { id: S1, msgs: [["visitor", "hello via gmail"], ["bot", "Hi!"]], at: ago(30) });
+  assert.equal(await emailSession({ db, env: GENV, sessionId: S1 }, g.fetchImpl), "sent");
+  const mime = decodeRaw(g.calls.sent[0]);
+  assert.match(bodyPart(mime, "text/plain"), /hello via gmail/);
+  assert.match(bodyPart(mime, "text/html"), /admin#aaaa1111bbbb2222cccc/);
+});

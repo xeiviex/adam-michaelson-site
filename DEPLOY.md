@@ -130,9 +130,33 @@ After every chat, `EMAIL_TO` (default `ADMIN_EMAIL`) gets the full transcript wi
 A chat counts as closed when the visitor leaves the page or closes the fit modal (sent immediately), or after `EMAIL_IDLE_MINUTES` (default 20) of silence.
 If the chat continues afterwards, a later email carries the updated full transcript. Only chats active after this feature went live are emailed.
 
-1. Create a free account at https://resend.com (use the same email you want the transcripts sent to) and create an API key.
-2. Add secrets (Production and Preview): `RESEND_API_KEY` (required). Optional: `EMAIL_TO`, `EMAIL_FROM`, `EMAIL_IDLE_MINUTES`, `EMAIL_DAILY_CAP` (default 100).
-3. Without `EMAIL_FROM` the mail comes from Resend's shared test sender, which can only deliver to the Resend account owner's own address. That is enough for transcripts to yourself.
-   To send from your own domain, verify `adam-michaelson.com` in Resend (it gives you DNS records to add in Cloudflare), then set `EMAIL_FROM` to e.g. `Chat <chat@adam-michaelson.com>`.
-4. Pages Functions have no scheduler, so the 20-minute check runs when the site or console has traffic. For on-time emails even on quiet days, set a `CRON_SECRET` secret and point any free scheduler (for example cron-job.org) at
-   `https://adam-michaelson.com/api/cron/sweep` every 5 minutes with the header `X-Cron-Secret: <your secret>`. This is optional.
+Two ways to send (Gmail is used if its three secrets exist; otherwise Resend; `EMAIL_PROVIDER` can force one):
+
+### Option A: your own Gmail (send-only credential)
+
+The credential can send mail from your Gmail account but cannot read it. Secrets: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN`, plus `EMAIL_TO` (the alias to send to). Optional: `EMAIL_FROM`.
+
+1. https://console.cloud.google.com -> create a project (e.g. `adam-michaelson-site chat`).
+2. **APIs & Services -> Library** -> enable **Gmail API**.
+3. **OAuth consent screen** (Google Auth Platform): user type **External**, app name and your email as support/contact. Add the scope `https://www.googleapis.com/auth/gmail.send`. Add yourself as a test user.
+   **Then publish the app ("In production").** In "Testing" mode Google expires the refresh token after 7 days. Personal use of an unverified app is fine; you will see a "Google hasn't verified this app" screen, choose Advanced -> continue.
+4. **Credentials -> Create credentials -> OAuth client ID -> Web application.** Authorized redirect URI: `https://developers.google.com/oauthplayground`. Copy the client ID and secret.
+5. Open https://developers.google.com/oauthplayground. Gear icon -> **Use your own OAuth credentials** -> paste the ID and secret.
+   Step 1: type the scope `https://www.googleapis.com/auth/gmail.send` in the box -> **Authorize APIs** -> sign in with the Gmail account and allow.
+   Step 2: **Exchange authorization code for tokens** -> copy the **Refresh token**.
+6. Add the secrets in Cloudflare (Production and Preview), then retry the latest Production deployment.
+
+Mail arrives from your Gmail account to `EMAIL_TO`. If that is an alias of the same account, it shows up in your inbox (and also in Sent); a Gmail filter on the alias can label it and skip the inbox if you prefer.
+If a send ever fails, the reason is saved (visible in the database table `chat_errors`); a revoked or expired token says so.
+
+### Option B: Resend
+
+1. Create a free account at https://resend.com (use the address that should receive transcripts) and an API key.
+2. Secrets: `RESEND_API_KEY`, `EMAIL_TO`. Optional: `EMAIL_FROM`.
+   Without `EMAIL_FROM` the mail comes from Resend's shared test sender, which can only deliver to the Resend account owner's own address. To send from your own domain, verify it in Resend (DNS records in Cloudflare) and set `EMAIL_FROM` (e.g. `Chat <chat@adam-michaelson.com>`).
+
+### Either way
+
+Optional: `EMAIL_IDLE_MINUTES`, `EMAIL_DAILY_CAP` (default 100). Pages Functions have no scheduler, so the 20-minute check runs when the site or console has traffic.
+For on-time emails even on quiet days, set a `CRON_SECRET` secret and point any free scheduler (for example cron-job.org) at
+`https://adam-michaelson.com/api/cron/sweep` every 5 minutes with the header `X-Cron-Secret: <your secret>`. This is optional.
