@@ -8,18 +8,19 @@ import { cpSync, mkdtempSync, readFileSync, writeFileSync, symlinkSync } from "n
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { onRequestPost as endChat } from "../functions/api/chat/end.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const requests = [];
 let server, onRequestPost, db;
 let reply = ["Hello ", "from Adam."];
 
-function d1(sqlite) {
+function d1(sqlite) { // eslint-disable-line
   const mk = (sql, args = []) => ({
     bind: (...a) => mk(sql, a),
     first: async () => sqlite.prepare(sql).get(...args) ?? null,
     all: async () => ({ results: sqlite.prepare(sql).all(...args) }),
-    run: async () => { sqlite.prepare(sql).run(...args); return {}; },
+    run: async () => { const r = sqlite.prepare(sql).run(...args); return { meta: { last_row_id: Number(r.lastInsertRowid), changes: Number(r.changes) } }; },
     _run: () => { const r = sqlite.prepare(sql).run(...args); return { meta: { last_row_id: Number(r.lastInsertRowid) } }; },
   });
   return { prepare: (sql) => mk(sql), batch: async (stmts) => stmts.map((s) => s._run()) };
@@ -199,4 +200,74 @@ test("children's names never reach the visitor or the log, even when the model s
     assert.ok(!/Joshua|Ava/.test(bot), bot);
     assert.match(bot, /one of my kids/);
   } finally { reply = saved; }
+});
+
+test("alerts and takeover through the chat endpoint", async () => {
+  const realFetch = globalThis.fetch;
+  const telegram = [];
+  globalThis.fetch = async (url, init) => {
+    if (String(url).startsWith("https://api.telegram.org/")) { telegram.push(JSON.parse(init.body).text); return new Response(JSON.stringify({ ok: true, result: { message_id: 500 + telegram.length } })); }
+    return realFetch(url, init);
+  };
+  const tgEnv = { TELEGRAM_BOT_TOKEN: "tok", TELEGRAM_CHAT_ID: "42", ALERT_QUIET_HOURS: "0-0" };
+  const pending = [];
+  const callBg = (body) => onRequestPost({ request: new Request("https://adam-michaelson.com/api/chat", { method: "POST", headers: { "CF-Connecting-IP": "7.7.7.7" }, body: JSON.stringify(body) }), env: { ANTHROPIC_API_KEY: "test", SMS_OPTIN_DB: d1(db), ...tgEnv }, waitUntil: (p) => pending.push(p) });
+  const sid = "takeover12345678901";
+  try {
+    // first message of a chat: Adam is alerted, the visitor still gets a reply
+    const r1 = await callBg({ sessionId: sid, mode: "intro", message: "Do you do consulting?" });
+    const streamed = (raw) => [...raw.matchAll(/"t":"([^"]*)"/g)].map((m) => m[1]).join("");
+    assert.equal(streamed(await r1.text()), "Hello from Adam.");
+    await Promise.all(pending.splice(0));
+    assert.equal(telegram.length, 1);
+    assert.match(telegram[0], /New chat \[take\] from 7\.7\.7\.7/);
+    assert.match(telegram[0], /Do you do consulting\?/);
+
+    // a second message in the same chat does not alert again
+    await (await callBg({ sessionId: sid, mode: "intro", message: "And fractional work?" })).text();
+    await Promise.all(pending.splice(0));
+    assert.equal(telegram.length, 1);
+
+    // Adam takes over: the bot stays quiet, the visitor's message is forwarded to him
+    db.prepare("UPDATE chat_sessions SET mode = 'human' WHERE session_id = ?").run(sid);
+    db.prepare("INSERT INTO chat_messages (user_id, session_id, role, content, created_at) VALUES ('7.7.7.7', ?, 'adam', 'Yes, I do. What do you need?', ?)").run(sid, new Date().toISOString());
+    const modelCalls = requests.length;
+    const r2 = await callBg({ sessionId: sid, mode: "intro", message: "A product leader for 3 months" });
+    assert.deepEqual(await r2.json(), { human: true });
+    await Promise.all(pending.splice(0));
+    assert.equal(requests.length, modelCalls);
+    assert.equal(telegram.length, 2);
+    assert.match(telegram[1], /\[take\] visitor:\nA product leader for 3 months/);
+
+    // handed back: the bot answers again and knows what Adam said
+    db.prepare("UPDATE chat_sessions SET mode = 'bot' WHERE session_id = ?").run(sid);
+    await (await callBg({ sessionId: sid, mode: "intro", message: "Thanks" })).text();
+    const last = requests.at(-1).messages;
+    assert.ok(JSON.stringify(last).includes("Yes, I do. What do you need?"));
+    for (let i = 1; i < last.length; i++) assert.notEqual(last[i].role, last[i - 1].role);
+  } finally { globalThis.fetch = realFetch; }
+});
+
+test("end to end: a visitor chats, closes the page, and Adam gets the transcript with a link to the admin page", async () => {
+  const realFetch = globalThis.fetch;
+  const emails = [];
+  globalThis.fetch = async (url, init) => {
+    if (String(url) === "https://api.resend.com/emails") { emails.push(JSON.parse(init.body)); return new Response("{}"); }
+    return realFetch(url, init);
+  };
+  const env = { ANTHROPIC_API_KEY: "test", SMS_OPTIN_DB: d1(db), RESEND_API_KEY: "re_test", ADMIN_EMAIL: "adam@example.com" };
+  const sid = "e2eemail1234567890ab";
+  try {
+    const chat = await onRequestPost({ request: new Request("https://adam-michaelson.com/api/chat", { method: "POST", headers: { "CF-Connecting-IP": "8.8.4.4" }, body: JSON.stringify({ sessionId: sid, mode: "intro", message: "What have you built at Lendio?" }) }), env });
+    await chat.text();
+    assert.equal(emails.length, 0); // the chat is still open
+    await endChat({ request: new Request("https://adam-michaelson.com/api/chat/end", { method: "POST", body: JSON.stringify({ sessionId: sid }) }), env });
+    assert.equal(emails.length, 1);
+    assert.deepEqual(emails[0].to, ["adam@example.com"]);
+    assert.match(emails[0].subject, /What have you built at Lendio\?/);
+    assert.match(emails[0].text, /Visitor \(.*\):\nWhat have you built at Lendio\?/);
+    assert.match(emails[0].text, /Assistant \(.*\):\nHello from Adam\./);
+    assert.match(emails[0].text, /8\.8\.4\.4/);
+    assert.match(emails[0].text, new RegExp("admin#" + sid));
+  } finally { globalThis.fetch = realFetch; }
 });

@@ -51,3 +51,6 @@ CREATE TABLE IF NOT EXISTS chat_attachments (
 -- Existing databases created before source_url was added: ALTER TABLE chat_attachments ADD COLUMN source_url TEXT;
 CREATE INDEX IF NOT EXISTS idx_chat_att_msg ON chat_attachments (message_id);
 CREATE INDEX IF NOT EXISTS idx_chat_att_source ON chat_attachments (source_url, created_at);
+
+-- Admin console, alerts and search (created automatically on first use by functions/_lib/schema.js; listed here for reference)
+-- Admin console tables: chat_alerts (alert log + reply routing), chat_meta, chat_emails (transcript-email state), chat_messages_fts (FTS5 full-text index) with triggers.
