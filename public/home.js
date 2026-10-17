@@ -107,6 +107,11 @@
     }).catch(function () { if (!text) show(FAIL); }).then(finish);
   }
   var introSession = newSession(), introBusy = false;
+  /* Tell the server a conversation has ended so Adam gets the transcript right away. */
+  function endSession(sid) {
+    try { if (sid && navigator.sendBeacon) navigator.sendBeacon('/api/chat/end', new Blob([JSON.stringify({ sessionId: sid })], { type: 'application/json' })); } catch (e) {}
+  }
+  window.addEventListener('pagehide', function (e) { if (!e.persisted) { endSession(introSession); endSession(fSession); } });
   var introWatch = watcher(function () { return introSession; }, log);
   /* Live messages from Adam: while a conversation is open, check every few seconds whether he has stepped in. */
   function watcher(getSid, lg, isOpen) {
@@ -250,7 +255,7 @@
   }
   function closeFit() {
     if (!$('fdlg').classList.contains('on')) return;
-    fgen++; fitWatch.stop(); flog.innerHTML = ''; fmsg.value = ''; fgrow();
+    endSession(fSession); fgen++; fitWatch.stop(); flog.innerHTML = ''; fmsg.value = ''; fgrow();
     $('fscrim').classList.remove('on'); $('fdlg').classList.remove('on'); document.body.style.overflow = '';
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }

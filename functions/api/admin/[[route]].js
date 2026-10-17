@@ -7,6 +7,8 @@ import { ensureSchema } from "../../_lib/schema.js";
 import { ftsQuery } from "../../_lib/search.js";
 import { sendAsAdam, setMode } from "../../_lib/convo.js";
 import { provider, sendTest, setTelegramWebhook } from "../../_lib/alerts.js";
+import { sweepIdleSessions } from "../../_lib/sweep.js";
+import { emailConfigured } from "../../_lib/email.js";
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -58,7 +60,7 @@ async function getConversation(db, url) {
   return { session, messages, attachments };
 }
 
-export async function onRequest({ request, env, params }) {
+export async function onRequest({ request, env, params, waitUntil }) {
   // Fail closed: no valid Access token for the admin means this route does not exist.
   const who = await verifyAccess(request, env);
   if (!who || !env.SMS_OPTIN_DB) return new Response("Not found", { status: 404, headers: { "X-Robots-Tag": "noindex" } });
@@ -72,6 +74,8 @@ export async function onRequest({ request, env, params }) {
   } else if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
 
   await ensureSchema(db);
+  const sweep = sweepIdleSessions({ db, env }).catch(() => {});
+  if (waitUntil) waitUntil(sweep);
   let body = {};
   if (write) { try { body = await request.json(); } catch { body = {}; } }
 
@@ -96,6 +100,7 @@ export async function onRequest({ request, env, params }) {
         email: who.email,
         alertProvider: (env.ALERT_PROVIDER || "telegram").toLowerCase(),
         alertsConfigured: !!provider(env),
+        emailConfigured: emailConfigured(env),
         telegram: { token: !!env.TELEGRAM_BOT_TOKEN, chatId: !!env.TELEGRAM_CHAT_ID, webhookSecret: !!env.TELEGRAM_WEBHOOK_SECRET },
       });
     case "POST telegram/webhook": {

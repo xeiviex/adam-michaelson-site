@@ -122,3 +122,17 @@ Cloudflare Access token for `ADMIN_EMAIL`, so it is closed until the steps below
   Their replies are forwarded to you. `#a3f2 your message` targets a chat by its code; a plain message goes to the most recent chat that alerted you.
 - `/bot` (or `#a3f2 /bot`) hands the chat back to the assistant, which knows what you said. The console has the same reply box and a **Hand back to bot** button.
 - Twilio SMS is a second provider behind the same interface and stays off until its A2P campaign is approved.
+
+
+## Transcript emails
+
+After every chat, `EMAIL_TO` (default `ADMIN_EMAIL`) gets the full transcript with a button that opens the conversation in `/admin`.
+A chat counts as closed when the visitor leaves the page or closes the fit modal (sent immediately), or after `EMAIL_IDLE_MINUTES` (default 20) of silence.
+If the chat continues afterwards, a later email carries the updated full transcript. Only chats active after this feature went live are emailed.
+
+1. Create a free account at https://resend.com (use the same email you want the transcripts sent to) and create an API key.
+2. Add secrets (Production and Preview): `RESEND_API_KEY` (required). Optional: `EMAIL_TO`, `EMAIL_FROM`, `EMAIL_IDLE_MINUTES`, `EMAIL_DAILY_CAP` (default 100).
+3. Without `EMAIL_FROM` the mail comes from Resend's shared test sender, which can only deliver to the Resend account owner's own address. That is enough for transcripts to yourself.
+   To send from your own domain, verify `adam-michaelson.com` in Resend (it gives you DNS records to add in Cloudflare), then set `EMAIL_FROM` to e.g. `Chat <chat@adam-michaelson.com>`.
+4. Pages Functions have no scheduler, so the 20-minute check runs when the site or console has traffic. For on-time emails even on quiet days, set a `CRON_SECRET` secret and point any free scheduler (for example cron-job.org) at
+   `https://adam-michaelson.com/api/cron/sweep` every 5 minutes with the header `X-Cron-Secret: <your secret>`. This is optional.

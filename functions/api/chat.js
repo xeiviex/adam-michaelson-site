@@ -11,6 +11,7 @@ import knowledge from "../_generated/knowledge.js";
 import { getConfig } from "../_lib/config.js";
 import { buildSystem } from "../_lib/prompts.js";
 import { makeNameFilter } from "../_lib/nameguard.js";
+import { sweepIdleSessions } from "../_lib/sweep.js";
 import { alertNewSession, forwardVisitorMessage } from "../_lib/alerts.js";
 import { looksLikeUrl, fetchPosting, cacheKey, PostingError } from "../_lib/jobfetch.js";
 
@@ -80,6 +81,9 @@ export async function onRequestPost({ request, env, waitUntil }) {
     db.prepare("UPDATE chat_sessions SET last_activity_at = ?2, message_count = message_count + 1 WHERE session_id = ?1").bind(sessionId, ts),
   ]);
   const messageId = logged[0] && logged[0].meta && logged[0].meta.last_row_id;
+
+  // Email transcripts of chats that have gone quiet (throttled; a no-op unless email is configured).
+  background(sweepIdleSessions({ db, env }));
 
   // First message of a new chat: tell Adam (a job description or link in the fit chat is a "hot" alert).
   if (visitorTurns === 0) {

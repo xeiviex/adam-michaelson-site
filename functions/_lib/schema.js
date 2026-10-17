@@ -13,6 +13,12 @@ const STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS idx_chat_alerts_session ON chat_alerts (session_id, kind)`,
   `CREATE INDEX IF NOT EXISTS idx_chat_alerts_msg ON chat_alerts (provider_msg_id)`,
   `CREATE TABLE IF NOT EXISTS chat_meta (key TEXT PRIMARY KEY, value TEXT)`,
+  `CREATE TABLE IF NOT EXISTS chat_emails (
+     session_id TEXT PRIMARY KEY,
+     emailed_count INTEGER NOT NULL DEFAULT 0,
+     attempts INTEGER NOT NULL DEFAULT 0,
+     sent_at TEXT
+   )`,
   `CREATE VIRTUAL TABLE IF NOT EXISTS chat_messages_fts USING fts5(content, content='chat_messages', content_rowid='id')`,
   `CREATE TRIGGER IF NOT EXISTS chat_messages_ai AFTER INSERT ON chat_messages BEGIN
      INSERT INTO chat_messages_fts(rowid, content) VALUES (new.id, new.content);
@@ -27,6 +33,8 @@ let ready = false;
 export async function ensureSchema(db) {
   if (ready) return;
   for (const sql of STATEMENTS) await db.prepare(sql).run();
+  // Transcript emails only cover chats that were active after this moment, so old conversations are never mass-mailed.
+  await db.prepare("INSERT OR IGNORE INTO chat_meta (key, value) VALUES ('email_since', ?1)").bind(new Date().toISOString()).run();
   // Index everything that was logged before the search index existed.
   const built = await db.prepare("SELECT value FROM chat_meta WHERE key = 'fts_built'").first();
   if (!built) {
