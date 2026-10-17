@@ -10,6 +10,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import knowledge from "../_generated/knowledge.js";
 import { getConfig } from "../_lib/config.js";
 import { buildSystem } from "../_lib/prompts.js";
+import { makeNameFilter } from "../_lib/nameguard.js";
 import { looksLikeUrl, fetchPosting, cacheKey, PostingError } from "../_lib/jobfetch.js";
 
 const json = (body, status = 200) =>
@@ -133,6 +134,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const stream = new ReadableStream({
     async start(controller) {
       let text = "";
+      const guard = makeNameFilter(cfg.blockedNames);
+      const emit = (t) => { if (t) { text += t; send(controller, { t }); } };
       try {
         const s = client.messages.stream({
           model: cfg.model,
@@ -144,10 +147,10 @@ export async function onRequestPost({ request, env, waitUntil }) {
         });
         for await (const ev of s) {
           if (ev.type === "content_block_delta" && ev.delta.type === "text_delta") {
-            text += ev.delta.text;
-            send(controller, { t: ev.delta.text });
+            emit(guard.push(ev.delta.text));
           }
         }
+        emit(guard.flush());
         const final = await s.finalMessage();
         console.log("chat usage", JSON.stringify({ cache_read: final.usage.cache_read_input_tokens, cache_write: final.usage.cache_creation_input_tokens, input: final.usage.input_tokens, output: final.usage.output_tokens }));
         if (final.stop_reason === "refusal" && !text) {

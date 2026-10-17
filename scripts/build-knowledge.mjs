@@ -16,6 +16,7 @@
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { blockedNames, redact } from "../functions/_lib/nameguard.js";
 import { filterPage, assertNoLeak, markdownToBlocks } from "./lib/knowledge-filter.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -74,7 +75,10 @@ if (fromDir) {
   }
 }
 
-const markdown = sections.join("\n");
+const names = blockedNames(process.env);
+const markdown = redact(sections.join("\n"), names);
+const redactedCount = sections.join("\n").length !== markdown.length ? "yes" : "none found";
+console.log(`blocked names removed from knowledge: ${redactedCount}`);
 const canaries = (process.env.KNOWLEDGE_CANARIES || "").split("\n").map((s) => s.trim()).filter(Boolean);
 try {
   assertNoLeak(markdown, { privateIds: PRIVATE_IDS, dropped: allDropped, canaries });

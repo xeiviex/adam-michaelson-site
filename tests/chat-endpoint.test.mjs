@@ -69,7 +69,7 @@ test("streams a reply, logs both sides, caches the knowledge block", async () =>
   const res = await call({ sessionId: S, mode: "intro", message: "What have you built?" });
   assert.equal(res.status, 200);
   const text = await res.text();
-  assert.match(text, /"t":"Hello "/);
+  assert.equal([...text.matchAll(/"t":"([^"]*)"/g)].map((m) => m[1]).join(""), "Hello from Adam.");
   assert.match(text, /"done":true/);
   const rows = db.prepare("SELECT user_id, session_id, role, content FROM chat_messages ORDER BY id").all();
   assert.deepEqual(rows.map((r) => [r.role, r.content, r.user_id, r.session_id]), [
@@ -185,4 +185,18 @@ test("fit chat: a posting read once is reused for a week, even if the site later
     assert.equal(hits, 1);
     assert.match(requests.at(-1).messages.at(-1).content, /Title: PM Agents/);
   } finally { globalThis.fetch = realFetch; }
+});
+
+test("children's names never reach the visitor or the log, even when the model slips", async () => {
+  const saved = reply;
+  reply = ["Our oldest, Josh", "ua, was born in 2001, and Ava is the baby. ", "Joshua's room is upstairs."];
+  try {
+    const sid = "names1234567890abcd";
+    const res = await call({ sessionId: sid, mode: "intro", message: "Tell me about your kids" }, { CHAT_BLOCKED_NAMES: "Ava" });
+    const raw = await res.text();
+    assert.ok(!/Joshua|Ava/.test(raw), raw);
+    const bot = db.prepare("SELECT content FROM chat_messages WHERE session_id = ? AND role = 'bot'").get(sid).content;
+    assert.ok(!/Joshua|Ava/.test(bot), bot);
+    assert.match(bot, /one of my kids/);
+  } finally { reply = saved; }
 });
