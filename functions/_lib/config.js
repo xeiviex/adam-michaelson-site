@@ -1,3 +1,5 @@
+import { blockedNames } from "./nameguard.js";
+
 /** Chat configuration. Everything overridable by environment variable. */
 export function getConfig(env) {
   const int = (v, d) => (Number.isFinite(parseInt(v, 10)) ? parseInt(v, 10) : d);
@@ -5,6 +7,7 @@ export function getConfig(env) {
     // Contact: phone first, email as the alternative. Config values, not prompt text.
     contactPhone: env.CONTACT_PHONE || "801-822-9045",
     contactEmail: env.CONTACT_EMAIL || "hello@adam-michaelson.com",
+    blockedNames: blockedNames(env),
     model: env.CHAT_MODEL || "claude-sonnet-5-5",
     effort: env.CHAT_EFFORT || "medium",
     maxTokens: { intro: int(env.CHAT_MAX_TOKENS_INTRO, 1024), fit: int(env.CHAT_MAX_TOKENS_FIT, 1800) },
