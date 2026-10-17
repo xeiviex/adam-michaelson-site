@@ -289,25 +289,58 @@
   msg.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); $('form').requestSubmit(); }
   });
-  var spacer = null;
-  function setMax(on) {
+  /* Chat sizes: collapsed (in the page), mid (phone-sized, grows upward, wide screens only), max (the lightbox). */
+  var spacer = null, midAnim = null;
+  function stopAnim() { if (midAnim) { midAnim.cancel(); midAnim = null; } }
+  function hold(chat) {
+    if (spacer) return;
+    spacer = document.createElement('div'); spacer.style.cssText = 'flex:none;margin-top:10px;height:' + chat.offsetHeight + 'px';
+    chat.parentNode.insertBefore(spacer, chat);
+  }
+  function release() { if (spacer) { spacer.remove(); spacer = null; } }
+  function canMid() { return window.innerWidth > 820; }
+  function setMid(on) {
+    var chat = $('chat');
+    if (on === chat.classList.contains('mid')) return;
+    if (on) {
+      if (!canMid() || chat.classList.contains('max') || !chat.classList.contains('in')) return;
+      stopAnim();
+      var h0 = chat.offsetHeight, avail = Math.min(chat.parentNode.getBoundingClientRect().bottom, window.innerHeight) - 100;
+      var h1 = Math.round(Math.max(h0, 380, Math.min(740, avail)));
+      hold(chat); chat.classList.add('mid'); chat.style.height = h1 + 'px';
+      if (!reduce && chat.animate) midAnim = chat.animate([{ height: h0 + 'px' }, { height: h1 + 'px' }], { duration: 260, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    } else {
+      stopAnim(); chat.classList.remove('mid'); chat.style.height = ''; release();
+    }
+    log.scrollTop = log.scrollHeight;
+  }
+  function setMax(on, noMid) {
     var chat = $('chat'), isMax = chat.classList.contains('max');
     if (on === isMax) return;
     if (on) {
-      spacer = document.createElement('div'); spacer.style.cssText = 'flex:none;height:' + chat.offsetHeight + 'px';
-      chat.parentNode.insertBefore(spacer, chat);
+      stopAnim(); hold(chat); chat.classList.remove('mid'); chat.style.height = '';
       chat.classList.add('max'); $('scrim').classList.add('on'); document.body.style.overflow = 'hidden';
     } else {
       chat.classList.remove('max'); $('scrim').classList.remove('on'); document.body.style.overflow = '';
-      if (spacer) { spacer.remove(); spacer = null; }
+      release();
     }
     $('ctl').setAttribute('aria-expanded', on); $('ctl').setAttribute('aria-label', on ? 'Minimize chat' : 'Maximize chat');
     $('ico-max').style.display = on ? 'none' : ''; $('ico-min').style.display = on ? '' : 'none';
-    log.scrollTop = log.scrollHeight; msg.focus();
+    log.scrollTop = log.scrollHeight;
+    if (on || !noMid) { msg.focus(); if (!on) setMid(true); }
   }
+  /* Clicking into the text box opens the mid size; clicking or tabbing away, or Escape, collapses it. */
+  msg.addEventListener('focus', function () { setMid(true); });
+  document.addEventListener('pointerdown', function (e) { if (!$('chat').contains(e.target)) setMid(false); });
+  $('chat').addEventListener('focusout', function (e) { if (e.relatedTarget && !$('chat').contains(e.relatedTarget)) setMid(false); });
+  window.addEventListener('resize', function () { if (!canMid()) setMid(false); });
   $('ctl').addEventListener('click', function () { setMax(!$('chat').classList.contains('max')); });
-  $('scrim').addEventListener('click', function () { setMax(false); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeFit(); setMax(false); } });
+  $('scrim').addEventListener('click', function () { setMax(false, true); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    closeFit();
+    if ($('chat').classList.contains('max')) setMax(false, true); else setMid(false);
+  });
   var fbar = $('fbar');
   function onScroll() {
     var on = window.scrollY > window.innerHeight * 0.75;
