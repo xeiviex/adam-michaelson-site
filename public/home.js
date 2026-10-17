@@ -289,7 +289,7 @@
   msg.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); $('form').requestSubmit(); }
   });
-  /* Chat sizes: collapsed (in the page), mid (phone-sized, grows upward, wide screens only), max (the lightbox). */
+  /* Chat sizes: collapsed (in the page), mid (phone-sized, grows upward, wide screens only), max (the lightbox; full screen on narrow screens, where focusing the text box opens it). */
   var spacer = null, midAnim = null;
   function stopAnim() { if (midAnim) { midAnim.cancel(); midAnim = null; } }
   function hold(chat) {
@@ -327,10 +327,10 @@
     $('ctl').setAttribute('aria-expanded', on); $('ctl').setAttribute('aria-label', on ? 'Minimize chat' : 'Maximize chat');
     $('ico-max').style.display = on ? 'none' : ''; $('ico-min').style.display = on ? '' : 'none';
     log.scrollTop = log.scrollHeight;
-    if (on || !noMid) { msg.focus(); if (!on) setMid(true); }
+    if (on) msg.focus(); else if (!noMid && canMid()) { msg.focus(); setMid(true); }
   }
   /* Clicking into the text box opens the mid size; clicking or tabbing away, or Escape, collapses it. */
-  msg.addEventListener('focus', function () { setMid(true); });
+  msg.addEventListener('focus', function () { if (canMid()) setMid(true); else setMax(true); });
   document.addEventListener('pointerdown', function (e) { if (!$('chat').contains(e.target)) setMid(false); });
   $('chat').addEventListener('focusout', function (e) { if (e.relatedTarget && !$('chat').contains(e.relatedTarget)) setMid(false); });
   window.addEventListener('resize', function () { if (!canMid()) setMid(false); });
