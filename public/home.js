@@ -289,7 +289,7 @@
   msg.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); $('form').requestSubmit(); }
   });
-  /* Chat sizes: collapsed (in the page), mid (phone-sized, grows upward, wide screens only), max (the lightbox; full screen on narrow screens, where focusing the text box opens it). */
+  /* Chat sizes: collapsed (in the page); mid (same width, grows upward; wide screens only); max (the lightbox, full screen on narrow screens, where focusing the text box goes straight to it). Collapsing from mid or max returns to collapsed. */
   var spacer = null, midAnim = null;
   function stopAnim() { if (midAnim) { midAnim.cancel(); midAnim = null; } }
   function hold(chat) {
@@ -314,7 +314,7 @@
     }
     log.scrollTop = log.scrollHeight;
   }
-  function setMax(on, noMid) {
+  function setMax(on) {
     var chat = $('chat'), isMax = chat.classList.contains('max');
     if (on === isMax) return;
     if (on) {
@@ -327,7 +327,7 @@
     $('ctl').setAttribute('aria-expanded', on); $('ctl').setAttribute('aria-label', on ? 'Minimize chat' : 'Maximize chat');
     $('ico-max').style.display = on ? 'none' : ''; $('ico-min').style.display = on ? '' : 'none';
     log.scrollTop = log.scrollHeight;
-    if (on) msg.focus(); else if (!noMid && canMid()) { msg.focus(); setMid(true); }
+    if (on) msg.focus();
   }
   /* Clicking into the text box opens the mid size; clicking or tabbing away, or Escape, collapses it. */
   msg.addEventListener('focus', function () { if (canMid()) setMid(true); else setMax(true); });
@@ -335,11 +335,11 @@
   $('chat').addEventListener('focusout', function (e) { if (e.relatedTarget && !$('chat').contains(e.relatedTarget)) setMid(false); });
   window.addEventListener('resize', function () { if (!canMid()) setMid(false); });
   $('ctl').addEventListener('click', function () { setMax(!$('chat').classList.contains('max')); });
-  $('scrim').addEventListener('click', function () { setMax(false, true); });
+  $('scrim').addEventListener('click', function () { setMax(false); });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
     closeFit();
-    if ($('chat').classList.contains('max')) setMax(false, true); else setMid(false);
+    if ($('chat').classList.contains('max')) setMax(false); else setMid(false);
   });
   var fbar = $('fbar');
   function onScroll() {
