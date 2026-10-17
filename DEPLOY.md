@@ -160,3 +160,8 @@ If a send ever fails, the reason is saved (visible in the database table `chat_e
 Optional: `EMAIL_IDLE_MINUTES`, `EMAIL_DAILY_CAP` (default 100). Pages Functions have no scheduler, so the 20-minute check runs when the site or console has traffic.
 For on-time emails even on quiet days, set a `CRON_SECRET` secret and point any free scheduler (for example cron-job.org) at
 `https://adam-michaelson.com/api/cron/sweep` every 5 minutes with the header `X-Cron-Secret: <your secret>`. This is optional.
+
+## Names the chat must never say
+
+`CHAT_BLOCKED_NAMES` (secret, comma separated): the children's names. They are removed from the knowledge at build time and from every reply as it streams ("Joshua" is always blocked).
+`CHAT_ALLOWED_NAMES` (optional, comma separated full names): people who share a first name with a blocked name, e.g. `Joshua Steimle` (always allowed).
