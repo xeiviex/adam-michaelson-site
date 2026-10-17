@@ -307,10 +307,10 @@
       stopAnim();
       var h0 = chat.offsetHeight, avail = Math.min(chat.parentNode.getBoundingClientRect().bottom, window.innerHeight) - 100;
       var h1 = Math.round(Math.max(h0, 380, Math.min(740, avail)));
-      hold(chat); chat.classList.add('mid'); chat.style.height = h1 + 'px';
+      hold(chat); chat.classList.add('mid'); chat.style.height = h1 + 'px'; chat.style.width = chat.parentNode.clientWidth + 'px';
       if (!reduce && chat.animate) midAnim = chat.animate([{ height: h0 + 'px' }, { height: h1 + 'px' }], { duration: 260, easing: 'cubic-bezier(.2,.8,.2,1)' });
     } else {
-      stopAnim(); chat.classList.remove('mid'); chat.style.height = ''; release();
+      stopAnim(); chat.classList.remove('mid'); chat.style.height = ''; chat.style.width = ''; release();
     }
     log.scrollTop = log.scrollHeight;
   }
@@ -318,7 +318,7 @@
     var chat = $('chat'), isMax = chat.classList.contains('max');
     if (on === isMax) return;
     if (on) {
-      stopAnim(); hold(chat); chat.classList.remove('mid'); chat.style.height = '';
+      stopAnim(); hold(chat); chat.classList.remove('mid'); chat.style.height = ''; chat.style.width = '';
       chat.classList.add('max'); $('scrim').classList.add('on'); document.body.style.overflow = 'hidden';
     } else {
       chat.classList.remove('max'); $('scrim').classList.remove('on'); document.body.style.overflow = '';
@@ -333,7 +333,7 @@
   msg.addEventListener('focus', function () { if (canMid()) setMid(true); else setMax(true); });
   document.addEventListener('pointerdown', function (e) { if (!$('chat').contains(e.target)) setMid(false); });
   $('chat').addEventListener('focusout', function (e) { if (e.relatedTarget && !$('chat').contains(e.relatedTarget)) setMid(false); });
-  window.addEventListener('resize', function () { if (!canMid()) setMid(false); });
+  window.addEventListener('resize', function () { setMid(false); });
   $('ctl').addEventListener('click', function () { setMax(!$('chat').classList.contains('max')); });
   $('scrim').addEventListener('click', function () { setMax(false); });
   document.addEventListener('keydown', function (e) {
