@@ -26,3 +26,6 @@ Updated 2026-10-08.
 - Replace the photo placeholders on the seven career pages, and swap in the newer dark Lendio logo (recolored white).
 - Decide whether to delete stray duplicates: `public/00review.html`, `public/clone10contactinfo.html`, `public/clever/00review.html`, `public/clever/clone10contactinfo.html`.
 - Note: this repo is public. Everything in it is already public on the site, except the opt-in handler code and the database schema, neither of which holds secrets.
+
+## Site-wide scroll hint
+`functions/_middleware.js` appends `<script src="/scroll-hint.js">` to every public HTML page (it skips /api, /admin and /clever), so new pages inherit the hint with no edits. `public/scroll-hint.js` shows a chevron at the bottom center when the screen looks complete but more page is below, hides it on scroll, and brings it back after a pause. Opt a page out with `<html data-no-scroll-hint>`. `public/_routes.json` keeps static assets (js, css, images) from invoking Functions.
