@@ -124,7 +124,20 @@
         if (isOpen && !isOpen()) return;
         if (j.mode === 'human' && !human) { human = true; note('Adam has joined the conversation.'); }
         if (j.mode !== 'human' && human) { human = false; note('Adam has handed you back to the assistant.'); }
-        (j.messages || []).forEach(function (m) { lastId = Math.max(lastId, m.id); var b = row(false, lg); setText(b, m.content); b.classList.add('pop', 'live'); ding(); });
+        (j.messages || []).forEach(function (m) {
+          lastId = Math.max(lastId, m.id);
+          var b = row(false, lg); setText(b, m.content);
+          var ico = document.createElement('span');
+          ico.className = 'live-bolt';
+          ico.tabIndex = 0;
+          ico.setAttribute('role', 'img');
+          ico.setAttribute('aria-label', 'This is actually Adam messaging you -- not AI.');
+          ico.setAttribute('data-tip', 'This is actually Adam messaging you -- not AI.');
+          ico.innerHTML = '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M9.5 1.5L3 9h4.5l-1 5.5L13 7H8.5l1-5.5z"/></svg>';
+          b.insertBefore(ico, b.firstChild);
+          b.classList.add('pop', 'live');
+          ding();
+        });
       }).catch(function () {});
     }
     return {
