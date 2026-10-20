@@ -13,6 +13,10 @@ test('fit chat assesses bare product-leadership titles instead of asking for a j
   assert.match(t, /B2B SaaS, fintech and lending, AI product, HR software, banking software, and infrastructure software/);
 });
 
+test('CPO answers claim the seat in practice, not a CPO title', () => {
+  assert.match(text('fit'), /executive product leader, even though my formal title was VP or SVP of Product/);
+});
+
 test('intro chat does not carry the fit-title rules', () => {
   assert.doesNotMatch(text('intro'), /ROLE TITLE ONLY/);
 });
