@@ -639,7 +639,10 @@ export const pages = [
       closing: [
         'Some who were on board at first suddenly found opportunities elsewhere, and others called it unfair. But those who delivered on the outputs and outcomes loved it, and they have told me it was the biggest leveling up of their careers. The team got about half as large, and far stronger.',
       ],
-      photos: ['Adam training the team, with a "Cadences" slide on screen', 'Adam in a 1:1 with a team member in a small conference room'],
+      photos: [
+        { src: '/bio/photos/lendio2-craft-training.webp', alt: 'Adam Michaelson standing at the front of a conference room, gesturing as he trains a seated team, with a slide titled Outcomes on the screen behind him', position: '50% 40%', width: 1536, height: 1024 },
+        { src: '/bio/photos/lendio2-craft-1on1.webp', alt: 'Over Adam Michaelson’s shoulder as he talks one-on-one with a team member who listens and takes notes in a small conference room', position: '50% 40%', width: 1536, height: 1024 },
+      ],
       photoNote: 'Although Adam’s likeness has been used, the rest is AI generated.',
     },
     s5: {

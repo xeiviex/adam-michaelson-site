@@ -124,7 +124,7 @@ function render(p, i) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/bio/bio.css?v=4">
-<link rel="stylesheet" href="/bio/career.css?v=19">
+<link rel="stylesheet" href="/bio/career.css?v=21">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -147,7 +147,7 @@ function render(p, i) {
 ${hero}
 ${section('charter', '02', labels[1], p.s2, 'collage')}
 ${section('approach', '03', labels[2], p.s3, 'single')}
-${section('outcomes', '04', labels[3], p.s4, 'montage')}${p.craft ? section('craft', '05', labels[4], p.craft, 'single') : ''}
+${section('outcomes', '04', labels[3], p.s4, 'montage')}${p.craft ? section('craft', '05', labels[4], p.craft, 'stack') : ''}
 ${last}
 </main>
 
