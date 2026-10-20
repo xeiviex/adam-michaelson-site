@@ -641,7 +641,7 @@ export const pages = [
       ],
       photos: [
         { src: '/bio/photos/lendio2-craft-training.webp', alt: 'Adam Michaelson standing at the front of a conference room, gesturing as he trains a seated team, with a slide titled Outcomes on the screen behind him', position: '50% 40%', width: 1536, height: 1024 },
-        { src: '/bio/photos/lendio2-craft-1on1.webp', alt: 'Over Adam Michaelson’s shoulder as he talks one-on-one with a team member who listens and takes notes in a small conference room', position: '50% 40%', width: 1536, height: 1024 },
+        { src: '/bio/photos/lendio2-craft-1on1.webp?v=2', alt: 'Over Adam Michaelson’s shoulder as he talks one-on-one with a team member who listens and takes notes in a small conference room', position: '50% 40%', width: 1536, height: 1024 },
       ],
       photoNote: 'Although Adam’s likeness has been used, the rest is AI generated.',
     },
