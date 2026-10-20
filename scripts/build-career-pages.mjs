@@ -49,7 +49,8 @@ function section(id, n, label, s, kind) {
           <h2>${esc(s.title)}</h2>
           <p class="subtitle">${esc(s.sub)}</p>
           ${paras(s.body)}
-          ${s.points ? points(s.points) : ''}
+          ${s.points ? points(s.points) : ''}${s.closing ? `
+          ${paras(s.closing)}` : ''}
         </div>${s.photoNote ? `
         <div class="media-col">${media(s.photos, kind)}
           <p class="photo-note">${esc(s.photoNote)}</p>
@@ -63,6 +64,12 @@ function render(p, i) {
   const next = p.s5.next;
   const labels = ['Overview', 'The charter', 'The approach', 'Output & outcomes', 'Learnings & what’s next'];
   const ids = ['overview', 'charter', 'approach', 'outcomes', 'next'];
+  if (p.craft) {
+    labels.splice(4, 0, 'Raising the bar');
+    ids.splice(4, 0, 'craft');
+  }
+  const lastLabel = labels[labels.length - 1];
+  const lastNum = pad(labels.length);
 
   const hero = `
     <section class="panel hero" id="overview" data-label="${labels[0]}">
@@ -87,10 +94,10 @@ function render(p, i) {
   const nextHref = next.slug ? `/bio/${next.slug}/` : next.href;
   const nextCta = next.slug ? 'Continue to the next chapter' : next.cta;
   const last = `
-    <section class="panel" id="next" data-label="${labels[4]}">
+    <section class="panel" id="next" data-label="${lastLabel}">
       <div class="wrap split">
         <div class="copy">
-          <span class="eyebrow"><span class="n">05</span> · ${labels[4]}</span>
+          <span class="eyebrow"><span class="n">${lastNum}</span> · ${lastLabel}</span>
           <h2>${esc(p.s5.title)}</h2>
           <p class="subtitle">${esc(p.s5.sub)}</p>
           ${paras(p.s5.body)}
@@ -117,7 +124,7 @@ function render(p, i) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/bio/bio.css?v=4">
-<link rel="stylesheet" href="/bio/career.css?v=19">
+<link rel="stylesheet" href="/bio/career.css?v=21">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -140,7 +147,7 @@ function render(p, i) {
 ${hero}
 ${section('charter', '02', labels[1], p.s2, 'collage')}
 ${section('approach', '03', labels[2], p.s3, 'single')}
-${section('outcomes', '04', labels[3], p.s4, 'montage')}
+${section('outcomes', '04', labels[3], p.s4, 'montage')}${p.craft ? section('craft', '05', labels[4], p.craft, 'stack') : ''}
 ${last}
 </main>
 

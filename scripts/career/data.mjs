@@ -624,11 +624,32 @@ export const pages = [
       ],
       photoNote: 'Although Adam’s likeness has been used, the rest is AI generated.',
     },
+    craft: {
+      title: 'Level up the craft',
+      sub: 'Instead of letting people go, I made it a challenge to level up.',
+      body: [
+        'With 40 people on the team, I could see in the work that some were coasting rather than contributing at a high level. Rather than simply let them go, I brought the whole team a detailed set of expectations, standards, and processes for the craft, and asked if they agreed these defined the job done well. I asked them to calibrate it and add to it, and we landed in full agreement.',
+        'Then we trained on it together. I taught and gave assignments, the team helped each other level up, and I met with every person every week to review their outputs and outcomes and give feedback. It was very time consuming, and I did it anyway. The path was clear to everyone from the start:',
+      ],
+      points: [
+        { h: 'At 30 days,', t: 'anyone not on track for the agreed expectations got guidance from me.' },
+        { h: 'At 60 days,', t: 'anyone still not on track was put on a performance plan.' },
+        { h: 'At 90 days,', t: 'anyone still not on track was helped to find a better fit elsewhere.' },
+      ],
+      closing: [
+        'Some who were on board at first suddenly found opportunities elsewhere, and others called it unfair. But those who delivered on the outputs and outcomes loved it, and they have told me it was the biggest leveling up of their careers. The team got about half as large, and far stronger.',
+      ],
+      photos: [
+        { src: '/bio/photos/lendio2-craft-training.webp', alt: 'Adam Michaelson standing at the front of a conference room, gesturing as he trains a seated team, with a slide titled Outcomes on the screen behind him', position: '50% 40%', width: 1536, height: 1024 },
+        { src: '/bio/photos/lendio2-craft-1on1.webp', alt: 'Over Adam Michaelson’s shoulder as he talks one-on-one with a team member who listens and takes notes in a small conference room', position: '50% 40%', width: 1536, height: 1024 },
+      ],
+      photoNote: 'Although Adam’s likeness has been used, the rest is AI generated.',
+    },
     s5: {
       title: 'Earn trust, then automate',
       sub: 'What I learned, how the team adapted, and what came next.',
       body: [
-        'Banks did not trust full automation at first, so we sequenced the strategy: deterministic logic under a lender portal with a clear audit trail of every decision. Then, once trust was earned, full automation and Forward Flow. To raise the craft of a 40-person team, I set agreed standards and a 30-, 60-, and 90-day path. Those who delivered called it the biggest leveling up of their careers.',
+        'Banks did not trust full automation at first, so we sequenced the strategy: deterministic logic under a lender portal with a clear audit trail of every decision. Then, once trust was earned, full automation and Forward Flow.',
         'In my last month I shipped 12 production features (60,000 lines of code) with Claude Code. I hit the milestones I came to hit, the new product lines and the platform behind them were in place, and the team was strong enough to carry the work forward. I was ready for my next adventure.',
       ],
       photos: [
