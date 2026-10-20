@@ -639,7 +639,7 @@ export const pages = [
       closing: [
         'Some who were on board at first suddenly found opportunities elsewhere, and others called it unfair. But those who delivered on the outputs and outcomes loved it, and they have told me it was the biggest leveling up of their careers. The team got about half as large, and far stronger.',
       ],
-      photos: ['The team at a standards calibration session'],
+      photos: ['Adam training the team, with a "Cadences" slide on screen', 'Adam in a 1:1 with a team member in a small conference room'],
       photoNote: 'Although Adam’s likeness has been used, the rest is AI generated.',
     },
     s5: {
