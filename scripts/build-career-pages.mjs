@@ -65,7 +65,7 @@ function render(p, i) {
   const labels = ['Overview', 'The charter', 'The approach', 'Output & outcomes', 'Learnings & what’s next'];
   const ids = ['overview', 'charter', 'approach', 'outcomes', 'next'];
   if (p.craft) {
-    labels.splice(4, 0, 'Raising the craft');
+    labels.splice(4, 0, 'Raising the bar');
     ids.splice(4, 0, 'craft');
   }
   const lastLabel = labels[labels.length - 1];
