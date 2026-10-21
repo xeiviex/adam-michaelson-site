@@ -2,6 +2,48 @@
 (function () {
   var tile = document.querySelector('.chat-tile');
   if (!tile) return;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // Intro paragraph types in with the same caret and punctuation pauses as the /bio headers (bio.js);
+  // the phone conversation starts once it has finished.
+  var lede = document.querySelector('.chat-lede');
+  var ready = !lede || reduce.matches;
+  var onReady = function () {};
+  if (lede && !reduce.matches) {
+    var full = lede.textContent.trim();
+    lede.setAttribute('data-typing', '');
+    lede.innerHTML = '<span class="sr"></span><span class="ghost" aria-hidden="true"></span><span class="typed" aria-hidden="true"><span class="t"></span></span>';
+    lede.firstChild.textContent = full;
+    lede.querySelector('.ghost').textContent = full;
+    var out = lede.querySelector('.t');
+    var TYPE_SPEED = 22, began = false;
+    var delayFor = function (ch) { return '.!?…'.indexOf(ch) !== -1 ? 300 : ',;:—'.indexOf(ch) !== -1 ? 150 : TYPE_SPEED; };
+    var finish = function () {
+      out.textContent = full; lede.classList.add('typed-done');
+      var c = lede.querySelector('.caret'); if (c) c.remove();
+      ready = true; onReady();
+    };
+    var typeIn = function () {
+      if (began) return; began = true;
+      var caret = document.createElement('span'); caret.className = 'caret'; out.after(caret);
+      var i = 0;
+      (function step() {
+        if (ready) return;
+        if (i < full.length) { var ch = full[i++]; out.textContent += ch; setTimeout(step, delayFor(ch)); }
+        else finish();
+      })();
+    };
+    if ('IntersectionObserver' in window) {
+      var seen = new IntersectionObserver(function (e) {
+        if (!e[0].isIntersecting) return;
+        seen.disconnect(); typeIn();
+      }, { threshold: 0.6 });
+      seen.observe(lede);
+    } else finish();
+    // Skipped past the paragraph (jump link, fast scroll): don't make the phone wait for typing nobody sees
+    var skip = function () { if (!ready && lede.getBoundingClientRect().bottom < 0) finish(); };
+    window.addEventListener('scroll', skip, { passive: true });
+  }
   var stage = tile.querySelector('.chat-stage');
   var list = tile.querySelector('.chat-msgs');
   var MSGS = [
@@ -22,7 +64,6 @@
   var cards = {};
   CARDS.forEach(function (c) { cards[c[0]] = tile.querySelector('.chat-card' + c[0]); });
   function setCard(sel, on) { if (cards[sel]) cards[sel].classList.toggle('show', on); }
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function fit() {
     var room = tile.parentNode.clientWidth;
@@ -73,8 +114,10 @@
   }
   function start() {
     if (reduce.matches) { clear(); showAll(); running = false; return; }
+    if (!ready) return;
     if (!running) { running = true; play(); }
   }
+  onReady = function () { if (visible) start(); };
 
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (e) { visible = e[0].isIntersecting; if (visible) start(); }, { threshold: 0.1 }).observe(tile);
