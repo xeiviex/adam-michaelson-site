@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopping on the shopper's terms | Adam Michaelson</title>
+<meta name="description" content="Three problems and two product bets for LendingTree, with prototypes. Prepared by Adam Michaelson.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/product/product.css?v=1">
+<link rel="stylesheet" href="/lendingtree/lendingtree.css?v=1">
+<script>document.documentElement.classList.add('js');</script>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+<header class="bar"><div class="in">
+  <a class="nm" href="/">Adam Michaelson</a>
+  <a class="back" href="#bets">The bets</a>
+</div></header>
+<div class="wrap">
+
+  <section class="hero">
+    <span class="eyebrow rv">Prepared for LendingTree · October 2026</span>
+    <h1 class="rv">Shopping on the shopper's terms.</h1>
+    <p class="summary rv">LendingTree helps millions of people compare loans and insurance. One form can still turn into a flood of calls, offers that only look alike, and policies scattered across a dozen carriers. Here are three problems I see, two bets that go after them, and a prototype for each.</p>
+    <div class="btn-row rv">
+      <a class="btn" href="#problems">The three problems &darr;</a>
+      <a class="btn" href="#bets">The two bets &darr;</a>
+    </div>
+    <span class="draft rv">Working draft · title, copy and numbers are open for calibration</span>
+    <p class="alts rv"><b>Other title ideas:</b> "Let the shopper choose." · "From leads to choices." · "The marketplace where the borrower picks." · "One form. One conversation."</p>
+  </section>
+
+  <div class="section-head" id="problems">
+    <span class="eyebrow rv">Three problems</span>
+    <h2 class="rv">What I see when I shop it myself.</h2>
+    <p class="rv">I went through the home equity flow on lendingtree.com as a real shopper and kept notes along the way. The first two problems come from that test. The third comes from LendingTree's own numbers.</p>
+  </div>
+
+  <section class="lead problem" id="problem-1">
+    <div class="txt">
+      <span class="eyebrow rv">01</span>
+      <h2 class="rv">One click hands over control.</h2>
+      <p class="rv">The last button on the form, "View My Rates," is also the consent. It covers calls and texts, including automated ones, from LendingTree, its network partners and anyone acting for them. The shopper isn't told which lenders, how many, or how often.</p>
+      <p class="proof rv">In my test, a single form produced about eleven calls and texts from at least four named lenders in the first three minutes. One test, one phone number, so it's a data point and not a rate.</p>
+    </div>
+    <div class="imgph rv"><b>Image placeholder</b><span>The phone's call list and the first text messages, minutes after submitting</span></div>
+  </section>
+
+  <section class="lead problem" id="problem-2">
+    <div class="txt">
+      <span class="eyebrow rv">02</span>
+      <h2 class="rv">Offers look alike and aren't.</h2>
+      <p class="rv">The top two results showed monthly payments of $734 and $739. One was a fixed-rate loan paying principal and interest. The other was a variable-rate line of credit paying interest only. Side by side, they read as the same thing.</p>
+      <p class="proof rv">Each card is labeled "Lender's Best Quote." The page doesn't say whether a quote is an estimate, pre-qualified or verified, or what the lender still needs to confirm.</p>
+    </div>
+    <div class="imgph rv"><b>Image placeholder</b><span>The results page with the two offers side by side</span></div>
+  </section>
+
+  <section class="lead problem" id="problem-3">
+    <div class="txt">
+      <span class="eyebrow rv">03</span>
+      <h2 class="rv">Insurance shoppers come back one quote at a time.</h2>
+      <p class="rv">A person's auto, home and other policies live with different carriers, each with its own login, renewal date and price. Nobody sees all of it in one place, so shopping happens once, at a renewal or a bad surprise, and starts from zero each time.</p>
+      <p class="proof rv">LendingTree's Insurance segment margin was 24% in Q2 2026, down from 27% a year earlier, so acquiring each of those one-time shoppers is getting more expensive.</p>
+    </div>
+    <div class="imgph rv"><b>Image placeholder</b><span>A phone full of carrier apps and logins</span></div>
+  </section>
+
+  <div class="section-head" id="bets">
+    <span class="eyebrow rv">Two bets</span>
+    <h2 class="rv">Small enough to test, big enough to matter.</h2>
+    <p class="rv">Each bet has a defined scope, a rough time to market, success measures, and a line drawn in advance for when we'd persevere and when we'd pivot. Time estimates are rough order of magnitude and the thresholds are my proposals to calibrate with the team.</p>
+  </div>
+
+  <section class="bet" id="bet-a">
+    <div class="bet-top">
+      <div class="txt">
+        <span class="eyebrow rv">Bet A · Problems 01 and 02</span>
+        <h2 class="rv">Choose your lender.</h2>
+        <p class="rv">After the form, the shopper sees clear, comparable options and picks who contacts them, how, and when. Lenders pay for a lead the shopper chose. Start with one home equity segment.</p>
+        <div class="btn-row rv"><a class="btn" href="/lendingtree/bet-a/">See the prototype &rarr;</a></div>
+      </div>
+      <a class="teaser rv" href="/lendingtree/bet-a/" aria-label="Animated preview of the Choose your lender prototype">
+        <div class="phone" aria-hidden="true">
+          <div class="hd">Your options</div>
+          <div class="opt o1"><span>Lender A<small>8.0% APR · fixed</small></span><i>Choose</i></div>
+          <div class="opt o2"><span>Lender B<small>8.4% APR · variable</small></span><i>Choose</i></div>
+          <div class="opt o3"><span>Lender C<small>7.9% APR · fixed</small></span><i>Choose</i></div>
+          <div class="cursor"></div>
+          <div class="msg">Lender B will text you today at 6:00 PM. Nobody else will contact you.</div>
+        </div>
+        <span class="tag">Illustrative</span><span class="go">Open the prototype &rsaquo;</span>
+      </a>
+    </div>
+    <div class="facts">
+      <div class="wide"><h3>What we're doing</h3>
+        <p>Add an options step where the shopper selects the lender (or lenders) that may contact them, plus channel and time. An AI assistant helps in the flow and follows up by text and email to move the shopper to a choice. Shoppers who don't choose within 24 hours fall back to today's model.</p></div>
+      <div><h3>Scope</h3>
+        <ul>
+          <li>One home equity segment.</li>
+          <li>At least three alpha lenders who together cover 100% of that segment and at least 80% of its lenders.</li>
+          <li>An alpha agreement with terms around consumer selection only.</li>
+          <li>In-flow chat, proactive text and email, all pushing toward a selection.</li>
+          <li>A holdout group on the current model for comparison.</li>
+        </ul></div>
+      <div><h3>Time to market (ROM)</h3>
+        <p class="big">About 12 to 16 weeks</p>
+        <p>Lender agreements (6 to 8 weeks) run in parallel with the build of the options step, AI chasing and measurement (about 8 weeks). The long pole is lender agreements.</p></div>
+      <div><h3>Success criteria</h3>
+        <ul>
+          <li><strong>Selection rate:</strong> share of shoppers reaching the options step who choose a lender.</li>
+          <li><strong>Funded rate:</strong> share of selections that fund.</li>
+          <li><strong>Revenue per lead</strong> against the holdout, at a price lenders accept.</li>
+          <li>Contacts per shopper, opt-outs and complaints, and time to first lender contact.</li>
+        </ul></div>
+      <div><h3>Time in production and the numbers to hit</h3>
+        <p>Run about 6 weeks live, then wait out the funding window, for about 12 weeks to a decision. Aim for at least 5,000 leads reaching the options step, which should yield roughly 2,500 selections and about 100 funded loans at a 4% funded rate.</p></div>
+      <div class="wide"><h3>Persevere or pivot</h3>
+        <div class="verdict">
+          <div class="go"><b>Persevere</b>Selection at 40% or more, funded rate near 4% or better, and revenue per lead at or above the holdout at a price lenders will pay.</div>
+          <div class="mid"><b>Iterate</b>Selection between 25% and 40%, or economics within reach. Improve the AI chasing and the price, then rerun.</div>
+          <div class="stop"><b>Pivot</b>Selection under 25%, or lenders won't pay what it takes to break even.</div>
+        </div></div>
+    </div>
+  </section>
+
+  <section class="bet" id="bet-b">
+    <div class="bet-top">
+      <div class="txt">
+        <span class="eyebrow rv">Bet B · Problem 03</span>
+        <h2 class="rv">All your insurance, in one place.</h2>
+        <p class="rv">An app that keeps every policy, renewal date and price in one view, then tells the owner when a better deal exists. LendingTree becomes the place people open between shopping moments.</p>
+        <div class="btn-row rv"><a class="btn" href="/lendingtree/bet-b/">See the prototype &rarr;</a></div>
+      </div>
+      <a class="teaser rv" href="/lendingtree/bet-b/" aria-label="Animated preview of the All your insurance prototype">
+        <div class="hub" aria-hidden="true">
+          <div class="cards">
+            <div class="pol">Auto<small>Carrier 1 · renews Mar</small></div>
+            <div class="pol">Home<small>Carrier 2 · renews Aug</small></div>
+            <div class="pol">Umbrella<small>Carrier 3 · renews Nov</small></div>
+          </div>
+          <div class="panel">
+            <div class="hd">Your insurance</div>
+            <div class="row2"><span>Auto</span><span>Mar</span></div>
+            <div class="row2 r2"><span>Home</span><span>Aug</span></div>
+            <div class="row2 r3"><span>Umbrella</span><span>Nov</span></div>
+            <div class="chip">Lower price found for your auto policy</div>
+          </div>
+        </div>
+        <span class="tag">Illustrative</span><span class="go">Open the prototype &rsaquo;</span>
+      </a>
+    </div>
+    <div class="facts">
+      <div class="wide"><h3>What we're doing</h3>
+        <p>A single app where a person connects their policies, sees coverage, price and renewal dates together, and gets an alert when a better price is available, with a quote a tap away.</p></div>
+      <div><h3>Scope</h3>
+        <ul>
+          <li>Auto and home policies first.</li>
+          <li>Ways to add a policy without friction: upload a declarations page, forward an email, or connect through an aggregator.</li>
+          <li>A renewal calendar and a price-check on each renewal.</li>
+          <li>A path from an alert to a LendingTree quote.</li>
+        </ul></div>
+      <div><h3>Time to market (ROM)</h3>
+        <p class="big">About 5 to 7 months</p>
+        <p>An MVP with manual and upload-based policy capture first, and carrier connections after we see which ones matter.</p></div>
+      <div><h3>Success criteria</h3>
+        <ul>
+          <li><strong>Activation:</strong> policies connected per new user.</li>
+          <li><strong>Retention:</strong> users still active at 90 days.</li>
+          <li><strong>Quote starts</strong> per active user compared with cold site traffic.</li>
+          <li>Policies bound, and cost per bound policy.</li>
+        </ul></div>
+      <div><h3>Time in production and the numbers to hit</h3>
+        <p>Run a cohort of about 2,000 users for 90 days. That is enough to read activation and retention, and to see at least one renewal cycle for a share of them.</p></div>
+      <div class="wide"><h3>Persevere or pivot</h3>
+        <div class="verdict">
+          <div class="go"><b>Persevere</b>Half of new users connect two or more policies, 90-day retention of 35% or more, and quote starts at twice the rate of cold traffic.</div>
+          <div class="mid"><b>Iterate</b>Activation is strong but retention or quote conversion lags. Improve the alerts and the capture flow, then rerun.</div>
+          <div class="stop"><b>Pivot</b>Users won't connect their policies, or connecting doesn't change quote behavior.</div>
+        </div></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Prepared by Adam Michaelson · Eagle Mountain, Utah</span>
+    <span><a href="mailto:hello@adam-michaelson.com">hello@adam-michaelson.com</a> · <a href="https://www.linkedin.com/in/adammichaelson" target="_blank" rel="noopener">LinkedIn</a></span>
+  </footer>
+</div>
+<script src="/product/product.js?v=1" defer></script>
+</body>
+</html>
