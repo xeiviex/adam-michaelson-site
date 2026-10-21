@@ -17,6 +17,10 @@ test('CPO answers claim the seat in practice, not a CPO title', () => {
   assert.match(text('fit'), /executive product leader, even though my formal title was SVP of Product/);
 });
 
+test('CTO and CPTO answers bring in the technical background', () => {
+  assert.match(text('fit'), /computer science major at BYU/);
+});
+
 test('intro chat does not carry the fit-title rules', () => {
   assert.doesNotMatch(text('intro'), /ROLE TITLE ONLY/);
 });
