@@ -1,12 +1,17 @@
 /* Aktify charter: recreation of the animated roofing text conversation from aktify.com's hero. */
-.media-collage .photo.chat-tile { background: #0b0b0c; display: grid; place-items: center; }
+.panel:nth-child(even) { background: none; }
+.panel:nth-child(odd):not(:first-child) { background: linear-gradient(180deg, #060607, #000); }
+.chat-panel .wrap { display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; }
+.chat-lede { margin: 0; max-width: 40ch; font-size: clamp(16px, 2vw, 19px); line-height: 1.5; color: var(--body); }
+.chat-tile { position: relative; margin: 0; height: min(680px, calc(100svh - 190px)); min-height: 440px; aspect-ratio: 300 / 640; max-width: 100%; }
 .chat-tile::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
+  content: ""; position: absolute; inset: -12%; pointer-events: none;
   background: radial-gradient(circle at 50% 50%, rgba(250, 0, 82, 0.16) 0%, rgba(250, 0, 82, 0.05) 45%, transparent 72%);
 }
 .chat-stage { position: absolute; left: 50%; top: 50%; width: 300px; height: 640px; transform: translate(-50%, -50%) scale(var(--s, 0.85)); }
 
 
+.chat-phone, .chat-card { text-align: left; }
 .chat-phone {
   position: absolute; left: 16px; top: 54px; width: 256px; height: 520px; box-sizing: content-box;
   border: 6px solid #1a1a1a; border-radius: 2.5rem; background: #000; overflow: hidden;
@@ -54,10 +59,6 @@
 @keyframes chatIn { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
 @keyframes chatWave { 0%, 60%, 100% { opacity: 0.4; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
 
-/* Stacked layout: the tile spans the row, so give the phone its own height */
-@media (max-width: 900px) {
-  .media-collage .photo.chat-tile.ph-1 { aspect-ratio: auto; height: 560px; }
-}
 @media (prefers-reduced-motion: reduce) {
   .chat-row, .chat-card { animation: none; opacity: 1; }
   .chat-dot { animation: none; opacity: 0.7; }

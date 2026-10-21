@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/bio/bio.css?v=4">
 <link rel="stylesheet" href="/bio/career.css?v=21">
-<link rel="stylesheet" href="/bio/aktify/chat.css?v=1">
+<link rel="stylesheet" href="/bio/aktify/chat.css?v=3">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -55,6 +55,29 @@
       </div>
     </section>
 
+    <section class="panel chat-panel" id="chat-demo" data-label="How the agent works">
+      <div class="wrap">
+        <p class="chat-lede">What a customer sees: the agent texts back within seconds, books the visit, and hands off to a person.</p>
+        <figure class="chat-tile">
+            <div class="chat-stage" aria-hidden="true">
+              <div class="chat-card booked"><i><svg viewBox="0 0 24 24" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg></i><div><b>Appointment booked</b><small>Tomorrow at 12:00 PM</small></div></div>
+              <div class="chat-phone">
+                <div class="chat-notch"></div>
+                <div class="chat-status"><span>9:41</span><span><svg viewBox="0 0 24 24" fill="#000"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" fill="#000"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></span></div>
+                <div class="chat-head">
+                  <div class="chat-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"/></svg>Messages</div>
+                  <div class="chat-contact"><div class="chat-avatar">PR</div><p class="chat-name">Peak Roofing</p></div>
+                </div>
+                <div class="chat-msgs"></div>
+                <div class="chat-input"><span>Text Message</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div>
+              </div>
+              <div class="chat-card transfer"><i><svg viewBox="0 0 24 24" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></i><div><b>Lead transferred</b><small>Connected to sales rep</small></div></div>
+            </div>
+            <figcaption class="sr">An animated text conversation with a roofing company’s AI agent: it greets a customer, learns about hail damage, offers 2pm or 3:30pm, confirms a 2pm visit, then shows “Appointment booked” and “Lead transferred” notices.</figcaption>
+        </figure>
+      </div>
+    </section>
+
     <section class="panel" id="charter" data-label="The charter">
       <div class="wrap split">
         <div class="copy">
@@ -71,30 +94,17 @@
         </div>
         <div class="media-col">
         <div class="media media-collage">
-          <figure class="photo ph-1 chat-tile">
-            <div class="chat-stage" aria-hidden="true">
-              <div class="chat-card booked"><i><svg viewBox="0 0 24 24" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg></i><div><b>Appointment booked</b><small>Tomorrow at 12:00 PM</small></div></div>
-              <div class="chat-phone">
-                <div class="chat-notch"></div>
-                <div class="chat-status"><span>9:41</span><span><svg viewBox="0 0 24 24" fill="#000"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><svg viewBox="0 0 24 24" fill="#000"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg></span></div>
-                <div class="chat-head">
-                  <div class="chat-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 19l-7-7 7-7"/></svg>Messages</div>
-                  <div class="chat-contact"><div class="chat-avatar">PR</div><p class="chat-name">Peak Roofing</p></div>
-                </div>
-                <div class="chat-msgs"></div>
-                <div class="chat-input"><span>Text Message</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></div>
-              </div>
-              <div class="chat-card transfer"><i><svg viewBox="0 0 24 24" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></i><div><b>Lead transferred</b><small>Connected to sales rep</small></div></div>
-            </div>
-            <figcaption class="sr">An animated text conversation with a roofing company’s AI agent: it greets a customer, learns about hail damage, offers 2pm or 3:30pm, confirms a 2pm visit, then shows “Appointment booked” and “Lead transferred” notices.</figcaption>
+          <figure class="photo ph-1">
+            <img src="/bio/photos/aktify-charter-customer-chat.webp" alt="Over the shoulder of a customer typing in a chat conversation on their phone while standing on a city sidewalk" width="887" height="1774" loading="lazy" style="object-position: 50% 60%">
+            <figcaption class="sr">A customer chatting with a client’s website agent on their phone</figcaption>
           </figure>
           <figure class="photo ph-2">
             <img src="/bio/photos/aktify-charter-call-center.webp" alt="A headset-wearing call-center agent takes a call at her desk in an open office, taking notes" width="1145" height="1374" loading="lazy" style="object-position: 50% 30%">
             <figcaption class="sr">A call-center agent taking a call transferred by the AI agent</figcaption>
           </figure>
           <figure class="photo ph-3">
-            <img src="/bio/photos/aktify-charter-street-phone.webp" alt="Over the shoulder of a customer typing in a chat conversation on their phone while standing on a city sidewalk" width="1122" height="1402" loading="lazy" style="object-position: 62% 60%">
-            <figcaption class="sr">A customer chatting with a client’s website agent on their phone</figcaption>
+            <img src="/bio/photos/aktify-charter-review.webp" alt="Two call-center colleagues and a manager discuss call handoff notes in an open office" width="1145" height="1374" loading="lazy" style="object-position: 50% 30%">
+            <figcaption class="sr">Sales and service colleagues discussing call handoff notes</figcaption>
           </figure>
         </div>
         <p class="photo-note">These images are AI-generated.</p>
@@ -196,6 +206,6 @@
 </footer>
 
 <script src="/bio/career.js?v=2"></script>
-<script src="/bio/aktify/chat.js?v=1"></script>
+<script src="/bio/aktify/chat.js?v=3"></script>
 </body>
 </html>

@@ -21,7 +21,7 @@
 
   function fit() {
     var s = Math.min(tile.clientWidth / 300, tile.clientHeight / 640);
-    stage.style.setProperty('--s', Math.min(s, 1.15).toFixed(3));
+    stage.style.setProperty('--s', Math.min(s, 1.2).toFixed(3));
   }
   fit();
   if ('ResizeObserver' in window) new ResizeObserver(fit).observe(tile); else window.addEventListener('resize', fit);
