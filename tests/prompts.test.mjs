@@ -19,6 +19,7 @@ test('CPO answers claim the seat in practice, not a CPO title', () => {
 
 test('CTO and CPTO answers bring in the technical background', () => {
   assert.match(text('fit'), /computer science major at BYU/);
+  assert.match(text('fit'), /hire and lean on a strong VP of Engineering/);
 });
 
 test('intro chat does not carry the fit-title rules', () => {
