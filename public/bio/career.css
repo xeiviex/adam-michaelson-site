@@ -136,6 +136,11 @@
 .photo-contain { background: #111113; }
 .photo.photo-contain img { object-fit: contain; }
 
+/* Videos stacked, each shown whole at 16:9 */
+.media-video { grid-template-columns: 1fr; grid-template-rows: auto; align-content: center; }
+.media-video .video { aspect-ratio: 16 / 9; margin: 0; overflow: hidden; border-radius: 12px; border: 1px solid var(--line); background: #0b0b0c; }
+.media-video .video iframe { display: block; width: 100%; height: 100%; border: 0; }
+
 /* Photos inside the collage and montage grids fill their tile */
 .media-collage .photo, .media-montage .photo, .media-feature .photo { position: relative; }
 .media-collage .photo img, .media-montage .photo img, .media-feature .photo img { position: absolute; inset: 0; }
