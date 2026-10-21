@@ -16,7 +16,12 @@
     { t: 'business', x: 'Done! We will have a specialist at your home at 2pm.', ok: true }
   ];
   var AT = [0, 1200, 2400, 3600, 4800, 6200, 7400, 8400, 10000];
-  var CYCLE = 16000;
+  var CYCLE = 18000;
+  // Callouts follow the last message (10s): 50% right after, then booked and transferred a second apart
+  var CARDS = [['.stat', 10600], ['.booked', 11600], ['.transfer', 12600]];
+  var cards = {};
+  CARDS.forEach(function (c) { cards[c[0]] = tile.querySelector('.chat-card' + c[0]); });
+  function setCard(sel, on) { if (cards[sel]) cards[sel].classList.toggle('show', on); }
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function fit() {
@@ -47,12 +52,14 @@
   function showAll() {
     list.textContent = '';
     MSGS.forEach(function (m, i) { if (m.t !== 'typing') list.appendChild(row(i)); });
+    CARDS.forEach(function (c) { setCard(c[0], true); });
   }
 
   var timers = [], visible = true, running = false;
   function clear() { timers.forEach(clearTimeout); timers = []; }
   function play() {
     clear(); list.textContent = '';
+    CARDS.forEach(function (c) { setCard(c[0], false); });
     var els = {};
     AT.forEach(function (ms, i) {
       timers.push(setTimeout(function () {
@@ -61,6 +68,7 @@
         els[i] = row(i); list.appendChild(els[i]);
       }, ms));
     });
+    CARDS.forEach(function (c) { timers.push(setTimeout(function () { setCard(c[0], true); }, c[1])); });
     timers.push(setTimeout(function () { if (visible) play(); else running = false; }, CYCLE));
   }
   function start() {
