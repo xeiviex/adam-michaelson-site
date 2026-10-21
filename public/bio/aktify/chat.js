@@ -21,8 +21,8 @@
 
   function fit() {
     var room = tile.parentNode.clientWidth;
-    tile.setAttribute('data-mode', room >= 480 ? 'wide' : 'compact');
-    var w = room >= 480 ? 520 : 300, h = room >= 480 ? 560 : 640;
+    tile.setAttribute('data-mode', room >= 600 ? 'wide' : 'compact');
+    var w = room >= 600 ? 640 : 300, h = room >= 600 ? 560 : 640;
     var s = Math.min(tile.clientWidth / w, tile.clientHeight / h);
     stage.style.setProperty('--s', Math.min(s, 1).toFixed(3));
   }
