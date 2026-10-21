@@ -1,0 +1,64 @@
+/* Aktify charter: recreation of the animated roofing text conversation from aktify.com's hero. */
+.media-collage .photo.chat-tile { background: #0b0b0c; display: grid; place-items: center; }
+.chat-tile::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, rgba(250, 0, 82, 0.16) 0%, rgba(250, 0, 82, 0.05) 45%, transparent 72%);
+}
+.chat-stage { position: absolute; left: 50%; top: 50%; width: 300px; height: 640px; transform: translate(-50%, -50%) scale(var(--s, 0.85)); }
+
+
+.chat-phone {
+  position: absolute; left: 16px; top: 54px; width: 256px; height: 520px; box-sizing: content-box;
+  border: 6px solid #1a1a1a; border-radius: 2.5rem; background: #000; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 25px 60px rgba(0, 0, 0, 0.5);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, system-ui, sans-serif;
+}
+.chat-notch { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 80px; height: 22px; background: #000; border-radius: 999px; z-index: 2; }
+.chat-status { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px 2px; background: #f2f2f7; color: #000; font-size: 10px; font-weight: 600; }
+.chat-status svg { width: 12px; height: 12px; margin-left: 2px; }
+.chat-head { background: #f2f2f7; padding: 2px 12px 6px; }
+.chat-back { display: flex; align-items: center; gap: 2px; color: #007aff; font-size: 10px; }
+.chat-back svg { width: 14px; height: 14px; }
+.chat-contact { display: flex; flex-direction: column; align-items: center; margin-top: 2px; }
+.chat-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(#d1d5db, #9ca3af); color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; }
+.chat-name { margin: 2px 0 0; color: #000; font-size: 10px; font-weight: 600; }
+.chat-msgs { height: calc(100% - 130px); background: #fff; padding: 8px 10px; overflow: hidden; display: flex; flex-direction: column; gap: 6px; }
+.chat-row { display: flex; animation: chatIn 0.35s forwards; }
+.chat-row.lead { justify-content: flex-end; }
+.chat-bubble { padding: 6px 12px; max-width: 82%; font-size: 11px; line-height: 1.625; border-radius: 16px; border-bottom-left-radius: 6px; background: #e9e9eb; color: #000; }
+.chat-row.lead .chat-bubble { background: #007aff; color: #fff; border-radius: 16px; border-bottom-right-radius: 6px; }
+.chat-row.confirmed .chat-bubble { background: #d1fae5; color: #065f46; }
+.chat-row.typing .chat-bubble { display: flex; gap: 2px; align-items: center; height: 28px; padding: 8px 12px; }
+.chat-dot { width: 4px; height: 4px; border-radius: 50%; background: #8e8e93; animation: chatWave 1.2s ease-in-out infinite; }
+.chat-row.lead .chat-dot { background: rgba(255, 255, 255, 0.7); }
+.chat-dot:nth-child(2) { animation-delay: 160ms; }
+.chat-dot:nth-child(3) { animation-delay: 320ms; }
+.chat-input { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: #fff; border-top: 1px solid #e5e7eb; }
+.chat-input span { flex: 1; background: #f2f2f7; border-radius: 999px; padding: 4px 10px; font-size: 9px; color: #9ca3af; }
+.chat-input svg { width: 16px; height: 16px; color: #007aff; }
+
+.chat-card {
+  position: absolute; z-index: 3; background: #fff; border: 1px solid #f3f4f6; border-radius: 12px; padding: 10px 14px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -4px rgba(0, 0, 0, 0.25);
+  display: flex; align-items: center; gap: 10px; opacity: 0; animation: chatIn 0.5s ease forwards;
+  font-family: Inter, system-ui, sans-serif; white-space: nowrap;
+}
+.chat-card b { display: block; font-size: 12px; font-weight: 600; color: #111827; line-height: 1.3; }
+.chat-card small { display: block; font-size: 10px; color: #9ca3af; line-height: 1.3; }
+.chat-card i { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+.chat-card i svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+.chat-card.booked { left: 0; top: 4px; --r: -3deg; transform: rotate(-3deg); animation-delay: 1.2s; }
+.chat-card.booked i { background: #d1fae5; color: #059669; }
+.chat-card.transfer { right: 0; bottom: 2px; --r: 2deg; transform: rotate(2deg); animation-delay: 1.6s; }
+.chat-card.transfer i { background: #dbeafe; color: #2563eb; }
+
+@keyframes chatIn { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
+@keyframes chatWave { 0%, 60%, 100% { opacity: 0.4; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+
+/* Stacked layout: the tile spans the row, so give the phone its own height */
+@media (max-width: 900px) {
+  .media-collage .photo.chat-tile.ph-1 { aspect-ratio: auto; height: 560px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-row, .chat-card { animation: none; opacity: 1; }
+  .chat-dot { animation: none; opacity: 0.7; }
+}
