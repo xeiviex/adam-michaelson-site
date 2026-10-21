@@ -20,11 +20,14 @@
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function fit() {
-    var s = Math.min(tile.clientWidth / 300, tile.clientHeight / 640);
-    stage.style.setProperty('--s', Math.min(s, 1.2).toFixed(3));
+    var room = tile.parentNode.clientWidth;
+    tile.setAttribute('data-mode', room >= 480 ? 'wide' : 'compact');
+    var w = room >= 480 ? 520 : 300, h = room >= 480 ? 560 : 640;
+    var s = Math.min(tile.clientWidth / w, tile.clientHeight / h);
+    stage.style.setProperty('--s', Math.min(s, 1).toFixed(3));
   }
   fit();
-  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(tile); else window.addEventListener('resize', fit);
+  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(tile.parentNode); else window.addEventListener('resize', fit);
 
   function row(i) {
     var m = MSGS[i], el = document.createElement('div'), b = document.createElement('div');
