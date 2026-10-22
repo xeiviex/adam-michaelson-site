@@ -105,6 +105,8 @@ h1, h2, h3 { font-family: var(--head); font-weight: 800; text-transform: upperca
 .dev .scr { position: relative; width: 100%; height: 100%; border: 5px solid #000; border-radius: 36px; background: #0d1117; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 34px 14px 24px; text-align: center; }
 .dev .notch { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 64px; height: 18px; background: #000; border-radius: 999px; }
 .dev .home { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); width: 74px; height: 4px; border-radius: 2px; background: #cfd5de; }
+.dev .scr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.dev .notch, .dev .home { z-index: 2; }
 .dev .scr b { font-family: var(--head); font-weight: 800; font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--ink); }
 .dev .scr span { font-size: .74rem; color: var(--muted); line-height: 1.35; }
 .dev .scr code { font-size: .62rem; color: var(--accent-hi); word-break: break-all; }
