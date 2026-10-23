@@ -106,3 +106,9 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 56px; display: f
 .pillar .todo { font-size: .95rem; color: var(--muted); font-style: italic; max-width: 46ch; }
 .principles a { text-decoration: none; }
 .principles a:hover b, .principles a:focus-visible b { color: var(--accent-text); }
+
+/* People: hiring attributes */
+.attrs { display: flex; flex-direction: column; border-bottom: 1px solid var(--line); }
+.attrs > div { padding: 18px 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
+.attrs b { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); font-weight: 500; line-height: 1.15; }
+.attrs span { font-size: .95rem; color: var(--body); max-width: 52ch; }
