@@ -38,7 +38,7 @@ html { scroll-padding-top: 70px; }
 .hero h1 { font-size: clamp(2.4rem, 6vw, 4.4rem); line-height: 1.05; }
 .hero .summary { font-size: 1.15rem; max-width: 62ch; }
 .principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 28px; width: 100%; margin-top: 18px; }
-.principles div { padding: 20px 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
+.principles div, .principles a { padding: 20px 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
 .principles b { font-family: var(--serif); font-size: clamp(1.5rem, 2.6vw, 2rem); color: var(--ink); font-weight: 500; line-height: 1.1; }
 .principles span { font-size: .92rem; color: var(--muted); }
 
@@ -96,3 +96,13 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 56px; display: f
   .list span { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .js .rv { opacity: 1; transform: none; } * { transition: none !important; } }
+
+/* archive banner */
+.archive-note { margin-top: 20px; padding: 12px 16px; border: 1px dashed var(--line); font-size: .85rem; color: var(--muted); }
+.archive-note a { color: var(--accent-text); }
+
+/* product home v2: People / Principles / Practices */
+.pillar .num { font-family: var(--label); }
+.pillar .todo { font-size: .95rem; color: var(--muted); font-style: italic; max-width: 46ch; }
+.principles a { text-decoration: none; }
+.principles a:hover b, .principles a:focus-visible b { color: var(--accent-text); }
