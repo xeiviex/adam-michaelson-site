@@ -186,3 +186,4 @@ footer a { color: #0a0d12; text-underline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .js .rv { opacity: 1; transform: none; } * { transition: none !important; } }
 
 .fig-note { font-size: .8rem; color: var(--muted); text-align: center; max-width: 46ch; margin: 6px auto 0; }
+.fig-note small { display: block; margin-top: 4px; font-size: .72rem; opacity: .75; }
