@@ -200,3 +200,8 @@ footer a { color: #0a0d12; text-underline-offset: 3px; }
 .light .scores { border-top-color: #000; }
 .light .scores b { color: #000; }
 .light .scores a:hover b, .light .scores a:focus-visible b { color: #006c9c; }
+
+.shot { margin: 0; }
+.shot a { display: block; }
+.shot img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
+.shot .fig-note { margin-top: 10px; }
