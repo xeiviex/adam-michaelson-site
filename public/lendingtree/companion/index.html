@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A companion | Adam Michaelson</title>
-<meta name="description" content="A clickable prototype of an app that holds every insurance policy and renewal in one place, and prompts a shop at the right time.">
+<meta name="description" content="A clickable prototype of the insurance companion app: every policy, price and renewal date in one place, with a prompt to shop at the right moment.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#000000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/lendingtree/lt.css?v=2">
+<link rel="stylesheet" href="/lendingtree/lt.css?v=10">
+<link rel="stylesheet" href="/lendingtree/proto.css?v=2">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -26,18 +27,41 @@
   <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/lendingtree/">LendingTree</a><span>/</span><span>A companion</span></nav>
   <span class="kicker">Prototype</span>
   <h1>A companion</h1>
-  <p class="lede">A clickable prototype of an app that holds every insurance policy and renewal in one place, and prompts a shop at the right time.</p>
-  <div class="proto"><div><b>Prototype placeholder</b>Policy capture, the combined view, the renewal calendar and a price alert</div></div>
-  <div class="stubs">
-    <div><b>What it shows</b><span>To write once the prototype exists.</span></div>
-    <div><b>How it works</b><span>To write once the prototype exists.</span></div>
-    <div><b>What we measure</b><span>See the approach on the <a href="/lendingtree/#s2">LendingTree page</a>.</span></div>
+  <p class="lede">A clickable prototype of the insurance companion app: every policy, price and renewal date in one place, with a prompt to shop at the right moment.</p>
+  <div class="stage">
+    <div class="well"><div class="phone" id="phone" aria-label="Interactive prototype of the insurance companion app on an iPhone">
+      <div class="sb"><span>9:41</span><span class="ic">▂▄▆ <i class="bat"></i></span></div><div class="isl"></div><div class="hm"></div>
+      <div class="toast" id="toast" role="status"></div>
+      <div class="app" id="app"></div>
+      <div class="scrim" id="scrim" hidden></div>
+      <div class="sheet" id="sheet" hidden></div>
+    </div></div>
+    <div class="side">
+      <div>
+        <h2>Try it</h2>
+        <p>You shopped for car insurance last month. Now LendingTree holds your policies, knows when each one renews and checks prices for you. Tap through the app, or use these shortcuts.</p>
+      </div>
+      <div class="try" id="try">
+        <button data-act="t-add">Add a policy from your past quotes <span>Pre-filled</span></button>
+        <button data-act="t-skip">Skip ahead 30 days <span>Watch renewals arrive</span></button>
+        <button data-act="t-quote">Compare quotes on the auto policy <span>The moment it pays off</span></button>
+        <button data-act="t-reset">Start over <span>Reset the app</span></button>
+      </div>
+      <div class="tiles" id="tiles" aria-live="polite"></div>
+      <div><div class="loghead"><span>What LendingTree learns</span><span>Live</span></div><div class="log" id="log" aria-live="polite"></div></div>
+    </div>
+  </div>
+  <div class="explain">
+    <div><b>What it shows</b><span>A free app that holds every insurance policy a person has: carrier, coverage, price and renewal date. It pre-fills what LendingTree already knows from past quotes, accepts the rest by upload or email forward, and prompts a shop at the right moment.</span></div>
+    <div><b>How it works</b><span>Renewal dates are predictable, so the app watches them and speaks up before the decision happens. A saved policy gives LendingTree a direct relationship with a shopper who used to arrive through an ad. See the <a href="/lendingtree/#s2">approach</a> for scope and segment.</span></div>
+    <div><b>What we measure</b><span>Activation (policies connected per user, goal two or more for half of users), 90-day retention (goal 35%) and quote starts per active user against cold traffic (goal 2×). Policies and prices here are sample data.</span></div>
   </div>
 </main>
 <footer><div class="wrap">
-  <span>Prepared by Adam Michaelson · Eagle Mountain, Utah</span>
+  <span>Prepared by Adam Michaelson · Eagle Mountain, Utah · Clickable prototype with sample data. Nothing is sent anywhere.</span>
   <span><a href="mailto:hello@adam-michaelson.com">hello@adam-michaelson.com</a> · <a href="https://www.linkedin.com/in/adammichaelson" target="_blank" rel="noopener">LinkedIn</a></span>
 </div></footer>
 <script src="/lendingtree/lt.js?v=1" defer></script>
+<script src="/lendingtree/companion/companion.js?v=1" defer></script>
 </body>
 </html>

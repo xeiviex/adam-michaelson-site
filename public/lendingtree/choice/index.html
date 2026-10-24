@@ -10,7 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/lendingtree/lt.css?v=2">
+<link rel="stylesheet" href="/lendingtree/lt.css?v=10">
+<link rel="stylesheet" href="/lendingtree/proto.css?v=2">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -27,17 +28,40 @@
   <span class="kicker">Prototype</span>
   <h1>The power of choice</h1>
   <p class="lede">A clickable prototype of the options step: comparable offers, a shopper who picks who contacts them, and an AI guide that helps them decide.</p>
-  <div class="proto"><div><b>Prototype placeholder</b>Home equity options step, shopper selection, confirmation and AI follow-up</div></div>
-  <div class="stubs">
-    <div><b>What it shows</b><span>To write once the prototype exists.</span></div>
-    <div><b>How it works</b><span>To write once the prototype exists.</span></div>
-    <div><b>What we measure</b><span>See the approach on the <a href="/lendingtree/#s1">LendingTree page</a>.</span></div>
+  <div class="stage">
+    <div class="well"><div class="phone" id="phone" aria-label="Interactive prototype of the options step on an iPhone">
+      <div class="sb"><span>9:41</span><span class="ic">▂▄▆ <i class="bat"></i></span></div><div class="isl"></div><div class="hm"></div>
+      <div class="toast" id="toast" role="status"></div>
+      <div class="app" id="app"></div>
+      <div class="scrim" id="scrim" hidden></div>
+      <div class="sheet" id="sheet" hidden></div>
+    </div></div>
+    <div class="side">
+      <div>
+        <h2>Try it</h2>
+        <p>You just submitted a home equity form. Instead of a dozen calls, you see comparable offers and decide who contacts you, how and when. Nobody else calls.</p>
+      </div>
+      <div class="try" id="try">
+        <button data-act="ask">Ask the AI guide which costs least <span>Tap a question chip</span></button>
+        <button data-act="pick">Choose Ridgeview by text at 6:00 PM <span>Fills the flow for you</span></button>
+        <button data-act="skip">Skip ahead 24 hours with no choice <span>See the fallback</span></button>
+        <button data-act="reset">Start over <span>Reset the shopper</span></button>
+      </div>
+      <div class="tiles" id="tiles" aria-live="polite"></div>
+      <div><div class="loghead"><span>What LendingTree records</span><span>Live</span></div><div class="log" id="log" aria-live="polite"></div></div>
+    </div>
+  </div>
+  <div class="explain">
+    <div><b>What it shows</b><span>The step after the form, rebuilt. Comparable offers, a choose button on each, and an AI guide inside the page. The shopper picks the lender, the channel and the time. A shopper who does not choose within 24 hours falls back to today's model.</span></div>
+    <div><b>How it works</b><span>Each choice becomes a consented contact request for one lender, with the context the shopper saw. The AI guide answers questions about the offers on screen and keeps following up by text and email until the shopper chooses. See the <a href="/lendingtree/#s1">approach</a> for scope and segment.</span></div>
+    <div><b>What we measure</b><span>Selection rate (goal 50%), funded rate per selection (goal 4%) and revenue per lead against a holdout. Double down at 40% selection or more, kill under 25%. Sample data here is illustrative.</span></div>
   </div>
 </main>
 <footer><div class="wrap">
-  <span>Prepared by Adam Michaelson · Eagle Mountain, Utah</span>
+  <span>Prepared by Adam Michaelson · Eagle Mountain, Utah · Clickable prototype with sample data. Nothing is sent anywhere.</span>
   <span><a href="mailto:hello@adam-michaelson.com">hello@adam-michaelson.com</a> · <a href="https://www.linkedin.com/in/adammichaelson" target="_blank" rel="noopener">LinkedIn</a></span>
 </div></footer>
 <script src="/lendingtree/lt.js?v=1" defer></script>
+<script src="/lendingtree/choice/choice.js?v=1" defer></script>
 </body>
 </html>
