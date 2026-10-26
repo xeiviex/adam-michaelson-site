@@ -324,3 +324,17 @@ html:not(.app-mode) .phone { border-color: #17171a; box-shadow: 0 0 0 1px rgba(2
 .phone .sb .ic .sig rect, .phone .sb .ic .batt rect, .phone .sb .ic .batt path, .phone .sb .ic .wifi path:last-child { stroke: none; }
 .phone .sb .ic .wifi path:not(:last-child) { fill: none; }
 .phone .sb .ic .batt rect:first-child { fill: none; stroke: #0d1b2a; stroke-width: 1; }
+
+/* compare sheet */
+.phone .sheet { top: 84px; }
+.phone .sheet .sx { position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 50%; border: 0; background: #eef2f6; color: #3a4350; display: grid; place-items: center; padding: 0; }
+.phone table.cmp { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 10px; }
+.phone table.cmp th[scope=row] { width: 21%; text-align: left; font-weight: 500; font-size: 13.5px; color: #5b6574; padding: 13px 4px 13px 0; border-top: 1px solid #e8edf3; vertical-align: middle; }
+.phone table.cmp td { padding: 13px 4px; border-top: 1px solid #e8edf3; vertical-align: middle; text-align: center; }
+.phone table.cmp td.cv { font-weight: 700; font-size: 15px; color: #0d1b2a; }
+.phone table.cmp td.cv.best { color: #1f7a4d; }
+.phone table.cmp td.ch { border-top: 0; padding: 4px 4px 14px; vertical-align: top; }
+.phone table.cmp .ch .mark { margin: 0 auto 8px; }
+.phone table.cmp .cn { font-weight: 700; font-size: 13.5px; line-height: 1.2; margin-bottom: 8px; min-height: 32px; }
+.phone .btn.sm { padding: 8px 6px; font-size: 13px; border-radius: 9px; width: 100%; white-space: nowrap; }
+.phone table.cmp tr:first-child td { border-top: 0; }

@@ -178,21 +178,26 @@
   function compareSheet() {
     var ids = Object.keys(S.compare), os = ids.map(by);
     var best = function (f, lo) { var v = os.map(f); return lo ? Math.min.apply(0, v) : Math.max.apply(0, v); };
-    var cell = function (txt, good) { return '<td class="' + (good ? 'win b' : 'b') + '">' + txt + '</td>'; };
-    openSheet('<h3 style="font-size:22px">Compare offers</h3><p class="sub">Side by side, same $20,000 over 60 months.</p><div style="overflow-x:auto"><table><tr><th></th>' + os.map(function (o) { return '<th>' + o.name.split(' ')[0] + '</th>'; }).join('') + '</tr>' +
-      '<tr><td>APR</td>' + os.map(function (o) { return cell(o.apr.toFixed(2) + '%', o.apr === best(function (x) { return x.apr; }, true)); }).join('') + '</tr>' +
-      '<tr><td>Monthly</td>' + os.map(function (o) { return cell(money(o.mo), o.mo === best(function (x) { return x.mo; }, true)); }).join('') + '</tr>' +
-      '<tr><td>Fee</td>' + os.map(function (o) { return cell(money(o.fee), o.fee === best(function (x) { return x.fee; }, true)); }).join('') + '</tr>' +
-      '<tr><td>Est. total</td>' + os.map(function (o) { return cell(money(o.total), o.total === best(function (x) { return x.total; }, true)); }).join('') + '</tr>' +
-      '<tr><td>Rate type</td>' + os.map(function (o) { return '<td>' + (o.fixed ? 'Fixed' : 'Variable') + '</td>'; }).join('') + '</tr></table></div>' +
-      '<p class="note" style="text-align:left;margin-top:12px">Green marks the best value in each row. Maple Bank\'s total assumes today\'s variable rate.</p><button class="btn full" data-act="closesheet" style="margin-top:12px">Close</button>');
+    var row = function (label, f, lo, fmtv) {
+      var vals = os.map(f), tie = vals.every(function (v) { return v === vals[0]; }), b = best(f, lo);
+      return '<tr><th scope="row">' + label + '</th>' + os.map(function (o, k) { return '<td class="cv' + (!tie && vals[k] === b ? ' best' : '') + '">' + fmtv(vals[k], o) + '</td>'; }).join('') + '</tr>';
+    };
+    var head = '<tr><td></td>' + os.map(function (o) { return '<td class="ch"><div class="mark">' + o.mark + '</div><div class="cn">' + o.name + '</div><button class="btn sm" data-act="open" data-id="' + o.id + '">' + (S.picks[o.id] ? 'Edit' : 'See details') + '</button></td>'; }).join('') + '</tr>';
+    openSheet('<button class="sx" data-act="closesheet" aria-label="Close">' + '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></button>' +
+      '<h3 style="font-size:22px">Compare offers</h3><p class="sub">Side by side, same $20,000 over 60 months.</p><table class="cmp">' + head +
+      row('APR', function (o) { return o.apr; }, true, function (v) { return v.toFixed(2) + '%'; }) +
+      row('Monthly', function (o) { return o.mo; }, true, function (v) { return money(v); }) +
+      row('Fee', function (o) { return o.fee; }, true, function (v) { return money(v); }) +
+      row('Est. total', function (o) { return o.total; }, true, function (v) { return money(v); }) +
+      row('Rate type', function (o) { return o.fixed ? 0 : 1; }, true, function (v) { return v ? 'Variable' : 'Fixed'; }).replace(/ best"/g, '"') +
+      '</table><p class="note" style="text-align:left;margin-top:12px">Green marks the best value in each row. Maple Bank\'s total assumes today\'s variable rate.</p>');
   }
 
   // ---- events
   document.addEventListener('click', function (e) {
     if (S.ddOpen && !e.target.closest('.dd')) { closeDd(); }
     var el = e.target.closest('[data-act]'); if (!el) return; var a = el.getAttribute('data-act'), id = el.getAttribute('data-id');
-    if (a === 'open') { S.screen = 'detail'; S.open = id; if (!S.opened[id]) { S.opened[id] = 1; log('offer_opened', id); } render(); app.scrollTop = 0; }
+    if (a === 'open') { closeSheet(); S.screen = 'detail'; S.open = id; if (!S.opened[id]) { S.opened[id] = 1; log('offer_opened', id); } render(); app.scrollTop = 0; }
     else if (a === 'back') { S.screen = 'offers'; S.done = false; S.ddOpen = false; render(); app.scrollTop = 0; }
     else if (a === 'method') { var d = S.draft[S.open]; d.method = el.getAttribute('data-m'); d.time = d.method === 'Email' ? emailOpts()[0] : defaultTime(); render(); }
     else if (a === 'request') {
