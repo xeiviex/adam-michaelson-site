@@ -13,7 +13,8 @@
   ];
   var TIMES = ['Right now (within 5 minutes)', 'Today, 6:00 PM', 'Today, 8:00 PM', 'Tomorrow, 9:00 AM', 'Tomorrow, 12:00 PM'];
   var S;
-  function fresh() { S = { screen: 'offers', open: null, compare: {}, picks: {}, draft: {}, chat: {}, done: false, fallback: false, asked: 0, opened: {}, t0: Date.now() }; }
+  var OPEN_MSG = "Hi, I'm here to help you choose. What will you use the money for?";
+  function fresh() { S = { screen: 'offers', open: null, compare: {}, picks: {}, draft: {}, chat: { all: [{ text: OPEN_MSG }] }, busy: false, done: false, fallback: false, asked: 0, opened: {}, t0: Date.now() }; }
   fresh();
   var money = function (n) { return '$' + n.toLocaleString('en-US'); };
   var by = function (id) { return OFFERS.filter(function (o) { return o.id === id; })[0]; };
@@ -71,11 +72,21 @@
     app.style.paddingBottom = (dock.offsetHeight + 36) + 'px';
   }
   function ask(q, ctx) {
-    if (!q) return;
+    if (!q || S.busy) return;
     var k = ctx || 'all'; S.chat[k] = (S.chat[k] || []).concat([{ you: true, text: q.replace(/</g, '&lt;') }]); S.asked++;
     log('ai_question', '"' + q.replace(/</g, '&lt;') + '"' + (ctx ? ' on ' + ctx : ''));
-    S.dockOpen = true; S.stick = true; render();
-    setTimeout(function () { S.chat[k].push({ text: answer(q, ctx) }); S.stick = true; render(); }, 450);
+    S.busy = true; S.dockOpen = true; S.stick = true;
+    var pending = { text: '<span class="typing"><i></i><i></i><i></i></span>', pending: true };
+    S.chat[k].push(pending); render();
+    var history = S.chat[k].filter(function (m) { return !m.pending; }).map(function (m) { return { role: m.you ? 'user' : 'assistant', content: m.you ? m.text.replace(/&lt;/g, '<') : m.text.replace(/<[^>]+>/g, '') }; });
+    var done = function (text, live) { pending.pending = false; pending.text = text; S.busy = false; S.stick = true; if (live) log('ai_answer', 'agent reply, ' + text.length + ' chars'); render(); };
+    var fb = function () { setTimeout(function () { done(answer(q, ctx), false); }, 350); };
+    if (!window.fetch) return fb();
+    var ctrl = window.AbortController ? new AbortController() : null, to = setTimeout(function () { if (ctrl) ctrl.abort(); }, 25000);
+    fetch('/api/lt-assistant', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: history, ctx: ctx || null }), signal: ctrl ? ctrl.signal : undefined })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function (d) { clearTimeout(to); if (!d || !d.text) throw 0; done(String(d.text).replace(/</g, '&lt;').replace(/\n/g, '<br>'), true); })
+      .catch(function () { clearTimeout(to); fb(); });
   }
 
   // ---- screens
