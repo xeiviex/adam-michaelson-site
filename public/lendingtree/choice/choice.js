@@ -83,7 +83,7 @@
   var topbar = '<div class="top"><div class="logo">' + LOGO + '</div></div>';
   function screenOffers() {
     var nChosen = Object.keys(S.picks).length, nCmp = Object.keys(S.compare).length;
-    var wasShown = S.cmpShown; S.cmpShown = nCmp >= 2; if (wasShown) { /* already visible: no entrance */ }
+    var wasShown = S.cmpShown; S.cmpShown = nCmp >= 2; if (S.cmpShown && !wasShown) S.revealCmp = true;
     var cards = OFFERS.map(function (o) {
       var p = S.picks[o.id];
       return '<div class="offer' + (p ? ' sel' : '') + '"><div class="row"><div style="display:flex;gap:12px;align-items:flex-start"><div class="mark">' + o.mark + '</div><div><div class="nm">' + o.name + '</div><div class="ty">' + o.kind + ' · ' + o.rate + '</div></div></div>' +
@@ -126,6 +126,11 @@
     var keep = app.scrollTop;
     app.innerHTML = S.fallback ? screenFallback() : S.done ? screenDone() : S.screen === 'detail' ? screenDetail(S.open) : topbar + screenOffers();
     app.scrollTop = keep; renderDock(); tiles();
+    if (S.revealCmp) { S.revealCmp = false; setTimeout(function () {
+      var w = app.querySelector('.cmpwrap'); if (!w) return;
+      var delta = w.getBoundingClientRect().bottom - (app.getBoundingClientRect().bottom - dock.offsetHeight - 14);
+      if (delta > 0) app.scrollTo({ top: app.scrollTop + delta, behavior: 'smooth' });
+    }, 460); }
   }
   function openSheet(html) { sheet.innerHTML = '<div class="grab"></div>' + html; sheet.hidden = false; scrim.hidden = false; }
   function closeSheet() { sheet.hidden = true; scrim.hidden = true; }
