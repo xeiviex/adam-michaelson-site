@@ -10,6 +10,7 @@
   }
   if (app) {
     d.classList.add('app-mode');
+    var vp = document.querySelector('meta[name=viewport]'); if (vp) vp.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover');
     document.addEventListener('DOMContentLoaded', function () {
       var p = document.getElementById('phone'); if (!p) return;
       var a = document.createElement('a'); a.className = 'exitbar'; a.href = '/lendingtree/#solutions'; a.textContent = '‹ Back to Adam\u2019s proposal';

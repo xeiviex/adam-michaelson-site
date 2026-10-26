@@ -230,3 +230,6 @@ html.app-mode .phone .dockwrap { bottom: calc(8px + env(safe-area-inset-bottom))
 /* lender logo frame */
 .phone .mark:has(img) { padding: 4px; }
 .phone .mark img { object-fit: contain; border-radius: 6px; }
+
+/* iOS zooms the page when a focused field is under 16px */
+.phone input, .phone select, .phone textarea { font-size: 16px !important; }
