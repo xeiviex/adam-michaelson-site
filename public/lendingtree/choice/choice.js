@@ -11,7 +11,21 @@
     { id: 'summit', name: 'Summit Lending', mark: '<img src=\"/lendingtree/img/lender-summit.png\" alt=\"\" width=\"46\" height=\"46\">', kind: 'Personal loan', rate: 'Fixed rate', apr: 8.99, mo: 422, fee: 400, term: 60, total: 25720, stars: '4.4', n: '893', fixed: true,
       about: 'A fixed-rate personal loan with a 2% origination fee. Funds can arrive as soon as the next business day.' }
   ];
-  var TIMES = ['Right now (within 5 minutes)', 'Today, 6:00 PM', 'Today, 8:00 PM', 'Tomorrow, 9:00 AM', 'Tomorrow, 12:00 PM'];
+  /* Contact times follow the device clock and locale: the next whole hour that is at least 15 minutes away, then the next two,
+     within 8 AM to 9 PM; otherwise tomorrow morning. */
+  function fmt(d) { try { return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); } catch (e) { return d.getHours() + ':00'; } }
+  function timeOpts() {
+    var now = new Date(), out = [], first = new Date(now.getTime() + 15 * 60000);
+    if (now.getHours() >= 8 && now.getHours() < 21) out.push('Right now (within 5 minutes)');
+    var t = new Date(first); t.setMinutes(0, 0, 0); if (t < first) t.setHours(t.getHours() + 1);
+    for (var i = 0; i < 3; i++) { if (t.getDate() === now.getDate() && t.getHours() >= 8 && t.getHours() <= 21) out.push('Today, ' + fmt(t)); t = new Date(t.getTime() + 3600000); }
+    var tm = new Date(now); tm.setDate(tm.getDate() + 1);
+    var nine = new Date(tm); nine.setHours(9, 0, 0, 0); var noon = new Date(tm); noon.setHours(12, 0, 0, 0);
+    out.push('Tomorrow, ' + fmt(nine), 'Tomorrow, ' + fmt(noon));
+    return out;
+  }
+  function defaultTime() { return timeOpts().filter(function (x) { return x.indexOf('Right now') < 0; })[0]; }
+  function emailOpts() { var o = timeOpts(), h = new Date().getHours(); return (h < 21 ? ['Any time today'] : []).concat(o.filter(function (x) { return x.indexOf('Tomorrow') === 0; })); }
   var S;
   var OPEN_MSG = "Hi, I'm here to help you choose. What will you use the money for?";
   function fresh() { S = { screen: 'offers', open: null, compare: {}, picks: {}, draft: {}, chat: { all: [{ text: OPEN_MSG }] }, busy: false, done: false, fallback: false, asked: 0, opened: {}, t0: Date.now() }; }
@@ -108,14 +122,14 @@
       '';
   }
   function screenDetail(id) {
-    var o = by(id), d = S.draft[id] || (S.draft[id] = { method: (S.picks[id] || {}).method || 'Text', time: (S.picks[id] || {}).time || TIMES[1] });
+    var o = by(id), d = S.draft[id] || (S.draft[id] = { method: (S.picks[id] || {}).method || 'Text', time: (S.picks[id] || {}).time || defaultTime() });
     var rows = [['Loan amount', '$20,000'], ['APR (' + (o.fixed ? 'fixed' : 'variable') + ')', o.apr.toFixed(2) + '%'], ['Est. monthly payment', money(o.mo)], ['Term', o.term + ' months'], ['Origination fee', money(o.fee)], ['Estimated total cost', money(o.total)]];
     return '<div class="top"><button class="back" data-act="back">‹ Back to offers</button></div>' +
-      '<div style="display:flex;gap:12px;align-items:flex-start;justify-content:space-between"><div style="display:flex;gap:12px;align-items:center"><div class="mark">' + o.mark + '</div><div><h3 style="font-size:21px">' + o.name + '</h3><span class="tag">' + o.kind + '</span><span class="tag">' + o.rate + '</span></div></div><div style="text-align:right;font-size:13px">★ <b>' + o.stars + '</b><br><span style="color:#5b6574">(' + o.n + ')</span></div></div>' +
+      '<div style="display:flex;gap:12px;align-items:flex-start;justify-content:space-between"><div style="display:flex;gap:14px;align-items:flex-start;min-width:0"><div class="mark lg">' + o.mark + '</div><div><h3 style="font-size:21px">' + o.name + '</h3><div class="tags"><span class="tag">' + o.kind + '</span><span class="tag">' + o.rate + '</span></div></div></div><div style="text-align:right;font-size:13px">★ <b>' + o.stars + '</b><br><span style="color:#5b6574">(' + o.n + ')</span></div></div>' +
       '<h4>Overview</h4><p class="sub" style="margin-top:0">' + o.about + '</p><h4>Loan details</h4><div class="kv">' + rows.map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div>' +
       '<h4>Contact me about this offer</h4><p class="sub" style="margin:0 0 6px">Choose how and when ' + o.name + ' can reach you.</p>' +
       '<div class="methods">' + ['Text', 'Call', 'Email'].map(function (m) { return '<button data-act="method" data-m="' + m + '" class="' + (d.method === m ? 'on' : '') + '">' + ({ Text: '💬', Call: '📞', Email: '✉️' })[m] + '<span>' + m + '</span></button>'; }).join('') + '</div>' +
-      '<select aria-label="When" data-act="time">' + (d.method === 'Email' ? ['Any time today'].concat(TIMES.slice(3)) : TIMES).map(function (t) { return '<option' + (t === d.time ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select>' +
+      '<select aria-label="When" data-act="time">' + (d.method === 'Email' ? emailOpts() : timeOpts()).map(function (t) { return '<option' + (t === d.time ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select>' +
       '<div style="height:14px"></div>' +
       '<div class="donebox"><button class="btn full" data-act="request" data-id="' + o.id + '">' + (S.picks[o.id] ? 'Update my request' : 'Contact me about this offer') + '</button><div class="note">You can change or cancel this request at any time.</div></div>';
   }
@@ -163,7 +177,7 @@
     var el = e.target.closest('[data-act]'); if (!el) return; var a = el.getAttribute('data-act'), id = el.getAttribute('data-id');
     if (a === 'open') { S.screen = 'detail'; S.open = id; if (!S.opened[id]) { S.opened[id] = 1; log('offer_opened', id); } render(); app.scrollTop = 0; }
     else if (a === 'back') { S.screen = 'offers'; S.done = false; render(); app.scrollTop = 0; }
-    else if (a === 'method') { var d = S.draft[S.open]; d.method = el.getAttribute('data-m'); d.time = d.method === 'Email' ? 'Any time today' : TIMES[1]; render(); }
+    else if (a === 'method') { var d = S.draft[S.open]; d.method = el.getAttribute('data-m'); d.time = d.method === 'Email' ? emailOpts()[0] : defaultTime(); render(); }
     else if (a === 'request') {
       var dd = S.draft[id]; S.picks[id] = { method: dd.method, time: dd.time }; S.screen = 'offers';
       log('contact_requested', by(id).name + ' via <em>' + dd.method.toLowerCase() + '</em>, ' + dd.time + '. consent scoped to this lender'); render(); app.scrollTop = 0; say(by(id).name + ' will ' + (dd.method === 'Call' ? 'call' : dd.method === 'Text' ? 'text' : 'email') + ' you. Choose another lender to hear from them too.');
@@ -187,7 +201,7 @@
   function tryIt(a) {
     if (a === 'reset') { fresh(); logEl.innerHTML = ''; closeSheet(); log('form_submitted', 'home equity, $20,000. options step shown'); render(); app.scrollTop = 0; }
     else if (a === 'ask') { S.screen = 'offers'; S.done = false; S.fallback = false; render(); ask('Which of these costs least over 5 years?', null); }
-    else if (a === 'pick') { S.fallback = false; S.screen = 'offers'; S.done = false; S.draft.ridgeview = { method: 'Text', time: 'Today, 6:00 PM' }; S.picks.ridgeview = { method: 'Text', time: 'Today, 6:00 PM' }; log('offer_opened', 'ridgeview'); log('contact_requested', 'Ridgeview Financial via <em>text</em>, Today, 6:00 PM. consent scoped to this lender'); render(); app.scrollTop = 0; say('Ridgeview Financial will text you. Choose another lender to hear from them too.'); }
+    else if (a === 'pick') { S.fallback = false; S.screen = 'offers'; S.done = false; S.draft.ridgeview = { method: 'Text', time: defaultTime() }; S.picks.ridgeview = { method: 'Text', time: defaultTime() }; log('offer_opened', 'ridgeview'); log('contact_requested', 'Ridgeview Financial via <em>text</em>, ' + defaultTime() + '. consent scoped to this lender'); render(); app.scrollTop = 0; say('Ridgeview Financial will text you. Choose another lender to hear from them too.'); }
     else if (a === 'skip') { if (Object.keys(S.picks).length) { say('You already chose. Start over to see the fallback.'); return; } S.fallback = true; log('no_selection_24h', 'lead released to matching lenders (today\'s model)', true); render(); app.scrollTop = 0; }
   }
   log('form_submitted', 'home equity, $20,000. options step shown'); render();

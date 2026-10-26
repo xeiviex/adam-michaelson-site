@@ -26,7 +26,7 @@
       /* Tapping anywhere outside the assistant closes the keyboard; scrolling does not. */
       p.addEventListener('click', function (e) {
         var ae = document.activeElement;
-        if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && !e.target.closest('.dock')) ae.blur();
+        if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && !e.target.closest('.dock, input, select, textarea, label')) ae.blur();
       });
       var a = document.createElement('a'); a.className = 'exitbar'; a.href = '/lendingtree/#solutions'; a.textContent = '‹ Back to Adam\u2019s proposal';
       p.insertBefore(a, p.firstChild);
