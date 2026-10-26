@@ -79,12 +79,12 @@
   function renderDock() {
     var show = !S.fallback && !S.done, old = dock.querySelector('input'), val = old ? old.value : '', had = old && document.activeElement === old;
     if (!show) { dock.hidden = true; dock.innerHTML = ''; app.style.paddingBottom = ''; return; }
-    if (S.ddOpen && S.screen === 'detail') { dock.hidden = true; dock.innerHTML = ''; app.style.paddingBottom = '330px'; return; }
+    dock.classList.toggle('away', !!(S.ddOpen && S.screen === 'detail'));
     var m = dock.querySelector('.dmsgs'), top = m ? m.scrollTop : 0;
     dock.hidden = false; dock.innerHTML = dockHtml(S.screen === 'detail' ? S.open : null);
     var inp = dock.querySelector('input'); if (val) inp.value = val; if (had) inp.focus();
     var nm = dock.querySelector('.dmsgs'); if (nm) nm.scrollTop = S.stick ? nm.scrollHeight : top; S.stick = false;
-    app.style.paddingBottom = (dock.offsetHeight + 36) + 'px';
+    app.style.paddingBottom = (S.ddOpen && S.screen === 'detail' ? 330 : dock.offsetHeight + 36) + 'px';
   }
   function ask(q, ctx) {
     if (!q || S.busy) return;
@@ -160,6 +160,12 @@
       if (delta > 0) app.scrollTo({ top: app.scrollTop + delta, behavior: 'smooth' });
     }, 460); }
   }
+  function closeDd() {
+    if (!S.ddOpen || S.ddClosing) return; S.ddClosing = true;
+    var l = app.querySelector('.ddlist'); if (l) l.classList.add('out');
+    app.scrollTo({ top: Math.max(0, Math.min(S.ddScroll || 0, app.scrollHeight)), behavior: 'smooth' });
+    setTimeout(function () { S.ddOpen = false; S.ddClosing = false; render(); }, 190);
+  }
   function openSheet(html) { sheet.innerHTML = '<div class="grab"></div>' + html; sheet.hidden = false; scrim.hidden = false; }
   function closeSheet() { sheet.hidden = true; scrim.hidden = true; }
   function compareSheet() {
@@ -177,7 +183,7 @@
 
   // ---- events
   document.addEventListener('click', function (e) {
-    if (S.ddOpen && !e.target.closest('.dd')) { S.ddOpen = false; render(); }
+    if (S.ddOpen && !e.target.closest('.dd')) { closeDd(); }
     var el = e.target.closest('[data-act]'); if (!el) return; var a = el.getAttribute('data-act'), id = el.getAttribute('data-id');
     if (a === 'open') { S.screen = 'detail'; S.open = id; if (!S.opened[id]) { S.opened[id] = 1; log('offer_opened', id); } render(); app.scrollTop = 0; }
     else if (a === 'back') { S.screen = 'offers'; S.done = false; S.ddOpen = false; render(); app.scrollTop = 0; }
@@ -190,8 +196,8 @@
     else if (a === 'cancel') { delete S.picks[id]; log('contact_cancelled', id); if (!Object.keys(S.picks).length) { S.done = false; } render(); }
     else if (a === 'docompare') { log('offers_compared', Object.keys(S.compare).join(', ')); compareSheet(); }
     else if (a === 'closesheet') closeSheet();
-    else if (a === 'ddtoggle') { S.ddOpen = !S.ddOpen; render(); if (S.ddOpen) { var b = app.querySelector('.ddbtn'); if (b) app.scrollTo({ top: app.scrollTop + b.getBoundingClientRect().top - app.getBoundingClientRect().top - 80, behavior: 'smooth' }); } }
-    else if (a === 'ddpick') { S.draft[S.open].time = el.getAttribute('data-v'); S.ddOpen = false; render(); }
+    else if (a === 'ddtoggle') { if (S.ddOpen) { closeDd(); return; } S.ddScroll = app.scrollTop; S.ddOpen = true; render(); { var b = app.querySelector('.ddbtn'); if (b) app.scrollTo({ top: app.scrollTop + b.getBoundingClientRect().top - app.getBoundingClientRect().top - 80, behavior: 'smooth' }); } }
+    else if (a === 'ddpick') { var v = el.getAttribute('data-v'); S.draft[S.open].time = v; var bt = app.querySelector('.ddbtn span'); if (bt) bt.textContent = v; closeDd(); }
     else if (a === 'dockhide') { S.dockOpen = S.dockOpen === false; render(); }
     else if (a === 'chip') { ask(el.getAttribute('data-q'), el.closest('.ai').getAttribute('data-ctx')); }
     else if (a === 'help') { say('Help: tap See details, choose how to be contacted, then Done.'); }

@@ -303,3 +303,9 @@ html.app-mode .phone .sheet { left: max(0px, calc((100% - 640px) / 2)); right: m
 @media (prefers-reduced-motion: reduce) { .phone.rot .app, .phone.rot .dockwrap { animation: none; } }
 @media (max-height: 700px) { .phone .dmsgs { max-height: 92px; } }
 @media (max-height: 520px) and (orientation: landscape) { .phone .ai.dock .hd { display: none; } .phone .dmsgs { max-height: 58px; margin-top: 0; } .phone .answer { margin-top: 6px; padding: 8px 10px; font-size: 13.5px; } }
+
+.phone .app { transition: padding-bottom .32s ease; }
+.phone .dockwrap { transition: opacity .3s ease .08s, transform .3s ease .08s; }
+.phone .dockwrap.away { opacity: 0; transform: translateY(12px); pointer-events: none; transition-delay: 0s; transition-duration: .16s; }
+.phone .ddlist.out { animation: ddOut .18s ease-in forwards; }
+@keyframes ddOut { to { opacity: 0; transform: translateY(-6px); } }
