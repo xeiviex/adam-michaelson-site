@@ -206,3 +206,27 @@ html.app-mode .phone .toast { top: calc(36px + env(safe-area-inset-top)); }
 
 .phone .mark:has(img) { background: #fff; border: 1px solid #e3e8ef; overflow: hidden; padding: 0; }
 .phone .mark img { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+/* docked AI assistant */
+.phone .dockwrap { position: absolute; z-index: 5; left: 8px; right: 8px; bottom: 22px; filter: drop-shadow(0 -6px 18px rgba(13,27,42,.18)); }
+.phone .dockwrap[hidden] { display: none; }
+.phone .ai.dock { margin: 0; padding: 10px 12px 12px; border: 1px solid #cfe5d6; }
+.phone .ai.dock .hd { justify-content: space-between; gap: 8px; }
+.phone .ai.dock .hd b { font-size: 15px; } .phone .ai.dock .hd span { font-size: 12.5px; }
+.phone .ai.dock .dtog { border: 0; background: #d3ecdb; color: #0b6b46; width: 28px; height: 28px; border-radius: 50%; font-size: 16px; line-height: 1; flex: none; }
+.phone .dmsgs { max-height: 190px; overflow-y: auto; margin-top: 2px; scrollbar-width: none; }
+.phone .dmsgs::-webkit-scrollbar { display: none; }
+.phone .ai.dock form { margin-top: 8px; }
+.phone .ai.dock input { padding: 10px 12px; }
+.phone .ai.dock form button { width: 40px; height: 40px; flex: none; }
+html.app-mode .phone .dockwrap { bottom: calc(8px + env(safe-area-inset-bottom)); }
+
+/* compare button entrance */
+.phone .cmpwrap { margin-bottom: 12px; }
+.phone .cmpwrap.enter { animation: cmpIn .42s cubic-bezier(.2,.9,.3,1.15) both; transform-origin: 50% 0; }
+@keyframes cmpIn { from { opacity: 0; max-height: 0; margin-bottom: 0; transform: scale(.9) translateY(-8px); } 60% { opacity: 1; } to { opacity: 1; max-height: 70px; margin-bottom: 12px; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .phone .cmpwrap.enter { animation: none; } }
+
+/* lender logo frame */
+.phone .mark:has(img) { padding: 4px; }
+.phone .mark img { object-fit: contain; border-radius: 6px; }

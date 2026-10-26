@@ -12,7 +12,7 @@
     d.classList.add('app-mode');
     document.addEventListener('DOMContentLoaded', function () {
       var p = document.getElementById('phone'); if (!p) return;
-      var a = document.createElement('a'); a.className = 'exitbar'; a.href = '/lendingtree/#solutions'; a.textContent = '‹ Back to the LendingTree page';
+      var a = document.createElement('a'); a.className = 'exitbar'; a.href = '/lendingtree/#solutions'; a.textContent = '‹ Back to Adam\u2019s proposal';
       p.insertBefore(a, p.firstChild);
     });
   }

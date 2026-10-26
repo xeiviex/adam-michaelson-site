@@ -1,7 +1,7 @@
 // Prototype: the options step. Sample data, no network.
 (function () {
   var $ = function (s) { return document.querySelector(s); };
-  var app = $('#app'), sheet = $('#sheet'), scrim = $('#scrim'), toast = $('#toast');
+  var app = $('#app'), dock = $('#dock'), sheet = $('#sheet'), scrim = $('#scrim'), toast = $('#toast');
   var LOGO = '<img src="/lendingtree/img/lt-logo.png" alt="lendingtree" width="728" height="230">';
   var OFFERS = [
     { id: 'ridgeview', name: 'Ridgeview Financial', mark: '<img src=\"/lendingtree/img/lender-ridgeview.png\" alt=\"\" width=\"46\" height=\"46\">', kind: 'Personal loan', rate: 'Fixed rate', apr: 6.49, mo: 387, fee: 0, term: 60, total: 23220, stars: '4.8', n: '2,341', fixed: true,
@@ -54,18 +54,28 @@
     if (/fee/.test(t)) return 'Ridgeview and Maple Bank charge no origination fee. Summit Lending charges 2% ($400).';
     return 'I can compare these offers, explain fees, or work out total cost. Type a question below, or tap See details on an offer.';
   }
-  function aiBox(ctx, chips) {
-    var msgs = (S.chat[ctx || 'all'] || []).map(function (m) { return '<div class="answer' + (m.you ? ' you' : '') + '">' + m.text + '</div>'; }).join('');
-    return '<div class="ai" data-ctx="' + (ctx || '') + '"><div class="hd"><div><b>AI Assistant</b><span>Get quick, unbiased answers about ' + (ctx ? 'this offer' : 'these offers') + '.</span></div></div>' +
-      msgs + '<form data-act="askform"><input aria-label="Ask a question" placeholder="' + (ctx ? 'Ask a question about this offer' : 'Ask a question about these options') + '"><button aria-label="Send">➤</button></form>' +
-      '</div>';
+  function dockHtml(ctx) {
+    var list = S.chat[ctx || 'all'] || [], open = S.dockOpen !== false && list.length;
+    var msgs = open ? '<div class="dmsgs">' + list.map(function (m) { return '<div class="answer' + (m.you ? ' you' : '') + '">' + m.text + '</div>'; }).join('') + '</div>' : '';
+    return '<div class="ai dock" data-ctx="' + (ctx || '') + '"><div class="hd"><div><b>AI Assistant</b><span>Quick, unbiased answers about ' + (ctx ? 'this offer' : 'these offers') + '.</span></div>' +
+      (list.length ? '<button type="button" class="dtog" data-act="dockhide" aria-label="' + (open ? 'Hide answers' : 'Show answers') + '">' + (open ? '⌄' : '⌃') + '</button>' : '') + '</div>' + msgs +
+      '<form data-act="askform"><input aria-label="Ask a question" autocomplete="off" placeholder="' + (ctx ? 'Ask a question about this offer' : 'Ask a question about these options') + '"><button aria-label="Send">➤</button></form></div>';
+  }
+  function renderDock() {
+    var show = !S.fallback && !S.done, old = dock.querySelector('input'), val = old ? old.value : '', had = old && document.activeElement === old;
+    if (!show) { dock.hidden = true; dock.innerHTML = ''; app.style.paddingBottom = ''; return; }
+    var m = dock.querySelector('.dmsgs'), top = m ? m.scrollTop : 0;
+    dock.hidden = false; dock.innerHTML = dockHtml(S.screen === 'detail' ? S.open : null);
+    var inp = dock.querySelector('input'); if (val) inp.value = val; if (had) inp.focus();
+    var nm = dock.querySelector('.dmsgs'); if (nm) nm.scrollTop = S.stick ? nm.scrollHeight : top; S.stick = false;
+    app.style.paddingBottom = (dock.offsetHeight + 36) + 'px';
   }
   function ask(q, ctx) {
     if (!q) return;
     var k = ctx || 'all'; S.chat[k] = (S.chat[k] || []).concat([{ you: true, text: q.replace(/</g, '&lt;') }]); S.asked++;
     log('ai_question', '"' + q.replace(/</g, '&lt;') + '"' + (ctx ? ' on ' + ctx : ''));
-    render();
-    setTimeout(function () { S.chat[k].push({ text: answer(q, ctx) }); render(); var a = app.querySelectorAll('.answer'); if (a.length) a[a.length - 1].scrollIntoView({ block: 'nearest' }); }, 450);
+    S.dockOpen = true; S.stick = true; render();
+    setTimeout(function () { S.chat[k].push({ text: answer(q, ctx) }); S.stick = true; render(); }, 450);
   }
 
   // ---- screens
@@ -73,6 +83,7 @@
   var topbar = '<div class="top"><div class="logo">' + LOGO + '</div></div>';
   function screenOffers() {
     var nChosen = Object.keys(S.picks).length, nCmp = Object.keys(S.compare).length;
+    var wasShown = S.cmpShown; S.cmpShown = nCmp >= 2; if (wasShown) { /* already visible: no entrance */ }
     var cards = OFFERS.map(function (o) {
       var p = S.picks[o.id];
       return '<div class="offer' + (p ? ' sel' : '') + '"><div class="row"><div style="display:flex;gap:12px;align-items:flex-start"><div class="mark">' + o.mark + '</div><div><div class="nm">' + o.name + '</div><div class="ty">' + o.kind + ' · ' + o.rate + '</div></div></div>' +
@@ -82,8 +93,8 @@
     }).join('');
     return steps(2) + '<h3>You have options.</h3><p class="sub">We found personalized offers based on your application. Choose the lenders you want to hear from.</p><div style="height:14px"></div>' + cards +
       (nChosen ? '<div class="donebox"><button class="btn full" data-act="finish">Done: connect me with ' + nChosen + (nChosen > 1 ? ' lenders' : ' lender') + '</button><div class="note">Only the lenders you chose will contact you.</div></div>' : '') +
-      (nCmp >= 2 ? '<button class="btn ghost full" data-act="docompare" style="margin-bottom:12px">Compare ' + nCmp + ' offers</button>' : '') +
-      aiBox(null, []);
+      (nCmp >= 2 ? '<div class="cmpwrap' + (wasShown ? '' : ' enter') + '"><button class="btn ghost full" data-act="docompare">Compare ' + nCmp + ' offers</button></div>' : '') +
+      '';
   }
   function screenDetail(id) {
     var o = by(id), d = S.draft[id] || (S.draft[id] = { method: (S.picks[id] || {}).method || 'Text', time: (S.picks[id] || {}).time || TIMES[1] });
@@ -94,7 +105,7 @@
       '<h4>Contact me about this offer</h4><p class="sub" style="margin:0 0 6px">Choose how and when ' + o.name + ' can reach you.</p>' +
       '<div class="methods">' + ['Text', 'Call', 'Email'].map(function (m) { return '<button data-act="method" data-m="' + m + '" class="' + (d.method === m ? 'on' : '') + '">' + ({ Text: '💬', Call: '📞', Email: '✉️' })[m] + '<span>' + m + '</span></button>'; }).join('') + '</div>' +
       '<select aria-label="When" data-act="time">' + (d.method === 'Email' ? ['Any time today'].concat(TIMES.slice(3)) : TIMES).map(function (t) { return '<option' + (t === d.time ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select>' +
-      '<div style="height:14px"></div>' + aiBox(id, []) +
+      '<div style="height:14px"></div>' +
       '<div class="donebox"><button class="btn full" data-act="request" data-id="' + o.id + '">' + (S.picks[o.id] ? 'Update my request' : 'Contact me about this offer') + '</button><div class="note">You can change or cancel this request at any time.</div></div>';
   }
   function screenDone() {
@@ -114,7 +125,7 @@
   function render() {
     var keep = app.scrollTop;
     app.innerHTML = S.fallback ? screenFallback() : S.done ? screenDone() : S.screen === 'detail' ? screenDetail(S.open) : topbar + screenOffers();
-    app.scrollTop = keep; tiles();
+    app.scrollTop = keep; renderDock(); tiles();
   }
   function openSheet(html) { sheet.innerHTML = '<div class="grab"></div>' + html; sheet.hidden = false; scrim.hidden = false; }
   function closeSheet() { sheet.hidden = true; scrim.hidden = true; }
@@ -145,6 +156,7 @@
     else if (a === 'cancel') { delete S.picks[id]; log('contact_cancelled', id); if (!Object.keys(S.picks).length) { S.done = false; } render(); }
     else if (a === 'docompare') { log('offers_compared', Object.keys(S.compare).join(', ')); compareSheet(); }
     else if (a === 'closesheet') closeSheet();
+    else if (a === 'dockhide') { S.dockOpen = S.dockOpen === false; render(); }
     else if (a === 'chip') { ask(el.getAttribute('data-q'), el.closest('.ai').getAttribute('data-ctx')); }
     else if (a === 'help') { say('Help: tap See details, choose how to be contacted, then Done.'); }
     else if (['ask', 'pick', 'skip', 'reset'].indexOf(a) > -1) tryIt(a);
@@ -153,7 +165,7 @@
     var el = e.target; if (el.matches && el.matches('[data-act="cmp"]')) { var id = el.getAttribute('data-id'); if (el.checked) { if (Object.keys(S.compare).length >= 3) { el.checked = false; return; } S.compare[id] = 1; } else delete S.compare[id]; render(); }
     if (el.matches && el.matches('[data-act="time"]')) { S.draft[S.open].time = el.value; }
   });
-  document.addEventListener('submit', function (e) { var f = e.target.closest('[data-act="askform"]'); if (!f) return; e.preventDefault(); var i = f.querySelector('input'); ask(i.value.trim(), f.closest('.ai').getAttribute('data-ctx')); });
+  document.addEventListener('submit', function (e) { var f = e.target.closest('[data-act="askform"]'); if (!f) return; e.preventDefault(); var i = f.querySelector('input'), q = i.value.trim(), cx = f.closest('.ai').getAttribute('data-ctx'); i.value = ''; ask(q, cx); });
   scrim.addEventListener('click', closeSheet);
 
   function tryIt(a) {
