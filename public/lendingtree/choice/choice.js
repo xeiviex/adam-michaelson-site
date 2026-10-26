@@ -2,7 +2,7 @@
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var app = $('#app'), sheet = $('#sheet'), scrim = $('#scrim'), toast = $('#toast');
-  var LEAF = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 14C2 6 7 2 14 2c0 7-4 12-12 12z" fill="#1fa35c"/></svg>';
+  var LOGO = '<img src="/lendingtree/img/lt-logo.png" alt="lendingtree" width="728" height="230">';
   var OFFERS = [
     { id: 'ridgeview', name: 'Ridgeview Financial', mark: '▲', kind: 'Personal loan', rate: 'Fixed rate', apr: 6.49, mo: 387, fee: 0, term: 60, total: 23220, stars: '4.8', n: '2,341', fixed: true,
       about: 'A fixed-rate personal loan with no origination fee. Good for debt consolidation, home improvement, or other major expenses.' },
@@ -70,7 +70,7 @@
 
   // ---- screens
   var steps = function (n) { return '<div class="steps">' + ['Application', 'View offers', 'Choose &amp; connect'].map(function (t, k) { return '<div class="st' + (k + 1 === n ? ' on' : '') + (k + 1 < n ? ' past' : '') + '"><i>' + (k + 1) + '</i><span>' + t + '</span></div>'; }).join('') + '</div>'; };
-  var topbar = '<div class="top"><div class="logo">' + LEAF + 'lendingtree</div></div>';
+  var topbar = '<div class="top"><div class="logo">' + LOGO + '</div></div>';
   function screenOffers() {
     var nChosen = Object.keys(S.picks).length, nCmp = Object.keys(S.compare).length;
     var cards = OFFERS.map(function (o) {

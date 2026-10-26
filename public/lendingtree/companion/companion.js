@@ -2,7 +2,7 @@
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var app = $('#app'), sheet = $('#sheet'), scrim = $('#scrim'), toast = $('#toast'), logEl = $('#log');
-  var LEAF = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 14C2 6 7 2 14 2c0 7-4 12-12 12z" fill="#1fa35c"/></svg>';
+  var LOGO = '<img src="/lendingtree/img/lt-logo.png" alt="lendingtree" width="728" height="230">';
   var DAY = 86400000;
   var COVER = [['🚗', 'Liability', '$100,000 / $300,000'], ['🛡', 'Collision', '$500 deductible'], ['🛡', 'Comprehensive', '$500 deductible'], ['👥', 'Uninsured motorist', '$100,000 / $300,000'], ['➕', 'Medical payments', '$10,000']];
   var CARRIERS = { Allstate: '#0b3d91', 'State Farm': '#b3121d', Travelers: '#c8102e', Lemonade: '#d6007f', Progressive: '#0a58ca', GEICO: '#1d6fb8', Nationwide: '#1d4f91', Trupanion: '#00836b', Other: '#3a4350' };
@@ -53,7 +53,7 @@
   var unread = function () { return notes().filter(function (n) { return n.kind !== 'Updates' && !S.read[n.id]; }).length; };
 
   // ---- views
-  function topbar() { var u = unread(); return '<div class="top"><div class="logo">' + LEAF + 'lendingtree</div><div style="display:flex;gap:8px;align-items:center"><button class="ico" data-act="tab" data-t="notes" aria-label="Notifications" style="position:relative">🔔' + (u ? '<span style="position:absolute;top:-6px;right:-6px;background:#e5362d;color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;display:grid;place-items:center">' + u + '</span>' : '') + '</button><button class="ico" style="background:#e8eefc;border-color:#e8eefc;color:#0b5cff;font-size:12px" data-act="say" data-m="Profile is not in this prototype.">AM</button></div></div>'; }
+  function topbar() { var u = unread(); return '<div class="top"><div class="logo">' + LOGO + '</div><div style="display:flex;gap:8px;align-items:center"><button class="ico" data-act="tab" data-t="notes" aria-label="Notifications" style="position:relative">🔔' + (u ? '<span style="position:absolute;top:-6px;right:-6px;background:#e5362d;color:#fff;border-radius:50%;width:18px;height:18px;font-size:11px;display:grid;place-items:center">' + u + '</span>' : '') + '</button><button class="ico" style="background:#e8eefc;border-color:#e8eefc;color:#0b5cff;font-size:12px" data-act="say" data-m="Profile is not in this prototype.">AM</button></div></div>'; }
   function nav() {
     var items = [['home', '🛡', 'Insurance'], ['savings', '🗓', 'Savings'], ['explore', '🏷', 'Explore'], ['notes', '🔔', 'Notifications']];
     return '<div class="nav" style="position:absolute;z-index:5;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #e3e8ef;display:flex;padding:8px 6px 26px">' + items.map(function (i) { var on = S.tab === i[0]; return '<button data-act="tab" data-t="' + i[0] + '" style="flex:1;background:none;border:0;color:' + (on ? '#0b5cff' : '#7b8696') + ';font-size:11.5px;font-weight:' + (on ? 700 : 500) + ';display:grid;gap:2px;justify-items:center;position:relative"><span style="font-size:20px">' + i[1] + '</span>' + i[2] + (i[0] === 'notes' && unread() ? '<i style="position:absolute;top:-2px;right:calc(50% - 22px);background:#e5362d;color:#fff;border-radius:50%;width:16px;height:16px;font:700 10px/16px var(--sans);font-style:normal;text-align:center">' + unread() + '</i>' : '') + '</button>'; }).join('') + '</div>';
@@ -96,7 +96,7 @@
     var cnt = function (k) { return all.filter(function (n) { return n.kind === k && !S.read[n.id]; }).length; };
     var chips = ['All', 'Renewals', 'Savings', 'Updates'].map(function (k) { var c = k === 'All' ? 0 : cnt(k); return '<button data-act="nf" data-k="' + k + '" style="border:1.5px solid ' + (f === k ? '#0b5cff' : '#dfe5ee') + ';background:' + (f === k ? '#eef4ff' : '#fff') + ';border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;color:' + (f === k ? '#0b5cff' : '#3a4350') + '">' + k + (c ? ' <i style="font-style:normal;background:#e5362d;color:#fff;border-radius:50%;padding:1px 6px;font-size:11px">' + c + '</i>' : '') + '</button>'; }).join('');
     var list = all.filter(function (n) { return f === 'All' || n.kind === f; }), lastWhen = '';
-    return topbar().replace(/<div class="top">.*?<\/div><\/div>/, '<div class="top"><div class="logo">' + LEAF + 'lendingtree</div></div>') + '<h3>Notifications</h3><p class="sub">Important updates about your policies, renewals, and savings opportunities.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">' + chips + '</div>' +
+    return topbar().replace(/<div class="top">.*?<\/div><\/div>/, '<div class="top"><div class="logo">' + LOGO + '</div></div>') + '<h3>Notifications</h3><p class="sub">Important updates about your policies, renewals, and savings opportunities.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">' + chips + '</div>' +
       (list.length ? list.map(function (n) {
         var hd = n.when !== lastWhen ? '<h4 style="margin:14px 0 6px">' + n.when + '</h4>' : ''; lastWhen = n.when;
         var bg = n.tone === 'red' ? '#fdeceb' : n.tone === 'green' ? '#e8f6ec' : '#fff', unr = n.kind !== 'Updates' && !S.read[n.id];
