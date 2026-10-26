@@ -58,7 +58,7 @@
     var list = S.chat[ctx || 'all'] || [], open = S.dockOpen !== false && list.length;
     var msgs = open ? '<div class="dmsgs">' + list.map(function (m) { return '<div class="answer' + (m.you ? ' you' : '') + '">' + m.text + '</div>'; }).join('') + '</div>' : '';
     return '<div class="ai dock" data-ctx="' + (ctx || '') + '"><div class="hd"><div><b>AI Assistant</b><span>Quick, unbiased answers about ' + (ctx ? 'this offer' : 'these offers') + '.</span></div>' +
-      (list.length ? '<button type="button" class="dtog" data-act="dockhide" aria-label="' + (open ? 'Hide answers' : 'Show answers') + '">' + (open ? '⌄' : '⌃') + '</button>' : '') + '</div>' + msgs +
+      (list.length ? '<button type="button" class="dtog" data-act="dockhide" aria-label="' + (open ? 'Hide answers' : 'Show answers') + '">' + '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"' + (open ? '' : ' class="up"') + '><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' : '') + '</div>' + msgs +
       '<form data-act="askform"><input aria-label="Ask a question" autocomplete="off" placeholder="' + (ctx ? 'Ask a question about this offer' : 'Ask a question about these options') + '"><button aria-label="Send">➤</button></form></div>';
   }
   function renderDock() {
