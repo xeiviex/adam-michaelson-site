@@ -173,3 +173,24 @@
 .tryrow button span { color: var(--muted); font-weight: 400; font-size: .85rem; }
 .tryrow button:hover { color: var(--accent-hi); }
 @media (max-width: 880px) { .tryrow { grid-template-columns: 1fr 1fr; } }
+
+/* Desktop and tablet: phone centered on the page, controls underneath */
+html:not(.app-mode) .stage { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 32px; }
+html:not(.app-mode) .stage .well { position: static; width: 100%; max-width: 560px; }
+html:not(.app-mode) .stage .side { width: 100%; max-width: 900px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 40px; align-items: start; }
+html:not(.app-mode) .stage .side > :first-child, html:not(.app-mode) .stage .side .tiles { grid-column: 1 / -1; }
+@media (max-width: 760px) { html:not(.app-mode) .stage .side { grid-template-columns: minmax(0, 1fr); } }
+html:not(.app-mode) .exitbar { display: none; }
+
+/* Phone browsers: the prototype is the app. No site chrome, no frame. */
+html.app-mode, html.app-mode body { height: 100%; overflow: hidden; background: #fff; overscroll-behavior: none; }
+html.app-mode .bar, html.app-mode .crumbs, html.app-mode .kicker, html.app-mode h1, html.app-mode .subpage > .lede,
+html.app-mode .side, html.app-mode .explain, html.app-mode footer, html.app-mode .scroll-hint, html.app-mode [class*="scrollhint"] { display: none !important; }
+html.app-mode .wrap.subpage, html.app-mode main { padding: 0 !important; margin: 0 !important; max-width: none !important; width: 100%; }
+html.app-mode .stage { display: block; width: 100%; }
+html.app-mode .stage .well { padding: 0; background: #fff; position: static; display: block; }
+html.app-mode .phone { position: fixed; inset: 0; width: 100%; max-width: none; height: 100dvh; border: 0; border-radius: 0; box-shadow: none; }
+html.app-mode .phone .sb, html.app-mode .phone .isl, html.app-mode .phone .hm { display: none; }
+html.app-mode .phone .exitbar { position: absolute; z-index: 8; top: 0; left: 0; right: 0; height: calc(26px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 14px 0; display: flex; align-items: center; background: #f4f6f9; color: #5b6574; font: 600 12px var(--sans); text-decoration: none; border-bottom: 1px solid #e3e8ef; }
+html.app-mode .phone .app { inset: calc(26px + env(safe-area-inset-top)) 0 0; padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+html.app-mode .phone .toast { top: calc(36px + env(safe-area-inset-top)); }
