@@ -84,7 +84,7 @@
     dock.hidden = false; dock.innerHTML = dockHtml(S.screen === 'detail' ? S.open : null);
     var inp = dock.querySelector('input'); if (val) inp.value = val; if (had) inp.focus();
     var nm = dock.querySelector('.dmsgs'); if (nm) nm.scrollTop = S.stick ? nm.scrollHeight : top; S.stick = false;
-    app.style.paddingBottom = (S.ddOpen && S.screen === 'detail' ? 330 : dock.offsetHeight + 36) + 'px';
+    app.style.paddingBottom = ((S.ddOpen || S.ddClosing) && S.screen === 'detail' ? 330 : dock.offsetHeight + 36) + 'px';
   }
   function ask(q, ctx) {
     if (!q || S.busy) return;
@@ -163,8 +163,13 @@
   function closeDd() {
     if (!S.ddOpen || S.ddClosing) return; S.ddClosing = true;
     var l = app.querySelector('.ddlist'); if (l) l.classList.add('out');
+    dock.classList.remove('away');
     app.scrollTo({ top: Math.max(0, Math.min(S.ddScroll || 0, app.scrollHeight)), behavior: 'smooth' });
-    setTimeout(function () { S.ddOpen = false; S.ddClosing = false; render(); }, 190);
+    setTimeout(function () { S.ddOpen = false; render(); }, 190);
+    /* Keep the extra room below the form until the scroll has landed, then drop it with no transition so nothing shifts. */
+    setTimeout(function () {
+      S.ddClosing = false; app.style.transition = 'none'; app.style.paddingBottom = (dock.offsetHeight + 36) + 'px'; void app.offsetWidth; app.style.transition = '';
+    }, 620);
   }
   function openSheet(html) { sheet.innerHTML = '<div class="grab"></div>' + html; sheet.hidden = false; scrim.hidden = false; }
   function closeSheet() { sheet.hidden = true; scrim.hidden = true; }
