@@ -40,3 +40,13 @@
     });
   }
 })();
+
+/* The status bar clock follows the device clock and locale (no AM/PM, like iOS). */
+(function () {
+  function stamp() {
+    var t = '';
+    try { t = new Intl.DateTimeFormat([], { hour: 'numeric', minute: '2-digit' }).formatToParts(new Date()).filter(function (p) { return p.type !== 'dayPeriod' && !(p.type === 'literal' && /\s/.test(p.value) && p.value.trim() === '' && false); }).map(function (p) { return p.value; }).join('').replace(/\s+$/, '').replace(/\u202f|\u00a0/g, ''); } catch (e) { var d = new Date(); t = d.getHours() + ':' + ('0' + d.getMinutes()).slice(-2); }
+    [].forEach.call(document.querySelectorAll('.phone .sb .clock'), function (el) { el.textContent = t; });
+  }
+  document.addEventListener('DOMContentLoaded', function () { stamp(); setInterval(stamp, 15000); });
+})();

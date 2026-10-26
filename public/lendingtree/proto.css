@@ -313,3 +313,14 @@ html.app-mode .phone .sheet { left: max(0px, calc((100% - 640px) / 2)); right: m
 .phone .methods .on .envl rect { fill: #cfe0ff; stroke: #0b5cff; } .phone .methods .on .envl path { stroke: #0b5cff; }
 .phone .methods .envl { width: 20px; height: 18px; margin: 0 auto; }
 .phone .methods .envl { height: 17px; margin-top: 1px; }
+
+/* ---- desktop pass 1 ---- */
+.subpage h1 { max-width: none; }
+.subpage .lede { max-width: 110ch; }
+html:not(.app-mode) .stage .well { background: transparent; padding: clamp(24px, 4vw, 56px) 12px; }
+html:not(.app-mode) .phone { border-color: #17171a; box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 0 36px 0 rgba(255,255,255,.12), 0 0 110px 14px rgba(190,215,255,.08); }
+.phone .sb .ic { display: flex; align-items: center; gap: 6px; font-size: 0; letter-spacing: 0; }
+.phone .sb .ic svg { display: block; fill: #0d1b2a; stroke: #0d1b2a; }
+.phone .sb .ic .sig rect, .phone .sb .ic .batt rect, .phone .sb .ic .batt path, .phone .sb .ic .wifi path:last-child { stroke: none; }
+.phone .sb .ic .wifi path:not(:last-child) { fill: none; }
+.phone .sb .ic .batt rect:first-child { fill: none; stroke: #0d1b2a; stroke-width: 1; }

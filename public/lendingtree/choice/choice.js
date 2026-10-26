@@ -39,10 +39,12 @@
   function log(ev, detail, warn) {
     var d = document.createElement('div'); if (warn) d.className = 'warn';
     d.innerHTML = '<i>' + clock() + '</i><em>' + ev + '</em> ' + (detail || '');
+    if (!logEl) return;
     logEl.appendChild(d); logEl.scrollTop = logEl.scrollHeight;
   }
   function tiles() {
     var n = Object.keys(S.picks).length;
+    if (!$('#tiles')) return;
     $('#tiles').innerHTML =
       '<div class="' + (n ? 'ok' : '') + '"><b>' + n + '</b><span>Lenders chosen</span></div>' +
       '<div><b>' + (n ? n : 0) + '</b><span>Contacts scheduled</span></div>' +
@@ -216,7 +218,7 @@
   scrim.addEventListener('click', closeSheet);
 
   function tryIt(a) {
-    if (a === 'reset') { fresh(); logEl.innerHTML = ''; closeSheet(); log('form_submitted', 'home equity, $20,000. options step shown'); render(); app.scrollTop = 0; }
+    if (a === 'reset') { fresh(); if (logEl) logEl.innerHTML = ''; closeSheet(); log('form_submitted', 'home equity, $20,000. options step shown'); render(); app.scrollTop = 0; }
     else if (a === 'ask') { S.screen = 'offers'; S.done = false; S.fallback = false; render(); ask('Which of these costs least over 5 years?', null); }
     else if (a === 'pick') { S.fallback = false; S.screen = 'offers'; S.done = false; S.draft.ridgeview = { method: 'Text', time: defaultTime() }; S.picks.ridgeview = { method: 'Text', time: defaultTime() }; log('offer_opened', 'ridgeview'); log('contact_requested', 'Ridgeview Financial via <em>text</em>, ' + defaultTime() + '. consent scoped to this lender'); render(); app.scrollTop = 0; say('Ridgeview Financial will text you. Choose another lender to hear from them too.'); }
     else if (a === 'skip') { if (Object.keys(S.picks).length) { say('You already chose. Start over to see the fallback.'); return; } S.fallback = true; log('no_selection_24h', 'lead released to matching lenders (today\'s model)', true); render(); app.scrollTop = 0; }

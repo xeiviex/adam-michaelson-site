@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/lendingtree/lt.css?v=10">
-<link rel="stylesheet" href="/lendingtree/proto.css?v=21">
+<link rel="stylesheet" href="/lendingtree/proto.css?v=22">
 <script>document.documentElement.classList.add('js');</script>
-<script src="/lendingtree/proto-mode.js?v=6"></script>
+<script src="/lendingtree/proto-mode.js?v=7"></script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -28,35 +28,16 @@
   <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/lendingtree/">LendingTree</a><span>/</span><span>The power of choice</span></nav>
   <span class="kicker">Prototype</span>
   <h1>The power of choice</h1>
-  <p class="lede">A clickable prototype of the options step: comparable offers, a shopper who picks who contacts them, and an AI guide that helps them decide.</p>
+  <p class="lede">A clickable prototype of the options step: comparable offers, a shopper who picks who contacts them, and an AI guide that helps them decide. You just submitted a home equity request and landed on step 2 of 3. Try it: tap See details on an offer to choose who contacts you and when, or ask the AI guide which one fits you best.</p>
   <div class="stage">
     <div class="well"><div class="phone" id="phone" aria-label="Interactive prototype of the options step on an iPhone">
-      <div class="sb"><span>9:41</span><span class="ic">▂▄▆ <i class="bat"></i></span></div><div class="isl"></div><div class="hm"></div>
+      <div class="sb"><span class="clock">9:41</span><span class="ic"><svg class="sig" viewBox="0 0 18 12" width="18" height="12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="0.9"/><rect x="5" y="5.4" width="3" height="6.6" rx="0.9"/><rect x="10" y="2.7" width="3" height="9.3" rx="0.9"/><rect x="15" y="0" width="3" height="12" rx="0.9"/></svg><svg class="wifi" viewBox="0 0 17 12" width="17" height="12" aria-hidden="true"><path d="M1.1 4.2a10.4 10.4 0 0 1 14.8 0" fill="none" stroke-width="1.9" stroke-linecap="round"/><path d="M3.7 6.9a6.7 6.7 0 0 1 9.6 0" fill="none" stroke-width="1.9" stroke-linecap="round"/><path d="M6.2 9.3a3.2 3.2 0 0 1 4.6 0L8.5 11.9z"/></svg><svg class="batt" viewBox="0 0 27 12" width="27" height="12" aria-hidden="true"><rect x="0.5" y="0.5" width="22.5" height="11" rx="3.3" fill="none" opacity="0.4"/><rect x="2" y="2" width="19.5" height="8" rx="2" /><path d="M24.4 4.1v3.8a1.9 1.9 0 0 0 0-3.8z" opacity="0.45"/></svg></span></div><div class="isl"></div><div class="hm"></div>
       <div class="toast" id="toast" role="status"></div>
       <div class="app" id="app"></div>
       <div class="dockwrap" id="dock" hidden></div>
       <div class="scrim" id="scrim" hidden></div>
       <div class="sheet" id="sheet" hidden></div>
     </div></div>
-    <div class="side">
-      <div>
-        <h2>Try it</h2>
-        <p>You just submitted a home equity form. Instead of a dozen calls, you see comparable offers and decide who contacts you, how and when. Nobody else calls.</p>
-      </div>
-      <div class="try" id="try">
-        <button data-act="ask">Ask the AI guide which costs least <span>Tap a question chip</span></button>
-        <button data-act="pick">Choose Ridgeview by text at the next hour <span>Fills the flow for you</span></button>
-        <button data-act="skip">Skip ahead 24 hours with no choice <span>See the fallback</span></button>
-        <button data-act="reset">Start over <span>Reset the shopper</span></button>
-      </div>
-      <div class="tiles" id="tiles" aria-live="polite"></div>
-      <div><div class="loghead"><span>What LendingTree records</span><span>Live</span></div><div class="log" id="log" aria-live="polite"></div></div>
-    </div>
-  </div>
-  <div class="explain">
-    <div><b>What it shows</b><span>The step after the form, rebuilt. Comparable offers, a choose button on each, and an AI guide inside the page. The shopper picks the lender, the channel and the time. A shopper who does not choose within 24 hours falls back to today's model.</span></div>
-    <div><b>How it works</b><span>Each choice becomes a consented contact request for one lender, with the context the shopper saw. The AI guide answers questions about the offers on screen and keeps following up by text and email until the shopper chooses. See the <a href="/lendingtree/#s1">approach</a> for scope and segment.</span></div>
-    <div><b>What we measure</b><span>Selection rate (goal 50%), funded rate per selection (goal 4%) and revenue per lead against a holdout. Double down at 40% selection or more, kill under 25%. Sample data here is illustrative.</span></div>
   </div>
 </main>
 <footer><div class="wrap">
@@ -64,6 +45,6 @@
   <span><a href="mailto:hello@adam-michaelson.com">hello@adam-michaelson.com</a> · <a href="https://www.linkedin.com/in/adammichaelson" target="_blank" rel="noopener">LinkedIn</a></span>
 </div></footer>
 <script src="/lendingtree/lt.js?v=1" defer></script>
-<script src="/lendingtree/choice/choice.js?v=17" defer></script>
+<script src="/lendingtree/choice/choice.js?v=18" defer></script>
 </body>
 </html>
