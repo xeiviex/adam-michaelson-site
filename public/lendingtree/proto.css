@@ -203,3 +203,6 @@ html.app-mode .phone .toast { top: calc(36px + env(safe-area-inset-top)); }
 
 .phone .tag { border: 0; text-transform: none; letter-spacing: 0; font-family: var(--sans); font-weight: 500; white-space: nowrap; line-height: 1.3; }
 .phone .logo img { display: block; height: 34px; width: auto; }
+
+.phone .mark:has(img) { background: #fff; border: 1px solid #e3e8ef; overflow: hidden; padding: 0; }
+.phone .mark img { width: 100%; height: 100%; display: block; object-fit: cover; }

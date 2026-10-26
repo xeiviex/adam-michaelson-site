@@ -4,11 +4,11 @@
   var app = $('#app'), sheet = $('#sheet'), scrim = $('#scrim'), toast = $('#toast');
   var LOGO = '<img src="/lendingtree/img/lt-logo.png" alt="lendingtree" width="728" height="230">';
   var OFFERS = [
-    { id: 'ridgeview', name: 'Ridgeview Financial', mark: '▲', kind: 'Personal loan', rate: 'Fixed rate', apr: 6.49, mo: 387, fee: 0, term: 60, total: 23220, stars: '4.8', n: '2,341', fixed: true,
+    { id: 'ridgeview', name: 'Ridgeview Financial', mark: '<img src=\"/lendingtree/img/lender-ridgeview.png\" alt=\"\" width=\"46\" height=\"46\">', kind: 'Personal loan', rate: 'Fixed rate', apr: 6.49, mo: 387, fee: 0, term: 60, total: 23220, stars: '4.8', n: '2,341', fixed: true,
       about: 'A fixed-rate personal loan with no origination fee. Good for debt consolidation, home improvement, or other major expenses.' },
-    { id: 'maple', name: 'Maple Bank', mark: '❦', kind: 'Home equity line', rate: 'Variable', apr: 7.21, mo: 356, fee: 0, term: 60, total: 21360, stars: '4.6', n: '1,208', fixed: false,
+    { id: 'maple', name: 'Maple Bank', mark: '<img src=\"/lendingtree/img/lender-maple.png\" alt=\"\" width=\"46\" height=\"46\">', kind: 'Home equity line', rate: 'Variable', apr: 7.21, mo: 356, fee: 0, term: 60, total: 21360, stars: '4.6', n: '1,208', fixed: false,
       about: 'A home equity line of credit with a variable rate. The payment can move with the market, and your home secures the line.' },
-    { id: 'summit', name: 'Summit Lending', mark: '▞', kind: 'Personal loan', rate: 'Fixed rate', apr: 8.99, mo: 422, fee: 400, term: 60, total: 25720, stars: '4.4', n: '893', fixed: true,
+    { id: 'summit', name: 'Summit Lending', mark: '<img src=\"/lendingtree/img/lender-summit.png\" alt=\"\" width=\"46\" height=\"46\">', kind: 'Personal loan', rate: 'Fixed rate', apr: 8.99, mo: 422, fee: 400, term: 60, total: 25720, stars: '4.4', n: '893', fixed: true,
       about: 'A fixed-rate personal loan with a 2% origination fee. Funds can arrive as soon as the next business day.' }
   ];
   var TIMES = ['Right now (within 5 minutes)', 'Today, 6:00 PM', 'Today, 8:00 PM', 'Tomorrow, 9:00 AM', 'Tomorrow, 12:00 PM'];
