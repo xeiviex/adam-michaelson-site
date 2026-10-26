@@ -79,6 +79,7 @@
   function renderDock() {
     var show = !S.fallback && !S.done, old = dock.querySelector('input'), val = old ? old.value : '', had = old && document.activeElement === old;
     if (!show) { dock.hidden = true; dock.innerHTML = ''; app.style.paddingBottom = ''; return; }
+    if (S.ddOpen && S.screen === 'detail') { dock.hidden = true; dock.innerHTML = ''; app.style.paddingBottom = '330px'; return; }
     var m = dock.querySelector('.dmsgs'), top = m ? m.scrollTop : 0;
     dock.hidden = false; dock.innerHTML = dockHtml(S.screen === 'detail' ? S.open : null);
     var inp = dock.querySelector('input'); if (val) inp.value = val; if (had) inp.focus();
@@ -129,7 +130,9 @@
       '<h4>Overview</h4><p class="sub" style="margin-top:0">' + o.about + '</p><h4>Loan details</h4><div class="kv">' + rows.map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div>' +
       '<h4>Contact me about this offer</h4><p class="sub" style="margin:0 0 6px">Choose how and when ' + o.name + ' can reach you.</p>' +
       '<div class="methods">' + ['Text', 'Call', 'Email'].map(function (m) { return '<button data-act="method" data-m="' + m + '" class="' + (d.method === m ? 'on' : '') + '">' + ({ Text: '💬', Call: '📞', Email: '✉️' })[m] + '<span>' + m + '</span></button>'; }).join('') + '</div>' +
-      '<select aria-label="When" data-act="time">' + (d.method === 'Email' ? emailOpts() : timeOpts()).map(function (t) { return '<option' + (t === d.time ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select>' +
+      (function () { var opts = d.method === 'Email' ? emailOpts() : timeOpts(); if (opts.indexOf(d.time) < 0) d.time = opts[0];
+        return '<div class="dd' + (S.ddOpen ? ' open' : '') + '"><button type="button" class="ddbtn" data-act="ddtoggle" aria-haspopup="listbox" aria-expanded="' + (!!S.ddOpen) + '"><span>' + d.time + '</span><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
+          (S.ddOpen ? '<div class="ddlist" role="listbox">' + opts.map(function (t) { return '<button type="button" role="option" class="ddopt' + (t === d.time ? ' on' : '') + '" aria-selected="' + (t === d.time) + '" data-act="ddpick" data-v="' + t + '"><i>' + (t === d.time ? '✓' : '') + '</i>' + t + '</button>'; }).join('') + '</div>' : '') + '</div>'; })() +
       '<div style="height:14px"></div>' +
       '<div class="donebox"><button class="btn full" data-act="request" data-id="' + o.id + '">' + (S.picks[o.id] ? 'Update my request' : 'Contact me about this offer') + '</button><div class="note">You can change or cancel this request at any time.</div></div>';
   }
@@ -174,9 +177,10 @@
 
   // ---- events
   document.addEventListener('click', function (e) {
+    if (S.ddOpen && !e.target.closest('.dd')) { S.ddOpen = false; render(); }
     var el = e.target.closest('[data-act]'); if (!el) return; var a = el.getAttribute('data-act'), id = el.getAttribute('data-id');
     if (a === 'open') { S.screen = 'detail'; S.open = id; if (!S.opened[id]) { S.opened[id] = 1; log('offer_opened', id); } render(); app.scrollTop = 0; }
-    else if (a === 'back') { S.screen = 'offers'; S.done = false; render(); app.scrollTop = 0; }
+    else if (a === 'back') { S.screen = 'offers'; S.done = false; S.ddOpen = false; render(); app.scrollTop = 0; }
     else if (a === 'method') { var d = S.draft[S.open]; d.method = el.getAttribute('data-m'); d.time = d.method === 'Email' ? emailOpts()[0] : defaultTime(); render(); }
     else if (a === 'request') {
       var dd = S.draft[id]; S.picks[id] = { method: dd.method, time: dd.time }; S.screen = 'offers';
@@ -186,6 +190,8 @@
     else if (a === 'cancel') { delete S.picks[id]; log('contact_cancelled', id); if (!Object.keys(S.picks).length) { S.done = false; } render(); }
     else if (a === 'docompare') { log('offers_compared', Object.keys(S.compare).join(', ')); compareSheet(); }
     else if (a === 'closesheet') closeSheet();
+    else if (a === 'ddtoggle') { S.ddOpen = !S.ddOpen; render(); if (S.ddOpen) { var b = app.querySelector('.ddbtn'); if (b) app.scrollTo({ top: app.scrollTop + b.getBoundingClientRect().top - app.getBoundingClientRect().top - 80, behavior: 'smooth' }); } }
+    else if (a === 'ddpick') { S.draft[S.open].time = el.getAttribute('data-v'); S.ddOpen = false; render(); }
     else if (a === 'dockhide') { S.dockOpen = S.dockOpen === false; render(); }
     else if (a === 'chip') { ask(el.getAttribute('data-q'), el.closest('.ai').getAttribute('data-ctx')); }
     else if (a === 'help') { say('Help: tap See details, choose how to be contacted, then Done.'); }

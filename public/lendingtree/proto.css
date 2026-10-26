@@ -253,3 +253,14 @@ html.app-mode .phone { overscroll-behavior: none; touch-action: manipulation; }
 .phone .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .phone .tags .tag { margin: 0; }
 .phone h3 + .tags { margin-top: 10px; }
+
+/* custom time dropdown: the list is exactly as wide as the field */
+.phone .dd { position: relative; }
+.phone .ddbtn { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; text-align: left; padding: 14px 14px; border: 1px solid #c9d2de; border-radius: 12px; background: #fff; font-size: 16px; color: #0d1b2a; }
+.phone .dd.open .ddbtn { border-color: #0b5cff; box-shadow: 0 0 0 3px rgba(11,92,255,.15); }
+.phone .ddbtn svg { flex: none; color: #5b6574; transition: transform .18s; } .phone .dd.open .ddbtn svg { transform: rotate(180deg); }
+.phone .ddlist { position: absolute; z-index: 4; left: 0; right: 0; top: calc(100% + 6px); background: #fff; border: 1px solid #c9d2de; border-radius: 12px; box-shadow: 0 12px 30px rgba(13,27,42,.18); padding: 6px; animation: ddIn .14s ease-out; }
+@keyframes ddIn { from { opacity: 0; transform: translateY(-4px); } }
+.phone .ddopt { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; border: 0; background: none; padding: 12px 10px; border-radius: 8px; font-size: 16px; color: #0d1b2a; }
+.phone .ddopt i { font-style: normal; width: 16px; color: #0b5cff; font-weight: 700; flex: none; }
+.phone .ddopt.on { background: #eaf1ff; font-weight: 600; }
