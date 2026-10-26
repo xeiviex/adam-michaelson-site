@@ -100,7 +100,7 @@
       return '<div class="offer' + (p ? ' sel' : '') + '"><div class="row"><div style="display:flex;gap:12px;align-items:flex-start"><div class="mark">' + o.mark + '</div><div><div class="nm">' + o.name + '</div><div class="ty">' + o.kind + ' · ' + o.rate + '</div></div></div>' +
         '<button class="btn" data-act="open" data-id="' + o.id + '">' + (p ? 'Edit' : 'See details') + '</button></div>' +
         '<div class="nums"><div><b>' + o.apr.toFixed(2) + '%</b><span>APR</span></div><div><b>' + money(o.mo) + '</b><span>Est. monthly</span></div>' +
-        (p ? '<span class="chosen" style="margin-left:auto">✓ ' + p.method + ' · ' + p.time.split(',')[0] + '</span>' : '<label><input type="checkbox" data-act="cmp" data-id="' + o.id + '"' + (S.compare[o.id] ? ' checked' : '') + '> Compare</label>') + '</div></div>';
+        (p ? '</div><div class="chosen"><i>✓</i><span><b>' + p.method + '</b> · ' + p.time + '</span></div></div>' : '<label><input type="checkbox" data-act="cmp" data-id="' + o.id + '"' + (S.compare[o.id] ? ' checked' : '') + '> Compare</label></div></div>');
     }).join('');
     return steps(2) + '<h3>You have options.</h3><p class="sub">We found personalized offers based on your application. Choose the lenders you want to hear from.</p><div style="height:14px"></div>' + cards +
       (nChosen ? '<div class="donebox"><button class="btn full" data-act="finish">Done: connect me with ' + nChosen + (nChosen > 1 ? ' lenders' : ' lender') + '</button><div class="note">Only the lenders you chose will contact you.</div></div>' : '') +
@@ -166,7 +166,7 @@
     else if (a === 'method') { var d = S.draft[S.open]; d.method = el.getAttribute('data-m'); d.time = d.method === 'Email' ? 'Any time today' : TIMES[1]; render(); }
     else if (a === 'request') {
       var dd = S.draft[id]; S.picks[id] = { method: dd.method, time: dd.time }; S.screen = 'offers';
-      log('contact_requested', by(id).name + ' via <em>' + dd.method.toLowerCase() + '</em>, ' + dd.time + '. consent scoped to this lender'); render(); app.scrollTop = 0; say(by(id).name + ' will ' + (dd.method === 'Call' ? 'call' : dd.method === 'Text' ? 'text' : 'email') + ' you. No one else will.');
+      log('contact_requested', by(id).name + ' via <em>' + dd.method.toLowerCase() + '</em>, ' + dd.time + '. consent scoped to this lender'); render(); app.scrollTop = 0; say(by(id).name + ' will ' + (dd.method === 'Call' ? 'call' : dd.method === 'Text' ? 'text' : 'email') + ' you. Choose another lender to hear from them too.');
     }
     else if (a === 'finish') { S.done = true; log('selection_complete', Object.keys(S.picks).length + ' lender(s) chosen. other lenders: <em>0</em>'); render(); app.scrollTop = 0; }
     else if (a === 'cancel') { delete S.picks[id]; log('contact_cancelled', id); if (!Object.keys(S.picks).length) { S.done = false; } render(); }
@@ -187,7 +187,7 @@
   function tryIt(a) {
     if (a === 'reset') { fresh(); logEl.innerHTML = ''; closeSheet(); log('form_submitted', 'home equity, $20,000. options step shown'); render(); app.scrollTop = 0; }
     else if (a === 'ask') { S.screen = 'offers'; S.done = false; S.fallback = false; render(); ask('Which of these costs least over 5 years?', null); }
-    else if (a === 'pick') { S.fallback = false; S.screen = 'offers'; S.done = false; S.draft.ridgeview = { method: 'Text', time: 'Today, 6:00 PM' }; S.picks.ridgeview = { method: 'Text', time: 'Today, 6:00 PM' }; log('offer_opened', 'ridgeview'); log('contact_requested', 'Ridgeview Financial via <em>text</em>, Today, 6:00 PM. consent scoped to this lender'); render(); app.scrollTop = 0; say('Ridgeview Financial will text you. No one else will.'); }
+    else if (a === 'pick') { S.fallback = false; S.screen = 'offers'; S.done = false; S.draft.ridgeview = { method: 'Text', time: 'Today, 6:00 PM' }; S.picks.ridgeview = { method: 'Text', time: 'Today, 6:00 PM' }; log('offer_opened', 'ridgeview'); log('contact_requested', 'Ridgeview Financial via <em>text</em>, Today, 6:00 PM. consent scoped to this lender'); render(); app.scrollTop = 0; say('Ridgeview Financial will text you. Choose another lender to hear from them too.'); }
     else if (a === 'skip') { if (Object.keys(S.picks).length) { say('You already chose. Start over to see the fallback.'); return; } S.fallback = true; log('no_selection_24h', 'lead released to matching lenders (today\'s model)', true); render(); app.scrollTop = 0; }
   }
   log('form_submitted', 'home equity, $20,000. options step shown'); render();
