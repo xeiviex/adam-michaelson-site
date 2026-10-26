@@ -46,19 +46,19 @@
       if (/total|cost|5 year|five/.test(t)) return 'Over ' + o.term + ' months, ' + o.name + ' comes to about ' + money(o.total) + ': ' + money(o.mo) + ' a month' + (o.fee ? ' plus a ' + money(o.fee) + ' fee' : '') + '.' + (o.fixed ? ' The rate is fixed, so this will not move.' : ' The rate is variable, so this can change.');
       if (/compare/.test(t)) return 'Against the other two: ' + OFFERS.filter(function (x) { return x.id !== ctx; }).map(function (x) { return x.name + ' is ' + money(x.mo) + ' a month at ' + x.apr + '% (' + (x.fixed ? 'fixed' : 'variable') + ')'; }).join('; ') + '.';
       if (/good deal|worth/.test(t)) return o.id === low.id ? o.name + ' has the lowest estimated total of the three, but the rate is variable. If rates rise, the gap closes.' : o.id === fixedLow.id ? o.name + ' has the lowest total of the fixed-rate options and no fee. That is a strong choice if you want a payment that never changes.' : o.name + ' costs the most of the three over the term. It could still make sense if speed matters more than total cost.';
-      return 'I can explain the fees, the total cost, or how this compares to the other offers. Try one of the questions below.';
+      return 'I can explain the fees, the total cost, or how this compares to the other offers. Type a question below.';
     }
     if (/least|cheap|lowest|cost|total/.test(t)) return 'Over 5 years the lowest estimated total is Maple Bank at ' + money(low.total) + ', but its rate is variable and can rise. The lowest fixed-rate total is Ridgeview Financial at ' + money(fixedLow.total) + ', with no fee. Summit Lending is highest at ' + money(by('summit').total) + ' including its fee.';
     if (/differen|vs|compare/.test(t)) return 'Ridgeview and Summit are fixed-rate personal loans. Maple Bank is a variable-rate home equity line secured by your home. Ridgeview has the lowest APR (6.49%) and no fee. Maple has the lowest payment. Summit charges a 2% fee.';
     if (/choose|help|recommend|pick/.test(t)) return 'If you want a payment that never changes, Ridgeview Financial is the strongest fit: lowest APR, no fee, fixed rate. If the lowest monthly payment matters most and you are comfortable with a variable rate, look at Maple Bank. Pick one or more, and only the lenders you choose will contact you.';
     if (/fee/.test(t)) return 'Ridgeview and Maple Bank charge no origination fee. Summit Lending charges 2% ($400).';
-    return 'I can compare these offers, explain fees, or work out total cost. Try one of the questions below, or tap See details on an offer.';
+    return 'I can compare these offers, explain fees, or work out total cost. Type a question below, or tap See details on an offer.';
   }
   function aiBox(ctx, chips) {
     var msgs = (S.chat[ctx || 'all'] || []).map(function (m) { return '<div class="answer' + (m.you ? ' you' : '') + '">' + m.text + '</div>'; }).join('');
-    return '<div class="ai" data-ctx="' + (ctx || '') + '"><div class="hd"><div class="spark">✦</div><div><b>AI Assistant<em>BETA</em></b><span>Get quick, unbiased answers about ' + (ctx ? 'this offer' : 'these offers') + '.</span></div></div>' +
-      msgs + '<form data-act="askform"><input aria-label="Ask a question" placeholder="' + (ctx ? "What's the total cost over 5 years?" : 'Which of these costs least over 5 years?') + '"><button aria-label="Send">➤</button></form>' +
-      '<div class="chips">' + chips.map(function (c) { return '<button type="button" data-act="chip" data-q="' + c + '">' + c + '</button>'; }).join('') + '</div></div>';
+    return '<div class="ai" data-ctx="' + (ctx || '') + '"><div class="hd"><div><b>AI Assistant</b><span>Get quick, unbiased answers about ' + (ctx ? 'this offer' : 'these offers') + '.</span></div></div>' +
+      msgs + '<form data-act="askform"><input aria-label="Ask a question" placeholder="' + (ctx ? 'Ask a question about this offer' : 'Ask a question about these options') + '"><button aria-label="Send">➤</button></form>' +
+      '</div>';
   }
   function ask(q, ctx) {
     if (!q) return;
@@ -69,33 +69,33 @@
   }
 
   // ---- screens
-  var steps = function (n) { return '<div class="steps"><span class="' + (n === 1 ? 'on' : '') + '"><i>1</i> Application</span><u></u><span class="' + (n === 2 ? 'on' : '') + '"><i>2</i> View offers</span><u></u><span class="' + (n === 3 ? 'on' : '') + '"><i>3</i> Choose &amp; connect</span></div>'; };
-  var topbar = '<div class="top"><div class="logo">' + LEAF + 'lendingtree</div><button class="ico" aria-label="Help" data-act="help">?</button></div>';
+  var steps = function (n) { return '<div class="steps">' + ['Application', 'View offers', 'Choose &amp; connect'].map(function (t, k) { return '<div class="st' + (k + 1 === n ? ' on' : '') + (k + 1 < n ? ' past' : '') + '"><i>' + (k + 1) + '</i><span>' + t + '</span></div>'; }).join('') + '</div>'; };
+  var topbar = '<div class="top"><div class="logo">' + LEAF + 'lendingtree</div></div>';
   function screenOffers() {
     var nChosen = Object.keys(S.picks).length, nCmp = Object.keys(S.compare).length;
     var cards = OFFERS.map(function (o) {
       var p = S.picks[o.id];
-      return '<div class="offer' + (p ? ' sel' : '') + '"><div class="row"><div style="display:flex;gap:12px;align-items:center"><div class="mark">' + o.mark + '</div><div><div class="nm">' + o.name + '</div><div class="ty">' + o.kind + ' · ' + o.rate + '</div></div></div>' +
-        '<button class="btn" data-act="open" data-id="' + o.id + '">' + (p ? 'Edit' : 'See details →') + '</button></div>' +
+      return '<div class="offer' + (p ? ' sel' : '') + '"><div class="row"><div style="display:flex;gap:12px;align-items:flex-start"><div class="mark">' + o.mark + '</div><div><div class="nm">' + o.name + '</div><div class="ty">' + o.kind + ' · ' + o.rate + '</div></div></div>' +
+        '<button class="btn" data-act="open" data-id="' + o.id + '">' + (p ? 'Edit' : 'See details') + '</button></div>' +
         '<div class="nums"><div><b>' + o.apr.toFixed(2) + '%</b><span>APR</span></div><div><b>' + money(o.mo) + '</b><span>Est. monthly</span></div>' +
         (p ? '<span class="chosen" style="margin-left:auto">✓ ' + p.method + ' · ' + p.time.split(',')[0] + '</span>' : '<label><input type="checkbox" data-act="cmp" data-id="' + o.id + '"' + (S.compare[o.id] ? ' checked' : '') + '> Compare</label>') + '</div></div>';
     }).join('');
     return steps(2) + '<h3>You have options.</h3><p class="sub">We found personalized offers based on your application. Choose the lenders you want to hear from.</p><div style="height:14px"></div>' + cards +
+      (nChosen ? '<div class="donebox"><button class="btn full" data-act="finish">Done: connect me with ' + nChosen + (nChosen > 1 ? ' lenders' : ' lender') + '</button><div class="note">Only the lenders you chose will contact you.</div></div>' : '') +
       (nCmp >= 2 ? '<button class="btn ghost full" data-act="docompare" style="margin-bottom:12px">Compare ' + nCmp + ' offers</button>' : '') +
-      aiBox(null, ['Lowest total cost?', "What's the difference?", 'Help me choose']) +
-      '<div class="bar2"><button class="btn full" data-act="finish"' + (nChosen ? '' : ' disabled') + '>' + (nChosen ? 'Done: connect me with ' + nChosen + (nChosen > 1 ? ' lenders' : ' lender') : 'Choose at least one lender') + '</button><div class="note">Only lenders you choose will contact you.</div></div>';
+      aiBox(null, []);
   }
   function screenDetail(id) {
     var o = by(id), d = S.draft[id] || (S.draft[id] = { method: (S.picks[id] || {}).method || 'Text', time: (S.picks[id] || {}).time || TIMES[1] });
     var rows = [['Loan amount', '$20,000'], ['APR (' + (o.fixed ? 'fixed' : 'variable') + ')', o.apr.toFixed(2) + '%'], ['Est. monthly payment', money(o.mo)], ['Term', o.term + ' months'], ['Origination fee', money(o.fee)], ['Estimated total cost', money(o.total)]];
-    return '<div class="top"><button class="back" data-act="back">‹ Back to offers</button><button class="ico" aria-label="Help" data-act="help">?</button></div>' +
-      '<div style="display:flex;gap:12px;align-items:center;justify-content:space-between"><div style="display:flex;gap:12px;align-items:center"><div class="mark">' + o.mark + '</div><div><h3 style="font-size:21px">' + o.name + '</h3><span class="tag">' + o.kind + '</span><span class="tag">' + o.rate + '</span></div></div><div style="text-align:right;font-size:13px">★ <b>' + o.stars + '</b><br><span style="color:#5b6574">(' + o.n + ')</span></div></div>' +
+    return '<div class="top"><button class="back" data-act="back">‹ Back to offers</button></div>' +
+      '<div style="display:flex;gap:12px;align-items:flex-start;justify-content:space-between"><div style="display:flex;gap:12px;align-items:center"><div class="mark">' + o.mark + '</div><div><h3 style="font-size:21px">' + o.name + '</h3><span class="tag">' + o.kind + '</span><span class="tag">' + o.rate + '</span></div></div><div style="text-align:right;font-size:13px">★ <b>' + o.stars + '</b><br><span style="color:#5b6574">(' + o.n + ')</span></div></div>' +
       '<h4>Overview</h4><p class="sub" style="margin-top:0">' + o.about + '</p><h4>Loan details</h4><div class="kv">' + rows.map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + '</div>' +
       '<h4>Contact me about this offer</h4><p class="sub" style="margin:0 0 6px">Choose how and when ' + o.name + ' can reach you.</p>' +
       '<div class="methods">' + ['Text', 'Call', 'Email'].map(function (m) { return '<button data-act="method" data-m="' + m + '" class="' + (d.method === m ? 'on' : '') + '">' + ({ Text: '💬', Call: '📞', Email: '✉️' })[m] + '<span>' + m + '</span></button>'; }).join('') + '</div>' +
       '<select aria-label="When" data-act="time">' + (d.method === 'Email' ? ['Any time today'].concat(TIMES.slice(3)) : TIMES).map(function (t) { return '<option' + (t === d.time ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select>' +
-      '<div style="height:14px"></div>' + aiBox(id, ["Explain the fees", 'Compare to other offers', 'Is this a good deal?']) +
-      '<div class="bar2"><button class="btn full" data-act="request" data-id="' + o.id + '">' + (S.picks[o.id] ? 'Update my request' : 'Contact me about this offer') + '</button><div class="note">You can change or cancel this request at any time.</div></div>';
+      '<div style="height:14px"></div>' + aiBox(id, []) +
+      '<div class="donebox"><button class="btn full" data-act="request" data-id="' + o.id + '">' + (S.picks[o.id] ? 'Update my request' : 'Contact me about this offer') + '</button><div class="note">You can change or cancel this request at any time.</div></div>';
   }
   function screenDone() {
     var ids = Object.keys(S.picks);
