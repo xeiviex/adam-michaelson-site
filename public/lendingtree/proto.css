@@ -338,3 +338,18 @@ html:not(.app-mode) .phone { border-color: #17171a; box-shadow: 0 0 0 1px rgba(2
 .phone table.cmp .cn { font-weight: 700; font-size: 13.5px; line-height: 1.2; margin-bottom: 8px; min-height: 32px; }
 .phone .btn.sm { padding: 8px 6px; font-size: 13px; border-radius: 9px; width: 100%; white-space: nowrap; }
 .phone table.cmp tr:first-child td { border-top: 0; }
+
+/* compare sheet, round 2 */
+.phone .btn.sm { display: block; padding: 9px 2px; font-size: 12.5px; text-align: center; letter-spacing: -.01em; }
+.phone table.cmp td.ch { padding: 6px 3px 14px; }
+.phone table.cmp td { padding: 12px 3px; }
+.phone table.cmp .chip { border: 1px solid #d5dde8; background: #fff; color: #3a4350; border-radius: 999px; padding: 6px 4px; font-size: 11.5px; font-weight: 600; line-height: 1.15; width: 100%; }
+.phone table.cmp .chip.on { background: #0b5cff; border-color: #0b5cff; color: #fff; }
+.phone table.cmp td.sel { background: #f2f7ff; border-left: 1.5px solid #0b5cff; border-right: 1.5px solid #0b5cff; }
+.phone table.cmp tr:first-child td.sel { border-top: 1.5px solid #0b5cff; border-radius: 12px 12px 0 0; }
+.phone table.cmp tr.last td.sel { border-bottom: 1.5px solid #0b5cff; border-radius: 0 0 12px 12px; }
+.phone .why { position: relative; margin-top: 14px; border: 1.5px solid #0b5cff; background: #f2f7ff; border-radius: 14px; padding: 14px 14px 12px; animation: whyIn .28s ease-out; }
+.phone .why::before { content: ""; position: absolute; top: -8px; left: var(--tail); width: 14px; height: 14px; background: #f2f7ff; border-left: 1.5px solid #0b5cff; border-top: 1.5px solid #0b5cff; transform: translateX(-50%) rotate(45deg); }
+.phone .why b { font-size: 15.5px; display: block; margin-bottom: 4px; }
+.phone .why p { margin: 0; font-size: 14.5px; line-height: 1.5; color: #1d2b3b; }
+@keyframes whyIn { from { opacity: 0; transform: translateY(-6px); } }
