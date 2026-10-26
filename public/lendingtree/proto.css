@@ -264,3 +264,42 @@ html.app-mode .phone { overscroll-behavior: none; touch-action: manipulation; }
 .phone .ddopt { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; border: 0; background: none; padding: 12px 10px; border-radius: 8px; font-size: 16px; color: #0d1b2a; }
 .phone .ddopt i { font-style: normal; width: 16px; color: #0b5cff; font-weight: 700; flex: none; }
 .phone .ddopt.on { background: #eaf1ff; font-weight: 600; }
+
+/* ---- app mode: fit any phone or tablet, either orientation ---- */
+html.app-mode .phone { --col: 640px; --padx: max(16px, env(safe-area-inset-left), calc((100% - var(--col)) / 2)); }
+html.app-mode .phone .app { padding-left: max(16px, env(safe-area-inset-left), calc((100% - 640px) / 2)); padding-right: max(16px, env(safe-area-inset-right), calc((100% - 640px) / 2)); }
+html.app-mode .phone .dockwrap { left: max(8px, env(safe-area-inset-left), calc((100% - 656px) / 2)); right: max(8px, env(safe-area-inset-right), calc((100% - 656px) / 2)); }
+html.app-mode .phone .toast { left: max(16px, calc((100% - 640px) / 2)); right: max(16px, calc((100% - 640px) / 2)); }
+html.app-mode .phone .sheet { left: max(0px, calc((100% - 640px) / 2)); right: max(0px, calc((100% - 640px) / 2)); }
+@media (min-width: 700px) {
+  html.app-mode body, html.app-mode .phone { background: #e9eef4; }
+  html.app-mode .phone .app { background: linear-gradient(to right, #e9eef4 calc((100% - 640px) / 2), #fff 0, #fff calc((100% + 640px) / 2), #e9eef4 0); }
+  html.app-mode .phone .exitbar { padding-left: max(14px, calc((100% - 640px) / 2 + 14px)); }
+}
+/* small phones */
+@media (max-width: 359px) {
+  .phone h3 { font-size: 24px; }
+  .phone .steps { font-size: 11.5px; }
+  .phone .offer { padding: 12px; }
+  .phone .offer .btn { min-width: 96px; padding: 11px 12px; font-size: 14px; }
+  .phone .nums b { font-size: 19px; } .phone .nums > div { padding-right: 10px; margin-right: 10px; }
+  .phone .logo img { height: 30px; }
+  .phone .ai.dock .hd span { display: none; }
+}
+/* landscape phones: little height, so keep chrome small */
+@media (max-height: 520px) and (orientation: landscape) {
+  .phone .steps { margin: 4px 0 12px; }
+  .phone h3 { font-size: 24px; }
+  .phone .ai.dock { padding: 8px 10px 10px; }
+  .phone .ai.dock .hd span { display: none; }
+  .phone .dmsgs { max-height: 84px; }
+  .phone .ai.dock form { margin-top: 6px; }
+  .phone .ai.dock input { padding: 8px 12px; } .phone .ai.dock form button { width: 36px; height: 36px; }
+  .phone .sheet { top: 40px; }
+}
+/* orientation change: a short settle instead of a snap */
+.phone.rot .app, .phone.rot .dockwrap { animation: ltRot .38s cubic-bezier(.2,.8,.2,1); }
+@keyframes ltRot { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .phone.rot .app, .phone.rot .dockwrap { animation: none; } }
+@media (max-height: 700px) { .phone .dmsgs { max-height: 92px; } }
+@media (max-height: 520px) and (orientation: landscape) { .phone .ai.dock .hd { display: none; } .phone .dmsgs { max-height: 58px; margin-top: 0; } .phone .answer { margin-top: 6px; padding: 8px 10px; font-size: 13.5px; } }

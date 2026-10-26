@@ -5,8 +5,9 @@
   if (m) app = m[1] === 'app';
   else {
     var ua = navigator.userAgent || '';
-    app = /iPhone|iPod|Android.+Mobile|Windows Phone|Mobile.+Firefox/i.test(ua) ||
-      (window.matchMedia && matchMedia('(pointer:coarse)').matches && Math.min(screen.width, screen.height) < 700);
+    var ipadOS = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
+    app = /iPhone|iPod|iPad|Android|Windows Phone|Mobile.+Firefox/i.test(ua) || ipadOS ||
+      (window.matchMedia && matchMedia('(pointer:coarse)').matches && Math.min(screen.width, screen.height) < 1100);
   }
   if (app) {
     d.classList.add('app-mode');
@@ -15,6 +16,12 @@
       var p = document.getElementById('phone'); if (!p) return;
       /* Keep the app glued to the visible area when the iOS keyboard opens, so the docked assistant stays above the keyboard
          and only the content behind it scrolls. */
+      var land = innerWidth > innerHeight;
+      function turned() {
+        var now = innerWidth > innerHeight; if (now === land) return; land = now;
+        p.classList.remove('rot'); void p.offsetWidth; p.classList.add('rot');
+      }
+      window.addEventListener('resize', turned); window.addEventListener('orientationchange', function () { setTimeout(turned, 60); });
       var vv = window.visualViewport;
       function fit() {
         if (!vv) return;
