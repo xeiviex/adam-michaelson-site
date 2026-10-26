@@ -362,3 +362,13 @@ html:not(.app-mode) .phone { border-color: #17171a; box-shadow: 0 0 0 1px rgba(2
 .phone .why::before { content: ""; position: absolute; top: 0; left: 0; width: var(--cl); height: 1.5px; background: #0b5cff; transform: none; border: 0; }
 .phone .why::after { content: ""; position: absolute; top: 0; left: var(--cr); right: 0; height: 1.5px; background: #0b5cff; }
 @keyframes whyIn { from { opacity: 0; } }
+
+/* round 4: single SVG outline */
+.phone .cmpwrap2 { position: relative; }
+.phone .cmpwrap2 > svg.ol { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 0; }
+.phone .cmpwrap2 > svg.ol path { fill: #f2f7ff; stroke: #0b5cff; stroke-width: 1.5; stroke-linejoin: round; }
+.phone .cmpwrap2 table.cmp, .phone .cmpwrap2 .why { position: relative; z-index: 1; }
+.phone table.cmp td.sel, .phone table.cmp tr:first-child td.sel, .phone table.cmp tr.last td.sel { background: none; border-left: 0; border-right: 0; border-bottom: 0; border-radius: 0; }
+.phone table.cmp tr:first-child td.sel { border-top: 0; }
+.phone .why { border: 0; background: none; border-radius: 0; padding: 16px 16px 16px; }
+.phone .why::before, .phone .why::after { display: none; }

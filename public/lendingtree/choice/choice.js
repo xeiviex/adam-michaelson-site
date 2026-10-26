@@ -193,15 +193,29 @@
     var head = '<tr><td></td>' + os.map(function (o) { return '<td class="ch' + sel(o) + '"><div class="mark">' + o.mark + '</div><div class="cn">' + o.name + '</div><button class="btn sm" data-act="open" data-id="' + o.id + '">' + (S.picks[o.id] ? 'Edit' : 'See details') + '</button></td>'; }).join('') + '</tr>';
     var bf = '<tr class="last"><th scope="row">Best for</th>' + os.map(function (o) { return '<td class="cv bf' + sel(o) + '"><button type="button" class="chip' + (o.id === S.cmpSel ? ' on' : '') + '" data-act="cmpsel" data-id="' + o.id + '">' + o.best + '</button></td>'; }).join('') + '</tr>';
     var k = ids.indexOf(S.cmpSel), n = os.length;
-    return '<table class="cmp">' + head +
+    return '<div class="cmpwrap2"><svg class="ol" aria-hidden="true"><path d=""/></svg><table class="cmp">' + head +
       row('APR', function (o) { return o.apr; }, true, function (v) { return v.toFixed(2) + '%'; }) +
       row('Monthly', function (o) { return o.mo; }, true, function (v) { return money(v); }) +
       row('Fee', function (o) { return o.fee; }, true, function (v) { return money(v); }) +
       row('Est. total', function (o) { return o.total; }, true, function (v) { return money(v); }) +
       row('Rate type', function (o) { return o.fixed ? 0 : 1; }, true, function (v) { return v ? 'Variable' : 'Fixed'; }, false, true) + bf + '</table>' +
-      '<div class="why" style="--cl:calc(21% + (79% / ' + n + ') * ' + k + ');--cr:calc(21% + (79% / ' + n + ') * ' + (k + 1) + ')"><b>' + by(S.cmpSel).name + '</b><p>' + why(by(S.cmpSel)) + '</p></div>' +
+      '<div class="why" style="--cl:calc(21% + (79% / ' + n + ') * ' + k + ');--cr:calc(21% + (79% / ' + n + ') * ' + (k + 1) + ')"><b>' + by(S.cmpSel).name + '</b><p>' + why(by(S.cmpSel)) + '</p></div></div>' +
       '<p class="note" style="text-align:left;margin-top:12px">Green marks the best value in each row. Maple Bank\'s total assumes today\'s variable rate.</p>';
   }
+  /* One continuous outline: the selected column and its description share a single rounded path. */
+  function drawOutline() {
+    var w = document.querySelector('.cmpwrap2'); if (!w) return;
+    var path = w.querySelector('svg.ol path'), head = w.querySelector('td.ch.sel'), why = w.querySelector('.why'); if (!path || !head || !why) return;
+    var o = w.getBoundingClientRect(), h = head.getBoundingClientRect(), y = why.getBoundingClientRect(), r = 14, k = 0.75;
+    var x1 = h.left - o.left + k, x2 = h.right - o.left - k, y0 = h.top - o.top + k, L = k, R = o.width - k, yj = y.top - o.top, yb = y.bottom - o.top - k;
+    var last = x2 >= R - 2;
+    var d = 'M' + (x1 + r) + ',' + y0 + ' H' + (x2 - r) + ' Q' + x2 + ',' + y0 + ' ' + x2 + ',' + (y0 + r);
+    d += last ? ' V' + (yb - r) : ' V' + (yj - r) + ' Q' + x2 + ',' + yj + ' ' + (x2 + r) + ',' + yj + ' H' + (R - r) + ' Q' + R + ',' + yj + ' ' + R + ',' + (yj + r) + ' V' + (yb - r);
+    d += ' Q' + (last ? x2 : R) + ',' + yb + ' ' + ((last ? x2 : R) - r) + ',' + yb + ' H' + (L + r) + ' Q' + L + ',' + yb + ' ' + L + ',' + (yb - r) + ' V' + (yj + r) + ' Q' + L + ',' + yj + ' ' + (L + r) + ',' + yj;
+    d += ' H' + (x1 - r) + ' Q' + x1 + ',' + yj + ' ' + x1 + ',' + (yj - r) + ' V' + (y0 + r) + ' Q' + x1 + ',' + y0 + ' ' + (x1 + r) + ',' + y0 + ' Z';
+    path.setAttribute('d', d);
+  }
+  window.addEventListener('resize', function () { setTimeout(drawOutline, 60); });
   function compareSheet() {
     openSheet('<button class="sx" data-act="closesheet" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></button>' +
       '<h3 style="font-size:22px">Compare offers</h3><p class="sub">Side by side, same $20,000 over 60 months. Tap a tag to see why you might pick it.</p><div id="cmpbody">' + cmpBody() + '</div>');
@@ -222,7 +236,7 @@
     else if (a === 'cancel') { delete S.picks[id]; log('contact_cancelled', id); if (!Object.keys(S.picks).length) { S.done = false; } render(); }
     else if (a === 'docompare') { log('offers_compared', Object.keys(S.compare).join(', ')); compareSheet(); }
     else if (a === 'closesheet') closeSheet();
-    else if (a === 'cmpsel') { S.cmpSel = id; var cb = document.getElementById('cmpbody'); if (cb) cb.innerHTML = cmpBody(); }
+    else if (a === 'cmpsel') { S.cmpSel = id; var cb = document.getElementById('cmpbody'); if (cb) { cb.innerHTML = cmpBody(); drawOutline(); } }
     else if (a === 'ddtoggle') { if (S.ddOpen) { closeDd(); return; } S.ddScroll = app.scrollTop; S.ddOpen = true; render(); { var b = app.querySelector('.ddbtn'); if (b) app.scrollTo({ top: app.scrollTop + b.getBoundingClientRect().top - app.getBoundingClientRect().top - 80, behavior: 'smooth' }); } }
     else if (a === 'ddpick') { var v = el.getAttribute('data-v'); S.draft[S.open].time = v; var bt = app.querySelector('.ddbtn span'); if (bt) bt.textContent = v; closeDd(); }
     else if (a === 'dockhide') { S.dockOpen = S.dockOpen === false; render(); }
