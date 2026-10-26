@@ -353,3 +353,12 @@ html:not(.app-mode) .phone { border-color: #17171a; box-shadow: 0 0 0 1px rgba(2
 .phone .why b { font-size: 15.5px; display: block; margin-bottom: 4px; }
 .phone .why p { margin: 0; font-size: 14.5px; line-height: 1.5; color: #1d2b3b; }
 @keyframes whyIn { from { opacity: 0; transform: translateY(-6px); } }
+
+/* round 3: the selected column flows into its description; green tags */
+.phone table.cmp tr.last td.sel { border-bottom: 0; border-radius: 0; }
+.phone table.cmp .chip { min-height: 46px; display: flex; align-items: center; justify-content: center; text-align: center; border: 1.5px solid #178a54; color: #126b42; background: #fff; }
+.phone table.cmp .chip.on { background: #178a54; border-color: #178a54; color: #fff; }
+.phone .why { margin-top: 0; border: 1.5px solid #0b5cff; border-top: 0; border-radius: 0 0 14px 14px; padding-top: 16px; }
+.phone .why::before { content: ""; position: absolute; top: 0; left: 0; width: var(--cl); height: 1.5px; background: #0b5cff; transform: none; border: 0; }
+.phone .why::after { content: ""; position: absolute; top: 0; left: var(--cr); right: 0; height: 1.5px; background: #0b5cff; }
+@keyframes whyIn { from { opacity: 0; } }

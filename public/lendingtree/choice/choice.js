@@ -6,7 +6,7 @@
   var OFFERS = [
     { id: 'ridgeview', best: 'Steady payment', speed: '2 to 3 business days', name: 'Ridgeview Financial', mark: '<img src=\"/lendingtree/img/lender-ridgeview.png\" alt=\"\" width=\"46\" height=\"46\">', kind: 'Personal loan', rate: 'Fixed rate', apr: 6.49, mo: 387, fee: 0, term: 60, total: 23220, stars: '4.8', n: '2,341', fixed: true,
       about: 'A fixed-rate personal loan with no origination fee. Good for debt consolidation, home improvement, or other major expenses.' },
-    { id: 'maple', best: 'Lowest cost', speed: '2 to 3 weeks', name: 'Maple Bank', mark: '<img src=\"/lendingtree/img/lender-maple.png\" alt=\"\" width=\"46\" height=\"46\">', kind: 'Home equity line', rate: 'Variable', apr: 7.21, mo: 356, fee: 0, term: 60, total: 21360, stars: '4.6', n: '1,208', fixed: false,
+    { id: 'maple', best: 'Lowest<br>cost', speed: '2 to 3 weeks', name: 'Maple Bank', mark: '<img src=\"/lendingtree/img/lender-maple.png\" alt=\"\" width=\"46\" height=\"46\">', kind: 'Home equity line', rate: 'Variable', apr: 7.21, mo: 356, fee: 0, term: 60, total: 21360, stars: '4.6', n: '1,208', fixed: false,
       about: 'A home equity line of credit with a variable rate. The payment can move with the market, and your home secures the line.' },
     { id: 'summit', best: 'Fastest funding', speed: 'as soon as the next business day', name: 'Summit Lending', mark: '<img src=\"/lendingtree/img/lender-summit.png\" alt=\"\" width=\"46\" height=\"46\">', kind: 'Personal loan', rate: 'Fixed rate', apr: 8.99, mo: 422, fee: 400, term: 60, total: 25720, stars: '4.4', n: '893', fixed: true,
       about: 'A fixed-rate personal loan with a 2% origination fee. Funds can arrive as soon as the next business day.' }
@@ -199,7 +199,7 @@
       row('Fee', function (o) { return o.fee; }, true, function (v) { return money(v); }) +
       row('Est. total', function (o) { return o.total; }, true, function (v) { return money(v); }) +
       row('Rate type', function (o) { return o.fixed ? 0 : 1; }, true, function (v) { return v ? 'Variable' : 'Fixed'; }, false, true) + bf + '</table>' +
-      '<div class="why" style="--tail:calc(21% + (79% / ' + n + ') * ' + (k + 0.5) + ')"><b>' + by(S.cmpSel).name + '</b><p>' + why(by(S.cmpSel)) + '</p></div>' +
+      '<div class="why" style="--cl:calc(21% + (79% / ' + n + ') * ' + k + ');--cr:calc(21% + (79% / ' + n + ') * ' + (k + 1) + ')"><b>' + by(S.cmpSel).name + '</b><p>' + why(by(S.cmpSel)) + '</p></div>' +
       '<p class="note" style="text-align:left;margin-top:12px">Green marks the best value in each row. Maple Bank\'s total assumes today\'s variable rate.</p>';
   }
   function compareSheet() {
