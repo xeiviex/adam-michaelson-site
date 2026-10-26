@@ -309,3 +309,7 @@ html.app-mode .phone .sheet { left: max(0px, calc((100% - 640px) / 2)); right: m
 .phone .dockwrap.away { opacity: 0; transform: translateY(12px); pointer-events: none; transition-delay: 0s; transition-duration: .16s; }
 .phone .ddlist.out { animation: ddOut .18s ease-in forwards; }
 @keyframes ddOut { to { opacity: 0; transform: translateY(-6px); } }
+.phone .methods .envl { display: block; margin: 0 auto 2px; }
+.phone .methods .on .envl rect { fill: #cfe0ff; stroke: #0b5cff; } .phone .methods .on .envl path { stroke: #0b5cff; }
+.phone .methods .envl { width: 20px; height: 18px; margin: 0 auto; }
+.phone .methods .envl { height: 17px; margin-top: 1px; }
