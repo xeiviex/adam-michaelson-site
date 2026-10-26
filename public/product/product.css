@@ -112,3 +112,9 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 56px; display: f
 .attrs > div { padding: 18px 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
 .attrs b { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); font-weight: 500; line-height: 1.15; }
 .attrs span { font-size: .95rem; color: var(--body); max-width: 52ch; }
+
+/* product home: title doubles as section anchors */
+.hero h1 a { text-decoration: none; transition: color .2s; }
+.hero h1 a:hover, .hero h1 a:focus-visible { color: var(--accent-text); }
+.hero .summary a { color: var(--accent-text); text-underline-offset: 3px; }
+.hero .summary a:hover, .hero .summary a:focus-visible { color: var(--accent-hover); }
