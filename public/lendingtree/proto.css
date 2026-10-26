@@ -372,3 +372,5 @@ html:not(.app-mode) .phone { border-color: #17171a; box-shadow: 0 0 0 1px rgba(2
 .phone table.cmp tr:first-child td.sel { border-top: 0; }
 .phone .why { border: 0; background: none; border-radius: 0; padding: 16px 16px 16px; }
 .phone .why::before, .phone .why::after { display: none; }
+.phone .why { padding: 14px 16px 15px; } .phone .why p b { font-weight: 800; color: #0d1b2a; }
+.phone .why p b { display: inline; font-size: inherit; margin: 0; }

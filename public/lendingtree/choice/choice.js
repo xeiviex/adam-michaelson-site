@@ -177,9 +177,9 @@
   function closeSheet() { sheet.hidden = true; scrim.hidden = true; }
   function why(o) {
     var d = function (a, b) { return money(Math.abs(a.total - b.total)); }, r = by('ridgeview'), m = by('maple'), u = by('summit');
-    if (o.id === 'ridgeview') return 'Choose ' + o.name + ' if you want a payment you can plan around. It has the lowest APR (' + o.apr.toFixed(2) + '%) and no fee, and the rate is fixed, so ' + money(o.mo) + ' stays ' + money(o.mo) + ' for all ' + o.term + ' months. Over the term it costs ' + d(r, m) + ' more than Maple Bank at today\'s rate, but nothing can rise and your home is not collateral. Funds take ' + o.speed + '.';
-    if (o.id === 'maple') return 'Choose ' + o.name + ' if the lowest cost matters most and you can live with some risk. At today\'s rate it has the lowest payment (' + money(o.mo) + ') and the lowest total (' + money(o.total) + '), ' + d(r, m) + ' less than Ridgeview. The rate is variable, so the payment can rise, and your home secures the line. It is also the slowest: expect ' + o.speed + '.';
-    return 'Choose ' + o.name + ' if you need the money fast. Funds can arrive ' + o.speed + '. That speed costs more: ' + o.apr.toFixed(2) + '% APR plus a ' + money(o.fee) + ' fee, about ' + d(u, r) + ' more than Ridgeview over the term. The rate is fixed, so the payment stays at ' + money(o.mo) + '.';
+    if (o.id === 'ridgeview') return 'Choose <b>' + o.name + '</b> if you want a payment you can plan around. It has the lowest APR (' + o.apr.toFixed(2) + '%) and no fee, and the rate is fixed, so ' + money(o.mo) + ' stays ' + money(o.mo) + ' for all ' + o.term + ' months. Over the term it costs ' + d(r, m) + ' more than Maple Bank at today\'s rate, but nothing can rise and your home is not collateral. Funds take ' + o.speed + '.';
+    if (o.id === 'maple') return 'Choose <b>' + o.name + '</b> if the lowest cost matters most and you can live with some risk. At today\'s rate it has the lowest payment (' + money(o.mo) + ') and the lowest total (' + money(o.total) + '), ' + d(r, m) + ' less than Ridgeview. The rate is variable, so the payment can rise, and your home secures the line. It is also the slowest: expect ' + o.speed + '.';
+    return 'Choose <b>' + o.name + '</b> if you need the money fast. Funds can arrive ' + o.speed + '. That speed costs more: ' + o.apr.toFixed(2) + '% APR plus a ' + money(o.fee) + ' fee, about ' + d(u, r) + ' more than Ridgeview over the term. The rate is fixed, so the payment stays at ' + money(o.mo) + '.';
   }
   function cmpBody() {
     var ids = Object.keys(S.compare), os = ids.map(by);
@@ -199,7 +199,7 @@
       row('Fee', function (o) { return o.fee; }, true, function (v) { return money(v); }) +
       row('Est. total', function (o) { return o.total; }, true, function (v) { return money(v); }) +
       row('Rate type', function (o) { return o.fixed ? 0 : 1; }, true, function (v) { return v ? 'Variable' : 'Fixed'; }, false, true) + bf + '</table>' +
-      '<div class="why" style="--cl:calc(21% + (79% / ' + n + ') * ' + k + ');--cr:calc(21% + (79% / ' + n + ') * ' + (k + 1) + ')"><b>' + by(S.cmpSel).name + '</b><p>' + why(by(S.cmpSel)) + '</p></div></div>' +
+      '<div class="why" style="--cl:calc(21% + (79% / ' + n + ') * ' + k + ');--cr:calc(21% + (79% / ' + n + ') * ' + (k + 1) + ')"><p>' + why(by(S.cmpSel)) + '</p></div></div>' +
       '<p class="note" style="text-align:left;margin-top:12px">Green marks the best value in each row. Maple Bank\'s total assumes today\'s variable rate.</p>';
   }
   /* One continuous outline: the selected column and its description share a single rounded path. */
