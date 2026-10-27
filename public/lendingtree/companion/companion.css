@@ -167,3 +167,4 @@ html.app-mode .phone .tabbar { padding-bottom: calc(6px + env(safe-area-inset-bo
 .phone .lchip { display: inline-flex; align-items: center; background: #fff; border-radius: 9px; padding: 7px 10px; }
 .phone .lchip img { display: block; }
 .phone .idc .lchip { margin-bottom: 4px; }
+.phone .cm.img.bleed { padding: 0; border: 0; overflow: hidden; background: none; }

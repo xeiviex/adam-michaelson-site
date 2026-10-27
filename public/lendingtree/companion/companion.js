@@ -35,7 +35,7 @@
   };
   var ic = function (n, s, w) { return '<svg class="i" viewBox="0 0 24 24" width="' + (s || 22) + '" height="' + (s || 22) + '" fill="none" stroke="currentColor" stroke-width="' + (w || 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + PATH[n] + '</svg>'; };
   var ICON = { 'Auto Insurance': 'car', 'Home Insurance': 'home', 'Umbrella Insurance': 'umbrella', 'Renters Insurance': 'building', 'Motorcycle Insurance': 'bike', 'Pet Insurance': 'paw', 'Life Insurance': 'heart' };
-  var LG = { Allstate: { full: 1, icon: 1 }, 'State Farm': { full: 1, icon: 1 }, Travelers: { full: 1, icon: 1 } };
+  var LG = { Allstate: { full: 1, icon: 1 }, 'State Farm': { full: 1, icon: 1 }, Travelers: { full: 1, icon: 1 }, Lemonade: { full: 1, icon: 1, bleed: 1 } };
   var logo = function (c, h) { var l = LG[c]; return l && l.full ? '<img src="/lendingtree/img/carriers/' + c.toLowerCase().replace(/ /g, '-') + '-full.png" alt="' + c + '" style="height:' + h + 'px;width:auto">' : null; };
   var chip = function (c, h) { var l = logo(c, h); return l ? '<span class="lchip">' + l + '</span>' : '<span class="cn">' + c + '</span>'; };
   var S;
@@ -57,7 +57,7 @@
   var low = function (p) { return short(p).toLowerCase(); };
   var best = function (p) { return Math.round(p.price * QUOTERS[0][1]); };
   var yearly = function (p) { return (p.price - best(p)) * 12; };
-  var mark = function (c, lg) { var l = LG[c]; if (l && l.icon) return '<span class="cm img' + (lg ? ' lg' : '') + '"><img src="/lendingtree/img/carriers/' + c.toLowerCase().replace(/ /g, '-') + '-icon.png" alt="' + c + '"></span>'; return '<span class="cm' + (lg ? ' lg' : '') + '" style="background:' + (CARRIERS[c] || CARRIERS.Other) + '" aria-hidden="true">' + c.charAt(0) + '</span>'; };
+  var mark = function (c, lg) { var l = LG[c]; if (l && l.icon) return '<span class="cm img' + (l.bleed ? ' bleed' : '') + (lg ? ' lg' : '') + '"><img src="/lendingtree/img/carriers/' + c.toLowerCase().replace(/ /g, '-') + '-icon.png" alt="' + c + '"></span>'; return '<span class="cm' + (lg ? ' lg' : '') + '" style="background:' + (CARRIERS[c] || CARRIERS.Other) + '" aria-hidden="true">' + c.charAt(0) + '</span>'; };
   var ibox = function (t) { return '<span class="ib">' + ic(ICON[t] || 'file', 22) + '</span>'; };
   var iconOf = function (p) { return ICON[p.type] || 'file'; };
   function say(m) { toast.textContent = m; toast.classList.add('on'); clearTimeout(say.t); say.t = setTimeout(function () { toast.classList.remove('on'); }, 2600); }
