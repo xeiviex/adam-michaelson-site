@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-no-scroll-hint>
+<html lang="en" data-no-scroll-hint class="oapp-page">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aligned outcomes | Adam Michaelson</title>
-<meta name="description" content="A clickable prototype of the outcomes API and partner dashboard: lenders report what happened to each lead, and reporting earns better placement and pricing.">
+<meta name="description" content="A clickable prototype of the outcomes API and partner dashboard: partners report what happened to each lead, and reporting earns better placement and pricing.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#000000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/lendingtree/lt.css?v=10">
 <link rel="stylesheet" href="/lendingtree/proto.css?v=36">
-<link rel="stylesheet" href="/lendingtree/outcomes/outcomes.css?v=4">
+<link rel="stylesheet" href="/lendingtree/outcomes/outcomes.css?v=7">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -21,28 +21,17 @@
 </head>
 <body>
 <header class="bar"><div class="in">
-  <a class="nm" href="/">Adam Michaelson</a>
-  <nav aria-label="Sections"><a href="/lendingtree/#problems">Problems</a><a href="/lendingtree/#solutions">Solutions</a></nav>
+  <nav class="bc" aria-label="Breadcrumb"><a class="nm" href="/">Adam Michaelson</a><span class="sl" aria-hidden="true">/</span><a href="/lendingtree/">LendingTree</a><span class="sl" aria-hidden="true">/</span><span class="cur" aria-current="page">Aligned outcomes</span></nav>
 </div></header>
-<main class="wrap subpage">
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/lendingtree/">LendingTree</a><span>/</span><span>Aligned outcomes</span></nav>
-  <span class="kicker">Prototype</span>
-  <h1>Aligned outcomes</h1>
-  <p class="lede">A clickable prototype of the outcomes API and partner dashboard: lenders report what happened to each lead, and reporting earns better placement and pricing. You are Northgate Bank, a lending partner, and only about a third of the leads LendingTree sent you have a reported outcome, which puts you at risk. Try it: send a status update for one lead, or load the sample batch and send it, then open the dashboard to watch your tier change.</p>
-  <div class="stage wide">
-    <div class="od" id="od">
-      <div class="odtabs"><span class="lg"><img src="/lendingtree/img/lt-logo.png" alt="lendingtree" width="728" height="230"></span>
-        <button data-act="tab" data-t="docs" class="on">Developer docs</button><button data-act="tab" data-t="dash">Partner dashboard</button>
-        <span class="who" id="who"></span></div>
-      <div class="odbody"><section id="docs"></section><section id="dash" hidden></section></div>
-    </div>
+<main class="oapp">
+  <div class="od" id="od">
+    <div class="odtabs"><span class="lg"><img src="/lendingtree/img/lt-logo.png" alt="lendingtree" width="728" height="230"></span>
+      <button data-act="tab" data-t="docs" class="on">Developer docs</button><button data-act="tab" data-t="dash">Partner dashboard</button>
+      <span class="who" id="who"></span></div>
+    <div class="odbody"><div class="intro" id="intro"></div><section id="docs"></section><section id="dash" hidden></section></div>
   </div>
 </main>
-<footer><div class="wrap">
-  <span>Prepared by Adam Michaelson · Eagle Mountain, Utah · Clickable prototype with sample data. Nothing is sent anywhere.</span>
-  <span><a href="mailto:hello@adam-michaelson.com">hello@adam-michaelson.com</a> · <a href="https://www.linkedin.com/in/adammichaelson" target="_blank" rel="noopener">LinkedIn</a></span>
-</div></footer>
 <script src="/lendingtree/lt.js?v=1" defer></script>
-<script src="/lendingtree/outcomes/outcomes.js?v=3" defer></script>
+<script src="/lendingtree/outcomes/outcomes.js?v=4" defer></script>
 </body>
 </html>
