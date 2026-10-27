@@ -25,3 +25,9 @@
   .od .odtabs { padding: 0 12px; }
   .od .odtabs .lg { width: 100%; padding-top: 12px; }
 }
+@media (max-width: 760px) {
+  .od th { white-space: normal; }
+  .od .cov { display: block; width: 100%; max-width: 70px; margin: 0 0 5px; }
+  .od .pn { gap: 8px; } .od .pm { width: 26px; height: 26px; }
+}
+@media (max-width: 520px) { .od table tr > :nth-child(2) { display: none; } .od td, .od th { padding-left: 6px; padding-right: 6px; } .od .tier { white-space: nowrap; } }
