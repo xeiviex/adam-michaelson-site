@@ -35,7 +35,7 @@
   };
   var ic = function (n, s, w) { return '<svg class="i" viewBox="0 0 24 24" width="' + (s || 22) + '" height="' + (s || 22) + '" fill="none" stroke="currentColor" stroke-width="' + (w || 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + PATH[n] + '</svg>'; };
   var ICON = { 'Auto Insurance': 'car', 'Home Insurance': 'home', 'Umbrella Insurance': 'umbrella', 'Renters Insurance': 'building', 'Motorcycle Insurance': 'bike', 'Pet Insurance': 'paw', 'Life Insurance': 'heart' };
-  var LG = { Allstate: { full: 1, icon: 1 }, 'State Farm': { full: 1, icon: 1 } };
+  var LG = { Allstate: { full: 1, icon: 1 }, 'State Farm': { full: 1, icon: 1 }, Travelers: { full: 1, icon: 1 } };
   var logo = function (c, h) { var l = LG[c]; return l && l.full ? '<img src="/lendingtree/img/carriers/' + c.toLowerCase().replace(/ /g, '-') + '-full.png" alt="' + c + '" style="height:' + h + 'px;width:auto">' : null; };
   var chip = function (c, h) { var l = logo(c, h); return l ? '<span class="lchip">' + l + '</span>' : '<span class="cn">' + c + '</span>'; };
   var S;
