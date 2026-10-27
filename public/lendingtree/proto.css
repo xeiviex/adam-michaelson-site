@@ -394,3 +394,5 @@ html:not(.app-mode) .phone { border-color: #17171a; box-shadow: 0 0 0 1px rgba(2
 .phone table.cmp .pt span { position: relative; }
 @keyframes ptb { 0%, 100% { transform: translateX(-3px); } 50% { transform: translateX(5px); } }
 @media (prefers-reduced-motion: reduce) { .phone table.cmp .pt { animation: none; } }
+.phone table.cmp .pt { margin-left: -14px; width: calc(100% + 14px + 4px); justify-content: center; text-align: center; padding: 4px 22% 4px 6px; }
+.phone table.cmp .pt span { display: block; }
