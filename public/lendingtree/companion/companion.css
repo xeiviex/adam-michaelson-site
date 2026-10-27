@@ -160,3 +160,10 @@ html.app-mode .phone .tabbar { padding-bottom: calc(6px + env(safe-area-inset-bo
   .phone .app, html.app-mode .phone .app { padding-bottom: 72px; }
 }
 @media (prefers-reduced-motion: reduce) { .phone .app > *, .phone .sheet:not([hidden]), .phone .scrim:not([hidden]), .phone .prow.fresh { animation: none; } }
+
+/* real carrier logos */
+.phone .cm.img { background: #fff; border: 1px solid #e3e8ef; padding: 3px; }
+.phone .cm.img img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.phone .lchip { display: inline-flex; align-items: center; background: #fff; border-radius: 9px; padding: 7px 10px; }
+.phone .lchip img { display: block; }
+.phone .idc .lchip { margin-bottom: 4px; }

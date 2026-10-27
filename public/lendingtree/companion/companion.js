@@ -35,6 +35,9 @@
   };
   var ic = function (n, s, w) { return '<svg class="i" viewBox="0 0 24 24" width="' + (s || 22) + '" height="' + (s || 22) + '" fill="none" stroke="currentColor" stroke-width="' + (w || 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + PATH[n] + '</svg>'; };
   var ICON = { 'Auto Insurance': 'car', 'Home Insurance': 'home', 'Umbrella Insurance': 'umbrella', 'Renters Insurance': 'building', 'Motorcycle Insurance': 'bike', 'Pet Insurance': 'paw', 'Life Insurance': 'heart' };
+  var LG = { Allstate: { full: [1547, 328], icon: 1 } };
+  var logo = function (c, h) { var l = LG[c]; return l && l.full ? '<img src="/lendingtree/img/carriers/' + c.toLowerCase().replace(/ /g, '-') + '-full.png" alt="' + c + '" style="height:' + h + 'px;width:auto">' : null; };
+  var chip = function (c, h) { var l = logo(c, h); return l ? '<span class="lchip">' + l + '</span>' : '<span class="cn">' + c + '</span>'; };
   var S;
   function fresh() {
     S = { tab: 'home', sub: 'cards', screen: 'home', open: null, card: 0, nfilter: 'All', read: {}, dismissed: {}, remind: {}, started: [], nextId: 10, newId: null,
@@ -54,7 +57,7 @@
   var low = function (p) { return short(p).toLowerCase(); };
   var best = function (p) { return Math.round(p.price * QUOTERS[0][1]); };
   var yearly = function (p) { return (p.price - best(p)) * 12; };
-  var mark = function (c, lg) { return '<span class="cm' + (lg ? ' lg' : '') + '" style="background:' + (CARRIERS[c] || CARRIERS.Other) + '" aria-hidden="true">' + c.charAt(0) + '</span>'; };
+  var mark = function (c, lg) { var l = LG[c]; if (l && l.icon) return '<span class="cm img' + (lg ? ' lg' : '') + '"><img src="/lendingtree/img/carriers/' + c.toLowerCase().replace(/ /g, '-') + '-icon.png" alt="' + c + '"></span>'; return '<span class="cm' + (lg ? ' lg' : '') + '" style="background:' + (CARRIERS[c] || CARRIERS.Other) + '" aria-hidden="true">' + c.charAt(0) + '</span>'; };
   var ibox = function (t) { return '<span class="ib">' + ic(ICON[t] || 'file', 22) + '</span>'; };
   var iconOf = function (p) { return ICON[p.type] || 'file'; };
   function say(m) { toast.textContent = m; toast.classList.add('on'); clearTimeout(say.t); say.t = setTimeout(function () { toast.classList.remove('on'); }, 2600); }
@@ -86,11 +89,11 @@
   }
   function polRow(p) {
     var d = p.renewIn;
-    return '<button class="prow' + (p.id === S.newId ? ' fresh' : '') + '" data-act="open" data-id="' + p.id + '">' + ibox(p.type) + '<span class="mid"><b>' + p.type + '</b><span style="color:' + CARRIERS[p.carrier] + '">' + p.carrier + '</span></span><span class="end"><b>' + money(p.price) + ' <small>/ month</small></b><span class="' + (d <= 45 ? 'soon' : '') + '">Renews ' + dateStr(d) + '</span></span><span class="chev">' + ic('right', 18) + '</span></button>';
+    return '<button class="prow' + (p.id === S.newId ? ' fresh' : '') + '" data-act="open" data-id="' + p.id + '">' + mark(p.carrier) + '<span class="mid"><b>' + p.type + '</b><span style="color:' + CARRIERS[p.carrier] + '">' + p.carrier + '</span></span><span class="end"><b>' + money(p.price) + ' <small>/ month</small></b><span class="' + (d <= 45 ? 'soon' : '') + '">Renews ' + dateStr(d) + '</span></span><span class="chev">' + ic('right', 18) + '</span></button>';
   }
   function pcard(p) {
     var c = CARRIERS[p.carrier];
-    return '<div class="pcard" style="background:linear-gradient(135deg,' + c + ',#0a1f4d)"><div class="hd"><span class="cn">' + p.carrier + '</span><span class="ty">' + p.type + '<span>Active</span></span></div>' +
+    return '<div class="pcard" style="background:linear-gradient(135deg,' + c + ',#0a1f4d)"><div class="hd">' + chip(p.carrier, 22) + '<span class="ty">' + p.type + '<span>Active</span></span></div>' +
       '<div class="meta"><div>Policy number<b>' + p.number + '</b></div><div>Renews in<b>' + p.renewIn + ' days</b></div></div>' +
       '<div class="acts"><button class="a1" data-act="idcard" data-id="' + p.id + '">' + ic('card', 18) + 'View card</button><button class="a2" data-act="open" data-id="' + p.id + '">Details' + ic('right', 16) + '</button></div></div>';
   }
@@ -185,7 +188,7 @@
     var el = e.target.closest('[data-act]'); if (!el) return; var a = el.getAttribute('data-act'), id = el.getAttribute('data-id');
     if (a === 'idcard') {
       var p = get(id), c = CARRIERS[p.carrier];
-      openSheet('<h3 style="font-size:22px">Insurance card</h3><div class="idc" style="background:linear-gradient(135deg,' + c + ',#0a1f4d)"><div class="cn">' + p.carrier + '</div><div class="ty">' + p.type + '</div><dl><div>Insured<dd>Alex Sample</dd></div><div>Policy number<dd>' + p.number + '</dd></div><div>Valid through<dd>' + dateStr(p.renewIn) + '</dd></div>' + (p.type === 'Auto Insurance' ? '<div>Vehicle<dd>2022 Subaru Outback</dd></div>' : '<div>Status<dd>Active</dd></div>') + '</dl></div><button class="btn full" data-act="towallet">Add to wallet</button>');
+      openSheet('<h3 style="font-size:22px">Insurance card</h3><div class="idc" style="background:linear-gradient(135deg,' + c + ',#0a1f4d)">' + chip(p.carrier, 26) + '<div class="ty">' + p.type + '</div><dl><div>Insured<dd>Alex Sample</dd></div><div>Policy number<dd>' + p.number + '</dd></div><div>Valid through<dd>' + dateStr(p.renewIn) + '</dd></div>' + (p.type === 'Auto Insurance' ? '<div>Vehicle<dd>2022 Subaru Outback</dd></div>' : '<div>Status<dd>Active</dd></div>') + '</dl></div><button class="btn full" data-act="towallet">Add to wallet</button>');
     }
     else if (a === 'towallet') { closeSheet(); say('Card added to your wallet.'); }
     else if (a === 'benefits') { var bp = get(id); openSheet('<h3 style="font-size:22px">Benefits</h3><p class="sub">Included with your ' + bp.carrier + ' ' + low(bp) + ' policy.</p><div style="height:6px"></div>' + BENEFITS.map(function (b) { return '<div class="ben">' + ic('check', 20, 2.2) + '<div><b>' + b[0] + '</b><small>' + b[1] + '</small></div></div>'; }).join('')); }
