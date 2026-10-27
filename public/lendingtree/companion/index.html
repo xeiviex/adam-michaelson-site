@@ -11,7 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/lendingtree/lt.css?v=10">
-<link rel="stylesheet" href="/lendingtree/proto.css?v=10">
+<link rel="stylesheet" href="/lendingtree/proto.css?v=35">
+<link rel="stylesheet" href="/lendingtree/companion/companion.css?v=4">
 <script>document.documentElement.classList.add('js');</script>
 <script src="/lendingtree/proto-mode.js?v=7"></script>
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -28,34 +29,16 @@
   <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/lendingtree/">LendingTree</a><span>/</span><span>A companion</span></nav>
   <span class="kicker">Prototype</span>
   <h1>A companion</h1>
-  <p class="lede">A clickable prototype of the insurance companion app: every policy, price and renewal date in one place, with a prompt to shop at the right moment.</p>
+  <p class="lede">A clickable prototype of the insurance companion app: every policy, price and renewal date in one place, with a prompt to shop at the right moment. You shopped for car insurance last month, and now LendingTree holds your policies and watches each renewal. Try it: your Allstate auto policy renews in 41 days, so tap the banner or the bell to compare quotes, or tap a card to see its coverage.</p>
   <div class="stage">
     <div class="well"><div class="phone" id="phone" aria-label="Interactive prototype of the insurance companion app on an iPhone">
       <div class="sb"><span class="clock">9:41</span><span class="ic"><svg class="sig" viewBox="0 0 18 12" width="18" height="12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="0.9"/><rect x="5" y="5.4" width="3" height="6.6" rx="0.9"/><rect x="10" y="2.7" width="3" height="9.3" rx="0.9"/><rect x="15" y="0" width="3" height="12" rx="0.9"/></svg><svg class="wifi" viewBox="0 0 17 12" width="17" height="12" aria-hidden="true"><path d="M1.1 4.2a10.4 10.4 0 0 1 14.8 0" fill="none" stroke-width="1.9" stroke-linecap="round"/><path d="M3.7 6.9a6.7 6.7 0 0 1 9.6 0" fill="none" stroke-width="1.9" stroke-linecap="round"/><path d="M6.2 9.3a3.2 3.2 0 0 1 4.6 0L8.5 11.9z"/></svg><svg class="batt" viewBox="0 0 27 12" width="27" height="12" aria-hidden="true"><rect x="0.5" y="0.5" width="22.5" height="11" rx="3.3" fill="none" opacity="0.4"/><rect x="2" y="2" width="19.5" height="8" rx="2" /><path d="M24.4 4.1v3.8a1.9 1.9 0 0 0 0-3.8z" opacity="0.45"/></svg></span></div><div class="isl"></div><div class="hm"></div>
       <div class="toast" id="toast" role="status"></div>
       <div class="app" id="app"></div>
+      <nav class="tabbar" id="tabbar" aria-label="App sections"></nav>
       <div class="scrim" id="scrim" hidden></div>
       <div class="sheet" id="sheet" hidden></div>
     </div></div>
-    <div class="side">
-      <div>
-        <h2>Try it</h2>
-        <p>You shopped for car insurance last month. Now LendingTree holds your policies, knows when each one renews and checks prices for you. Tap through the app, or use these shortcuts.</p>
-      </div>
-      <div class="try" id="try">
-        <button data-act="t-add">Add a policy from your past quotes <span>Pre-filled</span></button>
-        <button data-act="t-skip">Skip ahead 30 days <span>Watch renewals arrive</span></button>
-        <button data-act="t-quote">Compare quotes on the auto policy <span>The moment it pays off</span></button>
-        <button data-act="t-reset">Start over <span>Reset the app</span></button>
-      </div>
-      <div class="tiles" id="tiles" aria-live="polite"></div>
-      <div><div class="loghead"><span>What LendingTree learns</span><span>Live</span></div><div class="log" id="log" aria-live="polite"></div></div>
-    </div>
-  </div>
-  <div class="explain">
-    <div><b>What it shows</b><span>A free app that holds every insurance policy a person has: carrier, coverage, price and renewal date. It pre-fills what LendingTree already knows from past quotes, accepts the rest by upload or email forward, and prompts a shop at the right moment.</span></div>
-    <div><b>How it works</b><span>Renewal dates are predictable, so the app watches them and speaks up before the decision happens. A saved policy gives LendingTree a direct relationship with a shopper who used to arrive through an ad. See the <a href="/lendingtree/#s2">approach</a> for scope and segment.</span></div>
-    <div><b>What we measure</b><span>Activation (policies connected per user, goal two or more for half of users), 90-day retention (goal 35%) and quote starts per active user against cold traffic (goal 2×). Policies and prices here are sample data.</span></div>
   </div>
 </main>
 <footer><div class="wrap">
@@ -63,6 +46,6 @@
   <span><a href="mailto:hello@adam-michaelson.com">hello@adam-michaelson.com</a> · <a href="https://www.linkedin.com/in/adammichaelson" target="_blank" rel="noopener">LinkedIn</a></span>
 </div></footer>
 <script src="/lendingtree/lt.js?v=1" defer></script>
-<script src="/lendingtree/companion/companion.js?v=2" defer></script>
+<script src="/lendingtree/companion/companion.js?v=5" defer></script>
 </body>
 </html>

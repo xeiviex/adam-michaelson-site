@@ -267,7 +267,7 @@ html.app-mode .phone { overscroll-behavior: none; touch-action: manipulation; }
 
 /* ---- app mode: fit any phone or tablet, either orientation ---- */
 html.app-mode .phone { --col: 640px; --padx: max(16px, env(safe-area-inset-left), calc((100% - var(--col)) / 2)); }
-html.app-mode .phone .app { padding-left: max(16px, env(safe-area-inset-left), calc((100% - 640px) / 2)); padding-right: max(16px, env(safe-area-inset-right), calc((100% - 640px) / 2)); }
+html.app-mode .phone .app { padding-left: max(16px, env(safe-area-inset-left), calc((100% - 608px) / 2)); padding-right: max(16px, env(safe-area-inset-right), calc((100% - 608px) / 2)); }
 html.app-mode .phone .dockwrap { left: max(8px, env(safe-area-inset-left), calc((100% - 656px) / 2)); right: max(8px, env(safe-area-inset-right), calc((100% - 656px) / 2)); }
 html.app-mode .phone .toast { left: max(16px, calc((100% - 640px) / 2)); right: max(16px, calc((100% - 640px) / 2)); }
 html.app-mode .phone .sheet { left: max(0px, calc((100% - 640px) / 2)); right: max(0px, calc((100% - 640px) / 2)); }
