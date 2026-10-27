@@ -35,7 +35,7 @@
   };
   var ic = function (n, s, w) { return '<svg class="i" viewBox="0 0 24 24" width="' + (s || 22) + '" height="' + (s || 22) + '" fill="none" stroke="currentColor" stroke-width="' + (w || 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + PATH[n] + '</svg>'; };
   var ICON = { 'Auto Insurance': 'car', 'Home Insurance': 'home', 'Umbrella Insurance': 'umbrella', 'Renters Insurance': 'building', 'Motorcycle Insurance': 'bike', 'Pet Insurance': 'paw', 'Life Insurance': 'heart' };
-  var LG = { Allstate: { full: 1, icon: 1 }, 'State Farm': { full: 1, icon: 1 }, Travelers: { full: 1, icon: 1 }, Lemonade: { full: 1, icon: 1, bleed: 1 }, GEICO: { full: 1, icon: 1 }, Progressive: { full: 1, icon: 1 }, Nationwide: { full: 1, icon: 1, bleed: 1, h: 34 } };
+  var LG = { Allstate: { full: 1, icon: 1 }, 'State Farm': { full: 1, icon: 1 }, Travelers: { full: 1, icon: 1 }, Lemonade: { full: 1, icon: 1, bleed: 1 }, GEICO: { full: 1, icon: 1 }, Progressive: { full: 1, icon: 1 }, Nationwide: { full: 1, icon: 1, bleed: 1, h: 34 }, Trupanion: { full: 1, icon: 1 } };
   var logo = function (c, h) { var l = LG[c]; return l && l.full ? '<img src="/lendingtree/img/carriers/' + c.toLowerCase().replace(/ /g, '-') + '-full.png" alt="' + c + '" style="max-height:' + h + 'px;max-width:150px;width:auto;height:auto">' : null; };
   var chip = function (c, h) { var l = logo(c, (LG[c] && LG[c].h) || h); return l ? '<span class="lchip">' + l + '</span>' : '<span class="cn">' + c + '</span>'; };
   var S;
@@ -173,7 +173,7 @@
   function addSheet() {
     var pq = [['b', 'Progressive', 'Motorcycle Insurance', 46, 230], ['t', 'Trupanion', 'Pet Insurance', 62, 300]].filter(function (x) { return !get(x[0]); });
     openSheet('<h3 style="font-size:22px">Add a policy</h3><p class="sub">Three ways. Pick the easiest.</p>' +
-      (pq.length ? '<h4>From your past quotes</h4>' + pq.map(function (x) { return '<div class="qrow">' + ibox(x[2]) + '<div class="mid"><b>' + x[2] + '</b><small>' + x[1] + ' · ' + money(x[3]) + '/mo · quoted in August</small></div><button class="btn" data-act="addq" data-x="' + x.join('|') + '">Add</button></div>'; }).join('') : '') +
+      (pq.length ? '<h4>From your past quotes</h4>' + pq.map(function (x) { return '<div class="qrow">' + mark(x[1]) + '<div class="mid"><b>' + x[2] + '</b><small>' + x[1] + ' · ' + money(x[3]) + '/mo · quoted in August</small></div><button class="btn" data-act="addq" data-x="' + x.join('|') + '">Add</button></div>'; }).join('') : '') +
       '<h4>Forward your policy email</h4><p class="sub" style="margin:0">Send any renewal or policy email to this address and we read the dates and prices.</p><div class="addr"><span>add@mail.lendingtree.example</span><button class="link" data-act="copyaddr" aria-label="Copy address" style="display:grid;place-items:center;padding:6px">' + ic('copy', 18) + '</button></div><button class="btn ghost full" data-act="fwd">' + ic('mail', 18) + 'I forwarded an email</button>' +
       '<h4>Upload a document</h4><label class="btn ghost full" style="cursor:pointer">' + ic('upload', 18) + 'Choose a PDF or photo<input type="file" id="upl" accept="application/pdf,image/*" hidden></label>');
     var u = $('#upl'); if (u) u.addEventListener('change', function () { if (u.files[0]) addPolicy({ carrier: 'Other', type: 'Uploaded policy', price: 55, renewIn: 150 }); });
