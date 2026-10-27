@@ -1,15 +1,17 @@
 // Prototype: outcomes API and partner dashboard. Sample data, no network.
 (function () {
   var $ = function (s) { return document.querySelector(s); };
-  var docs = $('#docs'), dash = $('#dash'), logEl = $('#log');
+  var docs = $('#docs'), dash = $('#dash');
   var STATUSES = [['contacted', 'Customer was contacted'], ['applied', 'Customer submitted application'], ['approved', 'Customer was approved'], ['funded', 'Loan was funded'], ['declined', 'Customer was declined'], ['withdrawn', 'Customer withdrew an application']];
   var REASONS = ['', 'income_too_low', 'credit_score', 'incomplete_docs', 'customer_withdrew', 'found_other_lender'];
   var PRODUCTS = ['personal_loan', 'home_equity', 'auto_loan', 'auto_insurance', 'home_insurance'];
   var DEFS = [
-    ['sofi', 'SoFi', 'Lending', 248, 0.91, 0.21], ['marcus', 'Marcus', 'Lending', 187, 0.84, 0.18], ['upstart', 'Upstart', 'Lending', 156, 0.78, 0.17],
-    ['discover', 'Discover', 'Lending', 143, 0.62, 0.17], ['lendingclub', 'LendingClub', 'Lending', 128, 0.55, 0.16], ['citi', 'Citi', 'Lending', 98, 0.38, 0.15], ['wells', 'Wells Fargo', 'Lending', 72, 0.22, 0.14],
-    ['progressive', 'Progressive', 'Insurance', 210, 0.86, 0.24], ['geico', 'GEICO', 'Insurance', 175, 0.7, 0.22], ['nationwide', 'Nationwide', 'Insurance', 120, 0.45, 0.2]
+    ['ridgeview', 'Ridgeview Financial', 'Lending', 248, 0.91, 0.21], ['maple', 'Maple Bank', 'Lending', 187, 0.84, 0.18], ['summit', 'Summit Lending', 'Lending', 156, 0.78, 0.17],
+    ['harbor', 'Harbor Credit', 'Lending', 143, 0.62, 0.17], ['cedar', 'Cedar Capital', 'Lending', 128, 0.55, 0.16], ['northgate', 'Northgate Bank', 'Lending', 98, 0.38, 0.15], ['pinecrest', 'Pinecrest Lending', 'Lending', 72, 0.22, 0.14],
+    ['beacon', 'Beacon Mutual', 'Insurance', 210, 0.86, 0.24], ['keystone', 'Keystone Insurance', 'Insurance', 175, 0.7, 0.22], ['lakeshore', 'Lakeshore Mutual', 'Insurance', 120, 0.45, 0.2]
   ];
+  var LOGOS = { ridgeview: 1, maple: 1, summit: 1 }, TINTS = ['#2e6db4', '#1f7a5c', '#8a5a1f', '#6a4c93', '#b3463c', '#3a4350', '#0e7490'];
+  function pmark(p) { return LOGOS[p.id] ? '<span class="pm"><img src="/lendingtree/img/lender-' + p.id + '.png" alt=""></span>' : '<span class="pm" style="background:' + TINTS[DEFS.map(function (d) { return d[0]; }).indexOf(p.id) % TINTS.length] + ';color:#fff" aria-hidden="true">' + p.name.charAt(0) + '</span>'; }
   var LEAD_COST = 20, FEE_BASE = 0.2;
   var P, L, S, key = 'lt_test_sample', t0, base;
   function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -19,10 +21,10 @@
   var pct = function (n, d) { return (n * 100).toFixed(d == null ? 1 : d) + '%'; };
   var now = function () { return new Date().toISOString().replace(/\.\d+Z$/, 'Z'); };
   var clock = function () { var s = Math.round((Date.now() - t0) / 1000); return (s < 10 ? '0' : '') + s + 's'; };
-  function log(ev, detail, warn) { var d = document.createElement('div'); if (warn) d.className = 'warn'; d.innerHTML = '<i>' + clock() + '</i><em>' + ev + '</em> ' + detail; logEl.appendChild(d); logEl.scrollTop = logEl.scrollHeight; }
+  function log() {}
 
   function fresh() {
-    t0 = Date.now(); P = []; L = {}; S = { tab: 'docs', sec: 'single', code: 'req', as: 'sofi', sel: 'sofi', sort: 'delivered', dir: -1, seg: 'Lending', form: {}, resp: null, csv: '', csvResp: null, read: null, hooks: [] };
+    t0 = Date.now(); P = []; L = {}; S = { tab: 'docs', sec: 'single', code: 'req', as: 'northgate', sel: 'northgate', sort: 'delivered', dir: -1, seg: 'Lending', form: {}, resp: null, csv: '', csvResp: null, read: null, hooks: [] };
     DEFS.forEach(function (d, pi) {
       var r = rng(pi * 977 + 13), p = { id: d[0], name: d[1], type: d[2], delivered: d[3], leads: [], fr: d[5] };
       for (var i = 0; i < d[3]; i++) {
@@ -118,7 +120,7 @@
   }
   function respView(r) {
     if (!r) return '<div class="resp"><p class="sub" style="font-size:13.5px">Send the request to see the response.</p></div>';
-    return '<div class="resp"><span class="st ' + (r.code < 300 ? 'ok' : 'bad') + '">' + r.code + (r.code < 300 ? ' OK' : r.code === 404 ? ' Not Found' : ' Unprocessable') + '</span> <span class="note">' + r.ms + ' ms</span><div class="code" style="max-height:300px">' + hl(pretty(r.body)) + '</div>' + (r.cov ? '<p class="note">' + r.cov + '</p>' : '') + '</div>';
+    return '<div class="resp"><span class="st ' + (r.code < 300 ? 'ok' : 'bad') + '">' + r.code + (r.code < 300 ? ' OK' : r.code === 404 ? ' Not Found' : ' Unprocessable') + '</span> <span class="note">' + r.ms + ' ms</span><div class="code" style="max-height:300px">' + hl(pretty(r.body)) + '</div>' + (r.cov ? '<p class="note">' + r.cov + '</p><button class="go alt" data-act="todash">See it on the dashboard</button>' : '') + '</div>';
   }
 
   // ---- dashboard view
@@ -134,12 +136,12 @@
       '<div class="sec"><button data-act="seg" data-s="Lending" class="' + (S.seg === 'Lending' ? 'on' : '') + '">Lending partners</button><button data-act="seg" data-s="Insurance" class="' + (S.seg === 'Insurance' ? 'on' : '') + '">Insurance partners</button></div>' +
       '<div class="kp"><div><span>Total leads delivered</span><b>' + num(st.n) + '</b></div><div><span>Reporting coverage (goal 80%)</span><b>' + pct(st.cov) + dl(st.cov, bs[S.seg].cov, 'pp') + '</b></div><div><span>Funded rate per lead</span><b>' + pct(st.rate) + dl(st.rate, bs[S.seg].rate, 'pp') + '</b></div><div><span>Cost per funded loan</span><b>' + money(st.cpf) + dl(st.cpf, bs[S.seg].cpf, '$', true) + '</b></div></div>' +
       '<div class="tbl"><table><tr>' + th('name', 'Partner') + th('delivered', 'Leads delivered') + th('cov', 'Reporting coverage') + th('funded', 'Funded') + th('rate', 'Funded rate') + th('cpf', 'Cost / funded') + '<th>Tier</th></tr>' +
-      rows.map(function (r) { var t = tier(r.cov); return '<tr class="pick' + (r.p.id === S.sel ? ' on' : '') + '" data-act="selp" data-id="' + r.p.id + '"><td><b>' + r.p.name + '</b></td><td>' + num(r.delivered) + '</td><td><span class="cov"><i style="width:' + (r.cov * 100) + '%"></i><u></u></span>' + pct(r.cov, 0) + '</td><td>' + num(r.funded) + '</td><td>' + pct(r.rate) + '</td><td>' + (isFinite(r.cpf) ? money(r.cpf) : '–') + '</td><td><span class="tier ' + t[1] + '">' + t[0] + '</span></td></tr>'; }).join('') + '</table></div>' +
+      rows.map(function (r) { var t = tier(r.cov); return '<tr class="pick' + (r.p.id === S.sel ? ' on' : '') + '" data-act="selp" data-id="' + r.p.id + '"><td><span class="pn">' + pmark(r.p) + '<b>' + r.p.name + '</b></span></td><td>' + num(r.delivered) + '</td><td><span class="cov"><i style="width:' + (r.cov * 100) + '%"></i><u></u></span>' + pct(r.cov, 0) + '</td><td>' + num(r.funded) + '</td><td>' + pct(r.rate) + '</td><td>' + (isFinite(r.cpf) ? money(r.cpf) : '–') + '</td><td><span class="tier ' + t[1] + '">' + t[0] + '</span></td></tr>'; }).join('') + '</table></div>' +
       '<p class="note">The black tick marks 80% coverage. Priority partners earn better placement and pricing. Under 40% is at risk. Cost per funded loan is lead cost ($' + LEAD_COST + ' each) over funded loans, so it only means something once outcomes are reported.</p>' +
       '<h4>' + sel.name + ': from delivery to funded</h4><div class="box fun">' + stages.map(function (s) { return '<div><span>' + s[0] + '</span><span><i style="width:' + (s[1] / ss.n * 100) + '%"></i></span><b>' + num(s[1]) + ' · ' + pct(s[1] / ss.n, 0) + '</b></div>'; }).join('') + '<p class="note">' + num(ss.n - ss.rep) + ' leads have no reported outcome. Those are the leads LendingTree cannot learn from.</p></div>';
   }
   function render() {
-    $('#who').innerHTML = S.tab === 'docs' ? 'Signed in as <select data-f="as" aria-label="Partner">' + P.map(function (p) { return '<option value="' + p.id + '"' + (p.id === S.as ? ' selected' : '') + '>' + p.name + '</option>'; }).join('') + '</select> <code>' + key + '</code>' : 'Last 12 months';
+    $('#who').innerHTML = S.tab === 'docs' ? 'Signed in as ' + pmark(byId(S.as)) + '<select data-f="as" aria-label="Partner">' + P.map(function (p) { return '<option value="' + p.id + '"' + (p.id === S.as ? ' selected' : '') + '>' + p.name + '</option>'; }).join('') + '</select> <code>' + key + '</code>' : 'Last 12 months';
     docs.hidden = S.tab !== 'docs'; dash.hidden = S.tab !== 'dash';
     document.querySelectorAll('.odtabs [data-t]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-t') === S.tab); });
     if (S.tab === 'docs') docsView(); else dashView();
@@ -167,9 +169,13 @@
     log('POST /v1/customer-status/batch', '200 ' + ok + ' processed, ' + errors.length + ' rejected. coverage ' + pct(before) + ' → ' + pct(after), !!errors.length);
   }
   function sampleCsv() {
-    var u = unreported(S.as, 6), ts = now(), r = ['customer_id,status,timestamp,loan_amount,product,reason_code'];
-    u.slice(0, 4).forEach(function (l, i) { r.push([l.id, ['funded', 'approved', 'applied', 'declined'][i], ts, i < 2 ? 18000 + i * 4200 : '', 'personal_loan', i === 3 ? 'credit_score' : ''].join(',')); });
-    r.push('LT-999999,funded,' + ts + ',15000,personal_loan,'); r.push((u[4] ? u[4].id : 'LT-100777') + ',funded,' + ts + ',,personal_loan,');
+    var p = byId(S.as), u = unreported(S.as, 9999), ts = now(), r = ['customer_id,status,timestamp,loan_amount,product,reason_code'], rg = rng(41), prod = p.type === 'Lending' ? 'personal_loan' : 'auto_insurance';
+    var need = Math.max(6, Math.ceil(0.82 * p.leads.length) - p.leads.filter(function (l) { return l.status; }).length), take = u.slice(0, Math.min(u.length, need + 2));
+    take.forEach(function (l, i) {
+      var x = rg(), st = x < 0.22 ? 'funded' : x < 0.42 ? 'approved' : x < 0.62 ? 'applied' : x < 0.78 ? 'declined' : x < 0.86 ? 'withdrawn' : 'contacted';
+      r.push([l.id, st, ts, (st === 'funded' || st === 'approved') ? 18000 + Math.round(rg() * 14) * 500 : '', prod, st === 'declined' ? 'credit_score' : st === 'withdrawn' ? 'customer_withdrew' : ''].join(','));
+    });
+    r.splice(3, 0, 'LT-999999,funded,' + ts + ',15000,' + prod + ','); r.splice(9, 0, (take[1] ? take[1].id : 'LT-100777') + ',funded,' + ts + ',,' + prod + ',');
     return r.join('\n');
   }
   function bring(pid, goal) { var p = byId(pid), need = Math.ceil(goal * p.leads.length) - p.leads.filter(function (l) { return l.status; }).length, r = rng(5), n = 0; p.leads.forEach(function (l) { if (!l.status && n < need) { var x = r(); l.status = x < 0.2 ? 'funded' : x < 0.4 ? 'approved' : x < 0.6 ? 'applied' : x < 0.75 ? 'declined' : 'contacted'; l.at = now(); if (l.status === 'funded' || l.status === 'approved') l.amt = 22000; l.hist.push([l.at, l.status]); n++; } }); return n; }
@@ -189,11 +195,8 @@
     else if (a === 'testhook') { S.hooks.push({ t: clock(), ev: 'lead.test', id: 'LT-TEST-0001', status: 'funded' }); log('webhook', 'lead.test delivered to partner.example, 200'); docsView(); }
     else if (a === 'seg') { S.seg = el.getAttribute('data-s'); S.sel = P.filter(function (p) { return p.type === S.seg; })[0].id; dashView(); }
     else if (a === 'sort') { var k = el.getAttribute('data-k'); S.dir = S.sort === k ? -S.dir : (k === 'name' ? 1 : -1); S.sort = k; dashView(); }
+    else if (a === 'todash') { var tp = byId(S.as); S.tab = 'dash'; S.seg = tp.type; S.sel = tp.id; render(); window.scrollTo({ top: document.querySelector('.stage').getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' }); }
     else if (a === 'selp') { S.sel = el.getAttribute('data-id'); dashView(); }
-    else if (a === 't-funded') { S.as = 'sofi'; S.sec = 'single'; S.tab = 'docs'; var u1 = unreported('sofi')[0]; S.form = { customer_id: u1.id, status: 'funded', timestamp: now(), loan_amount: '26500', product: 'personal_loan', reason_code: '', notify: true }; send(sample(S.form), true); S.form = {}; render(); }
-    else if (a === 't-batch') { S.as = 'marcus'; S.tab = 'docs'; S.sec = 'batch'; S.csv = sampleCsv(); sendBatch(S.csv); render(); }
-    else if (a === 't-citi') { var n = bring('citi', 0.8); log('batch_reported', 'Citi reported ' + n + ' leads. coverage → ' + pct(pstat(byId('citi')).cov, 0) + '. tier: <em>Priority</em>'); S.tab = 'dash'; S.seg = 'Lending'; S.sel = 'citi'; render(); }
-    else if (a === 't-reset') { var keepLog = false; fresh(); logEl.innerHTML = ''; log('reset', 'sample data restored'); render(); }
   });
   document.addEventListener('change', function (e) {
     var el = e.target, k = el.getAttribute && el.getAttribute('data-f'); if (!k) return;
@@ -203,5 +206,5 @@
     if (k === 'readid') { S.readid = el.value; return; }
     S.form[k] = el.value; if (k === 'status') { if (el.value !== 'approved' && el.value !== 'funded' && S.form.loan_amount === '26500') S.form.loan_amount = ''; if ((el.value === 'approved' || el.value === 'funded') && !S.form.loan_amount) S.form.loan_amount = '26500'; } docsView();
   });
-  fresh(); log('session', 'signed in as SoFi with a sample test key. ' + num(P.reduce(function (a, p) { return a + p.leads.length; }, 0)) + ' sample leads delivered'); render();
+  fresh(); render();
 })();

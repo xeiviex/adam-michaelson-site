@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-no-scroll-hint>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/lendingtree/lt.css?v=10">
-<link rel="stylesheet" href="/lendingtree/proto.css?v=1">
+<link rel="stylesheet" href="/lendingtree/proto.css?v=36">
+<link rel="stylesheet" href="/lendingtree/outcomes/outcomes.css?v=2">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -27,27 +28,14 @@
   <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/lendingtree/">LendingTree</a><span>/</span><span>Aligned outcomes</span></nav>
   <span class="kicker">Prototype</span>
   <h1>Aligned outcomes</h1>
-  <p class="lede">A clickable prototype of the outcomes API and partner dashboard: lenders report what happened to each lead, and reporting earns better placement and pricing.</p>
-  <p class="lede" style="margin-top:-6px;color:var(--muted)">Two views of one loop. As a lender, report what happened to a lead. As LendingTree, watch reporting coverage and funded rate move.</p>
-  <div class="tryrow" id="try">
-    <button data-act="t-funded">Report a funded loan <span>As SoFi, one call</span></button>
-    <button data-act="t-batch">Upload a batch with two bad rows <span>See the error handling</span></button>
-    <button data-act="t-citi">Bring Citi to 80% coverage <span>Watch its tier change</span></button>
-    <button data-act="t-reset">Start over <span>Reset all sample data</span></button>
-  </div>
+  <p class="lede">A clickable prototype of the outcomes API and partner dashboard: lenders report what happened to each lead, and reporting earns better placement and pricing. You are Northgate Bank, a lending partner, and only about a third of the leads LendingTree sent you have a reported outcome, which puts you at risk. Try it: send a status update for one lead, or load the sample batch and send it, then open the dashboard to watch your tier change.</p>
   <div class="stage wide">
     <div class="od" id="od">
-      <div class="odtabs"><span class="lg" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M2 14C2 6 7 2 14 2c0 7-4 12-12 12z" fill="#1fa35c"/></svg>lendingtree</span>
+      <div class="odtabs"><span class="lg"><img src="/lendingtree/img/lt-logo.png" alt="lendingtree" width="728" height="230"></span>
         <button data-act="tab" data-t="docs" class="on">Developer docs</button><button data-act="tab" data-t="dash">Partner dashboard</button>
         <span class="who" id="who"></span></div>
       <div class="odbody"><section id="docs"></section><section id="dash" hidden></section></div>
     </div>
-  </div>
-  <div style="width:100%"><div class="loghead"><span>API and event log</span><span>Live</span></div><div class="log" id="log" aria-live="polite"></div></div>
-  <div class="explain">
-    <div><b>What it shows</b><span>A small API: report an outcome, read a lead's status, receive a webhook. The lender view is the developer docs with a working request builder. The LendingTree view is a partner dashboard that recalculates from what lenders report.</span></div>
-    <div><b>How it works</b><span>A lender calls one endpoint per lead, or uploads a CSV in batch. Reporting coverage drives a tier: partners at 80% or more earn priority placement and pricing. Update a lead and watch the dashboard move. See the <a href="/lendingtree/#s3">approach</a> for scope and segment.</span></div>
-    <div><b>What we measure</b><span>Reporting coverage (leads with a status inside 14 days, goal 80%), lift in funded rate per lead against control (goal +10%) and cost per funded loan. Under 40% coverage ends the test. All data here is sample data.</span></div>
   </div>
 </main>
 <footer><div class="wrap">
@@ -55,6 +43,6 @@
   <span><a href="mailto:hello@adam-michaelson.com">hello@adam-michaelson.com</a> · <a href="https://www.linkedin.com/in/adammichaelson" target="_blank" rel="noopener">LinkedIn</a></span>
 </div></footer>
 <script src="/lendingtree/lt.js?v=1" defer></script>
-<script src="/lendingtree/outcomes/outcomes.js?v=1" defer></script>
+<script src="/lendingtree/outcomes/outcomes.js?v=3" defer></script>
 </body>
 </html>
