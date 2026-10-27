@@ -2,9 +2,10 @@
 (function () {
   var $ = function (s) { return document.querySelector(s); };
   var app = $('#app'), sheet = $('#sheet'), scrim = $('#scrim'), toast = $('#toast'), tabbar = $('#tabbar');
-  var LOGO = '<img src="/lendingtree/img/lt-logo.png" alt="lendingtree" width="728" height="230">';
+  var LOGO = '<img src="/lendingtree/img/lt-leaf.png" alt="LendingTree">';
   var DAY = 86400000;
-  var CARRIERS = { Allstate: '#0b3d91', 'State Farm': '#b3121d', Travelers: '#c8102e', Lemonade: '#d6007f', Progressive: '#0a58ca', GEICO: '#1d6fb8', Nationwide: '#1d4f91', Trupanion: '#00836b', 'Healthy Paws': '#e26b1f', Other: '#3a4350' };
+  var CARRIERS = { Allstate: '#0033a0', 'State Farm': '#e31937', Travelers: '#d71e28', Lemonade: '#ff0083', Progressive: '#1e5aa8', GEICO: '#1f55a0', Nationwide: '#0a5bb5', Trupanion: '#2e4a8b', 'Healthy Paws': '#1b9e48', Other: '#3a4350' };
+  var shade = function (c) { return 'linear-gradient(135deg,' + c + ',color-mix(in srgb,' + c + ' 62%,#000))'; };
   var QUOTERS = [['Progressive', 0.82], ['GEICO', 0.85], ['Nationwide', 0.91]];
   var COVER = [['car', 'Liability', '$100,000 / $300,000'], ['shield', 'Collision', '$500 deductible'], ['shield', 'Comprehensive', '$500 deductible'], ['people', 'Uninsured motorist', '$100,000 / $300,000'], ['plus', 'Medical payments', '$10,000']];
   var BENEFITS = [['Roadside assistance', 'Towing, jump starts and lockouts, any time.'], ['Rental reimbursement', 'Up to $40 a day while your car is in the shop.'], ['Glass coverage', 'Windshield repairs with no deductible.'], ['Accident forgiveness', 'Your first at-fault accident will not raise your rate.']];
@@ -36,8 +37,8 @@
   var ic = function (n, s, w) { return '<svg class="i" viewBox="0 0 24 24" width="' + (s || 22) + '" height="' + (s || 22) + '" fill="none" stroke="currentColor" stroke-width="' + (w || 1.8) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + PATH[n] + '</svg>'; };
   var ICON = { 'Auto Insurance': 'car', 'Home Insurance': 'home', 'Umbrella Insurance': 'umbrella', 'Renters Insurance': 'building', 'Motorcycle Insurance': 'bike', 'Pet Insurance': 'paw', 'Life Insurance': 'heart' };
   var LG = { Allstate: { full: 1, icon: 1 }, 'State Farm': { full: 1, icon: 1 }, Travelers: { full: 1, icon: 1 }, Lemonade: { full: 1, icon: 1, bleed: 1 }, GEICO: { full: 1, icon: 1 }, Progressive: { full: 1, icon: 1 }, Nationwide: { full: 1, icon: 1, bleed: 1, h: 34 }, Trupanion: { full: 1, icon: 1 }, 'Healthy Paws': { full: 1, icon: 1 } };
-  var logo = function (c, h) { var l = LG[c]; return l && l.full ? '<img src="/lendingtree/img/carriers/' + c.toLowerCase().replace(/ /g, '-') + '-full.png" alt="' + c + '" style="max-height:' + h + 'px;max-width:150px;width:auto;height:auto">' : null; };
-  var chip = function (c, h) { var l = logo(c, (LG[c] && LG[c].h) || h); return l ? '<span class="lchip">' + l + '</span>' : '<span class="cn">' + c + '</span>'; };
+  var logo = function (c, h) { var l = LG[c]; return l && l.full ? '<img src="/lendingtree/img/carriers/' + c.toLowerCase().replace(/ /g, '-') + '-white.png" alt="' + c + '" style="max-height:' + h + 'px;max-width:150px;width:auto;height:auto">' : null; };
+  var chip = function (c, h) { var l = logo(c, (LG[c] && LG[c].h) || h); return l ? '<span class="lw">' + l + '</span>' : '<span class="cn">' + c + '</span>'; };
   var S;
   function fresh() {
     S = { tab: 'home', sub: 'cards', screen: 'home', open: null, card: 0, nfilter: 'All', read: {}, dismissed: {}, remind: {}, started: [], nextId: 10, newId: null,
@@ -51,6 +52,7 @@
   }
   fresh();
   var dateStr = function (d) { var t = new Date(Date.now() + d * DAY), y = t.getFullYear() !== new Date().getFullYear(); return t.toLocaleDateString('en-US', y ? { month: 'short', day: 'numeric', year: 'numeric' } : { month: 'short', day: 'numeric' }); };
+  var dFull = function (d) { return new Date(Date.now() + d * DAY).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); };
   var money = function (n) { return '$' + n.toLocaleString('en-US'); };
   var get = function (id) { return S.policies.filter(function (p) { return p.id === id; })[0]; };
   var short = function (p) { return p.type.replace(' Insurance', ''); };
@@ -93,7 +95,7 @@
   }
   function pcard(p) {
     var c = CARRIERS[p.carrier];
-    return '<div class="pcard" style="background:linear-gradient(135deg,' + c + ',#0a1f4d)"><div class="hd">' + chip(p.carrier, 22) + '<span class="ty">' + p.type + '<span>Active</span></span></div>' +
+    return '<div class="pcard" style="background:' + shade(c) + '"><div class="hd">' + chip(p.carrier, 22) + '<span class="ty">' + p.type + '<span>Active</span></span></div>' +
       '<div class="meta"><div>Policy number<b>' + p.number + '</b></div><div>Renews in<b>' + p.renewIn + ' days</b></div></div>' +
       '<div class="acts"><button class="a1" data-act="idcard" data-id="' + p.id + '">' + ic('card', 18) + 'View card</button><button class="a2" data-act="open" data-id="' + p.id + '">Details' + ic('right', 16) + '</button></div></div>';
   }
@@ -188,7 +190,14 @@
     var el = e.target.closest('[data-act]'); if (!el) return; var a = el.getAttribute('data-act'), id = el.getAttribute('data-id');
     if (a === 'idcard') {
       var p = get(id), c = CARRIERS[p.carrier];
-      openSheet('<h3 style="font-size:22px">Insurance card</h3><div class="idc" style="background:linear-gradient(135deg,' + c + ',#0a1f4d)">' + chip(p.carrier, 26) + '<div class="ty">' + p.type + '</div><dl><div>Insured<dd>Alex Sample</dd></div><div>Policy number<dd>' + p.number + '</dd></div><div>Valid through<dd>' + dateStr(p.renewIn) + '</dd></div>' + (p.type === 'Auto Insurance' ? '<div>Vehicle<dd>2022 Subaru Outback</dd></div>' : '<div>Status<dd>Active</dd></div>') + '</dl></div><button class="btn full" data-act="towallet">Add to wallet</button>');
+      var auto = p.type === 'Auto Insurance', ph = '1-800-555-01' + (40 + (p.number.charCodeAt(0) % 40)), bars = '';
+      for (var k = 0, sd = +p.number.replace(/\D/g, '').slice(0, 6); k < 46; k++) { sd = (sd * 9301 + 49297) % 233280; bars += '<i style="flex:' + (1 + (sd % 3)) + '"></i>'; }
+      openSheet('<h3 style="font-size:22px">Insurance card</h3><p class="sub">Show this as proof of insurance.</p>' +
+        '<div class="cap">Front</div><div class="idc" style="background:' + shade(c) + '">' + chip(p.carrier, 26) + '<div class="ty">' + p.type + '</div><dl><div>Insured<dd>Alex Sample</dd></div><div>Policy number<dd>' + p.number + '</dd></div><div>Effective<dd>' + dFull(p.renewIn - 365) + '</dd></div><div>Valid through<dd>' + dFull(p.renewIn) + '</dd></div>' + (auto ? '<div class="w2">Vehicle<dd>2022 Subaru Outback · VIN ending 4821</dd></div>' : '') + '</dl></div>' +
+        '<div class="cap">Back</div><div class="idc idb" style="background:' + shade(c) + '"><div class="bh">' + (auto ? 'In case of an accident' : 'To report a claim') + '</div>' +
+        (auto ? '<ol><li>Check for injuries and call 911 if anyone is hurt.</li><li>Exchange names, phone numbers and insurance details.</li><li>Take photos of the scene and the damage.</li></ol>' : '<p class="bp">Have your policy number ready, then call or report in the ' + p.carrier + ' app.</p>') +
+        '<div class="bn"><span>Report a claim, 24/7</span><b>' + ph + '</b></div><div class="bn"><span>Roadside assistance</span><b>1-800-555-0199</b></div><div class="bars" aria-hidden="true">' + bars + '</div></div>' +
+        '<button class="btn full" data-act="towallet" style="margin-top:6px">Add to wallet</button>');
     }
     else if (a === 'towallet') { closeSheet(); say('Card added to your wallet.'); }
     else if (a === 'benefits') { var bp = get(id); openSheet('<h3 style="font-size:22px">Benefits</h3><p class="sub">Included with your ' + bp.carrier + ' ' + low(bp) + ' policy.</p><div style="height:6px"></div>' + BENEFITS.map(function (b) { return '<div class="ben">' + ic('check', 20, 2.2) + '<div><b>' + b[0] + '</b><small>' + b[1] + '</small></div></div>'; }).join('')); }

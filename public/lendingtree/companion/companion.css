@@ -168,3 +168,20 @@ html.app-mode .phone .tabbar { padding-bottom: calc(6px + env(safe-area-inset-bo
 .phone .lchip img { display: block; }
 .phone .idc .lchip { margin-bottom: 4px; }
 .phone .cm.img.bleed { padding: 0; border: 0; overflow: hidden; background: none; }
+
+/* white logos on brand-color cards, leaf header, front and back ID card */
+.phone .lw { display: inline-flex; align-items: center; }
+.phone .lw img { display: block; }
+.phone .logo img { height: 38px; width: auto; display: block; }
+.phone .top { min-height: 46px; }
+.phone .idc .lw { margin-bottom: 6px; }
+.phone .cap { font: 700 12px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: #5b6574; margin: 14px 2px 6px; }
+.phone .idc { margin: 0 0 6px; }
+.phone .idc dl .w2 { grid-column: 1 / -1; }
+.phone .idc.idb { padding-bottom: 14px; }
+.phone .idc.idb .bh { font: 800 17px var(--sans); letter-spacing: -.01em; margin-bottom: 8px; }
+.phone .idc.idb ol { margin: 0 0 12px; padding-left: 20px; font-size: 13.5px; line-height: 1.4; opacity: .95; } .phone .idc.idb li { margin: 4px 0; }
+.phone .idc.idb .bp { margin: 0 0 12px; font-size: 13.5px; line-height: 1.4; opacity: .95; }
+.phone .idc.idb .bn { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; border-top: 1px solid rgba(255,255,255,.28); padding: 9px 0; font-size: 12.5px; } .phone .idc.idb .bn b { font-size: 15px; white-space: nowrap; }
+.phone .idc .bars { display: flex; gap: 2px; height: 46px; background: #fff; border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
+.phone .idc .bars i { background: #0d1b2a; border-radius: 1px; }
