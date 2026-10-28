@@ -205,3 +205,14 @@ footer a { color: #0a0d12; text-underline-offset: 3px; }
 .shot a { display: block; }
 .shot img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
 .shot .fig-note { margin-top: 10px; }
+/* footnotes */
+.fn { font-size: .68em; line-height: 0; margin-left: 1px; }
+.fn a { text-decoration: none; font-weight: 700; color: var(--accent-hi); padding: 0 2px; }
+.notes { padding-block: 8px clamp(48px, 7vw, 88px); }
+.notes h4 { font-family: var(--head); font-weight: 800; font-size: .74rem; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; padding-top: 22px; border-top: 1px solid var(--line); }
+.notes ol { margin: 0; padding-left: 1.4em; display: grid; gap: 8px; font-size: .86rem; color: var(--muted); max-width: 90ch; }
+.notes li { padding-left: 4px; }
+.notes li:target { color: var(--ink); }
+.notes a { color: inherit; }
+.notes .back { text-decoration: none; margin-left: 4px; }
+[id^="n"]:target, [id^="r"]:target { scroll-margin-top: 90px; }

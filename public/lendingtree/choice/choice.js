@@ -147,9 +147,9 @@
       '<div class="bar2"><button class="btn ghost full" data-act="back">Review offers</button></div>';
   }
   function screenFallback() {
-    return steps(3) + '<div class="done-ico" style="background:#fff2dd;color:#a35a00">⏱</div><h3>24 hours passed.</h3><p class="sub">No lender was chosen, so this request moved to the standard flow. Matching lenders can now contact you directly, as they do today.</p>' +
-      '<div class="kv"><div><span>Chosen lenders</span><b>0</b></div><div><span>Status</span><b>Released to matches</b></div></div>' +
-      '<p class="note" style="text-align:left">This is the safety net. Nothing is lost if a shopper never chooses. It is also why selection rate is the number to watch.</p>' +
+    return steps(3) + '<div class="done-ico" style="background:#fff2dd;color:#a35a00">⏱</div><h3>24 hours passed.</h3><p class="sub">No lender was chosen, so we shared your request with your two best matches, Ridgeview Financial and Maple Bank. Only they will contact you.</p>' +
+      '<div class="kv"><div><span>Lenders contacting you</span><b>2, by name</b></div><div><span>Status</span><b>Shared with best matches</b></div></div>' +
+      '<p class="note" style="text-align:left">This is the safety net. The shopper still knows who will call, and no more than two lenders do. Selection rate is the number to watch.</p>' +
       '<div class="bar2"><button class="btn full" data-act="reset">Start over</button></div>';
   }
   function render() {
