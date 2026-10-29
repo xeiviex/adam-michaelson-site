@@ -280,3 +280,4 @@ footer a { color: #0a0d12; text-underline-offset: 3px; }
 .why p { font-size: clamp(1.02rem, 1.5vw, 1.15rem); color: var(--body); max-width: 60ch; }
 .hero-wrap .principles-line { color: #06a866; }
 .hero-wrap .bar-accent { background: #06a866; }
+.gt .gb { background: #06a866; } .gr.sub .gt .gb { background: transparent; border-color: #06a866; } .gt .gb.gate { background: var(--white); }
