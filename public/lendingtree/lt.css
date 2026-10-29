@@ -279,3 +279,4 @@ footer a { color: #0a0d12; text-underline-offset: 3px; }
 .why .big { font-family: var(--head); font-weight: 800; font-size: clamp(1.6rem, 3.4vw, 2.6rem); line-height: 1.1; color: var(--white); text-transform: uppercase; letter-spacing: -.01em; }
 .why p { font-size: clamp(1.02rem, 1.5vw, 1.15rem); color: var(--body); max-width: 60ch; }
 .hero-wrap .principles-line { color: #08c177; }
+.hero-wrap .bar-accent { background: #08c177; }
