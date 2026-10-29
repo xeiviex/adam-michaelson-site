@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The next chapter at LendingTree (October draft) | Adam Michaelson</title>
+<meta name="description" content="Subtle shifts, big outcomes. Three problems and three solutions for LendingTree, with prototypes. Prepared by Adam Michaelson.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/lendingtree-old/lt.css?v=1">
+<script>document.documentElement.classList.add('js');</script>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+<header class="bar"><div class="in">
+  <a class="nm" href="/">Adam Michaelson</a>
+  <nav aria-label="Sections"><a href="#problems">Problems</a><a href="#solutions">Solutions</a></nav>
+</div></header>
+
+<main>
+<section class="hero-wrap"><div class="wrap hero">
+  <span class="kicker rv">LendingTree · A product point of view · October 2026</span>
+  <h1 class="rv">The next chapter at LendingTree.</h1>
+  <span class="bar-accent rv" aria-hidden="true"></span>
+  <p class="principles-line rv">Subtle shifts. Big outcomes.</p>
+  <p class="lede rv">Choice at the start. A relationship after the click. Outcomes that come back to us. Three problems hold LendingTree back today. Three solutions turn each one around.</p>
+  <div class="pillars" data-rvg>
+    <a href="#s1"><b><i>01</i>Choice</b><span>The shopper decides who calls.</span></a>
+    <a href="#s2"><b><i>02</i>Relationship</b><span>A reason to come back.</span></a>
+    <a href="#s3"><b><i>03</i>Outcomes</b><span>Every lead, a closed loop.</span></a>
+  </div>
+</div></section>
+
+<!-- THE PROBLEMS -->
+<section id="problems">
+  <div class="wrap era">
+    <span class="kicker rv">What's broken</span>
+    <h2 class="rv">The problems</h2>
+    <p class="rv">I shopped it myself. Then I read what everyone else says.</p>
+  </div>
+
+  <article class="item" id="p1"><div class="wrap grid">
+    <div class="txt">
+      <span class="num rv">01</span>
+      <h3 class="rv">Hunted.</h3>
+      <p class="sub rv">We sow distrust and reap sub-optimal economics.</p>
+      <p class="rv">One click on "View My Rates" is the consent. It covers calls and texts, automated and prerecorded, from LendingTree, its network partners and anyone calling on their behalf, even if the number is on a Do-Not-Call list. The shopper never learns who, how many or how often. The model pays for it: up to five match fees can come from a single request (<a href="https://www.sec.gov/Archives/edgar/data/1434621/000143462125000006/tree-20241231.htm" target="_blank" rel="noopener">10-K</a>).</p>
+      <p class="rv">I tested it with a home equity form. Within three minutes I had about eleven calls and texts from at least four lenders. The first text arrived inside a minute, before I had scrolled the results page. Two lenders asked the same question, text or call? Each answer goes to one lender. The rest keep calling.</p>
+      <p class="rv">Distrust costs money. Shoppers stop answering, so lenders pay for contacts that never connect. The brand loses return visits, and the flood draws lawsuits.<sup class="fn"><a href="#n1" id="r1" aria-label="Note 1">1</a></sup> Trust also moves the numbers: Trustpilot's case study on LendingTree reports up to a 6% lift in conversion from showing reviews on its application pages (<a href="https://business.trustpilot.com/customer-stories/finance-insurance/lendingtree-builds-trust-boosts-conversions" target="_blank" rel="noopener">source</a>, vendor-reported). The experience that decides whether trust holds is the one after the click.</p>
+    </div>
+    <div class="media rv">
+      <div class="phones" aria-label="Two iPhone screens: a flood of texts, and unknown callers with voicemails">
+        <div class="dev"><i class="btn a"></i><i class="btn u"></i><i class="btn d"></i><i class="btn p"></i>
+          <div class="scr"><img src="/lendingtree/img/p1-texts.jpg" alt="Illustration of an iPhone Unknown Senders list: thirteen texts from lenders arriving between 4:02 and 4:05 PM" width="800" height="1739" loading="lazy"><div class="notch"></div><div class="home"></div></div></div>
+        <div class="dev"><i class="btn a"></i><i class="btn u"></i><i class="btn d"></i><i class="btn p"></i>
+          <div class="scr"><img src="/lendingtree/img/p1-calls.jpg" alt="iPhone Unknown Callers list: six calls and voicemails from lenders, all at 4:03 PM" width="800" height="1739" loading="lazy"><div class="notch"></div><div class="home"></div></div></div>
+      </div>
+      <p class="fig-note">After going through the LendingTree flow, I was bombarded by texts and phone calls.<small>The text list is an illustration with fictional numbers. The call list is my own screenshot.</small></p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="scores rv" aria-label="Third-party scores for LendingTree">
+      <a href="https://www.consumeraffairs.com/finance/lending_tree.html" target="_blank" rel="noopener"><b>1.0<small>/5</small></b><span>ConsumerAffairs, 1,584 reviews. Recent reviews describe the calls and texts after one form.</span></a>
+      <a href="https://www.bbb.org/us/nc/charlotte/profile/loans/lendingtree-llc-0473-109412/customer-reviews" target="_blank" rel="noopener"><b>1.05<small>/5</small></b><span>Better Business Bureau customer reviews, 95 reviews. Recent reviews describe the same calls and texts.</span></a>
+      <a href="https://wallethub.com/profile/lendingtree-13760348i" target="_blank" rel="noopener"><b>1.2<small>/5</small></b><span>WalletHub, 1,926 reviews. Reviewers say their number was sold on.</span></a>
+    </div>
+    <p class="score-note rv">Distrust, measured: customers on three independent review sites rate the experience near 1 out of 5, and the reviews name the contact flood. Scores as of October 2026.<sup class="fn"><a href="#n2" id="r2" aria-label="Note 2">2</a></sup></p>
+    <p class="quotes-head rv">In their words</p>
+    <div class="quotes" data-rvg>
+      <figure><blockquote>"Literally within 10 seconds of submitting my inquiry for refinance rates, I received 3 texts and 10 phone calls."</blockquote><figcaption>ConsumerAffairs reviewer, Peru, IN, Dec. 18, 2025 · <a href="https://www.consumeraffairs.com/finance/lending_tree.html" target="_blank" rel="noopener">source</a></figcaption></figure>
+      <figure><blockquote>"I have received over 250 phone calls and about as many text messages."</blockquote><figcaption>ConsumerAffairs reviewer, Oct. 22, 2025 · <a href="https://www.consumeraffairs.com/finance/lending_tree.html" target="_blank" rel="noopener">source</a></figcaption></figure>
+      <figure><blockquote>"They just sell my number to the next company and the process starts all over again."</blockquote><figcaption>Justin Stewart, WalletHub, June 11, 2026 · <a href="https://wallethub.com/profile/lendingtree-13760348i" target="_blank" rel="noopener">source</a></figcaption></figure>
+      <figure><blockquote>"I would strongly recommend no one ever uses them. They need to get a better handle on selling your information."</blockquote><figcaption>ConsumerAffairs reviewer T. M., June 5, 2026 · <a href="https://www.consumeraffairs.com/finance/lending_tree.html" target="_blank" rel="noopener">source</a></figcaption></figure>
+    </div>
+  </div></article>
+
+  <article class="item" id="p2"><div class="wrap grid">
+    <div class="txt">
+      <span class="num rv">02</span>
+      <h3 class="rv">One and done.</h3>
+      <p class="sub rv">A transaction with no reason to stay.</p>
+      <p class="rv">The model finishes when the lead is sold. Home revenue is mostly upfront match fees (<a href="https://www.sec.gov/Archives/edgar/data/1434621/000143462125000006/tree-20241231.htm" target="_blank" rel="noopener">10-K</a>). After the match there is no account to open, no tool to use and no reason to return. The shopper gets no relationship and LendingTree gets no second visit it can count on. Each visit is bought again, at a rising price.<sup class="fn"><a href="#n3" id="r3" aria-label="Note 3">3</a></sup></p>
+      <p class="rv">The market does not stand still. J.D. Power found 53% of auto insurance customers shopped for new coverage in the past year, near the 19-year high of 57% a year earlier (<a href="https://www.repairerdrivennews.com/2026/06/05/j-d-power-consumers-collecting-historic-number-of-auto-insurance-quotes/" target="_blank" rel="noopener">J.D. Power</a>).<sup class="fn"><a href="#n4" id="r4" aria-label="Note 4">4</a></sup> Shoppers return to market all the time. I could not find a published repeat-shopper rate for LendingTree, which means nobody outside can see who comes back, and the model gives no one inside a reason to look.</p>
+      <p class="rv">Others made the shopper a member. Credit Karma gave people a free reason to come back and sold to Intuit for about $7.1 billion in 2020 (<a href="https://www.leadersleague.com/es/news/intuit-buys-credit-karma-for-e7-1bn-to-help-consumers-make-ends-meet" target="_blank" rel="noopener">source</a>). LendingTree tried with credit monitoring: My LendingTree, later the Spring app, signed up 28 million people but did not drive significant revenue.<sup class="fn"><a href="#n5" id="r5" aria-label="Note 5">5</a></sup> Credit monitoring gave no natural reason to return. Insurance does: every policy renews.</p>
+    </div>
+    <div class="media rv">
+      <figure class="shot">
+        <a href="/lendingtree/img/p2-flatline.webp" target="_blank" rel="noopener"><img src="/lendingtree/img/p2-flatline.webp" alt="A line chart of shopper engagement over ten minutes: it climbs while the shopper lands, fills out and submits the application, then drops to near zero when the lead is sold." width="1585" height="992" loading="lazy"></a>
+        <figcaption class="fig-note">Engagement climbs as the shopper lands, fills out and submits the application. The moment the lead is sold, it falls to near zero and stays there.</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="scores rv" aria-label="Data behind problem 2">
+      <a href="https://investors.lendingtree.com/static-files/adad2b39-5c81-4b93-8462-144bce99cc86" target="_blank" rel="noopener"><b>77%</b><span>Of 2025 revenue came from Home and Insurance ($863.6M of $1.12B), mainly match fees recognized when the request is delivered. The money is earned at the handoff, with no reason built in to bring the shopper back.</span></a>
+      <a href="https://www.sec.gov/Archives/edgar/data/0001434621/000162828026051187/tree-20260630.htm" target="_blank" rel="noopener"><b>75%</b><span>Of Q2 2026 revenue went to selling and marketing ($236.5M of $313.4M). With no returning base, each new visit is bought again.</span></a>
+      <a href="https://www.repairerdrivennews.com/2026/06/05/j-d-power-consumers-collecting-historic-number-of-auto-insurance-quotes/" target="_blank" rel="noopener"><b>53%</b><span>Of auto insurance customers shopped in the past year, near the 19-year high J.D. Power recorded in 2025. Shoppers keep coming back to market, and LendingTree has no relationship to keep them.</span></a>
+    </div>
+    <p class="score-note rv">Sources: LendingTree 10-K (FY2025) and 10-Q (Q2 2026), J.D. Power (2026 study). Percentages are my arithmetic on reported figures, and the readings beside them are mine. LendingTree publishes no repeat-shopper rate.</p>
+  </div></article>
+
+  <article class="item" id="p3"><div class="wrap grid">
+    <div class="txt">
+      <span class="num rv">03</span>
+      <h3 class="rv">Into the void.</h3>
+      <p class="sub rv">We send the lead over the wall and rarely learn what happened.</p>
+      <p class="rv">Most Home revenue is paid at the match, before anyone knows whether a loan closes (<a href="https://www.sec.gov/Archives/edgar/data/1434621/000143462125000006/tree-20241231.htm" target="_blank" rel="noopener">10-K</a>). The lead goes over the wall and, for most leads, LendingTree's view ends there.<sup class="fn"><a href="#n6" id="r6" aria-label="Note 6">6</a></sup></p>
+      <p class="rv">On the far side, lenders learn everything: who answered, who applied, who funded, who vanished. That outcome data is the most valuable data in the chain. Without it, matching runs on proxies, pricing cannot reward quality, and lenders cannot tell a good source from a bad one. Everyone guesses.</p>
+      <p class="rv">A closed loop changes the math. Reported outcomes let LendingTree price on what funds, train matching on results, and show every lender where its best customers come from. The gold is on the other side of the wall. The model today rarely goes to look.</p>
+    </div>
+    <div class="media rv">
+      <figure class="shot">
+        <a href="/lendingtree/img/p3-wall.webp" target="_blank" rel="noopener"><img src="/lendingtree/img/p3-wall.webp" alt="Workers on one side of a concrete wall shovel dirt over it. On the other side, workers sift gold from the same dirt on conveyor belts." width="1536" height="1024" loading="lazy"></a>
+        <figcaption class="fig-note">Lead after lead goes over the wall to lenders. The gold, the outcomes, is on the far side, where LendingTree rarely looks.</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="scores rv" aria-label="Data behind problem 3">
+      <a href="https://investors.lendingtree.com/static-files/adad2b39-5c81-4b93-8462-144bce99cc86" target="_blank" rel="noopener"><b>$151.8M</b><span>Home revenue in 2025, mostly upfront match fees. It is paid when the lead is delivered, before anyone knows whether a loan closes.</span></a>
+      <a href="https://investors.lendingtree.com/static-files/adad2b39-5c81-4b93-8462-144bce99cc86" target="_blank" rel="noopener"><b>Up to 5</b><span>Lenders can each pay a match fee for one consumer request. Five leads go over the wall at once, and each is paid at the match.</span></a>
+      <a href="https://investors.lendingtree.com/static-files/adad2b39-5c81-4b93-8462-144bce99cc86" target="_blank" rel="noopener"><b style="font-size:clamp(1.3rem,2.3vw,1.8rem);line-height:1.2">Beyond its control</b><span>LendingTree's 10-K says lead conversion depends on factors besides lead quality, many outside its control. Outcome data is how to tell them apart.</span></a>
+    </div>
+    <p class="score-note rv">Sources: LendingTree 10-K (FY2025). The last line is my reading of the risk factor.</p>
+  </div></article>
+</section>
+
+<!-- THE SOLUTIONS -->
+<section id="solutions" class="light">
+  <div class="wrap era">
+    <span class="kicker rv">What changes</span>
+    <h2 class="rv">The solutions</h2>
+    <p class="rv">Three moves. One shift, from selling leads to serving shoppers.</p>
+  </div>
+
+  <article class="item" id="s1"><div class="wrap grid">
+    <div class="txt">
+      <span class="num rv">01 · Choice</span>
+      <h3 class="rv">The power of choice.</h3>
+      <figure class="pull rv"><blockquote>"Exchange is truly voluntary only when nearly equivalent alternatives exist."</blockquote><figcaption>Milton Friedman, <i>Capitalism and Freedom</i>, 1962 · <a href="https://kwize.com/quote/7994" target="_blank" rel="noopener">source</a></figcaption></figure>
+      <p class="rv"><b>How it works.</b> After the form, the shopper sees clear, comparable options. They pick who contacts them, how and when. An AI guide, building on LendingTree's new AI offer overviews, helps them decide, then follows up by text and email until they choose. Nobody else calls. A shopper who has not chosen after 24 hours goes to their two best matches, shown by name, in place of up to five unnamed lenders.</p>
+      <p class="rv"><b>Why it works.</b> People answer the call they asked for. A chosen lender arrives expected, with context, to a shopper already leaning in. Lenders stop racing four rivals who dial in the same minute. Comparable offers remove the guesswork that breeds distrust. It is the shift LendingTree's CEO called for when trigger leads were banned: competition on "price, service, and product value rather than call volume" (<a href="https://nationalmortgageprofessional.com/news/trigger-lead-restrictions-begin-homebuyers-privacy-protection-act-takes-effect" target="_blank" rel="noopener">source</a>). Much of the consent work was built in 2024.<sup class="fn"><a href="#n7" id="r7" aria-label="Note 7">7</a></sup></p>
+      <p class="rv"><b>What we expect.</b> Fewer contacts per shopper, and higher answer and funded rates per lead. Lenders pay a premium for a lead the shopper picked.<sup class="fn"><a href="#n8" id="r8" aria-label="Note 8">8</a></sup> The risk is fewer match fees per form, so break-even is the test: if half of shoppers choose, and a fallback lead is worth half of today's, the price per selection needs to be about 1.5 times today's revenue per lead. Everything above that line is upside.</p>
+      <div class="approach rv">
+        <h4>Approach</h4>
+        <dl>
+          <div class="r"><dt>Scope</dt><dd>An options step with a clear comparison and a choose button, an AI guide inside the experience, and proactive text and email that push toward a choice.</dd></div>
+          <div class="r"><dt>Segment</dt><dd>One Home Equity segment. At least 5,000 leads reaching the options step.<span class="tag">Proposed</span></dd></div>
+          <div class="r"><dt>Partners</dt><dd>Three alpha lenders who cover 100% of the segment and at least 80% of its lenders, under a selection-only agreement.</dd></div>
+          <div class="r"><dt>KPIs</dt><dd><b>Selection rate</b> (goal 50%), <b>funded rate per selection</b> (goal 4%), and <b>revenue per lead</b> against a holdout on the current model.</dd></div>
+          <div class="r"><dt>Decision</dt><dd><b>Double down</b> at 40% selection or more, funded rate near 4% or better, and revenue per lead at or above the holdout. <b>Kill</b> under 25% selection, or if lenders will not pay break-even.<span class="tag">Proposed</span></dd></div>
+          <div class="r"><dt>Timing</dt><dd>12 to 16 weeks to launch, about 12 more to a decision once the funding window closes.<span class="tag">ROM</span></dd></div>
+          <div class="r"><dt>Compliance</dt><dd>Consent names only the chosen lender, or the two named fallback matches (TCPA).</dd></div>
+          <div class="r"><dt>Research</dt><dd>Alpha lenders, plus eight to ten shopper interviews on what they want to compare.</dd></div>
+        </dl>
+      </div>
+      <a class="cta rv" href="/lendingtree/choice/">Open the prototype</a>
+    </div>
+    <div class="media rv">
+      <figure class="shot">
+        <a href="/lendingtree/img/s1-options.webp" target="_blank" rel="noopener"><img src="/lendingtree/img/s1-options.webp" alt="Two iPhone screens. Left: three comparable lender offers with a compare box, a details button and an AI assistant. Right: one offer with loan details, a choice of text, call or email, a time picker and a contact button." width="1536" height="1024" loading="lazy"></a>
+        <figcaption class="fig-note">After the form, the shopper compares offers side by side and opens one for details. They choose how and when that lender reaches them: text, call or email. An AI assistant answers questions along the way.</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="scores rv" aria-label="Targets for choice">
+      <div><b>50%</b><span>Selection rate goal: shoppers who choose who contacts them.</span></div>
+      <div><b>4%</b><span>Funded rate per selection goal.</span></div>
+      <div><b>1.5×</b><span>Break-even price per selection, against today's revenue per lead.</span></div>
+    </div>
+    <p class="score-note rv">Targets from the approach above. Double down at 40% selection or more. Kill under 25%.</p>
+  </div></article>
+
+  <article class="item" id="s2"><div class="wrap grid">
+    <div class="txt">
+      <span class="num rv">02 · Relationship</span>
+      <h3 class="rv">A companion.</h3>
+      <figure class="pull rv"><blockquote>"Proactively delighting customers earns trust, which earns more business from those customers, even in new business arenas."</blockquote><figcaption>Jeff Bezos, 2013 letter to Amazon shareholders · <a href="https://www.sec.gov/Archives/edgar/data/1018724/000119312513151836/d511111dex991.htm" target="_blank" rel="noopener">source</a></figcaption></figure>
+      <p class="rv"><b>How it works.</b> A free policy wallet inside the LendingTree app that holds every insurance policy a person has: carrier, coverage, price, renewal date. LendingTree pre-fills what it knows from past quotes, and a policy-import service connects the rest in a tap,<sup class="fn"><a href="#n9" id="r9" aria-label="Note 9">9</a></sup> with upload or email forward as backup. The wallet watches renewals and prices, and prompts a shop at the right moment.</p>
+      <p class="rv"><b>Why it works.</b> Renewal dates are predictable, and a price increase is the top reason people shop.<sup class="fn"><a href="#n10" id="r10" aria-label="Note 10">10</a></sup> A tool that knows the date and the price is there when the decision happens. Useful service earns the next visit, and the next visit costs nothing to acquire.</p>
+      <p class="rv"><b>What we expect.</b> Returning shoppers in place of purchased ones. A lower cost to acquire each quote, more quotes per person over time, and a direct relationship with people who now arrive through an ad. Insurance segment margin was 24% in Q2 2026 against 27% a year earlier. Owned relationships are the lever that moves it. Experian already offers rate monitoring. LendingTree's edge is its quote volume and carrier demand.<sup class="fn"><a href="#n11" id="r11" aria-label="Note 11">11</a></sup></p>
+      <div class="approach rv">
+        <h4>Approach</h4>
+        <dl>
+          <div class="r"><dt>Scope</dt><dd>A wallet inside the existing LendingTree app and logged-in site. Policies are pre-filled or imported. Auto and home first. A renewal calendar, price checks, and prompts to shop or renew as contracts expire.</dd></div>
+          <div class="r"><dt>Segment</dt><dd>About 2,000 recent insurance quote shoppers who opt in.<span class="tag">Proposed</span></dd></div>
+          <div class="r"><dt>KPIs</dt><dd><b>Activation</b> (policies connected per user), <b>90-day retention</b>, <b>quote starts per active user</b> against cold traffic, policies bound, and <b>revenue per member</b> against the cost of buying the same quotes.</dd></div>
+          <div class="r"><dt>Decision</dt><dd><b>Double down</b> when half of users connect two or more policies, 35% are active at 90 days, and quote starts run at twice the cold-traffic rate. <b>Kill</b> if users will not connect policies, or connecting does not change quote behavior.<span class="tag">Proposed</span></dd></div>
+          <div class="r"><dt>Compliance</dt><dd>Opt-in consent to store and monitor policies, handled under GLBA privacy rules.</dd></div>
+          <div class="r"><dt>Timing</dt><dd>Five to seven months to an MVP, then a 90-day cohort.<span class="tag">ROM</span></dd></div>
+        </dl>
+      </div>
+      <a class="cta rv" href="/lendingtree/companion/">Open the prototype</a>
+    </div>
+    <div class="media rv">
+      <figure class="shot">
+        <a href="/lendingtree/img/s2-app.webp" target="_blank" rel="noopener"><img src="/lendingtree/img/s2-app.webp" alt="Three iPhone screens of an insurance app: policy cards with renewal dates, one policy with coverage details and a renewal prompt, and a notifications list with savings alerts." width="1536" height="1024" loading="lazy"></a>
+        <figcaption class="fig-note">The wallet holds every policy with its carrier, price and renewal date. It flags a renewal 41 days out and points to a lower rate when one exists.</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="scores rv" aria-label="Targets for the companion">
+      <div><b>50%</b><span>Of users connect two or more policies.</span></div>
+      <div><b>35%</b><span>Still active at 90 days.</span></div>
+      <div><b>2×</b><span>Quote starts per active user, against cold traffic.</span></div>
+    </div>
+    <p class="score-note rv">Targets from the approach above. Kill if users will not connect policies.</p>
+  </div></article>
+
+  <article class="item" id="s3"><div class="wrap grid">
+    <div class="txt">
+      <span class="num rv">03 · Outcomes</span>
+      <h3 class="rv">Aligned outcomes.</h3>
+      <figure class="pull rv"><blockquote>"I've been in the top 5% of my age cohort all my life in understanding the power of incentives, and all my life I've underestimated it."</blockquote><figcaption>Charlie Munger, "The Psychology of Human Misjudgment," Harvard, 1995 · <a href="https://jamesclear.com/great-speeches/psychology-of-human-misjudgment-by-charlie-munger" target="_blank" rel="noopener">source</a></figcaption></figure>
+      <p class="rv"><b>How it works.</b> A simple outcomes API. Partners report what happened to each lead: reached, quoted, applied, bound or funded, declined. Partners who report get better-matched leads and, where the rules allow, pricing tied to results.</p>
+      <p class="rv"><b>Why it works.</b> Incentives drive behavior, and today a partner gains nothing from reporting. With a reward attached, they report. Insurance lead gen already works this way.<sup class="fn"><a href="#n12" id="r12" aria-label="Note 12">12</a></sup> The data trains matching on what converts in place of who clicked, which lifts conversion for partners and the value of every lead.</p>
+      <p class="rv"><b>What we expect.</b> A closed loop. Quality becomes visible by source and by partner, pricing moves toward outcomes in Insurance and Consumer (not mortgage or home equity),<sup class="fn"><a href="#n13" id="r13" aria-label="Note 13">13</a></sup> and a model that learns from results compounds. It also gives Choice the data to keep its offers honest.</p>
+      <div class="approach rv">
+        <h4>Approach</h4>
+        <dl>
+          <div class="r"><dt>Scope</dt><dd>A small API: report an outcome, read a lead's status, receive a webhook. An incentive for reporting, better-matched leads and outcome-based pricing, and a basic partner dashboard.</dd></div>
+          <div class="r"><dt>Segment</dt><dd>Insurance first, with three alpha auto carriers. Personal loans next.<span class="tag">Proposed</span></dd></div>
+          <div class="r"><dt>KPIs</dt><dd><b>Reporting coverage</b> (leads with a status inside 14 days), <b>conversion per lead</b> (bound or funded) for matched traffic against control, and cost per bound policy.</dd></div>
+          <div class="r"><dt>Decision</dt><dd><b>Double down</b> at 80% reporting coverage and a 10% lift in conversion per lead. <b>Kill</b> under 40% coverage.<span class="tag">Proposed</span></dd></div>
+          <div class="r"><dt>Timing</dt><dd>Eight to ten weeks to a first version, run alongside Choice.<span class="tag">ROM</span></dd></div>
+          <div class="r"><dt>Compliance</dt><dd>Fair-lending tests on the matching model from day one. No pay-on-close or paid placement in mortgage or home equity (RESPA).</dd></div>
+          <div class="r"><dt>Research</dt><dd>Alpha carriers, on what they will report and what they want back.</dd></div>
+        </dl>
+      </div>
+      <a class="cta rv" href="/lendingtree/outcomes/">Open the prototype</a>
+    </div>
+    <div class="media rv">
+      <figure class="shot">
+        <a href="/lendingtree/img/s3-api.webp" target="_blank" rel="noopener"><img src="/lendingtree/img/s3-api.webp" alt="Top: developer documentation for an Update Customer Status endpoint with a status list. Bottom: a lender performance dashboard with leads delivered, converted and conversion rate by partner." width="1025" height="1500" loading="lazy"></a>
+        <figcaption class="fig-note">Top: the API a partner calls to report each lead's status, from contacted to bound or funded. Bottom: the partner dashboard that closes the loop, with leads delivered, converted and conversion rate by partner.</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="scores rv" aria-label="Targets for outcomes">
+      <div><b>80%</b><span>Reporting coverage: leads with a status inside 14 days.</span></div>
+      <div><b>+10%</b><span>Lift in conversion per lead, against control.</span></div>
+      <div><b>40%</b><span>Coverage below this ends the test.</span></div>
+    </div>
+    <p class="score-note rv">Targets from the approach above.</p>
+  </div></article>
+
+  <div class="wrap notes" id="notes">
+    <h4>Notes</h4>
+    <ol>
+      <li id="n1">QuoteWizard, LendingTree's insurance business, settled the <i>Mantha</i> TCPA class action over texts for $19 million (approved Sept. 2025). New TCPA suits followed in Nov. 2025 and July 2026. <a href="https://www.sec.gov/Archives/edgar/data/1434621/000162828026016084/R23.htm" target="_blank" rel="noopener">10-K note</a>, <a href="https://tcpaworld.com/2026/07/08/sued-again-lending-tree-sued-in-another-tcpa-class-action-this-time-over-failure-to-identify-itself-in-promotional-text-messages/" target="_blank" rel="noopener">TCPAWorld</a>. <a class="back" href="#r1" aria-label="Back to text">↩</a></li>
+      <li id="n2">Trustpilot shows about 4.5/5 on roughly 17,000 reviews, many invited by LendingTree. Its own review summary still names the wave of calls and texts. <a href="https://au.trustpilot.com/review/www.lendingtree.com?page=3" target="_blank" rel="noopener">Trustpilot</a>. <a class="back" href="#r2" aria-label="Back to text">↩</a></li>
+      <li id="n3">In Q2 2026 revenue grew 25% and variable marketing margin grew 4%, falling from about 33% to 28% of revenue. My arithmetic on the <a href="https://www.sec.gov/Archives/edgar/data/0001434621/000162828026050633/tree-63026xer.htm" target="_blank" rel="noopener">Q2 2026 release</a>. <a class="back" href="#r3" aria-label="Back to text">↩</a></li>
+      <li id="n4">57% in 2025 was the highest in the study's 19 years. The 2026 study found 53%, which J.D. Power still calls historic. <a href="https://www.repairerdrivennews.com/2026/06/05/j-d-power-consumers-collecting-historic-number-of-auto-insurance-quotes/" target="_blank" rel="noopener">Repairer Driven News</a>. <a class="back" href="#r4" aria-label="Back to text">↩</a></li>
+      <li id="n5">My LendingTree launched in 2014 as free credit monitoring and reached 28.2 million cumulative sign-ups by the end of 2023. It was relaunched as the Spring app in 2024. That May, LendingTree told the SEC that "the Spring platform is not yet driving significant revenue." <a href="https://www.sec.gov/Archives/edgar/data/1434621/000168316824003891/filename1.htm" target="_blank" rel="noopener">SEC correspondence</a>. <a class="back" href="#r5" aria-label="Back to text">↩</a></li>
+      <li id="n6">Some outcomes do come back. LendingTree earns closed-loan fees on some Consumer products and per-approval fees on cards (<a href="https://www.sec.gov/Archives/edgar/data/1434621/000162828026016084/tree-20251231.htm" target="_blank" rel="noopener">10-K</a>), and its concierge sales model drove "a 30% increase in the number of loans we closed for partners" (<a href="https://www.fool.com/earnings/call-transcripts/2025/11/01/lendingtree-tree-q3-2025-earnings-transcript" target="_blank" rel="noopener">Q3 2025 call</a>). Visibility is weakest in Home. <a class="back" href="#r6" aria-label="Back to text">↩</a></li>
+      <li id="n7">LendingTree "spent a significant portion of 2024 preparing to comply" with the FCC's one-to-one consent rule and planned premium pricing for those leads. It set the work aside when the 11th Circuit vacated the rule in Jan. 2025. <a href="https://insurancenewsnet.com/oarticle/lendingtree-inc-fourth-quarter-2024-earnings-sharehoholder-letter" target="_blank" rel="noopener">Q4 2024 letter</a>, <a href="https://www-web.itiger.com/news/2517168665" target="_blank" rel="noopener">Q4 2024 call</a>. <a class="back" href="#r7" aria-label="Back to text">↩</a></li>
+      <li id="n8">EverQuote kept consumer-control flows after the ruling. Leads with fewer buyers performed better, and the margin hit was "modest" (<a href="https://itiger.com/news/2514605660" target="_blank" rel="noopener">EverQuote call</a>). Credible has long promised users "won't be contacted by lenders unless they choose to move forward" (<a href="https://blogstaging.credible.com/company/how-credible-is-different/" target="_blank" rel="noopener">Credible</a>). <a class="back" href="#r8" aria-label="Back to text">↩</a></li>
+      <li id="n9">Services such as Canopy Connect import policies from about 400 carriers (<a href="https://usecanopy.com/solutions/insurance-hub" target="_blank" rel="noopener">Canopy</a>). Pre-fill can be bought, not built. <a class="back" href="#r9" aria-label="Back to text">↩</a></li>
+      <li id="n10">49% of shoppers cite an actual or expected premium increase as the trigger, and 86% of switchers cite price. LexisNexis Risk Solutions, Oct. 2026 (<a href="https://insurance-edge.net/2026/10/23/new-study-from-lexisnexis-risk-solutions-reveals-switching-behaviour/" target="_blank" rel="noopener">Insurance Edge</a>). <a class="back" href="#r10" aria-label="Back to text">↩</a></li>
+      <li id="n11">Experian bought Gabi for $320 million and in 2024 began monitoring members' auto rates (<a href="https://www.experian.com/blogs/news/2024/09/13/experian-helps-consumers-unshop-auto-insurance/" target="_blank" rel="noopener">Experian</a>). Jerry moved beyond insurance because commission per customer is "on the lower end" (<a href="https://coverager.com/?p=104888" target="_blank" rel="noopener">Coverager</a>). Insurance-only engagement needs scale in quotes to pay. <a class="back" href="#r11" aria-label="Back to text">↩</a></li>
+      <li id="n12">At MediaAlpha, 106 demand partners send real-time conversion feedback, covering about 90% of insurance transaction value. It is used to price each referral. <a href="https://www.sec.gov/Archives/edgar/data/1818383/000181838326000049/max-20251231.htm" target="_blank" rel="noopener">MediaAlpha 10-K</a>. <a class="back" href="#r12" aria-label="Back to text">↩</a></li>
+      <li id="n13">In mortgage and home equity, a fee that rises when a loan closes, or better placement for partners who pay, can read as a referral fee under RESPA Section 8 (<a href="https://dwt.com/blogs/financial-services-law-advisor/2023/02/cfpb-respa-section-8-digital-mortgage-kickback" target="_blank" rel="noopener">CFPB advisory opinion, 2023</a>). Matching trained on approvals also needs fair-lending testing (<a href="https://www.justice.gov/usao-sdny/pr/united-states-attorney-implements-groundbreaking-settlement-meta-platforms-inc-formerly" target="_blank" rel="noopener">DOJ v. Meta</a>). <a class="back" href="#r13" aria-label="Back to text">↩</a></li>
+    </ol>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <span>Prepared by Adam Michaelson · Eagle Mountain, Utah · Draft for discussion. Items tagged Proposed are mine to calibrate.</span>
+  <span><a href="mailto:hello@adam-michaelson.com">hello@adam-michaelson.com</a> · <a href="https://www.linkedin.com/in/adammichaelson" target="_blank" rel="noopener">LinkedIn</a></span>
+</div></footer>
+<script src="/lendingtree/lt.js?v=1" defer></script>
+</body>
+</html>
