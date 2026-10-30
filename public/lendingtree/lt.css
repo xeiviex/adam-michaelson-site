@@ -295,3 +295,4 @@ footer a { color: #0a0d12; text-underline-offset: 3px; }
 #solutions .cta { background: #06a866; color: var(--on-accent); }
 #solutions .cta:hover, #solutions .cta:focus-visible { background: #048a54; }
 #solutions .fn a { color: #006c9c; }
+#s1 .shot img { border: 0; }
