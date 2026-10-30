@@ -302,3 +302,4 @@ footer a { color: #0a0d12; text-underline-offset: 3px; }
 .shot .ctv:hover, .shot .ctv:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
 .shot a:not(.ctv) { transition: opacity .2s; }
 .shot a:not(.ctv):hover { opacity: .9; }
+.approach dt .lc { text-transform: lowercase; }
