@@ -18,6 +18,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { blockedNames, allowedFullNames, redact } from "../functions/_lib/nameguard.js";
 import { filterPage, assertNoLeak, markdownToBlocks } from "./lib/knowledge-filter.mjs";
+import { siteSection } from "./lib/site-pages.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -30,6 +31,9 @@ export const PAGES = [
   ["3f52856e-f62e-81d7-bbec-e8e834a3f45e", "Frameworks: Product Team Roles & Rules of Engagement"],
   ["3f52856e-f62e-81a4-b3f6-eeb9af22f832", "Frameworks: Product Team Roles & Expectations"],
 ];
+
+// Site routes whose published pages (and sub-pages) are included as [PUBLIC] knowledge: [route, section heading].
+export const SITE_ROUTES = [["lendingtree", "LendingTree: my point of view and prototypes (adam-michaelson.com/lendingtree)"]];
 
 // Hard-coded exclusion: "Adam's Professional Biography: Private Notes (NOT FOR PUBLIC CHAT)".
 // This page is never fetched. Its id is only used to refuse and to scan the output.
@@ -73,6 +77,12 @@ if (fromDir) {
     sections.push(r.markdown);
     allDropped.push(...r.dropped);
   }
+}
+
+// Published site pages that are fair game for the chat (the page and every sub-page under each route).
+for (const [route, heading] of SITE_ROUTES) {
+  const sec = siteSection(join(root, "public"), route, heading);
+  if (sec) { sections.push(sec); console.log(`  site pages /${route}: ${sec.length} chars`); }
 }
 
 const names = blockedNames(process.env);
