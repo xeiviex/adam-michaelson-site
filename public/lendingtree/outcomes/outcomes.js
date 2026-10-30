@@ -269,5 +269,8 @@
     }
     docsView();
   });
-  fresh(); render();
+  fresh();
+  if (/dash/.test(location.hash)) { var tp0 = byId(S.as); S.tab = 'dash'; S.seg = tp0.type; S.sel = tp0.id; }
+  window.addEventListener('hashchange', function () { S.tab = /dash/.test(location.hash) ? 'dash' : 'docs'; render(); });
+  render();
 })();
