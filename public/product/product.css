@@ -128,3 +128,5 @@ body.home .lead .txt { align-self: start; }
 .subsec { grid-column: 1 / -1; margin-top: 8px; padding: 28px clamp(20px, 3vw, 36px); border-left: 3px solid var(--accent); background: rgba(255,255,255,.04); display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
 .subsec h3 { font-family: var(--label); font-size: .82rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--ink); }
 .subsec p { font-size: 1.05rem; }
+.subsec .attrs { width: 100%; }
+.subsec .sub { font-size: clamp(1.1rem, 1.8vw, 1.3rem); }
