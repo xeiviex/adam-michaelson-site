@@ -295,7 +295,7 @@ footer a { color: #0a0d12; text-underline-offset: 3px; }
 #solutions .cta { background: #06a866; color: #fff; }
 #solutions .cta:hover, #solutions .cta:focus-visible { background: #048a54; }
 #solutions .fn a { color: #006c9c; }
-#s1 .shot img, #s2 .shot img { border: 0; }
+#s1 .shot img, #s2 .shot img, #s3 .shot img { border: 0; }
 /* click-to-view label above prototype images */
 .shot .ctv { display: inline-block; margin-bottom: 10px; font-family: var(--head); font-weight: 800; font-size: .78rem; letter-spacing: .24em; text-transform: uppercase; color: #06a866; text-decoration: none; }
 .shot .ctv::after { content: ' \2192'; }
