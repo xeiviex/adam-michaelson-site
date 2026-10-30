@@ -304,3 +304,6 @@ footer a { color: #0a0d12; text-underline-offset: 3px; }
 .shot a:not(.ctv):hover { opacity: .9; }
 .approach dt .lc { text-transform: lowercase; }
 .shot .ctv { display: block; text-align: center; }
+/* hero: all accent type in green */
+.hero-wrap .principles-line, .hero-wrap .pillars b i { color: #06a866; }
+.hero-wrap .pillars a:hover, .hero-wrap .pillars a:focus-visible { border-color: #06a866; }
