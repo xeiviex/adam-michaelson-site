@@ -4,7 +4,6 @@
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var openers = [
     "Hi, I'm Adam. Ask me whatever you're curious about, about my work or about me.",
-    "Hey there. I'd normally ask what brought you here, so what did?",
     "Welcome. Whatever you came here wondering, go ahead and ask.",
     "Not sure where to start? Tell me what you're looking for and I'll point you there.",
     "Hello. I build products, mostly with AI these days. What would you like to know?"
