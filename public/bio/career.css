@@ -180,3 +180,8 @@
 .media-fit .photo img { position: static; height: auto; }
 .media-fit .photo { aspect-ratio: 16 / 9; }
 @media (max-width: 900px) { .media-collage.collage-wide .photo.ph-1 { aspect-ratio: 16 / 9; } }
+
+/* BambooHR last section: photo above the KPI cards, cards with no frame */
+.media-stackcol { gap: 14px; }
+.media-stackcol .kpi { margin: 0; }
+.media-stackcol .kpi img { display: block; width: 100%; height: auto; }
