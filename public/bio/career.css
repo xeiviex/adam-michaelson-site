@@ -172,3 +172,11 @@
 @media (prefers-reduced-motion: reduce) {
   .js .panel .copy, .js .panel .media { opacity: 1; transform: none; }
 }
+
+/* BambooHR: wide HR-leader photo across the top of the charter collage, two squares beneath */
+.media-collage.collage-wide { grid-template-rows: auto 1fr auto; }
+.media-collage.collage-wide .ph-1 { grid-row: auto; grid-column: 1 / 3; aspect-ratio: 16 / 9; }
+.media-collage.collage-wide .photo-note { grid-column: 1 / 3; }
+.media-fit .photo img { position: static; height: auto; }
+.media-fit .photo { aspect-ratio: 16 / 9; }
+@media (max-width: 900px) { .media-collage.collage-wide .photo.ph-1 { aspect-ratio: 16 / 9; } }
