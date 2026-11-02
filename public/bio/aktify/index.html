@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="/bio/bio.css?v=4">
 <link rel="stylesheet" href="/bio/career.css?v=21">
 <link rel="stylesheet" href="/bio/aktify/chat.css?v=9">
+<link rel="stylesheet" href="/bio/aktify/nlu.css?v=1">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -154,10 +155,6 @@
         </ul>
         </div>
         <div class="media media-montage">
-          <figure class="ph ph-1">
-            <svg class="ph-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-            <figcaption><span class="ph-tag">Photo placeholder</span>The model-training management tool</figcaption>
-          </figure>
           <figure class="photo ph-2">
             <img src="/bio/photos/aktify-outcomes-nlu-analysts.webp" alt="Two NLU analysts review a flagged conversation on a screen together" width="1122" height="1402" loading="lazy" style="object-position: 50% 40%">
             <figcaption class="sr">NLU analysts reviewing conversations</figcaption>
@@ -171,7 +168,12 @@
             <figcaption class="sr">The Aktify product team</figcaption>
           </figure>
         </div>
-        <p class="photo-note">Illustrative AI-generated images; interfaces are not authentic screenshots.</p>
+        <div class="nlu-block">
+          <div class="nlu-head"><h3>The model-training tool, redesigned</h3><p>Analysts moved from a dashboard to an intent grid to a single intent, reviewing the phrases callers actually use and the responses the agent gives.</p></div>
+          <div class="nlu-tile" role="img" aria-label="Looping walkthrough of the NLU analyst tool: a dashboard of tasks, a grid of intents grouped by sentiment, a group, filter and sort panel, and an intent record with caller phrases and agent responses for a Medical Guardian campaign"><div class="nlu-stage" aria-hidden="true"></div></div>
+          <div class="nlu-steps" aria-label="Jump to a screen"><button type="button" data-go="dash">Dashboard</button><button type="button" data-go="grid">Intent grid</button><button type="button" data-go="rec">Intent record</button></div>
+        </div>
+        <p class="photo-note">Illustrative AI-generated images; interfaces are not authentic screenshots. The tool walkthrough is a redesigned mock-up with illustrative data.</p>
       </div>
     </section>
 
@@ -211,5 +213,6 @@
 
 <script src="/bio/career.js?v=2"></script>
 <script src="/bio/aktify/chat.js?v=7"></script>
+<script src="/bio/aktify/nlu.js?v=1"></script>
 </body>
 </html>
