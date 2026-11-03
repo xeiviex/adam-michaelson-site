@@ -234,7 +234,7 @@ export const pages = [
       title: 'Go sit next to them',
       sub: 'Three months, about 30 sites, and a lot of notepads.',
       body: [
-        'We spent roughly three months visiting about 30 clients and non-clients in our target market, among them Nike, Merck, ESPN, and Train. We split into teams and watched five to ten people per site at their own desks, doing normal work for 30 to 60 minutes each, to see what a phone call with a primary contact never could.',
+        'We spent roughly three months visiting about 30 clients and non-clients in our target market, among them Nike, Merck, ESPN, and Trane. We split into teams and watched five to ten people per site at their own desks, doing normal work for 30 to 60 minutes each, to see what a phone call with a primary contact never could.',
         'We tested three persona hypotheses. The finding that mattered: frontline workers kept running their work somewhere else, on a notepad, a small whiteboard, or a private spreadsheet. The project manager’s tool was the project manager’s, and they tracked their own work their own way.',
       ],
       quote: null,
