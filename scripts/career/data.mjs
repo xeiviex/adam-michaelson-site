@@ -216,8 +216,8 @@ export const pages = [
       title: 'Give the product a point of view',
       sub: 'The charter: vision and strategy for the next phase, in a company that had never had a product manager.',
       body: [
-        'AtTask had always been led by engineering. They hired me as their first product manager to set a vision and strategy for what came next. Steve Ballard joined as head of design and became a mentor in user research. Josh Custer, from the implementation team, became a PM alongside me.',
-        'Josh and I pitched the C-team on a strategy built around renewals: deepen adoption among the key personas, grounded in jobs-to-be-done and in immediate value that makes the product sticky. We got buy-in to go find out who those people really were.',
+        'AtTask had always been led by engineering. They hired me as their first product manager to set a vision and strategy for what came next. Steve Ballard joined as head of design and became a mentor in user research.',
+        'We pitched the C-team on a strategy built around renewals: deepen adoption among the key personas, grounded in jobs-to-be-done and in immediate value that makes the product sticky. We got buy-in to go find out who those people really were.',
       ],
       points: [
         { h: 'Mark', t: 'the executive, who needs visibility.' },
