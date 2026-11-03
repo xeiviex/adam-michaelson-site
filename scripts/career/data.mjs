@@ -244,8 +244,8 @@ export const pages = [
       title: 'My Work: a workspace for Chris',
       sub: 'A new area of the product, a new data model, and a six-month beta.',
       body: [
-        'We built “My Work,” a workspace for the frontline worker, plus a team space that had not existed before, and a data model compatible with the existing one. Work could now flow from Jen to Chris and bubble back up to Mark’s dashboards. Research took three months, building and iterating three to four more, then a six-month beta with testers drawn from the people we had studied.',
-        'Two details came straight from watching people. Jen could only request work, in a tab called “Work Requests,” because Chris wanted to feel in control. And when adoption stalled on a button labeled “Accept,” we relabeled it “Work on it,” and requests started moving.',
+        'We built “My Work,” a workspace for Chris — the frontline worker — plus a team space where he had visibility into the team’s work, could collaborate, and volunteer for work. Work could now flow from Jen to teams (or directly to Chris via a “work request”) and then automatically bubble up to Mark’s dashboards. Research took three months, building and iterating was a few more months, and then a six-month beta with testers drawn from the people we had studied.',
+        'One example of the iterative learnings: After launch, we noticed people weren’t moving incoming requests into their workspace. We suspected “Accept” felt like too big a commitment. Changing it to “Work on it” helped people feel ownership rather than obligation, and adoption jumped.',
       ],
       points: [
         { h: '4x', t: 'adoption by frontline workers (Chris).' },
