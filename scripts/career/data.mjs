@@ -263,8 +263,8 @@ export const pages = [
       title: 'Redesign the whole product, then pick a lane',
       sub: 'How the strategy scaled, and why I was ready to leave.',
       body: [
-        'After My Work, we redesigned every other area of the product around the same visual language and flows, adding social elements: connecting, sharing, and conversation. It meant a new data model and, in effect, a rewrite over several years.',
-        'Revenue grew from about $10M to $50M in three years. A dedicated marketing team then caught Adobe’s eye. With the redesign in place and the growth realized, I was ready for what was next, and Lendio’s CMO reached out to set up lunch with the CEO.',
+        'After the success of “My Work,” we redesigned every other area of the product around the same product principles, visual language and flows, and we added social elements like connecting, sharing, and conversation. It meant a new data model and, in effect, a rewrite over the next year or so.',
+        'Revenue grew from about $10M to $50M in three years. As we dialed in our ICP work, we noticed the success of quite a few marketing teams in our client-base, and this was what eventually caught the eye of Adobe. With the redesign in place and the growth realized, I was ready for what was next, and Lendio’s founders reached out to me.',
       ],
       next: {
         slug: 'lendio1',
