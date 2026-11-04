@@ -188,3 +188,5 @@
 
 .copy .tl { color: inherit; text-decoration: underline; text-decoration-color: var(--accent-text); text-underline-offset: 3px; }
 .copy .tl:hover, .copy .tl:focus-visible { color: var(--accent-text); }
+.photo-note .tl { color: inherit; text-decoration: underline; text-decoration-color: var(--accent-text); text-underline-offset: 3px; }
+.photo-note .tl:hover, .photo-note .tl:focus-visible { color: var(--accent-text); }
