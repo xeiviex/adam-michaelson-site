@@ -1,6 +1,6 @@
 /* Quote carousel (see carousel.js). Proxima Nova (italic quote, regular author) when available; Montserrat fallback until a Proxima Nova kit is added. */
 .quotes { padding: clamp(16px, 2.4vw, 29px) 0 clamp(36px, 5vw, 56px); border-bottom: 1px solid var(--line); }
-.qc { position: relative; touch-action: pan-y; outline: none; }
+.qc { position: relative; touch-action: pan-y; outline: none; padding-top: 44px; }
 .qc:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 8px; border-radius: 6px; }
 .qc-stage { display: grid; transition: height 0.5s ease; }
 .qc-slide { grid-area: 1 / 1; align-self: start; margin: 0; display: flex; flex-direction: column; justify-content: flex-start; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 0.6s ease, transform 0.6s ease, visibility 0s linear 0.6s; }
@@ -16,18 +16,18 @@
 /* Link to the full recommendations page */
 .qc-all { display: flex; align-items: center; justify-content: center; width: fit-content; height: 44px; margin: 1rem auto 0; font-family: 'proxima-nova', 'Proxima Nova', 'Montserrat', 'Inter', system-ui, sans-serif; font-size: .9rem; letter-spacing: .02em; color: #a9b4c4; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(169,180,196,.45); }
 .qc-all:hover, .qc-all:focus-visible { color: var(--accent-text); text-decoration-color: var(--accent-text); }
-/* Triangle arrows in the page accent. Under 1300px they sit at the left and right ends below the text; wider, in the side margins. */
-.qc-arrow { position: absolute; bottom: 0; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+/* Triangle arrows in the page accent, pinned to the top corners so they never move as quotes change length. Under 1300px they sit in a row above the quote; wider, in the side margins beside its first line. */
+.qc-arrow { position: absolute; top: 0; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; }
 .qc-arrow::before { content: ''; position: absolute; top: 50%; left: 50%; width: 16px; height: 20px; background: var(--accent-text); transform: translate(-50%, -50%); clip-path: polygon(0 50%, 100% 0, 100% 100%); transition: opacity 0.2s, transform 0.2s; opacity: .85; }
 .qc-next::before { clip-path: polygon(0 0, 100% 50%, 0 100%); }
 .qc-arrow:hover::before, .qc-arrow:focus-visible::before { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
 .qc-arrow:focus-visible { outline: 2px solid var(--accent-text); border-radius: 4px; }
 .qc-prev { left: -14px; } .qc-next { right: -14px; }
 @media (min-width: 1300px) {
-  .qc { padding-bottom: 0; }
-  .qc-arrow { bottom: auto; top: 50%; margin-top: -22px; }
+  .qc { padding-top: 0; }
+  .qc-arrow { top: 0; }
   .qc-prev { left: -56px; } .qc-next { right: -56px; }
 }
-@media (hover: none) and (max-width: 640px) { .qc-arrow { display: none; } .qc { padding-bottom: 0; } }
+@media (hover: none) and (max-width: 640px) { .qc-arrow { display: none; } .qc { padding-top: 0; } }
 .qc-still .qc-slide, .qc-still .qc-slide.on, .qc-still .qc-stage { transition: none; transform: none; }
 @media (prefers-reduced-motion: reduce) { .qc-slide, .qc-slide.on, .qc-stage { transition: none; transform: none; } }
