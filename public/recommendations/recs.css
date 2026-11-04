@@ -1,0 +1,17 @@
+/* /recommendations/: one section per person. Quote typography matches the bio carousels. */
+.recs-head { border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #0d0d0e 0%, #000 100%); }
+.recs-head .wrap { padding-top: clamp(28px, 5vw, 56px); padding-bottom: clamp(32px, 6vw, 64px); }
+.recs-head .more { display: inline-block; margin-bottom: clamp(24px, 4vw, 44px); }
+.recs-head .name { margin-bottom: 12px; }
+.recs-head .lede { color: var(--body); max-width: 52ch; }
+#recs { padding-top: clamp(8px, 2vw, 24px); padding-bottom: clamp(48px, 8vw, 96px); }
+.person { padding: clamp(32px, 5vw, 56px) 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: minmax(180px, 280px) minmax(0, 1fr); gap: clamp(20px, 4vw, 64px); }
+.person:last-child { border-bottom: 0; }
+.person h2 { font-size: clamp(19px, 2vw, 24px); font-weight: 600; letter-spacing: -0.01em; color: var(--ink); line-height: 1.25; }
+.person h2::after { content: ''; display: block; width: 28px; height: 2px; background: var(--accent-text); border-radius: 1px; margin: 12px 0; }
+.person .role { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.person .quotes-list { display: flex; flex-direction: column; gap: clamp(20px, 3vw, 32px); list-style: none; }
+.person blockquote { font-family: 'proxima-nova', 'Proxima Nova', 'Montserrat', 'Inter', system-ui, sans-serif; font-style: italic; font-weight: 400; font-size: clamp(1rem, 1.5vw, 1.2rem); line-height: 1.6; color: #f2f6fb; }
+.person .src { display: inline-block; margin-top: 8px; font-size: 13px; color: var(--link); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--faint); }
+.person .src:hover, .person .src:focus-visible { color: var(--accent-text); text-decoration-color: var(--accent-text); }
+@media (max-width: 720px) { .person { grid-template-columns: 1fr; gap: 16px; } }

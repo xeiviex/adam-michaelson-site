@@ -78,7 +78,8 @@
 
   var prev = el('button', 'qc-arrow qc-prev'); prev.type = 'button'; prev.setAttribute('aria-label', 'Previous quote'); 
   var next = el('button', 'qc-arrow qc-next'); next.type = 'button'; next.setAttribute('aria-label', 'Next quote'); 
-  box.appendChild(prev); box.appendChild(stage); box.appendChild(next);
+  var all = el('a', 'qc-all', 'See all recommendations'); all.href = '/recommendations/';
+  box.appendChild(prev); box.appendChild(stage); box.appendChild(next); box.appendChild(all);
   wrap.appendChild(box); root.appendChild(wrap);
   if (reduce) root.classList.add('qc-still');
   if (seq.length < 2) { prev.hidden = next.hidden = true; }
