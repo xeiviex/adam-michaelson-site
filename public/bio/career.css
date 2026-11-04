@@ -191,3 +191,25 @@
 .copy .tl:hover, .copy .tl:focus-visible { color: var(--accent-text); }
 .photo-note .tl { color: inherit; text-decoration: underline; text-decoration-color: var(--accent-text); text-underline-offset: 3px; }
 .photo-note .tl:hover, .photo-note .tl:focus-visible { color: var(--accent-text); }
+
+/* Image carousel (see image-carousel.js): slides stack in one grid cell so the stage is as tall as the tallest caption. */
+.split-solo { grid-template-columns: minmax(0, 1fr); }
+.split-solo .copy { max-width: 720px; }
+.ic { outline: none; touch-action: pan-y; }
+.ic:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 8px; border-radius: 6px; }
+.ic-stage { display: grid; }
+.ic-slide { grid-area: 1 / 1; margin: 0; display: flex; flex-direction: column; gap: 10px; opacity: 0; visibility: hidden; transition: opacity 0.6s ease, visibility 0s linear 0.6s; }
+.ic-slide.on { opacity: 1; visibility: visible; transition: opacity 0.6s ease; }
+.ic-slide .photo { position: relative; }
+.ic-slide .photo img { position: absolute; inset: 0; }
+.ic-ctrl { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
+.ic-dots { display: flex; }
+.ic-dot, .ic-arrow { width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; position: relative; }
+.ic-dot::before { content: ''; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transform: translate(-50%, -50%); transition: background 0.2s, transform 0.2s; }
+.ic-dot.on::before { background: var(--accent-text); transform: translate(-50%, -50%) scale(1.3); }
+.ic-arrow::before { content: ''; position: absolute; top: 50%; left: 50%; width: 14px; height: 18px; background: var(--accent-text); transform: translate(-50%, -50%); clip-path: polygon(0 50%, 100% 0, 100% 100%); opacity: .85; transition: opacity 0.2s; }
+.ic-next::before { clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.ic-arrow:hover::before, .ic-arrow:focus-visible::before { opacity: 1; }
+.ic-dot:focus-visible, .ic-arrow:focus-visible { outline: 2px solid var(--accent-text); border-radius: 4px; }
+.ic-still .ic-slide, .ic-still .ic-slide.on { transition: none; }
+@media (prefers-reduced-motion: reduce) { .ic-slide, .ic-slide.on { transition: none; } }
