@@ -13,7 +13,7 @@
     brock:   { name: 'Brock Blake',     role: 'CEO at Lendio' },
     spencer: { name: 'Spencer Grider',  role: 'VP at Sprout Marketing' },
     romney:  { name: 'Romney Williams', role: 'CEO at Dryout' },
-    paul:    { name: 'Paul O’Donnelle', role: 'VP of Engineering, Lendio' },
+    paul:    { name: 'Paul O’Donnell', role: 'VP of Engineering, Lendio' },
     mart:    { name: 'Mart Withers',    role: 'Co-Founder, Estate Share' },
     sam:     { name: 'Sam Strong',      role: 'Principal PM at Encino' },
     steve:   { name: 'Steve Ballard',   role: 'Head of Design at BambooHR and Workfront' },
