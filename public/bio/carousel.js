@@ -1,5 +1,5 @@
 // Rotating endorsement quotes. Mount: <aside class="quotes" data-page="main|lendio1|..."></aside>
-// Data lives in quotes-data.js. Auto-advances every 10s; dots, arrows, keyboard and swipe all work.
+// Data lives in quotes-data.js. Auto-advances every 10s; arrows, keyboard and swipe all work.
 (function () {
   var root = document.querySelector('.quotes[data-page]');
   if (!root || !window.BIO_QUOTES) return;
@@ -76,23 +76,18 @@
     return f;
   });
 
-  var prev = el('button', 'qc-arrow qc-prev'); prev.type = 'button'; prev.setAttribute('aria-label', 'Previous quote'); prev.textContent = '‹';
-  var next = el('button', 'qc-arrow qc-next'); next.type = 'button'; next.setAttribute('aria-label', 'Next quote'); next.textContent = '›';
-  var dotsEl = el('div', 'qc-dots');
-  var dots = seq.map(function (x, i) {
-    var b = el('button', 'qc-dot'); b.type = 'button';
-    b.setAttribute('aria-label', 'Show quote ' + (i + 1) + ' of ' + seq.length);
-    b.addEventListener('click', function () { go(i, true); });
-    dotsEl.appendChild(b);
-    return b;
-  });
-
-  box.appendChild(prev); box.appendChild(stage); box.appendChild(next); box.appendChild(dotsEl);
+  var prev = el('button', 'qc-arrow qc-prev'); prev.type = 'button'; prev.setAttribute('aria-label', 'Previous quote'); 
+  var next = el('button', 'qc-arrow qc-next'); next.type = 'button'; next.setAttribute('aria-label', 'Next quote'); 
+  box.appendChild(prev); box.appendChild(stage); box.appendChild(next);
   wrap.appendChild(box); root.appendChild(wrap);
   if (reduce) root.classList.add('qc-still');
-  if (seq.length < 2) { prev.hidden = next.hidden = dotsEl.hidden = true; }
+  if (seq.length < 2) { prev.hidden = next.hidden = true; }
 
   var cur = 0, timer = null, paused = false;
+  // Stage height follows the visible quote so short quotes don't leave a gap.
+  function sizeStage() { stage.style.height = slides[cur].offsetHeight + 'px'; }
+  window.addEventListener('resize', sizeStage);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeStage);
   function go(i, manual) {
     cur = (i + seq.length) % seq.length;
     slides.forEach(function (s, k) {
@@ -101,7 +96,7 @@
       if (on) s.removeAttribute('aria-hidden'); else s.setAttribute('aria-hidden', 'true');
       var links = s.querySelectorAll('a'); for (var l = 0; l < links.length; l++) links[l].tabIndex = on ? 0 : -1;
     });
-    dots.forEach(function (d, k) { if (k === cur) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
+    sizeStage();
     stage.setAttribute('aria-live', manual ? 'polite' : 'off');
     restart();
   }
