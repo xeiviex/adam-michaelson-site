@@ -111,9 +111,14 @@
     try { if (sid && navigator.sendBeacon) navigator.sendBeacon('/api/chat/end', new Blob([JSON.stringify({ sessionId: sid })], { type: 'application/json' })); } catch (e) {}
   }
   window.addEventListener('pagehide', function (e) { if (!e.persisted) { endSession(introSession); endSession(fSession); } });
-  var introWatch = watcher(function () { return introSession; }, log);
+  var introHuman = false;
+  var introWatch = watcher(function () { return introSession; }, log, null, {
+    onMode: function (h) { introHuman = h; idleReset(); },
+    onMessage: function () { idleReset(); }
+  });
   /* Live messages from Adam: while a conversation is open, check every few seconds whether he has stepped in. */
-  function watcher(getSid, lg, isOpen) {
+  function watcher(getSid, lg, isOpen, hooks) {
+    hooks = hooks || {};
     var lastId = 0, human = false, started = false, t = null;
     function note(text) { var r = document.createElement('div'); r.className = 'row note'; r.textContent = text; lg.appendChild(r); if (!lg._hold) lg.scrollTop = lg.scrollHeight; }
     function poll() {
@@ -121,8 +126,8 @@
       if (!sid || document.hidden || (isOpen && !isOpen())) return;
       fetch('/api/chat/poll?sessionId=' + encodeURIComponent(sid) + '&after=' + lastId).then(function (r) { return r.json(); }).then(function (j) {
         if (isOpen && !isOpen()) return;
-        if (j.mode === 'human' && !human) { human = true; note('Adam has joined the conversation.'); }
-        if (j.mode !== 'human' && human) { human = false; note('Adam has handed you back to the assistant.'); }
+        if (j.mode === 'human' && !human) { human = true; note('Adam has joined the conversation.'); if (hooks.onMode) hooks.onMode(true); }
+        if (j.mode !== 'human' && human) { human = false; note('Adam has handed you back to the assistant.'); if (hooks.onMode) hooks.onMode(false); }
         (j.messages || []).forEach(function (m) {
           lastId = Math.max(lastId, m.id);
           var b = row(false, lg); setText(b, m.content);
@@ -136,13 +141,14 @@
           b.insertBefore(ico, b.firstChild);
           b.classList.add('pop', 'live');
           ding();
+          if (hooks.onMessage) hooks.onMessage();
         });
       }).catch(function () {});
     }
     return {
       start: function () { if (!started) { started = true; t = setInterval(poll, 4000); } },
       stop: function () { clearInterval(t); started = false; },
-      reset: function () { lastId = 0; human = false; }
+      reset: function () { lastId = 0; human = false; if (hooks.onMode) hooks.onMode(false); }
     };
   }
 
@@ -189,12 +195,14 @@
     ]
   ];
   var idleStage = 0, idleTimer = null;
+  /* No check-ins while Adam has taken over, and every message from him restarts the countdown. */
   function idleReset() {
     clearTimeout(idleTimer); idleStage = 0;
-    if (!$('chat').classList.contains('in')) return;
+    if (introHuman || !$('chat').classList.contains('in')) return;
     idleTimer = setTimeout(idleFire, IDLE_MS);
   }
   function idleFire() {
+    if (introHuman) return;
     var list = idleLines[idleStage];
     botSay(list[Math.floor(Math.random() * list.length)], 1200);
     idleStage++;
