@@ -1,12 +1,12 @@
-/* Quote carousel (see carousel.js). Typography matches the original homepage quotes (see /me/mission-and-beliefs/). */
+/* Quote carousel (see carousel.js). Proxima Nova (italic quote, regular author) when available; Montserrat fallback until a Proxima Nova kit is added. */
 .quotes { padding: clamp(16px, 2.4vw, 29px) 0 clamp(36px, 5vw, 56px); border-bottom: 1px solid var(--line); }
 .qc { position: relative; touch-action: pan-y; outline: none; padding-bottom: 52px; }
 .qc:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 8px; border-radius: 6px; }
 .qc-stage { display: grid; transition: height 0.5s ease; }
 .qc-slide { grid-area: 1 / 1; align-self: start; margin: 0; display: flex; flex-direction: column; justify-content: flex-start; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 0.6s ease, transform 0.6s ease, visibility 0s linear 0.6s; }
 .qc-slide.on { opacity: 1; visibility: visible; transform: none; transition: opacity 0.6s ease, transform 0.6s ease; }
-.qc-text { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 400; font-size: clamp(1.5rem, 3.5vw, 2.6rem); line-height: 1.3; letter-spacing: .005em; color: #f2f6fb; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-.qc-who { margin-top: 1.5rem; text-align: right; font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: clamp(1rem, 1.6vw, 1.35rem); letter-spacing: .02em; color: #a9b4c4; }
+.qc-text { font-family: 'proxima-nova', 'Proxima Nova', 'Montserrat', 'Inter', system-ui, sans-serif; font-style: italic; font-weight: 400; font-size: clamp(1.15rem, 2.3vw, 1.75rem); line-height: 1.45; letter-spacing: 0; color: #f2f6fb; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+.qc-who { margin-top: 1.5rem; text-align: right; font-family: 'proxima-nova', 'Proxima Nova', 'Montserrat', 'Inter', system-ui, sans-serif; font-style: normal; font-weight: 400; font-size: clamp(.875rem, 1.3vw, 1.05rem); letter-spacing: .01em; color: #a9b4c4; }
 .qc-who > span { display: inline; }
 .qc-name::before { content: '\2014\00a0'; }
 .qc-role::before { content: ', '; }
