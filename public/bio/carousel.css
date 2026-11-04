@@ -1,6 +1,6 @@
 /* Quote carousel (see carousel.js). Proxima Nova (italic quote, regular author) when available; Montserrat fallback until a Proxima Nova kit is added. */
 .quotes { padding: clamp(16px, 2.4vw, 29px) 0 clamp(36px, 5vw, 56px); border-bottom: 1px solid var(--line); }
-.qc { position: relative; touch-action: pan-y; outline: none; padding-bottom: 52px; }
+.qc { position: relative; touch-action: pan-y; outline: none; }
 .qc:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 8px; border-radius: 6px; }
 .qc-stage { display: grid; transition: height 0.5s ease; }
 .qc-slide { grid-area: 1 / 1; align-self: start; margin: 0; display: flex; flex-direction: column; justify-content: flex-start; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 0.6s ease, transform 0.6s ease, visibility 0s linear 0.6s; }
@@ -13,6 +13,9 @@
 .qc-role::before { content: ', '; }
 .qc-post { display: block; margin-top: .35rem; color: #a9b4c4; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(169, 180, 196, .45); }
 .qc-post:hover, .qc-post:focus-visible { color: var(--accent-text); text-decoration-color: var(--accent-text); }
+/* Link to the full recommendations page */
+.qc-all { display: flex; align-items: center; justify-content: center; width: fit-content; height: 44px; margin: 1rem auto 0; font-family: 'proxima-nova', 'Proxima Nova', 'Montserrat', 'Inter', system-ui, sans-serif; font-size: .9rem; letter-spacing: .02em; color: #a9b4c4; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(169,180,196,.45); }
+.qc-all:hover, .qc-all:focus-visible { color: var(--accent-text); text-decoration-color: var(--accent-text); }
 /* Triangle arrows in the page accent. Under 1300px they sit at the left and right ends below the text; wider, in the side margins. */
 .qc-arrow { position: absolute; bottom: 0; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; }
 .qc-arrow::before { content: ''; position: absolute; top: 50%; left: 50%; width: 16px; height: 20px; background: var(--accent-text); transform: translate(-50%, -50%); clip-path: polygon(0 50%, 100% 0, 100% 100%); transition: opacity 0.2s, transform 0.2s; opacity: .85; }
