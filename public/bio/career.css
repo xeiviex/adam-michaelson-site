@@ -185,3 +185,6 @@
 .media-stackcol { gap: 14px; }
 .media-stackcol .kpi { margin: 0; }
 .media-stackcol .kpi img { display: block; width: 100%; height: auto; }
+
+.copy .tl { color: inherit; text-decoration: underline; text-decoration-color: var(--accent-text); text-underline-offset: 3px; }
+.copy .tl:hover, .copy .tl:focus-visible { color: var(--accent-text); }
