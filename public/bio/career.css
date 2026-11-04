@@ -39,7 +39,7 @@
   border-bottom: 1px solid var(--line);
   position: relative;
 }
-.panel:nth-child(even) { background: linear-gradient(180deg, #060607, #000); }
+.panel:nth-of-type(even) { background: linear-gradient(180deg, #060607, #000); }
 .panel > .wrap { width: 100%; }
 .split {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
