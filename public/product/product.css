@@ -140,3 +140,4 @@ body.home .lead .txt { align-self: start; }
 .tiles span { font-size: .9rem; color: var(--muted); }
 .tiles > a:hover, .tiles > a:focus-visible { border-color: var(--accent); }
 .tiles > a:hover b, .tiles > a:focus-visible b { color: var(--accent-text); }
+.sbar { margin-inline: calc(-1 * clamp(16px, 5vw, 64px)); }

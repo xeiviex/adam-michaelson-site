@@ -8,14 +8,6 @@
 :root[data-accent="aktify"] { --accent-text: #fa0052; } /* matches the Aktify logo red */
 
 /* ---------- Top bar + side dots ---------- */
-.topbar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 20; height: 56px;
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line);
-}
-.topbar .wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.topbar .count { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
 .chapters { display: flex; gap: 8px; }
 .chapters a { width: 22px; height: 4px; border-radius: 2px; background: var(--faint); transition: background 0.25s ease; }
 .chapters a:hover { background: var(--muted); }
@@ -39,7 +31,7 @@
   border-bottom: 1px solid var(--line);
   position: relative;
 }
-.panel:first-of-type { min-height: 100vh; min-height: 100svh; padding-top: calc(56px + clamp(24px, 4vw, 48px)); }
+.panel:first-of-type { min-height: calc(100vh - 57px); min-height: calc(100svh - 57px); padding-top: clamp(24px, 4vw, 48px); }
 .panel:nth-of-type(even) { background: linear-gradient(180deg, #060607, #000); }
 .panel > .wrap { width: 100%; }
 .split {

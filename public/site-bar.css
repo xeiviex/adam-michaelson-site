@@ -1,0 +1,29 @@
+/* Shared floating header for every page except the home page. Matches the bar on /lendingtree/. */
+html { scroll-padding-top: 64px; }
+.sbar { position: sticky; top: 0; z-index: 40; background: rgba(0,0,0,.92); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,.2); box-sizing: border-box; }
+.sbar *, .sbar *::before, .sbar *::after { box-sizing: border-box; }
+.sbar .in { max-width: 1180px; margin: 0 auto; padding-inline: clamp(18px, 5vw, 56px); height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.sbar .nm { font-family: 'Montserrat', 'Inter', system-ui, sans-serif; font-weight: 800; font-size: .95rem; letter-spacing: .16em; text-transform: uppercase; color: #fff; text-decoration: none; white-space: nowrap; }
+.sbar nav { display: flex; align-items: center; gap: 22px; }
+.sbar nav a { font-family: 'Montserrat', 'Inter', system-ui, sans-serif; font-weight: 700; font-size: .72rem; line-height: 1.65; letter-spacing: .18em; text-transform: uppercase; color: #8d97a8; text-decoration: none; padding-block: 6px; border-bottom: 2px solid transparent; }
+.sbar nav a:hover, .sbar nav a:focus-visible, .sbar nav a[aria-current] { color: #fff; border-color: var(--accent-text, #0089c4); }
+.sbar nav.trail { gap: 10px; }
+.sbar nav.trail a + a::before { content: '/'; display: inline-block; margin-right: 10px; color: #8d97a8; }
+.sbar nav.trail a + a { border-bottom: 0; }
+.sbar nav.trail a { white-space: nowrap; }
+.sbar .sb-r { display: flex; align-items: center; gap: 22px; }
+.sbar .count { font-family: 'Montserrat', 'Inter', system-ui, sans-serif; font-weight: 700; font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: #8d97a8; white-space: nowrap; }
+.sbar a:focus-visible { outline: 2px solid #2aa6de; outline-offset: 3px; }
+@media (max-width: 880px) {
+  .sbar nav.trail a:not(:last-child) { display: none; }
+  .sbar nav.trail a:last-child::before { display: none; }
+  .sbar .count { display: none; }
+}
+@media (max-width: 520px) {
+  .sbar .sb-r nav.trail { display: none; }
+  .sbar .nm { font-size: .85rem; letter-spacing: .12em; }
+  .sbar nav:not(.trail) { gap: 14px; }
+  .sbar nav:not(.trail) a:first-child { display: none; }
+  .sbar .chapters a { width: 14px; }
+  .sbar .chapters { gap: 5px; }
+}
