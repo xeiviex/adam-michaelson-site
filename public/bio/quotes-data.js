@@ -62,7 +62,7 @@
     // Trent Miskin (both Lendio tenures)
     { by: 'trent', pages: ['main', 'lendio1', 'lendio2'], q: 'Adam is a world-class product leader with the talent, capacity and drive to take products and platforms all the way from early executive or customer research-driven ideas to deployment and ultimate success.' },
     { by: 'trent', pages: ['main', 'lendio1', 'lendio2'], q: 'Adam knows the entire product lifecycle and stack, including engineering, data science/AI, UX, and the art and science of product management.' },
-    { by: 'trent', pages: ['main', 'lendio1', 'lendio2'], q: 'He speaks the language of each [group] and has a real appreciation for the needs and expertise of each layer of product.' },
+    { by: 'trent', pages: ['main', 'lendio1', 'lendio2'], q: 'He speaks the language of each discipline and has a real appreciation for the needs and expertise of each layer of product.' },
     { by: 'trent', pages: ['main', 'lendio1', 'lendio2'], q: 'One of the great things about working with him is how often he recognizes the contributions and talents of people on the team, not just in product, including the small things that are sometimes overlooked by others.' },
     { by: 'trent', pages: ['main', 'lendio1', 'lendio2'], q: 'He is data-driven and feels strongly about being measured by real business outcomes.' },
     { by: 'trent', pages: ['main', 'lendio1', 'lendio2'], q: 'He executes fast while also being able to step back and set long-term vision.' },
