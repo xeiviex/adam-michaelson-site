@@ -88,3 +88,4 @@ footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
   .gallery .ph.wide { grid-column: span 1; --ar: 1 / 1; }
 }
 @media (prefers-reduced-motion: reduce) { .js .rv { opacity: 1; transform: none; } * { transition: none !important; } }
+.sbar { margin-inline: calc(-1 * clamp(16px, 5vw, 64px)); }
