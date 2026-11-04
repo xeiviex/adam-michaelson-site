@@ -33,12 +33,13 @@
 
 /* ---------- Full-screen panels ---------- */
 .panel {
-  min-height: 100vh; min-height: 100svh;
+  /* Gap between sections trimmed ~60% (was full-height panels with ~270px between content). */
   display: flex; align-items: center;
-  padding: calc(56px + clamp(24px, 4vw, 48px)) 0 clamp(28px, 4vw, 52px);
+  padding: clamp(32px, 3.6vw, 52px) 0 clamp(24px, 2.9vw, 42px);
   border-bottom: 1px solid var(--line);
   position: relative;
 }
+.panel:first-of-type { min-height: 100vh; min-height: 100svh; padding-top: calc(56px + clamp(24px, 4vw, 48px)); }
 .panel:nth-of-type(even) { background: linear-gradient(180deg, #060607, #000); }
 .panel > .wrap { width: 100%; }
 .split {
