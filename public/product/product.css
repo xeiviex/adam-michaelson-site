@@ -188,3 +188,11 @@ body.home .lead .txt { align-self: start; }
   .attrs-row .attrs b { font-size: 1.25rem; }
   .attrs-row .attrs span { font-size: .9rem; }
 }
+
+/* phones: portrait sits between the section opener and the first attribute */
+@media (max-width: 820px) {
+  .attrs-row { grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
+  .pm-portrait { order: -1; position: relative; top: auto; aspect-ratio: 4 / 5; max-width: 420px; width: 100%; }
+  .attrs-row .attrs b { font-size: 1.5rem; }
+  .attrs-row .attrs span { font-size: .95rem; }
+}
