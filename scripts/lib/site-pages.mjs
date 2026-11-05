@@ -5,6 +5,7 @@
  */
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import vm from "node:vm";
 
 const ENT = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", rsquo: "'", lsquo: "'", ldquo: '"', rdquo: '"', mdash: "—", ndash: "–", middot: "·", hellip: "…", rarr: "→", larr: "←", times: "×", copy: "©" };
 const decode = (s) =>
@@ -79,4 +80,17 @@ export function siteSection(publicDir, route, heading) {
     );
   }
   return parts.length ? `## ${heading} \\[PUBLIC\\]\n${parts.join("\n\n")}\n` : "";
+}
+
+/** Recommendation quotes (rendered client-side from bio/quotes-data.js) as a [PUBLIC] section, so the chat can use them. */
+export function recommendationsSection(publicDir, heading) {
+  const file = join(publicDir, "bio", "quotes-data.js");
+  if (!existsSync(file)) return "";
+  const ctx = { window: {} };
+  vm.createContext(ctx);
+  vm.runInContext(readFileSync(file, "utf8"), ctx);
+  const quotes = ctx.window.BIO_QUOTES || [];
+  if (!quotes.length) return "";
+  const lines = quotes.map((x) => `- "${x.q}" — ${x.name}, ${x.role}`);
+  return `## ${heading} \\[PUBLIC\\]\n${lines.join("\n")}\n`;
 }

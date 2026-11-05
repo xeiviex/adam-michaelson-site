@@ -18,7 +18,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { blockedNames, allowedFullNames, redact } from "../functions/_lib/nameguard.js";
 import { filterPage, assertNoLeak, markdownToBlocks } from "./lib/knowledge-filter.mjs";
-import { siteSection } from "./lib/site-pages.mjs";
+import { siteSection, recommendationsSection } from "./lib/site-pages.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -33,7 +33,13 @@ export const PAGES = [
 ];
 
 // Site routes whose published pages (and sub-pages) are included as [PUBLIC] knowledge: [route, section heading].
-export const SITE_ROUTES = [["lendingtree", "LendingTree: my point of view and prototypes (adam-michaelson.com/lendingtree)"]];
+export const SITE_ROUTES = [
+  ["lendingtree", "LendingTree: my point of view and prototypes (adam-michaelson.com/lendingtree)"],
+  ["bio", "My executive bio and career pages (adam-michaelson.com/bio and each employer sub-page)"],
+  ["product", "How I do product: people, principles, practices and role pages (adam-michaelson.com/product and sub-pages)"],
+  ["me", "Getting to know me: history, family, faith, music, outdoors, mission and beliefs (adam-michaelson.com/me and sub-pages)"],
+  ["q-and-a", "Interview questions and my answers (adam-michaelson.com/q-and-a)"],
+];
 
 // Hard-coded exclusion: "Adam's Professional Biography: Private Notes (NOT FOR PUBLIC CHAT)".
 // This page is never fetched. Its id is only used to refuse and to scan the output.
@@ -83,6 +89,11 @@ if (fromDir) {
 for (const [route, heading] of SITE_ROUTES) {
   const sec = siteSection(join(root, "public"), route, heading);
   if (sec) { sections.push(sec); console.log(`  site pages /${route}: ${sec.length} chars`); }
+}
+
+{
+  const rec = recommendationsSection(join(root, "public"), "What colleagues say about working with me (adam-michaelson.com/recommendations)");
+  if (rec) { sections.push(rec); console.log(`  recommendations: ${rec.length} chars`); }
 }
 
 const names = blockedNames(process.env);
