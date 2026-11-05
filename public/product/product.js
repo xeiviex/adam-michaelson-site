@@ -10,3 +10,18 @@
   }, { threshold: 0.15 });
   els.forEach(function (e) { io.observe(e); });
 })();
+
+// Hero photo rotator: crossfade every 5 seconds, no controls.
+(function () {
+  var box = document.querySelector('.fade-show');
+  if (!box) return;
+  var imgs = Array.prototype.slice.call(box.querySelectorAll('img'));
+  if (imgs.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var i = 0;
+  setInterval(function () {
+    imgs[i].classList.remove('on');
+    i = (i + 1) % imgs.length;
+    imgs[i].loading = 'eager';
+    imgs[i].classList.add('on');
+  }, 5000);
+})();
