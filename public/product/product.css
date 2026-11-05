@@ -196,3 +196,13 @@ body.home .lead .txt { align-self: start; }
   .attrs-row .attrs b { font-size: 1.5rem; }
   .attrs-row .attrs span { font-size: .95rem; }
 }
+
+/* sub-section titles: +4pt; divider moved between Competencies and A world class team */
+.subsec h3 { font-size: 1.15rem; }
+#hiring-pipeline { position: relative; }
+#hiring-pipeline::before { content: ''; position: absolute; left: -3px; right: 0; top: calc(clamp(28px, 6vw, 88px) / -2); border-top: 1px solid var(--line); }
+#hiring-pipeline .attrs > div:first-child { border-top: 0; }
+/* Competencies: paragraph spacing follows the title, not the buttons */
+.subsec:has(.btn-col) { align-items: start; row-gap: 14px; }
+.subsec:has(.btn-col) > p { padding-top: 18px; align-self: start; }
+.btn-col { align-self: start; padding-top: 18px; }
