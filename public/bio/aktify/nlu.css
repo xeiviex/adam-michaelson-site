@@ -2,7 +2,7 @@
 .nlu-block { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 14px; margin-top: 8px; min-width: 0; }
 .nlu-head { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .nlu-head h3 { font-size: clamp(18px, 2vw, 22px); font-weight: 600; color: var(--ink); }
-.nlu-head p { font-size: 14px; color: var(--muted); max-width: 62ch; }
+.nlu-head p { font-size: 14px; color: var(--muted); max-width: none; }
 .nlu-tile { position: relative; width: 100%; aspect-ratio: 1280 / 760; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #0d0e11; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.03); }
 .nlu-stage { position: absolute; left: 0; top: 0; width: 1280px; height: 760px; transform-origin: 0 0; transform: scale(var(--s, 0.5)); font-family: Inter, system-ui, sans-serif; color: #f1efe8; font-size: 14px; line-height: 1.4; text-align: left; --g: #1fa878; --g2: #5fd3a8; --o: #e8692e; --line2: rgba(255, 255, 255, 0.08); --panel2: #14161a; --panel3: #1a1d22; }
 .nlu-stage * { box-sizing: border-box; }
