@@ -50,6 +50,7 @@ a { color: inherit; text-decoration: none; }
   background: linear-gradient(180deg, #0d0d0e 0%, #000 100%);
 }
 .masthead .wrap {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(200px, 300px) 1fr;
   gap: clamp(28px, 5vw, 64px);
@@ -291,3 +292,13 @@ a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 2
 
 .section-where .btn { background: transparent; color: #fff; border: 1px solid #fff; border-radius: 2px; padding: 14px 22px; font-weight: 500; transition: background .2s, color .2s; filter: none; }
 .section-where .btn:hover, .section-where .btn:focus-visible { background: #fff; color: #000; filter: none; }
+
+/* Profile + download links, extreme top right of the hero */
+.dl-panel { position: absolute; top: clamp(14px, 2.2vw, 28px); right: var(--gutter); display: grid; gap: 8px; justify-items: end; z-index: 2; }
+.dl-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.dl-row span { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.dl-ic { display: inline-flex; width: 28px; height: 28px; transition: transform .15s ease, filter .15s ease; }
+.dl-ic svg { width: 100%; height: 100%; display: block; }
+.dl-ic:hover, .dl-ic:focus-visible { transform: translateY(-2px); filter: brightness(1.15); }
+.dl-ic:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
+@media (max-width: 720px) { .masthead .wrap { padding-top: 112px; } .dl-panel { top: 14px; gap: 6px; } .dl-row span { font-size: 10.5px; letter-spacing: 0.1em; } .dl-ic { width: 26px; height: 26px; } }
