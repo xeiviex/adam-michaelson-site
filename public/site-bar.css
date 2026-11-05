@@ -27,13 +27,3 @@ html { scroll-padding-top: 64px; }
   .sbar .chapters a { width: 14px; }
   .sbar .chapters { gap: 5px; }
 }
-
-/* Icon links (LinkedIn / resume / bio downloads) in the header's top right */
-.sbar .sb-r { gap: 6px; }
-.sbar .sb-ic { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; color: #8d97a8; border-radius: 6px; }
-.sbar .sb-ic svg { width: 24px; height: 24px; }
-.sbar .sb-ic:hover, .sbar .sb-ic:focus-visible { color: #fff; }
-.sbar .sb-sep { width: 1px; height: 22px; background: rgba(255,255,255,.2); margin-inline: 6px; }
-.sbar .sb-grp { font-family: 'Montserrat', 'Inter', system-ui, sans-serif; font-weight: 700; font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; color: #8d97a8; margin-left: 2px; }
-@media (max-width: 720px) { .sbar .sb-grp { display: none; } }
-@media (max-width: 520px) { .sbar .sb-ic { width: 26px; height: 26px; } .sbar .sb-ic svg { width: 22px; height: 22px; } .sbar .sb-sep { display: none; } .sbar .sb-r { gap: 0; } .sbar .in { gap: 8px; } .sbar .nm { font-size: .78rem; letter-spacing: .08em; } }
