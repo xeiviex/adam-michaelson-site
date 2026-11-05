@@ -266,7 +266,7 @@ a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 2
 @media (max-width: 720px) {
   body { font-size: 16px; }
   .masthead .wrap { grid-template-columns: 1fr; gap: 24px; }
-  .portrait { max-width: 200px; border-radius: 50%; }
+  .portrait { max-width: 200px; border-radius: 6px; }
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .metrics .card:last-child { grid-column: 1 / -1; }
   .card { padding: 14px 16px 16px; }
