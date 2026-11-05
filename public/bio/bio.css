@@ -54,7 +54,7 @@ a { color: inherit; text-decoration: none; }
   display: grid;
   grid-template-columns: minmax(200px, 300px) 1fr;
   gap: clamp(28px, 5vw, 64px);
-  align-items: center;
+  align-items: start;
   padding-top: clamp(32px, 6vw, 72px);
   padding-bottom: clamp(32px, 6vw, 72px);
 }
@@ -68,6 +68,7 @@ a { color: inherit; text-decoration: none; }
   display: block;
 }
 .eyebrow {
+  line-height: 1;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.24em;
@@ -293,20 +294,21 @@ a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 2
 .section-where .btn { background: transparent; color: #fff; border: 1px solid #fff; border-radius: 2px; padding: 14px 22px; font-weight: 500; transition: background .2s, color .2s; filter: none; }
 .section-where .btn:hover, .section-where .btn:focus-visible { background: #fff; color: #000; filter: none; }
 
-/* Profile + download links, extreme top right of the hero */
-.dl-panel { position: absolute; top: clamp(14px, 2.2vw, 28px); right: var(--gutter); display: grid; gap: 8px; justify-items: end; z-index: 2; }
-.dl-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
-.dl-row > span { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
-.dl-pair { position: relative; display: flex; align-items: center; gap: 2px; }
-.dl-spacer { width: 18px; }
-.dl-ic { display: inline-flex; width: 28px; height: 28px; transition: transform .15s ease, filter .15s ease; }
-.dl-ic svg { width: 100%; height: 100%; display: block; }
-.dl-ic:hover, .dl-ic:focus-visible { transform: translateY(-2px); filter: brightness(1.15); }
-.dl-ic:focus-visible, .dl-caret:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
-.dl-caret { width: 18px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background: none; border: 0; color: var(--muted); cursor: pointer; padding: 0; }
+/* Profile + download links: outlined CTA buttons, top-aligned with the photo */
+.dl-panel { position: absolute; top: clamp(32px, 6vw, 72px); right: var(--gutter); display: grid; gap: 10px; justify-items: stretch; z-index: 2; }
+.dl-combo { position: relative; display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: 10px; }
+.dl-btn { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 12px; color: var(--link); transition: color .15s ease, background .15s ease; }
+.dl-solo { border: 1px solid var(--line); border-radius: 10px; }
+.dl-main { flex: 1; border-radius: 10px 0 0 10px; }
+.dl-btn span { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.dl-btn svg { width: 24px; height: 24px; flex: none; display: block; }
+.dl-btn:hover, .dl-btn:focus-visible { color: #fff; background: rgba(255,255,255,.05); }
+.dl-btn:focus-visible, .dl-caret:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.dl-caret { width: 30px; display: inline-flex; align-items: center; justify-content: center; background: none; border: 0; border-left: 1px solid var(--line); border-radius: 0 10px 10px 0; color: var(--link); cursor: pointer; padding: 0; transition: color .15s ease, background .15s ease; }
+.dl-caret:hover { color: #fff; background: rgba(255,255,255,.05); }
 .dl-caret svg { width: 10px; height: 6px; transition: transform .15s ease; }
-.dl-caret:hover { color: #fff; }
 .dl-caret[aria-expanded="true"] svg { transform: rotate(180deg); }
-.dl-menu { z-index: 5; position: absolute; top: calc(100% + 6px); right: 0; padding: 8px; background: #121214; border: 1px solid rgba(255,255,255,.2); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+.dl-menu { z-index: 5; position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #121214; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
 .dl-menu[hidden] { display: none; }
-@media (max-width: 720px) { .masthead .wrap { padding-top: 112px; } .dl-panel { top: 14px; gap: 6px; } .dl-row > span { font-size: 10.5px; letter-spacing: 0.1em; } .dl-ic { width: 26px; height: 26px; } }
+@media (max-width: 720px) { .masthead .wrap { padding-top: 168px; } .dl-panel { top: 20px; gap: 8px; } .dl-btn { padding: 5px 10px; } .dl-btn span { font-size: 10.5px; letter-spacing: 0.1em; } .dl-btn svg { width: 22px; height: 22px; } }
+@media (min-width: 721px) and (max-width: 1240px) { .masthead .wrap > div { padding-right: 200px; } }
