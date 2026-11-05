@@ -102,7 +102,8 @@
   function endSession(sid) {
     try { if (sid && navigator.sendBeacon) navigator.sendBeacon('/api/chat/end', new Blob([JSON.stringify({ sessionId: sid })], { type: 'application/json' })); } catch (e) {}
   }
-  window.addEventListener('pagehide', function (e) { if (!e.persisted) { endSession(fSession); } });
+  window.addEventListener('pagehide', function (e) { if (!e.persisted) { dialogs.forEach(function (d) { d.end(); }); } });
+  var dialogs = [];
   /* Live messages from Adam: while a conversation is open, check every few seconds whether he has stepped in. */
   function watcher(getSid, lg, isOpen, hooks) {
     hooks = hooks || {};
@@ -139,59 +140,78 @@
     };
   }
 
-  /* ---- Check my fit: a chat in a modal. The visitor pastes a job description (links are not read yet). ---- */
-  var flog = $('flog'), fmsg = $('fmsg'), ffield = $('ffield'), fgen = 0, lastFocus = null, fSession = newSession(), fBusy = false;
-  var fitWatch = watcher(function () { return fSession; }, flog, function () { return $('fdlg').classList.contains('on'); });
-  function fgrow() { fmsg.style.height = 'auto'; fmsg.style.height = Math.min(fmsg.scrollHeight, 128) + 'px'; ffield.classList.toggle('has', !!fmsg.value.trim()); }
-  function fok(g) { return function () { return g === fgen; }; }
-  function openFit() {
-    lastFocus = document.activeElement; fgen++; var g = fgen;
-    flog.innerHTML = ''; flog._hold = false; fmsg.value = ''; fgrow(); fSession = newSession(); fBusy = false; fitWatch.reset(); fitWatch.stop();
-    $('fscrim').classList.add('on'); $('fdlg').classList.add('on'); document.body.style.overflow = 'hidden';
-    botSay("Paste a job description or a link to the posting, or just give me a title or describe what you're looking for, and I'll tell you honestly how I fit.", 1800, flog, fok(g));
-    setTimeout(function () { fmsg.focus(); }, 60);
-    syncKeyboard();
+  /* ---- Two dialogs share this code: "Check my fit" (id prefix f, mode fit) and "Chat with Adam" (prefix c, mode intro). ---- */
+  function dialog(p, mode, opener, wait) {
+    var dlg = $(p + 'dlg'), scrim = $(p + 'scrim'), flog = $(p + 'log'), fmsg = $(p + 'msg'), ffield = $(p + 'field'), form = $(p + 'form');
+    var fgen = 0, lastFocus = null, fSession = newSession(), fBusy = false;
+    var watch = watcher(function () { return fSession; }, flog, function () { return dlg.classList.contains('on'); });
+    function grow() { fmsg.style.height = 'auto'; fmsg.style.height = Math.min(fmsg.scrollHeight, 128) + 'px'; ffield.classList.toggle('has', !!fmsg.value.trim()); }
+    function ok(g) { return function () { return g === fgen; }; }
+    function open() {
+      lastFocus = document.activeElement; fgen++; var g = fgen;
+      flog.innerHTML = ''; flog._hold = false; fmsg.value = ''; grow(); fSession = newSession(); fBusy = false; watch.reset(); watch.stop();
+      scrim.classList.add('on'); dlg.classList.add('on'); document.body.style.overflow = 'hidden';
+      botSay(typeof opener === 'function' ? opener() : opener, wait, flog, ok(g));
+      setTimeout(function () { fmsg.focus(); }, 60);
+      syncKeyboard();
+    }
+    function close() {
+      if (!dlg.classList.contains('on')) return;
+      endSession(fSession); fgen++; watch.stop(); flog.innerHTML = ''; fmsg.value = ''; grow();
+      scrim.classList.remove('on'); dlg.classList.remove('on'); document.body.style.overflow = '';
+      syncKeyboard();
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    $(p + 'close').addEventListener('click', close);
+    scrim.addEventListener('click', close);
+    fmsg.addEventListener('input', grow);
+    fmsg.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); form.requestSubmit(); } });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var v = fmsg.value.trim(); if (!v || fBusy) return;
+      var g = fgen;
+      flog._hold = false;
+      row(true, flog).textContent = mode === 'fit' && v.length > 90 ? v.slice(0, 87) + '...' : v;
+      fmsg.value = ''; grow(); fBusy = true;
+      watch.start();
+      askAdam(mode, fSession, v, flog, ok(g), function () { fBusy = false; });
+    });
+    dlg.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      var f = [$(p + 'close'), fmsg, dlg.querySelector('.enter')], i = f.indexOf(document.activeElement);
+      e.preventDefault(); f[(i + (e.shiftKey ? f.length - 1 : 1)) % f.length].focus();
+    });
+    var d = { open: open, close: close, el: dlg, log: flog, end: function () { if (dlg.classList.contains('on')) endSession(fSession); } };
+    dialogs.push(d); return d;
   }
-  function closeFit() {
-    if (!$('fdlg').classList.contains('on')) return;
-    endSession(fSession); fgen++; fitWatch.stop(); flog.innerHTML = ''; fmsg.value = ''; fgrow();
-    $('fscrim').classList.remove('on'); $('fdlg').classList.remove('on'); document.body.style.overflow = '';
-    syncKeyboard();
-    if (lastFocus && lastFocus.focus) lastFocus.focus();
-  }
-  $('fclose').addEventListener('click', closeFit);
-  $('fscrim').addEventListener('click', closeFit);
-  fmsg.addEventListener('input', fgrow);
-  fmsg.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); $('fform').requestSubmit(); } });
-  $('fform').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var v = fmsg.value.trim(); if (!v || fBusy) return;
-    var g = fgen;
-    flog._hold = false;
-    row(true, flog).textContent = v.length > 90 ? v.slice(0, 87) + '...' : v;
-    fmsg.value = ''; fgrow(); fBusy = true;
-    fitWatch.start();
-    askAdam('fit', fSession, v, flog, fok(g), function () { fBusy = false; });
-  });
-  $('fdlg').addEventListener('keydown', function (e) {
-    if (e.key !== 'Tab') return;
-    var f = [$('fclose'), fmsg, $('fdlg').querySelector('.enter')], i = f.indexOf(document.activeElement);
-    e.preventDefault(); f[(i + (e.shiftKey ? f.length - 1 : 1)) % f.length].focus();
-  });
+  var openers = [
+    "Hi, I'm Adam. Ask me whatever you're curious about, about my work or about me.",
+    "Welcome. Whatever you came here wondering, go ahead and ask.",
+    "Not sure where to start? Tell me what you're looking for and I'll point you there.",
+    "Hello. I build products, mostly with AI these days. What would you like to know?"
+  ];
+  var fit = $('fdlg') ? dialog('f', 'fit', "Paste a job description or a link to the posting, or just give me a title or describe what you're looking for, and I'll tell you honestly how I fit.", 1800) : null;
+  var chat = $('cdlg') ? dialog('c', 'intro', function () { return openers[Math.floor(Math.random() * openers.length)]; }, 1800) : null;
 
-  /* On-screen keyboard: pin the dialog to the visual viewport on phones so the input rides above the keyboard. */
+  /* On-screen keyboard: on narrow screens pin the open dialog to the visual viewport so the input rides above the keyboard. */
   var vv = window.visualViewport;
   function syncKeyboard() {
-    var fd = $('fdlg'), narrow = window.innerWidth <= 820 && !!vv;
-    if (fd.classList.contains('on') && narrow) {
-      fd.style.top = (vv.offsetTop + vv.height / 2) + 'px'; fd.style.height = Math.min(720, Math.round(vv.height * 0.92)) + 'px';
-      if (!flog._hold) flog.scrollTop = flog.scrollHeight;
-    } else { fd.style.top = ''; fd.style.height = ''; }
+    var narrow = window.innerWidth <= 820 && !!vv;
+    dialogs.forEach(function (d) {
+      var fd = d.el, full = fd.id === 'cdlg';
+      if (fd.classList.contains('on') && narrow) {
+        if (full) { fd.style.top = vv.offsetTop + 'px'; fd.style.height = vv.height + 'px'; }
+        else { fd.style.top = (vv.offsetTop + vv.height / 2) + 'px'; fd.style.height = Math.min(720, Math.round(vv.height * 0.92)) + 'px'; }
+        if (!d.log._hold) d.log.scrollTop = d.log.scrollHeight;
+      } else { fd.style.top = ''; fd.style.height = ''; }
+    });
   }
   if (vv) { vv.addEventListener('resize', syncKeyboard); vv.addEventListener('scroll', syncKeyboard); }
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeFit(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') dialogs.forEach(function (d) { d.close(); }); });
   document.addEventListener('click', function (e) {
-    var a = e.target.closest && e.target.closest('[data-modal="fit"]');
-    if (a) { e.preventDefault(); openFit(); }
+    var a = e.target.closest && e.target.closest('[data-modal]');
+    if (!a) return;
+    var m = a.getAttribute('data-modal'), d = m === 'fit' ? fit : m === 'chat' ? chat : null;
+    if (d) { e.preventDefault(); d.open(); }
   });
 })();
