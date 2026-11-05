@@ -312,3 +312,9 @@ a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 2
 .dl-menu[hidden] { display: none; }
 @media (max-width: 720px) { .masthead .wrap { padding-top: 168px; } .dl-panel { top: 20px; gap: 8px; } .dl-btn { padding: 5px 10px; } .dl-btn span { font-size: 10.5px; letter-spacing: 0.1em; } .dl-btn svg { width: 22px; height: 22px; } }
 @media (min-width: 721px) and (max-width: 1240px) { .masthead .wrap > div { padding-right: 200px; } }
+
+/* Check my fit CTA (opens the shared dialog), Deep green */
+.fit-btn { display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; padding: 14px 22px; border-radius: 2px; background: #1fa878; border: 1px solid #1fa878; color: #050709; font-weight: 600; font-size: 15px; text-decoration: none; transition: background .2s ease, border-color .2s ease; }
+.fit-btn:hover, .fit-btn:focus-visible { background: #3dc496; border-color: #3dc496; }
+.fit-btn span { transition: transform .2s ease; }
+.fit-btn:hover span { transform: translateX(4px); }
