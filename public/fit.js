@@ -148,7 +148,7 @@
     lastFocus = document.activeElement; fgen++; var g = fgen;
     flog.innerHTML = ''; flog._hold = false; fmsg.value = ''; fgrow(); fSession = newSession(); fBusy = false; fitWatch.reset(); fitWatch.stop();
     $('fscrim').classList.add('on'); $('fdlg').classList.add('on'); document.body.style.overflow = 'hidden';
-    botSay("Paste a job description, or a link to the posting, and I'll tell you honestly how I fit.", 1800, flog, fok(g));
+    botSay("Paste a job description or a link to the posting, or just give me a title or describe what you're looking for, and I'll tell you honestly how I fit.", 1800, flog, fok(g));
     setTimeout(function () { fmsg.focus(); }, 60);
     syncKeyboard();
   }
