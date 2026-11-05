@@ -298,7 +298,7 @@ a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 2
 .dl-panel { position: absolute; top: clamp(32px, 6vw, 72px); right: var(--gutter); display: grid; gap: 10px; justify-items: stretch; z-index: 2; }
 .dl-combo { position: relative; display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: 10px; }
 .dl-btn { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 12px; color: var(--link); transition: color .15s ease, background .15s ease; }
-.dl-solo { border: 1px solid var(--line); border-radius: 10px; }
+.dl-solo { border: 1px solid var(--line); border-radius: 10px; padding-right: 43px; }
 .dl-main { flex: 1; border-radius: 10px 0 0 10px; }
 .dl-btn span { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
 .dl-btn svg { width: 24px; height: 24px; flex: none; display: block; }
@@ -312,3 +312,8 @@ a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 2
 .dl-menu[hidden] { display: none; }
 @media (max-width: 720px) { .masthead .wrap { padding-top: 168px; } .dl-panel { top: 20px; gap: 8px; } .dl-btn { padding: 5px 10px; } .dl-btn span { font-size: 10.5px; letter-spacing: 0.1em; } .dl-btn svg { width: 22px; height: 22px; } }
 @media (min-width: 721px) and (max-width: 1240px) { .masthead .wrap > div { padding-right: 200px; } }
+
+/* Secondary CTAs: Check my fit / Chat with Adam's bot (outline, Deep green) */
+.hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.fit-btn { display: inline-flex; align-items: center; padding: 13px 22px; border-radius: 2px; background: none; border: 1px solid #1fa878; color: #1fa878; font-weight: 500; font-size: 15px; text-decoration: none; transition: background .2s ease, color .2s ease; }
+.fit-btn:hover, .fit-btn:focus-visible { background: #1fa878; color: #050709; }
