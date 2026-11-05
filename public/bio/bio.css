@@ -296,9 +296,17 @@ a:focus-visible { outline: 1px solid #fff; outline-offset: 4px; border-radius: 2
 /* Profile + download links, extreme top right of the hero */
 .dl-panel { position: absolute; top: clamp(14px, 2.2vw, 28px); right: var(--gutter); display: grid; gap: 8px; justify-items: end; z-index: 2; }
 .dl-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
-.dl-row span { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.dl-row > span { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.dl-pair { position: relative; display: flex; align-items: center; gap: 2px; }
+.dl-spacer { width: 18px; }
 .dl-ic { display: inline-flex; width: 28px; height: 28px; transition: transform .15s ease, filter .15s ease; }
 .dl-ic svg { width: 100%; height: 100%; display: block; }
 .dl-ic:hover, .dl-ic:focus-visible { transform: translateY(-2px); filter: brightness(1.15); }
-.dl-ic:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
-@media (max-width: 720px) { .masthead .wrap { padding-top: 112px; } .dl-panel { top: 14px; gap: 6px; } .dl-row span { font-size: 10.5px; letter-spacing: 0.1em; } .dl-ic { width: 26px; height: 26px; } }
+.dl-ic:focus-visible, .dl-caret:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 4px; }
+.dl-caret { width: 18px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background: none; border: 0; color: var(--muted); cursor: pointer; padding: 0; }
+.dl-caret svg { width: 10px; height: 6px; transition: transform .15s ease; }
+.dl-caret:hover { color: #fff; }
+.dl-caret[aria-expanded="true"] svg { transform: rotate(180deg); }
+.dl-menu { z-index: 5; position: absolute; top: calc(100% + 6px); right: 0; padding: 8px; background: #121214; border: 1px solid rgba(255,255,255,.2); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+.dl-menu[hidden] { display: none; }
+@media (max-width: 720px) { .masthead .wrap { padding-top: 112px; } .dl-panel { top: 14px; gap: 6px; } .dl-row > span { font-size: 10.5px; letter-spacing: 0.1em; } .dl-ic { width: 26px; height: 26px; } }
