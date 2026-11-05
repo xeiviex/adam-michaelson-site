@@ -588,7 +588,6 @@ export const pages = [
         { src: '/bio/photos/lendio2-lenders.webp?v=2', alt: 'Three community bank officers gather around a table and review a small business loan application together', position: '50% 40%', width: 1145, height: 1374 },
         { src: '/bio/photos/lendio2-sales.webp', alt: 'Lendio sales team members on headsets on a call with a loan applicant, with the Lendio logo on the glass behind them', position: '45% 40%', width: 900, height: 1080 },
       ],
-      photoNote: 'These images are AI-generated.',
     },
     s3: {
       title: 'Go from 0 to 1',
@@ -601,7 +600,6 @@ export const pages = [
       photos: [
         { src: '/bio/photos/lendio2-team.webp', alt: 'A product team of four works around a table with laptops and notebooks, with app wireframes and sticky notes on the whiteboard behind them', aspect: '3 / 2', width: 1400, height: 933 },
       ],
-      photoNote: 'Although Adam’s likeness has been used, the rest is AI generated.',
     },
     s4: {
       title: 'Three new business lines',
@@ -620,9 +618,7 @@ export const pages = [
         'The lender portal and decisioning screens',
         'A white-labeled application on a partner’s site',
         { src: '/bio/photos/lendio2-partners.webp', alt: 'A video call with four participants: Adam Michaelson and a bank partner, a capital partner and a lending partner', fit: 'contain', width: 1400, height: 933 },
-        'The product team shipping',
       ],
-      photoNote: 'Although Adam’s likeness has been used, the rest is AI generated.',
     },
     craft: {
       title: 'Level up the craft',
@@ -643,7 +639,6 @@ export const pages = [
         { src: '/bio/photos/lendio2-craft-training.webp', alt: 'Adam Michaelson standing at the front of a conference room, gesturing as he trains a seated team, with a slide titled Outcomes on the screen behind him', position: '50% 40%', width: 1536, height: 1024 },
         { src: '/bio/photos/lendio2-craft-1on1.webp?v=2', alt: 'Over Adam Michaelson’s shoulder as he talks one-on-one with a team member who listens and takes notes in a small conference room', position: '50% 40%', width: 1536, height: 1024 },
       ],
-      photoNote: 'Although Adam’s likeness has been used, the rest is AI generated.',
     },
     s5: {
       title: 'Earn trust, then automate',
@@ -657,7 +652,6 @@ export const pages = [
         { src: '/bio/photos/lendio2-learn-coding.webp', alt: 'Over Adam Michaelson’s shoulder as he types on a MacBook Air showing ChatGPT, in front of a curved monitor showing Antigravity, Claude Code and a GitHub pull request, in an open coworking space', position: '50% 25%', width: 1024, height: 1536 },
         { src: '/bio/photos/lendio2-learn-dashboard.webp?v=3', alt: 'A dark dashboard titled Loan Volume showing monthly loan volume growing unevenly from $0 to $40 million over 24 months', width: 1122, height: 1402 },
       ],
-      photoNote: 'Although Adam’s likeness has been used, the rest is AI generated.',
       next: {
         slug: null,
         label: 'What’s next',
