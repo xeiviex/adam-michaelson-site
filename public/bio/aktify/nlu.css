@@ -1,6 +1,6 @@
 /* Redesigned NLU analyst tool: an auto-playing click-through built in HTML/CSS (no raster screenshots). Stage is 1280x760, scaled to fit by nlu.js. */
 .nlu-block { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 14px; margin-top: 8px; min-width: 0; }
-.nlu-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; }
+.nlu-head { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .nlu-head h3 { font-size: clamp(18px, 2vw, 22px); font-weight: 600; color: var(--ink); }
 .nlu-head p { font-size: 14px; color: var(--muted); max-width: 62ch; }
 .nlu-tile { position: relative; width: 100%; aspect-ratio: 1280 / 760; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #0d0e11; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.03); }
