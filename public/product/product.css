@@ -177,3 +177,7 @@ body.home .lead .txt { align-self: start; }
 .fade-show { max-width: none; aspect-ratio: 2 / 1; }
 .fade-show img { object-position: 50% 8%; }
 @media (max-width: 820px) { .fade-show { aspect-ratio: 3 / 2; } }
+
+/* A world class team: tagline matches the item headers */
+#hiring-pipeline > .sub { font-family: var(--serif); font-style: normal; font-size: 1.5rem; font-weight: 500; line-height: 1.15; color: var(--ink); }
+#hiring-pipeline .attrs span a.tl { text-underline-offset: 3px; }
