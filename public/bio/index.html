@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/bio/bio.css?v=22">
+<link rel="stylesheet" href="/bio/bio.css?v=23">
 <link rel="stylesheet" href="/bio/carousel.css?v=9">
 <script>document.documentElement.classList.add('js');</script>
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -19,6 +19,7 @@
 <meta name="theme-color" content="#1fa878">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site-bar.css?v=3">
+<link rel="stylesheet" href="/fit.css?v=1">
 </head>
 <body>
 <header class="sbar"><div class="in">
@@ -44,6 +45,7 @@
           <a class="link" href="https://www.linkedin.com/in/adammichaelson" target="_blank" rel="noopener">linkedin.com/in/adammichaelson</a>
         </div>
       </div>
+      <a class="fit-btn" href="#" data-modal="fit">Check my fit for a role <span aria-hidden="true">&rarr;</span></a>
     </div>
   </div>
 </header>
@@ -149,5 +151,20 @@
 cs.forEach(function(c){c.addEventListener('click',function(e){e.stopPropagation();var m=document.getElementById(c.getAttribute('aria-controls')),o=c.getAttribute('aria-expanded')==='true';close();if(!o){c.setAttribute('aria-expanded','true');m.hidden=false;}});});
 document.addEventListener('click',function(e){if(!e.target.closest('.dl-menu'))close();});document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});})();
 </script>
+<div id="fscrim"></div>
+<div id="fdlg" role="dialog" aria-modal="true" aria-labelledby="ftitle">
+  <div class="fhead"><b id="ftitle">Check my fit</b>
+    <button type="button" id="fclose" aria-label="Close"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14"/></svg></button>
+  </div>
+  <div class="log" id="flog" aria-live="polite"></div>
+  <div class="fnote">Paste the job description or a link to the posting. Conversations are recorded so Adam can review them.</div>
+  <form id="fform" autocomplete="off">
+    <div class="field" id="ffield">
+      <textarea id="fmsg" rows="1" placeholder="Paste a job description or link" aria-label="Job description or link"></textarea>
+      <button type="submit" class="enter" aria-label="Send"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4v6.5a1.5 1.5 0 0 1-1.5 1.5H4"/><path d="M7.5 8.5L4 12l3.5 3.5"/></svg></button>
+    </div>
+  </form>
+</div>
+<script src="/fit.js?v=1" defer></script>
 </body>
 </html>
