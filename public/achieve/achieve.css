@@ -325,7 +325,7 @@ body.human .human-cta { display: none; }
 .cmp-bar .btn { margin: 0; }
 .sample-note { display: flex; gap: 8px; align-items: flex-start; margin: 14px 0 0; font-size: 12px; color: var(--mut); line-height: 1.45; }
 .sample-note .ico { margin-top: 1px; flex: none; }
-.o-hero { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; }
+.o-hero { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0; }
 .o-hero > div { padding: 12px; background: var(--tint); border-radius: 10px; text-align: center; }
 .o-hero b { display: block; font-size: 22px; color: var(--ind); letter-spacing: -.01em; }
 .o-hero span { font-size: 12px; color: var(--mut); }
@@ -421,3 +421,8 @@ body.human .human-cta { display: none; }
 .o-amt span { font-size: 12.5px; font-weight: 600; letter-spacing: .02em; color: var(--mut); text-transform: uppercase; }
 .o-amt b { font-size: 20px; letter-spacing: -.01em; }
 .o-amt.big { margin: 6px 0 12px; } .o-amt.big b { font-size: 26px; }
+
+/* buttons keep their 48px height inside stacked modal actions (they were being flex-shrunk) */
+.btn { flex: none; min-height: 48px; }
+.btn.sm { min-height: 38px; }
+.o-actions.stack { gap: 12px; }
