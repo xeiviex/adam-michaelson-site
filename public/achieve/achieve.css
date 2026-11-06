@@ -426,3 +426,8 @@ body.human .human-cta { display: none; }
 .btn { flex: none; min-height: 48px; }
 .btn.sm { min-height: 38px; }
 .o-actions.stack { gap: 12px; }
+
+/* Completed steps use Deep green: filled circle on groups, bare check on sub-steps */
+.rg.complete .rg-ic { background: #1fa878; color: #fff; }
+.rs.done .dot { background: none; border-color: transparent; color: #1fa878; }
+.rs.done .dot svg { width: 16px; height: 16px; stroke-width: 3; }
