@@ -415,3 +415,9 @@ body.human .human-cta { display: none; }
 .dev-btn { border: 0; background: #cf2748; color: #fff; border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 700; letter-spacing: .02em; opacity: 1; box-shadow: 0 4px 14px rgba(207, 39, 72, .35); }
 .dev-btn:hover { background: #de4d68; opacity: 1; }
 @media (max-width: 760px) { .dev-btn { padding: 5px 9px; font-size: 11px; } }
+
+/* full amount of the loan or credit line on every offer */
+.o-amt { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 10px 0 2px; padding: 8px 12px; border-radius: 10px; background: var(--mint, #e6f5f0); }
+.o-amt span { font-size: 12.5px; font-weight: 600; letter-spacing: .02em; color: var(--mut); text-transform: uppercase; }
+.o-amt b { font-size: 20px; letter-spacing: -.01em; }
+.o-amt.big { margin: 6px 0 12px; } .o-amt.big b { font-size: 26px; }
