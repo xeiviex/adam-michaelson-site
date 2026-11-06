@@ -42,8 +42,8 @@ button, input { font-family: inherit; }
 .out .bub { background: var(--blue); color: #fff; transform-origin: bottom right; }
 .in .bub, .row:not(.out) .bub { background: var(--gray); color: #000; transform-origin: bottom left; }
 @keyframes pop { from { opacity: 0; transform: scale(.7); } }
-.row.tail.out .bub::after, .row.tail:not(.out) .bub::after { content: ''; position: absolute; bottom: 0; width: 18px; height: 18px; }
-.row.tail.out .bub::before, .row.tail:not(.out) .bub::before { content: ''; position: absolute; bottom: 0; width: 20px; height: 18px; }
+.row.tail.out .bub::after, .row.tail:not(.out) .bub::after { content: ''; position: absolute; bottom: 0; width: 26px; height: 20px; }
+.row.tail.out .bub::before, .row.tail:not(.out) .bub::before { content: ''; position: absolute; bottom: 0; width: 20px; height: 20px; }
 .row.tail.out .bub { border-bottom-right-radius: 4px; }
 .row.tail:not(.out) .bub { border-bottom-left-radius: 4px; }
 .row.tail.out .bub::before { right: -7px; background: var(--blue); border-bottom-left-radius: 16px 14px; }
@@ -112,3 +112,7 @@ button, input { font-family: inherit; }
 /* Prototype-only control: Deep red with a white label so it is easy to find */
 .dev-btn { border: 0; background: #cf2748; color: #fff; border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 700; letter-spacing: .02em; opacity: 1; box-shadow: 0 4px 14px rgba(207, 39, 72, .35); }
 .dev-btn:hover { background: #de4d68; opacity: 1; }
+
+/* link card: gray only behind the caption, so no gray fringe around the white logo area */
+.row.hasLink .bub { background: transparent; }
+.link .lt { background: var(--gray); }
