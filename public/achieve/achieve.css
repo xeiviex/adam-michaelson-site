@@ -236,8 +236,6 @@ body.human .human-cta { display: none; }
 .rs.done { color: var(--ink); }
 .rs.cur { color: var(--ink); font-weight: 700; background: #fff; box-shadow: 0 1px 0 var(--line); }
 .rs.cur .dot { border-color: var(--ind); box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 9px var(--ind); }
-.rs.pop .dot { animation: pop .5s cubic-bezier(.2, 1.6, .4, 1); }
-.rs.pop .dot svg path { stroke-dasharray: 24; stroke-dashoffset: 24; animation: draw .45s .1s ease forwards; }
 @keyframes pop { 0% { transform: scale(.6); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 .road-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); }
@@ -436,3 +434,13 @@ body.human .human-cta { display: none; }
 .rs .dot { border-color: var(--ind); background: #fff; }
 .rs.done .dot { background: none; border-color: transparent; }
 .rs.cur .dot { border-color: var(--ind); }
+
+/* Check-off animation: a green dot runs once around the circle, the check is written, then it throbs */
+.rs.pop .dot { position: relative; animation: ringfade .7s linear both, throb .22s .62s ease-out both; }
+.rs.pop .dot::before { content: ""; position: absolute; inset: -2px; border-radius: 50%; background: radial-gradient(circle at 50% 1px, #17986c 0 3.2px, transparent 3.7px); animation: orbitdot .36s cubic-bezier(.5, 0, .3, 1) both, dotgone .08s .36s linear both; }
+.rs.pop .dot svg path { stroke-dasharray: 24; stroke-dashoffset: 24; animation: draw .26s .36s ease-out forwards; }
+@keyframes orbitdot { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+@keyframes dotgone { to { opacity: 0; } }
+@keyframes ringfade { 0%, 52% { border-color: var(--ind); } 62%, 100% { border-color: transparent; } }
+@keyframes throb { 0% { transform: scale(1); } 45% { transform: scale(1.2); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .rs.pop .dot, .rs.pop .dot::before, .rs.pop .dot svg path { animation: none; stroke-dashoffset: 0; } .rs.pop .dot::before { display: none; } }
