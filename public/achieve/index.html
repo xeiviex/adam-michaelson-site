@@ -83,7 +83,7 @@
 <script type="module">
   import { icon } from '/achieve/shared/dom.js';
   const put = (id, name, size, sw) => { const e = document.getElementById(id); if (e) e.innerHTML = icon(name, size, sw); };
-  put('telIc', 'phone', 18); put('hdIc', 'headset', 18); put('hd2Ic', 'headset', 20); put('stripIc', 'chevU', 18, 2.2);
+  put('telIc', 'phone', 18); put('hdIc', 'headset', 18); put('hd2Ic', 'headset', 20); put('stripIc', 'menu', 20, 2);
   put('upIc', 'up', 14, 2.4); put('xIc', 'x', 20); put('infoIc', 'info', 18); put('sendBtn', 'send', 18, 2);
   const av = document.getElementById('hbAv');
   import('/achieve/shared/dom.js').then((m) => av.append(m.avatarImg('hb-img')));

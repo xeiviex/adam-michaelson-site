@@ -192,7 +192,21 @@ async function finishStep(step, values, mode, turn) {
   requestAnimationFrame(() => b.classList.add('in'));
   renderRoad();
   await sleep(reduced() ? 0 : 650);
+  const nx = S.nextIncomplete();
+  if (wasNext && (nx === 'review' || nx === 'offers' || nx === 'docs')) await thinking(nx === 'offers' ? 'Finding your options' : 'Just a moment');
   proceed(wasNext);
+}
+
+/* Aktify convention: a brief "Just a moment..." with an orbiting ring before a big step */
+async function thinking(text) {
+  if (reduced()) return;
+  const t = addTurn('', 'intro lead wait-turn');
+  t.append(h('div', { class: 'jam' }, h('span', { class: 'jam-t' }, text + '...'), h('span', { class: 'orbit', 'aria-hidden': 'true' }, h('i'))));
+  scrollToEl(t);
+  await sleep(1100);
+  t.classList.add('gone');
+  await sleep(250);
+  t.remove();
 }
 
 function proceed(inOrder) {
