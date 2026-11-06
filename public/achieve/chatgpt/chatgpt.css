@@ -88,3 +88,7 @@ button, textarea { font-family: inherit; color: inherit; }
 .dev-menu a, .dev-menu button { display: block; width: 100%; text-align: left; margin-top: 4px; padding: 8px 10px; border: 0; border-radius: 6px; background: #f2f2f2; color: #000; font-size: 13px; text-decoration: none; cursor: pointer; }
 @media (max-width: 899px) { .dev { bottom: auto; top: 12px; left: auto; right: 60px; } .dev-menu { bottom: auto; top: 26px; left: auto; right: 0; } }
 @media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+
+/* Prototype-only control: Deep red with a white label so it is easy to find */
+.dev-btn { border: 0; background: #cf2748; color: #fff; border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 700; letter-spacing: .02em; opacity: 1; box-shadow: 0 4px 14px rgba(207, 39, 72, .35); }
+.dev-btn:hover { background: #de4d68; opacity: 1; }
