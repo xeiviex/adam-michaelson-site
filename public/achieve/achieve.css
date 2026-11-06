@@ -421,3 +421,8 @@ body.human .human-cta { display: none; }
 .o-amt span { font-size: 12.5px; font-weight: 600; letter-spacing: .02em; color: var(--mut); text-transform: uppercase; }
 .o-amt b { font-size: 20px; letter-spacing: -.01em; }
 .o-amt.big { margin: 6px 0 12px; } .o-amt.big b { font-size: 26px; }
+
+/* buttons keep their 48px height inside stacked modal actions (they were being flex-shrunk) */
+.btn { flex: none; min-height: 48px; }
+.btn.sm { min-height: 38px; }
+.o-actions.stack { gap: 12px; }

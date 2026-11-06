@@ -173,7 +173,7 @@ export function details(of, o) {
     h('div', { class: 'o-top' }, h('span', { class: 'o-kind' }, of.kind), of.tags.map((t) => h('span', { class: 'tag' }, t))),
     h('h2', null, of.name, h('small', null, of.short)),
     h('div', { class: 'o-amt big' }, h('span', null, of.amountLabel), h('b', null, money(of.amount))),
-    h('div', { class: 'o-hero' }, h('div', null, h('b', null, money(of.monthly)), h('span', null, 'per month')), h('div', null, h('b', null, of.apr + '%'), h('span', null, 'APR, ' + of.rateType.toLowerCase())), h('div', null, h('b', null, money(of.amount)), h('span', null, 'you borrow'))),
+    h('div', { class: 'o-hero' }, h('div', null, h('b', null, money(of.monthly)), h('span', null, 'per month')), h('div', null, h('b', null, of.apr + '%'), h('span', null, 'APR, ' + of.rateType.toLowerCase()))),
     h('dl', { class: 'o-grid wide' },
       row('Term', of.term + ' months'), row('Origination fee', money(of.fee) + ' (' + of.feePct + '%)'), row('Estimated total interest', money(of.interest)), row('Estimated total cost', money(of.totalCost)),
       row('Collateral', of.secured ? 'Your home secures this' : 'None (unsecured)'), row('Funding', of.funding), row('Prepayment penalty', 'None')),
