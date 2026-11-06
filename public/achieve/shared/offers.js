@@ -35,6 +35,7 @@ export function buildOffers(a) {
   }
   for (const o of list) {
     o.amount = amount;
+    o.amountLabel = o.type === 'term' ? 'Loan amount' : 'Credit line';
     o.fee = Math.round((amount * o.feePct) / 100);
     o.monthly = Math.round(pmt(amount, o.apr, o.term));
     o.totalCost = o.monthly * o.term + o.fee;
@@ -50,6 +51,6 @@ export function buildOffers(a) {
   return list;
 }
 
-export const offerLine = (o) => `${o.name} (${o.short}): ${o.apr}% APR ${o.rateType.toLowerCase()}, ${money(o.monthly)} a month, ${o.feePct}% fee (${money(o.fee)}), est. total ${money(o.totalCost)}`;
+export const offerLine = (o) => `${o.name} (${o.short}): ${money(o.amount)} ${o.amountLabel.toLowerCase()}, ${o.apr}% APR ${o.rateType.toLowerCase()}, ${money(o.monthly)} a month, ${o.feePct}% fee (${money(o.fee)}), est. total ${money(o.totalCost)}`;
 
 export const SAMPLE_NOTE = 'Sample offers for this prototype. Rates and terms are illustrative, not real Achieve pricing, and nothing here is a credit decision.';

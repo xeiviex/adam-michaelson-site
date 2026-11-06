@@ -148,6 +148,7 @@ export function offersPanel(offers, a, o) {
     const card = h('article', { class: 'offer', 'data-offer': of.id },
       h('div', { class: 'o-top' }, h('span', { class: 'o-kind' }, of.kind), of.tags.map((t) => h('span', { class: 'tag' }, t))),
       h('h3', { class: 'o-name' }, of.name, h('small', null, of.short)),
+      h('div', { class: 'o-amt' }, h('span', null, of.amountLabel), h('b', null, money(of.amount))),
       h('div', { class: 'o-big' }, money(of.monthly), h('small', null, ' / month')),
       h('dl', { class: 'o-grid' }, row('APR', of.apr + '% ' + of.rateType.toLowerCase()), row('Term', of.term + ' mo'), row('Fee', money(of.fee)), row('Funds', of.funding)),
       h('p', { class: 'o-blurb' }, of.blurb),
@@ -171,6 +172,7 @@ export function details(of, o) {
   const body = h('div', { class: 'o-detail' },
     h('div', { class: 'o-top' }, h('span', { class: 'o-kind' }, of.kind), of.tags.map((t) => h('span', { class: 'tag' }, t))),
     h('h2', null, of.name, h('small', null, of.short)),
+    h('div', { class: 'o-amt big' }, h('span', null, of.amountLabel), h('b', null, money(of.amount))),
     h('div', { class: 'o-hero' }, h('div', null, h('b', null, money(of.monthly)), h('span', null, 'per month')), h('div', null, h('b', null, of.apr + '%'), h('span', null, 'APR, ' + of.rateType.toLowerCase())), h('div', null, h('b', null, money(of.amount)), h('span', null, 'you borrow'))),
     h('dl', { class: 'o-grid wide' },
       row('Term', of.term + ' months'), row('Origination fee', money(of.fee) + ' (' + of.feePct + '%)'), row('Estimated total interest', money(of.interest)), row('Estimated total cost', money(of.totalCost)),
@@ -187,7 +189,7 @@ export function details(of, o) {
 export function compare(list, o) {
   const best = (k, dir) => { const v = list.map((x) => x[k]); const t = dir > 0 ? Math.min(...v) : Math.max(...v); return (x) => x[k] === t && new Set(v).size > 1; };
   const rowsDef = [
-    ['Monthly payment', (x) => money(x.monthly), best('monthly', 1)], ['APR', (x) => x.apr + '%', best('apr', 1)], ['Rate type', (x) => x.rateType], ['Term', (x) => x.term + ' months'],
+    ["Loan amount / credit line", (x) => money(x.amount) + (x.type === 'term' ? '' : ' line')], ['Monthly payment', (x) => money(x.monthly), best('monthly', 1)], ['APR', (x) => x.apr + '%', best('apr', 1)], ['Rate type', (x) => x.rateType], ['Term', (x) => x.term + ' months'],
     ['Origination fee', (x) => money(x.fee), best('fee', 1)], ['Estimated total cost', (x) => money(x.totalCost), best('totalCost', 1)], ['Funding', (x) => x.funding], ['Collateral', (x) => (x.secured ? 'Your home' : 'None')],
   ];
   const table = h('table', { class: 'cmp-table' },
