@@ -24,7 +24,12 @@ function scrollToEl(el, offset) {
   const top = Math.max(0, el.offsetTop - (offset == null ? Math.min(110, stream.clientHeight * 0.14) : offset));
   stream.scrollTo({ top, behavior: reduced() ? 'auto' : 'smooth' });
 }
-const scrollEnd = () => stream.scrollTo({ top: stream.scrollHeight, behavior: reduced() ? 'auto' : 'smooth' });
+/* Keep the newest chat line visible at the bottom of the viewport (the tail spacer below it stays offscreen). */
+const scrollEnd = () => {
+  const last = tail.previousElementSibling;
+  const top = last ? last.offsetTop + last.offsetHeight - stream.clientHeight + 28 : stream.scrollHeight;
+  stream.scrollTo({ top: Math.max(0, Math.min(top, stream.scrollHeight - stream.clientHeight)), behavior: reduced() ? 'auto' : 'smooth' });
+};
 function updateEarlier() {
   const has = $$('.turn.answered', stream).length > 0 || $$('.msg', stream).length > 0;
   $('#earlier').classList.toggle('show', has && stream.scrollTop > 140 && !mobile.matches);
