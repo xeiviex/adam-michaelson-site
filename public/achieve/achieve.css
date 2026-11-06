@@ -428,6 +428,11 @@ body.human .human-cta { display: none; }
 .o-actions.stack { gap: 12px; }
 
 /* Completed steps use Deep green: filled circle on groups, bare check on sub-steps */
-.rg.complete .rg-ic { background: #1fa878; color: #fff; }
-.rs.done .dot { background: none; border-color: transparent; color: #1fa878; }
+.rg.complete .rg-ic { background: #17986c; color: #fff; }
+.rs.done .dot { background: none; border-color: transparent; color: #17986c; }
 .rs.done .dot svg { width: 16px; height: 16px; stroke-width: 3; }
+
+/* Incomplete sub-steps: empty blue outlined circle; complete: bare green check */
+.rs .dot { border-color: var(--ind); background: #fff; }
+.rs.done .dot { background: none; border-color: transparent; }
+.rs.cur .dot { border-color: var(--ind); }
