@@ -13,8 +13,15 @@ test('fit chat assesses bare product-leadership titles instead of asking for a j
   assert.match(t, /B2B SaaS, fintech and lending, AI product, HR software, banking software, and infrastructure software/);
 });
 
-test('CPO answers claim the seat in practice, not a CPO title', () => {
-  assert.match(text('fit'), /executive product leader, even though my formal title was SVP of Product/);
+test('CPO is the confident target role in both chats, without hedging', () => {
+  for (const mode of ['intro', 'fit']) {
+    const t = text(mode);
+    assert.match(t, /TARGET ROLE: the role I'm looking for, and my best fit, is Chief Product Officer/);
+    assert.match(t, /Never hedge, never apologize for my titles/);
+    assert.match(t, /I don't lead with "SVP of Product" anymore/);
+  }
+  assert.match(text('fit'), /never list my titles or the lack of a CPO title as a gap/);
+  assert.match(text('fit'), /I'm a CPO, it's the role I'm looking for, and here's the evidence/);
 });
 
 test('CTO and CPTO answers bring in the technical background', () => {
