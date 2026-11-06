@@ -410,7 +410,7 @@ body.human .human-cta { display: none; }
 .bubble:hover { box-shadow: 0 4px 14px rgba(51, 0, 255, .14); color: #1d1a33; }
 
 /* Prototype-only control: Deep red with a white label so it is easy to find */
-.dev-btn { border: 0; background: #cf2748; color: #fff; border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 700; letter-spacing: .02em; opacity: 1; box-shadow: 0 4px 14px rgba(207, 39, 72, .35); }
+.dev-btn { border: 0; background: #cf2748; color: #fff; border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 700; letter-spacing: .02em; opacity: 1; box-shadow: none; }
 .dev-btn:hover { background: #de4d68; opacity: 1; }
 @media (max-width: 760px) { .dev-btn { padding: 5px 9px; font-size: 11px; } }
 
