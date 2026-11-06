@@ -392,3 +392,6 @@ body.human .human-cta { display: none; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* Aktify convention: a small ring marks each assistant question */
+.q::before { content: ""; display: block; width: 16px; height: 16px; box-sizing: border-box; border: 4px solid #3300ff; border-radius: 50%; margin: 0 0 12px; }
