@@ -56,6 +56,8 @@ figure figcaption { font-size: .82rem; color: var(--muted); margin-top: 8px; }
 .chapter .body p { font-size: 1.05rem; }
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 10px; margin-top: 8px; }
 .gallery .ph { --ar: 1 / 1; }
+.gallery.pair { grid-template-columns: 1fr 1fr; }
+.gallery.pair .ph { --ar: 13 / 25; }
 .gallery .ph.wide { grid-column: span 2; --ar: 2 / 1; }
 .videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 14px; margin-top: 8px; }
 .videos .ph { --ar: 16 / 9; background: #05070b; }
