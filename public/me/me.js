@@ -35,3 +35,19 @@
     if (e.key === 'Escape') close(); else if (e.key === 'ArrowLeft') show(at - 1); else if (e.key === 'ArrowRight') show(at + 1);
   });
 })();
+
+// Autoplay muted looping video with a visible unmute button
+(function () {
+  document.querySelectorAll('video[data-loop]').forEach(function (v) {
+    var box = v.parentNode;
+    v.muted = true;
+    var p = v.play(); if (p && p.catch) p.catch(function () {});
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'unmute';
+    function label() { b.textContent = v.muted ? '🔇 Tap for sound' : '🔊 Sound on'; b.setAttribute('aria-label', v.muted ? 'Unmute video' : 'Mute video'); }
+    label();
+    b.addEventListener('click', function () { v.muted = !v.muted; if (!v.muted && v.paused) v.play(); label(); });
+    v.addEventListener('volumechange', label);
+    box.appendChild(b);
+  });
+})();

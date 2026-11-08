@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" data-no-scroll-hint>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Messages | Achieve (prototype)</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="/achieve/messages/messages.css?v=1">
+<link rel="icon" href="/achieve/img/logo-mark.png" type="image/png">
+</head>
+<body class="msgs">
+<div class="win" id="win">
+  <aside class="side" aria-label="Conversations">
+    <div class="lights" aria-hidden="true"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+    <div class="s-search"><span class="ico" id="srIc"></span><span>Search</span></div>
+    <ul class="convos" id="convos"></ul>
+  </aside>
+  <section class="pane">
+    <header class="pane-h">
+      <a class="back" href="/achieve/messages/" aria-label="Back to conversations" id="backBtn"><span class="ico" id="backIc"></span><span class="bc">2</span></a>
+      <div class="who"><span class="av"><img src="/achieve/img/logo-mark.png" alt=""></span><span class="nm">Achieve <span class="ico" id="chevIc"></span></span><span class="sub">iMessage</span></div>
+      <span class="h-r"></span>
+    </header>
+    <div class="thread" id="thread" aria-live="polite"></div>
+    <form class="compose" id="compose" autocomplete="off">
+      <button type="button" class="plus" aria-label="Apps" id="plusBtn"></button>
+      <div class="pill"><input id="msgInput" type="text" placeholder="iMessage" aria-label="iMessage" enterkeyhint="send" autocomplete="off" autocapitalize="sentences"><button type="button" class="mic" id="micBtn" aria-label="Dictate"></button><button type="submit" class="send" id="sendBtn" aria-label="Send"></button></div>
+    </form>
+  </section>
+</div>
+<div class="dev" id="dev">
+  <div class="dev-menu" id="devMenu" hidden>
+    <p>Prototype controls. Not part of the product.</p>
+    <a href="/achieve/">Open the Achieve app (web)</a>
+    <a href="/achieve/chatgpt/">Switch to the ChatGPT context</a>
+    <button type="button" id="doReset">Start over (clear session)</button>
+  </div>
+  <button type="button" class="dev-btn" id="devBtn" aria-expanded="false" aria-controls="devMenu">Switch</button>
+</div>
+<script type="module" src="/achieve/messages/messages.js?v=1"></script>
+</body>
+</html>

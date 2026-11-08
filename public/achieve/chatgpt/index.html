@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" data-no-scroll-hint>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ChatGPT | Achieve (prototype)</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="/achieve/chatgpt/chatgpt.css?v=1">
+<link rel="icon" href="/achieve/img/logo-mark.png" type="image/png">
+</head>
+<body class="gpt">
+<div class="app" id="app">
+  <aside class="side" id="side" aria-label="Chat history">
+    <div class="s-top"><span class="logo" id="logoIc"></span><button class="ib" id="sideClose" aria-label="Close sidebar"></button></div>
+    <nav class="s-nav">
+      <a href="/achieve/chatgpt/" class="s-item"><span class="ico" id="nwIc"></span>New chat</a>
+      <button class="s-item" type="button"><span class="ico" id="srIc"></span>Search chats</button>
+      <button class="s-item" type="button"><span class="ico" id="libIc"></span>Library</button>
+    </nav>
+    <div class="s-label">Chats</div>
+    <ul class="s-list" id="hist">
+      <li class="on">Loan help with Achieve</li>
+      <li>Trip packing list</li>
+      <li>Explain compound interest</li>
+      <li>Weekend meal prep ideas</li>
+      <li>Resume feedback</li>
+    </ul>
+    <div class="s-user"><span class="me">A</span><span><b>Adam Michaelson</b><small>Plus</small></span></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <main class="main">
+    <header class="top">
+      <button class="ib menu" id="menuBtn" aria-label="Open sidebar"></button>
+      <button class="model" type="button">ChatGPT <span class="ico" id="mdIc"></span></button>
+      <div class="top-r"><button class="share" type="button"><span class="ico" id="shIc"></span>Share</button><button class="ib cmp" type="button" id="cmpBtn" aria-label="New chat"></button><span class="me small">A</span></div>
+    </header>
+    <div class="scroller" id="scroller"><div class="col" id="col"></div></div>
+    <form class="composer" id="composer" autocomplete="off">
+      <div class="box">
+        <button type="button" class="ib plus" id="plusBtn" aria-label="Attach"></button>
+        <textarea id="gptInput" rows="1" placeholder="Ask anything" aria-label="Message ChatGPT" enterkeyhint="send"></textarea>
+        <button type="button" class="ib mic" id="micBtn" aria-label="Dictate"></button>
+        <button type="submit" class="send" id="sendBtn" aria-label="Send message" disabled></button>
+      </div>
+      <p class="fine">ChatGPT can make mistakes. Check important info.</p>
+    </form>
+  </main>
+</div>
+<div class="dev" id="dev">
+  <div class="dev-menu" id="devMenu" hidden>
+    <p>Prototype controls. Not part of the product.</p>
+    <a href="/achieve/">Open the Achieve app (web)</a>
+    <a href="/achieve/messages/">Switch to Messages</a>
+    <button type="button" id="doReset">Start over (clear session)</button>
+  </div>
+  <button type="button" class="dev-btn" id="devBtn" aria-expanded="false" aria-controls="devMenu">Switch</button>
+</div>
+<script type="module" src="/achieve/chatgpt/chatgpt.js?v=1"></script>
+</body>
+</html>

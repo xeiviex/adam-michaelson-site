@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-no-scroll-hint>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Achieve | Get your rate (prototype)</title>
+<meta name="description" content="A prototype of a conversational, form-based loan application. Sample data only.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/achieve/achieve.css?v=1">
+<link rel="icon" href="/achieve/img/logo-mark.png" type="image/png">
+</head>
+<body class="ach">
+<header class="top">
+  <a class="brand" href="/achieve/" aria-label="Achieve home"><img src="/achieve/img/logo-full.png" alt="achieve" width="124" height="32"></a>
+  <div class="top-r">
+    <span class="mins" aria-live="polite"></span>
+    <a class="tel" href="tel:+18334352021"><span class="ico" id="telIc"></span><span class="tel-t">(833) 435-2021</span></a>
+    <button class="btn sm" type="button" data-human><span class="ico" id="hdIc"></span><span class="l-long">Chat with a human</span><span class="l-short">Human</span></button>
+  </div>
+  <div class="bar" role="progressbar" aria-label="Application progress"><i id="barFill"></i></div>
+</header>
+
+<button class="strip" id="strip" type="button" aria-label="Show your progress">
+  <span><b id="stripStep"></b><span class="sep"> &middot; </span><span class="mins"></span></span>
+  <span class="ico" id="stripIc"></span>
+</button>
+
+<div class="shell">
+  <main class="col" aria-label="Application">
+    <div class="stream" id="stream" tabindex="0" aria-live="polite">
+      <div class="tail" id="tail"></div>
+    </div>
+    <button class="earlier" id="earlier" type="button"><span class="ico" id="upIc"></span>Earlier answers</button>
+    <div class="dock" id="dock">
+      <div class="dock-in">
+        <div class="human-bar" id="humanBar" hidden>
+          <span class="hb-av" id="hbAv"></span>
+          <span class="hb-t"><b>Maya R.</b> <em>Achieve loan consultant</em><small>You're chatting with a real person</small></span>
+          <button type="button" class="lnk" id="handBack">Hand back to assistant</button>
+        </div>
+        <div class="ctx-chip" id="ctxChip" hidden></div>
+        <div class="dock-row">
+          <form class="ask" id="askForm" autocomplete="off">
+            <input id="askInput" type="text" maxlength="500" placeholder="Ask a question..." aria-label="Ask a question">
+            <button type="submit" aria-label="Send" id="sendBtn"></button>
+          </form>
+          <button class="btn human-cta" type="button" data-human><span class="ico" id="hd2Ic"></span><span class="l-long">Chat with a human</span><span class="l-short">Human</span></button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="road" id="road" aria-label="Your progress">
+    <div class="road-head">
+      <button class="road-x" id="roadClose" type="button" aria-label="Close"><span class="ico" id="xIc"></span></button>
+      <div class="road-t">Your application</div>
+      <div class="road-pct"><b id="pct">0%</b> <span>complete</span></div>
+      <div class="rbar"><i id="roadFill"></i></div>
+      <div class="mins"></div>
+    </div>
+    <nav id="roadInner" aria-label="Steps"></nav>
+    <div class="road-foot">
+      <button type="button" class="lnk-d" data-help><span class="ico" id="infoIc"></span>Help &amp; Support</button>
+    </div>
+  </aside>
+</div>
+<div class="road-back" id="roadBack"></div>
+
+<div class="dev" id="dev">
+  <div class="dev-menu" id="devMenu" hidden>
+    <p>Prototype controls. Not part of the product.</p>
+    <button type="button" id="doDropMsg">I dropped out: text me (Messages)</button>
+    <button type="button" id="doDropGpt">I dropped out: reach me in ChatGPT</button>
+    <button type="button" id="doReset">Start over (clear session)</button>
+  </div>
+  <button type="button" class="dev-btn" id="devBtn" aria-expanded="false" aria-controls="devMenu">Switch</button>
+</div>
+
+<script type="module">
+  import { icon } from '/achieve/shared/dom.js';
+  const put = (id, name, size, sw) => { const e = document.getElementById(id); if (e) e.innerHTML = icon(name, size, sw); };
+  put('telIc', 'phone', 18); put('hdIc', 'headset', 18); put('hd2Ic', 'headset', 20); put('stripIc', 'menu', 20, 2);
+  put('upIc', 'up', 14, 2.4); put('xIc', 'x', 20); put('infoIc', 'info', 18); put('sendBtn', 'send', 18, 2);
+  const av = document.getElementById('hbAv');
+  import('/achieve/shared/dom.js').then((m) => av.append(m.avatarImg('hb-img')));
+</script>
+<script type="module" src="/achieve/app.js?v=1"></script>
+</body>
+</html>

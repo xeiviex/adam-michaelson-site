@@ -22,7 +22,7 @@ a { color: inherit; }
 .eyebrow { font-family: var(--label); font-size: .82rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-text); }
 
 /* media: photos, videos, and the placeholder shown until a file exists */
-.ph { position: relative; background: var(--panel-2); overflow: hidden; border-radius: 2px; aspect-ratio: var(--ar, 4 / 3); }
+.ph { position: relative; background: var(--panel-2); overflow: hidden; border-radius: 6px; aspect-ratio: var(--ar, 4 / 3); }
 .ph > img, .ph > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .ph.missing > img, .ph.missing > video { display: none; }
 .ph::after { content: attr(data-label); position: absolute; inset: 0; display: none; place-items: center; text-align: center; padding: 16px; font-size: .78rem; letter-spacing: .06em; color: var(--muted); border: 1px dashed var(--line); background: repeating-linear-gradient(135deg, transparent 0 14px, rgba(190,210,255,.03) 14px 28px); }
@@ -56,6 +56,8 @@ figure figcaption { font-size: .82rem; color: var(--muted); margin-top: 8px; }
 .chapter .body p { font-size: 1.05rem; }
 .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 10px; margin-top: 8px; }
 .gallery .ph { --ar: 1 / 1; }
+.gallery.pair { grid-template-columns: 1fr 1fr; }
+.gallery.pair .ph { --ar: 13 / 25; }
 .gallery .ph.wide { grid-column: span 2; --ar: 2 / 1; }
 .videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 14px; margin-top: 8px; }
 .videos .ph { --ar: 16 / 9; background: #05070b; }
@@ -89,3 +91,5 @@ footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
 }
 @media (prefers-reduced-motion: reduce) { .js .rv { opacity: 1; transform: none; } * { transition: none !important; } }
 .sbar { margin-inline: calc(-1 * clamp(16px, 5vw, 64px)); }
+.unmute { position: absolute; top: 10px; left: 10px; z-index: 2; font: inherit; font-size: .8rem; padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.5); background: rgba(0,0,0,.6); color: #fff; cursor: pointer; }
+.unmute:hover { background: rgba(0,0,0,.85); }
