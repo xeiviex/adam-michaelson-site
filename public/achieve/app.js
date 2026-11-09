@@ -45,6 +45,8 @@ function stepRowHtml(s, cur) {
     <span class="dot">${done ? icon('check', 12, 3) : ''}</span><span class="rl">${s.label}</span></button></li>`;
 }
 function renderRoad() {
+  /* drop finished check-off animations first, so only a step completed moments ago can animate */
+  ui.justDone.forEach((t0, id) => { if (performance.now() - t0 > 1000) ui.justDone.delete(id); });
   const cur = S.get().focus && !S.isDone(S.get().focus) ? S.get().focus : S.nextIncomplete();
   const curGroup = cur ? F.stepById(cur).group : 'offers';
   ui.openGroups.add(curGroup);
