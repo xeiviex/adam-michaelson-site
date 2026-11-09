@@ -436,11 +436,11 @@ body.human .human-cta { display: none; }
 .rs.cur .dot { border-color: var(--ind); }
 
 /* Check-off animation: a green dot runs once around the circle, the check is written, then it throbs */
-.rs.pop .dot { position: relative; animation: ringfade .7s linear both, throb .22s .62s ease-out both; }
-.rs.pop .dot::before { content: ""; position: absolute; inset: -2px; border-radius: 50%; background: radial-gradient(circle at 50% 1px, #17986c 0 3.2px, transparent 3.7px); animation: orbitdot .36s cubic-bezier(.5, 0, .3, 1) both, dotgone .08s .36s linear both; }
-.rs.pop .dot svg path { stroke-dasharray: 24; stroke-dashoffset: 24; animation: draw .26s .36s ease-out forwards; }
+.rs.pop .dot { position: relative; animation: ringfade .5s linear both, throb .16s .48s ease-out both; }
+.rs.pop .dot::before { content: ""; position: absolute; inset: -2px; border-radius: 50%; background: radial-gradient(circle at 50% 1px, #17986c 0 3.2px, transparent 3.7px); animation: orbitdot .3s cubic-bezier(.5, 0, .3, 1) both, dotgone .06s .3s linear both; }
+.rs.pop .dot svg path { stroke-dasharray: 24; stroke-dashoffset: 24; animation: draw .2s .3s ease-out forwards; }
 @keyframes orbitdot { from { transform: rotate(0); } to { transform: rotate(360deg); } }
 @keyframes dotgone { to { opacity: 0; } }
-@keyframes ringfade { 0%, 52% { border-color: var(--ind); } 62%, 100% { border-color: transparent; } }
+@keyframes ringfade { 0%, 55% { border-color: var(--ind); } 70%, 100% { border-color: transparent; } }
 @keyframes throb { 0% { transform: scale(1); } 45% { transform: scale(1.2); } 100% { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .rs.pop .dot, .rs.pop .dot::before, .rs.pop .dot svg path { animation: none; stroke-dashoffset: 0; } .rs.pop .dot::before { display: none; } }
