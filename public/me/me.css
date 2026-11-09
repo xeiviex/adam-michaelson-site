@@ -38,7 +38,7 @@ figure figcaption { font-size: .82rem; color: var(--muted); margin-top: 8px; }
 .hub-head p { font-size: 1.15rem; }
 .facet { border-top: 1px solid var(--line); padding-block: 72px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 6vw, 88px); align-items: center; }
 .facet:nth-of-type(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
-.facet:nth-of-type(even) .ph { order: 2; }
+.facet:nth-of-type(even) .fig { order: 2; }
 .facet .txt { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; min-width: 0; }
 .facet h2 { font-size: clamp(2rem, 4.2vw, 3.2rem); line-height: 1.1; }
 .facet p { font-size: 1.08rem; max-width: 46ch; }
@@ -86,10 +86,12 @@ footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
 .js .rv.in { opacity: 1; transform: none; }
 @media (max-width: 820px) {
   .facet, .facet:nth-of-type(even), .chapter { grid-template-columns: 1fr; padding-block: 48px; }
-  .facet:nth-of-type(even) .ph { order: 0; }
+  .facet:nth-of-type(even) .fig { order: 0; }
   .gallery .ph.wide { grid-column: span 1; --ar: 1 / 1; }
 }
 @media (prefers-reduced-motion: reduce) { .js .rv { opacity: 1; transform: none; } * { transition: none !important; } }
 .sbar { margin-inline: calc(-1 * clamp(16px, 5vw, 64px)); }
 .unmute { position: absolute; top: 10px; left: 10px; z-index: 2; font: inherit; font-size: .8rem; padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.5); background: rgba(0,0,0,.6); color: #fff; cursor: pointer; }
 .unmute:hover { background: rgba(0,0,0,.85); }
+.fig { margin: 0; min-width: 0; }
+.fig figcaption { margin-top: 10px; font-size: .9rem; line-height: 1.45; color: var(--muted); max-width: 52ch; }
