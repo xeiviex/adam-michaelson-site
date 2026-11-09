@@ -15,7 +15,7 @@ const stream = $('#stream'), tail = $('#tail'), road = $('#roadInner'), dock = $
 const askForm = $('#askForm'), askInput = $('#askInput'), chip = $('#ctxChip'), humanBar = $('#humanBar');
 const mobile = window.matchMedia('(max-width: 899px)');
 
-const ui = { run: 0, human: false, chat: [], offerCtx: null, drafts: {}, offers: [], openGroups: new Set(), lastPct: 0, justDone: new Map(), busy: false };
+const ui = { run: 0, human: false, chat: [], offerCtx: null, drafts: {}, offers: [], openGroups: new Set(), lastPct: 0, justDone: new Set(), busy: false };
 const A = () => S.applicant();
 const first = () => A().first || '';
 
@@ -45,8 +45,6 @@ function stepRowHtml(s, cur) {
     <span class="dot">${done ? icon('check', 12, 3) : ''}</span><span class="rl">${s.label}</span></button></li>`;
 }
 function renderRoad() {
-  /* drop finished check-off animations first, so only a step completed moments ago can animate */
-  ui.justDone.forEach((t0, id) => { if (performance.now() - t0 > 1000) ui.justDone.delete(id); });
   const cur = S.get().focus && !S.isDone(S.get().focus) ? S.get().focus : S.nextIncomplete();
   const curGroup = cur ? F.stepById(cur).group : 'offers';
   ui.openGroups.add(curGroup);
@@ -70,14 +68,8 @@ function renderRoad() {
         <span class="rg-ic">${complete ? icon('check', 14, 3) : icon('chevR', 14, 2.4)}</span><span class="rg-t">${g.title}</span><span class="rg-n">${gp.done}/${gp.total}</span></button>
       <ul>${F.stepsInGroup(g.id).map((s) => stepRowHtml(s, cur)).join('')}</ul></div>`;
   }).join('');
-  /* keep the check-off animation going across re-renders: resume it where it left off */
-  const now = performance.now();
-  ui.justDone.forEach((t0, id) => {
-    const el = road.querySelector('.rs[data-step="' + id + '"] .dot');
-    const el0 = now - t0;
-    if (el0 > 1000) { ui.justDone.delete(id); return; }
-    if (el) el.getAnimations({ subtree: true }).forEach((a) => { try { a.currentTime = el0; } catch (e) { /* ignore */ } });
-  });
+  /* the check-off animation plays once, on the render right after a step completes; it is shorter than the delay before the next render */
+  ui.justDone.clear();
 }
 road.addEventListener('click', (e) => {
   const g = e.target.closest('.rg-h');
@@ -194,7 +186,7 @@ async function finishStep(step, values, mode, turn) {
   if (mode === 'edit') { closeEdit(turn); S.log('edit', { step_id: step.id }); S.save(); renderRoad(); const pend = $('.turn.pending', stream); if (pend && mode === 'edit') setTimeout(() => scrollToEl(pend), 350); return; }
   const wasNext = S.nextIncomplete() === step.id;
   S.complete(step.id);
-  ui.justDone.set(step.id, performance.now());
+  ui.justDone.add(step.id);
   turn.classList.remove('pending');
   turn.classList.add('answered');
   const card = turn.querySelector('.card');
