@@ -79,3 +79,17 @@
   #cdlg.on { transform: none; }
   #cscrim { display: none; }
 }
+
+/* Keyboard open on a phone: input snug on the keyboard, notice line hidden, room above the browser's own keyboard toolbar. */
+.kb .fdlg .fnote { display: none; }
+.kb .fdlg .fform { padding-top: 10px; padding-bottom: 26px; border-top: 0; }
+.kb .fdlg .field { box-shadow: 0 0 0 1px var(--line), 0 6px 22px rgba(0,0,0,.35); }
+
+/* /chat/ : the chat as a full-screen phone page. A back arrow sits at the left of the header instead of the close X. */
+html[data-chat-app] .fscrim { display: none; }
+html[data-chat-app] .fdlg, html[data-chat-app] #cdlg, html[data-chat-app] #fdlg { left: 0; top: 0; width: 100vw; height: 100vh; height: 100dvh; max-width: none; border: 0; border-radius: 0; box-shadow: none; transform: none; padding-top: env(safe-area-inset-top, 0px); background: #0a0d13; }
+html[data-chat-app] .fdlg.on, html[data-chat-app] #cdlg.on, html[data-chat-app] #fdlg.on { transform: none; }
+html[data-chat-app] .fdlg .fhead { padding: 0 12px; justify-content: flex-start; gap: 10px; height: 52px; }
+html[data-chat-app] .fdlg .fhead button { order: -1; }
+html[data-chat-app] .fdlg .log.flog { padding: 18px 18px 14px; }
+html[data-chat-app] .fdlg .fnote, html[data-chat-app] .fdlg .fform { padding-inline: 18px; }
