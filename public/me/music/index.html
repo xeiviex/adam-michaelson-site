@@ -497,7 +497,7 @@ function pick(t,results){
   var tt=norm(t.title), aa=norm(t.artist.split(',')[0]), wa=norm(t.malbum), want=tt+' '+wa, best=null, bs=-99;
   results.forEach(function(r){
     if(!r.previewUrl) return;
-    var s=0, rt=norm(r.trackName||''), ra=norm(r.artistName||''), rc=norm(r.collectionName||'');
+    var s=0, rt=norm(String(r.trackName||'').split(' - ')[0]), ra=norm(r.artistName||''), rc=norm(r.collectionName||'');
     if(rt===tt) s+=4; else if(rt.indexOf(tt)>-1||tt.indexOf(rt)>-1) s+=2;
     if(ra.indexOf(aa)>-1||aa.indexOf(ra)>-1) s+=4;
     if(t.fix.exact&&ra!==aa) s-=10;
@@ -509,7 +509,7 @@ function pick(t,results){
   });
   return bs>=6?best:null;
 }
-function search(q,limit){return jsonp('https://itunes.apple.com/search?media=music&entity=song&limit='+limit+'&country=us&term='+encodeURIComponent(q));}
+function search(q,limit,cc){return jsonp('https://itunes.apple.com/search?media=music&entity=song&limit='+limit+'&country='+(cc||'us')+'&term='+encodeURIComponent(q));}
 
 /* Apple throttles bursts (about 20 calls a minute). Requests go out one at a time, newest-visible row first,
    rows that scrolled away are skipped, and any failure pauses the line with a growing wait before retrying. */
@@ -539,11 +539,18 @@ function keyOf(t){return norm(t.title+' '+t.artist+' '+(t.fix.album||''));}
 function fetchInfo(t){
   var key=keyOf(t), hit=cget(key);
   if(hit) return Promise.resolve(hit);
-  var clean=t.title.replace(/\(.*?\)|\[.*?\]/g,' ')+' '+t.artist.split(',')[0];
-  return search(t.fix.q||clean,10).then(function(d){
-    var r=pick(t,d.results||[]); if(r) return r;
-    return new Promise(function(ok){setTimeout(ok,GAP);}).then(function(){return search(clean,40);}).then(function(d2){return pick(t,d2.results||[]);});
-  }).then(function(r){
+  var tt=t.title.replace(/\(.*?\)|\[.*?\]/g,' '), a1=t.artist.split(',')[0], clean=tt+' '+a1;
+  /* most precise search first, then wider ones, then other Apple storefronts (previews are the same everywhere) */
+  var tries=[[t.fix.q||clean,10,'us'],[clean,40,'us'],[a1+' '+t.malbum+' '+tt,50,'us'],[tt,50,'us'],[clean,40,'gb'],[clean,40,'ca']];
+  var i=0;
+  function step(){
+    var a=tries[i++]; if(!a) return Promise.resolve(null);
+    return search(a[0],a[1],a[2]).then(function(d){
+      var r=pick(t,d.results||[]); if(r) return r;
+      return new Promise(function(ok){setTimeout(ok,GAP);}).then(step);
+    });
+  }
+  return step().then(function(r){
     var out=r?{art:(r.artworkUrl100||'').replace('100x100','120x120'),prev:r.previewUrl}:{none:1};
     if(r) cset(key,out); return out;
   });
