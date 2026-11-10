@@ -108,6 +108,8 @@
 .amp-btn:disabled{opacity:.3;cursor:default}
 .amp-btn svg{width:16px;height:16px;fill:currentColor}
 .amp-btn .p{display:none}
+.amp-row.loading .amp-btn{animation:ampl 1s ease-in-out infinite}
+@keyframes ampl{0%,100%{opacity:1}50%{opacity:.35}}
 .amp-row.playing .amp-btn{background:var(--accent)}
 .amp-row.playing .amp-btn .p{display:block}
 .amp-row.playing .amp-btn .g{display:none}
@@ -413,7 +415,7 @@ list.appendChild(hd);
 tracks.forEach(function(t){
   var li=document.createElement('li'); li.className='amp-row'; li.setAttribute('data-i',t.id);
   li.innerHTML='<img class="amp-art" alt="" loading="lazy" width="40" height="40" src="'+PLACEHOLDER+'">'+
-    '<button class="amp-btn" type="button" aria-label="Play '+esc(t.title)+' by '+esc(t.artist)+'" disabled>'+PLAY+PAUSE+'</button>'+
+    '<button class="amp-btn" type="button" aria-label="Play '+esc(t.title)+' by '+esc(t.artist)+'">'+PLAY+PAUSE+'</button>'+
     '<span class="amp-name" title="'+esc(t.title)+'">'+esc(t.title)+'</span>'+
     '<span class="amp-artist" title="'+esc(t.artist)+'">'+esc(t.artist)+'</span>'+
     '<span class="amp-album" title="'+esc(t.album)+'">'+esc(t.album)+'</span>'+
@@ -523,7 +525,7 @@ function pump(){
     setTimeout(function(){busy=false;pump();},GAP);
   },function(){
     t.queued=false; penalty=Math.min(60000,penalty?penalty*2:5000);
-    t.row.querySelector('.amp-btn').disabled=false; t.retry=true; if(t.vis) want(t,t.prio);
+    t.retry=true; if(t.vis||t.wantPlay) want(t,t.prio);
     setTimeout(function(){busy=false;pump();},penalty);
   });
 }
@@ -543,8 +545,9 @@ function applyRow(t){
   var row=t.row, info=t.info; if(!info) return;
   if(info.art) row.querySelector('.amp-art').src=info.art;
   var b=row.querySelector('.amp-btn');
-  if(info.prev){b.disabled=false;t.prev=info.prev;t.retry=false;b.removeAttribute('title');}
-  else{b.disabled=true;b.title='No preview available';}
+  row.classList.remove('loading');
+  if(info.prev){t.prev=info.prev;t.retry=false;b.removeAttribute('title');if(t.wantPlay){t.wantPlay=false;play(t);}}
+  else{b.disabled=true;b.title='No preview available';if(t.wantPlay){t.wantPlay=false;next(t);}}
 }
 /* load rows as they scroll into view */
 var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){
@@ -558,12 +561,14 @@ for(var k=0;k<rows.length;k++){ if(io) io.observe(rows[k]); else {tracks[k].vis=
 /* ---------- playback ---------- */
 var audio=new Audio(); audio.preload='none';
 var cur=null; /* the playing row's track */
+var unlocked=false, SILENT='data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA';
 function setState(t,playing){
   for(var k=0;k<rows.length;k++){rows[k].classList.remove('playing');}
   if(t){t.row.classList.add('on'); if(playing) t.row.classList.add('playing');}
 }
 function clearOn(){for(var k=0;k<rows.length;k++){rows[k].classList.remove('on','playing');rows[k].querySelector('.amp-bar').style.width='0';}}
 function play(t){
+  tracks.forEach(function(x){if(x!==t&&x.wantPlay){x.wantPlay=false;x.row.classList.remove('loading');}});
   var go=function(info){
     if(!info||!info.prev) return next(t);
     if(cur!==t){clearOn();cur=t;audio.src=info.prev;}
@@ -571,13 +576,8 @@ function play(t){
     audio.play().catch(function(){});
   };
   if(t.prev) go({prev:t.prev});
-  else{
-    var b=t.row.querySelector('.amp-btn'); b.title='Looking it up…';
-    want(t,true);
-    var iv=setInterval(function(){
-      if(t.info){clearInterval(iv);applyRow(t);go(t.info);}
-      else if(!t.queued&&!busy&&t.retry){clearInterval(iv);b.title='Could not reach Apple; tap to retry';}
-    },300);
+  else{ /* not looked up yet: jump the line and start as soon as Apple answers */
+    t.wantPlay=true; t.row.classList.add('loading'); want(t,true);
   }
 }
 function next(t){
@@ -595,6 +595,9 @@ function keepVisible(r){
 list.addEventListener('click',function(e){
   var b=e.target.closest&&e.target.closest('.amp-btn'); if(!b||b.disabled) return;
   var t=b.parentNode._t;
+  if(!unlocked){ /* iOS only lets audio start from a tap: use this tap to unlock the player for later songs */
+    unlocked=true; audio.src=SILENT; var pr=audio.play(); if(pr&&pr.catch) pr.catch(function(){});
+  }
   if(cur===t&&!audio.paused) audio.pause(); else play(t);
 });
 audio.addEventListener('play',function(){setState(cur,true);});
