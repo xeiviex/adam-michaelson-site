@@ -2,7 +2,7 @@
 html { scroll-padding-top: 64px; }
 .sbar { position: sticky; top: 0; z-index: 40; background: rgba(0,0,0,.92); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,.2); box-sizing: border-box; }
 .sbar *, .sbar *::before, .sbar *::after { box-sizing: border-box; }
-.sbar .in { max-width: 1180px; margin: 0 auto; padding-inline: clamp(18px, 5vw, 56px); height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.sbar .in { max-width: none; margin: 0; padding-inline: clamp(16px, 2.5vw, 32px); height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .sbar .nm { font-family: 'Montserrat', 'Inter', system-ui, sans-serif; font-weight: 800; font-size: .95rem; letter-spacing: .16em; text-transform: uppercase; color: #fff; text-decoration: none; white-space: nowrap; }
 .sbar nav { display: flex; align-items: center; gap: 22px; }
 .sbar nav a { font-family: 'Montserrat', 'Inter', system-ui, sans-serif; font-weight: 700; font-size: .72rem; line-height: 1.65; letter-spacing: .18em; text-transform: uppercase; color: #8d97a8; text-decoration: none; padding-block: 6px; border-bottom: 2px solid transparent; }
