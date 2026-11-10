@@ -40,20 +40,38 @@ export const ANALYTICS_STATEMENTS = [
 let schemaReady = false;
 
 export async function ensureAnalyticsSchema(db) {
-  if (schemaReady || !db) return;
-  for (const sql of ANALYTICS_STATEMENTS) {
-    await db.prepare(sql).run();
+  if (!db) return;
+  if (!schemaReady) {
+    for (const sql of ANALYTICS_STATEMENTS) {
+      try {
+        await db.prepare(sql).run();
+      } catch {}
+    }
   }
-  // Idempotent column migrations for existing tables
+
   try {
-    await db.prepare("ALTER TABLE page_views ADD COLUMN is_owner INTEGER NOT NULL DEFAULT 0").run();
-  } catch {}
+    const pvCols = ((await db.prepare("PRAGMA table_info(page_views)").all()).results || []).map((c) => c.name);
+    if (pvCols.length > 0 && !pvCols.includes("is_owner")) {
+      await db.prepare("ALTER TABLE page_views ADD COLUMN is_owner INTEGER NOT NULL DEFAULT 0").run();
+    }
+  } catch (err) {
+    console.error("pv migration error:", err);
+  }
+
   try {
-    await db.prepare("ALTER TABLE site_visitors ADD COLUMN is_owner INTEGER NOT NULL DEFAULT 0").run();
-  } catch {}
-  try {
-    await db.prepare("ALTER TABLE site_visitors ADD COLUMN device_label TEXT").run();
-  } catch {}
+    const svCols = ((await db.prepare("PRAGMA table_info(site_visitors)").all()).results || []).map((c) => c.name);
+    if (svCols.length > 0) {
+      if (!svCols.includes("is_owner")) {
+        await db.prepare("ALTER TABLE site_visitors ADD COLUMN is_owner INTEGER NOT NULL DEFAULT 0").run();
+      }
+      if (!svCols.includes("device_label")) {
+        await db.prepare("ALTER TABLE site_visitors ADD COLUMN device_label TEXT").run();
+      }
+    }
+  } catch (err) {
+    console.error("sv migration error:", err);
+  }
+
   schemaReady = true;
 }
 
@@ -150,13 +168,15 @@ export async function recordPageView(db, { request, url, visitorId, isReturning,
 
   // If not flagged as owner in this request, check if visitor_id was already flagged previously
   if (!owner) {
-    const existing = await db.prepare(
-      `SELECT is_owner, device_label FROM site_visitors WHERE visitor_id = ?1`
-    ).bind(visitorId).first();
-    if (existing?.is_owner) {
-      owner = true;
-      if (existing.device_label) deviceLabel = existing.device_label;
-    }
+    try {
+      const existing = await db.prepare(
+        `SELECT is_owner, device_label FROM site_visitors WHERE visitor_id = ?1`
+      ).bind(visitorId).first();
+      if (existing?.is_owner) {
+        owner = true;
+        if (existing.device_label) deviceLabel = existing.device_label;
+      }
+    } catch {}
   }
 
   const now = new Date();
@@ -408,7 +428,8 @@ export async function getStats(db, { days = 30, path = null, includeBots = false
       country: r.country,
       views: Number(r.views),
       unique_visitors: Number(r.unique_visitors)
-    })),
+    }))
+    ,
     owner_activity: {
       total_views: Number(ownerTotals.total_views || 0),
       unique_devices: Number(ownerTotals.unique_devices || 0),
