@@ -27,8 +27,12 @@ Updated 2026-10-08.
 - Decide whether to delete stray duplicates: `public/00review.html`, `public/clone10contactinfo.html`, `public/clever/00review.html`, `public/clever/clone10contactinfo.html`.
 - Note: this repo is public. Everything in it is already public on the site, except the opt-in handler code and the database schema, neither of which holds secrets.
 
-## Site-wide scroll hint
-`functions/_middleware.js` appends `<script src="/scroll-hint.js">` to every public HTML page (it skips /api, /admin and /clever), so new pages inherit the hint with no edits. `public/scroll-hint.js` shows a chevron at the bottom center when the screen looks complete but more page is below, hides it on scroll, and brings it back after a pause. Opt a page out with `<html data-no-scroll-hint>`. `public/_routes.json` keeps static assets (js, css, images) from invoking Functions.
+## Site-wide scroll hint & Google Analytics
+`functions/_middleware.js` automatically handles two things across every public HTML page:
+1. Appends Google Analytics 4 (`G-1TRY7CFCFG`) to `<head>`.
+2. Appends `<script src="/scroll-hint.js?v=1" defer>` to `<body>`.
+3. Records privacy-friendly pageviews to D1 (`SMS_OPTIN_DB`) asynchronously with zero page latency, assigning a 1-year first-party cookie (`_am_vid`) to identify unique and returning visitors without PII.
+4. Exposes `/api/stats` (authenticated via `STATS_KEY` or `am_stats_k9x2m4p8v7w1n5q3`) and `/api/admin/stats` for real-time querying of totals, unique visitors, returning users, page rank, and daily trends.
 
 ## Achieve prototype (2026-11-06)
 `/achieve/` (web funnel), `/achieve/messages/` (Apple Messages) and `/achieve/chatgpt/` (ChatGPT) are one prototype for a CEO conversation: a hybrid of conversation and progressive forms that mirrors Achieve's real application flow (screenshots in the "Achieve" Google Slides deck) with Aktify-style conventions.

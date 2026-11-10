@@ -9,6 +9,7 @@ import { sendAsAdam, setMode } from "../../_lib/convo.js";
 import { provider, sendTest, setTelegramWebhook } from "../../_lib/alerts.js";
 import { sweepIdleSessions } from "../../_lib/sweep.js";
 import { emailConfigured } from "../../_lib/email.js";
+import { getStats } from "../../_lib/analytics.js";
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -80,6 +81,12 @@ export async function onRequest({ request, env, params, waitUntil }) {
   if (write) { try { body = await request.json(); } catch { body = {}; } }
 
   switch (`${request.method} ${route}`) {
+    case "GET stats": {
+      const days = url.searchParams.get("days") || "30";
+      const path = url.searchParams.get("path") || null;
+      const includeBots = ["1", "true", "yes"].includes(url.searchParams.get("bots") || "");
+      return json(await getStats(db, { days, path, includeBots }));
+    }
     case "GET conversations":
       return json(await listConversations(db, url));
     case "GET conversation": {
