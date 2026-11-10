@@ -33,6 +33,23 @@ let ready = false;
 export async function ensureSchema(db) {
   if (ready) return;
   for (const sql of STATEMENTS) await db.prepare(sql).run();
+  // Ensure chat_sessions migration columns
+  try {
+    const csCols = ((await db.prepare("PRAGMA table_info(chat_sessions)").all()).results || []).map((c) => c.name);
+    if (csCols.length > 0) {
+      if (!csCols.includes("is_owner")) {
+        await db.prepare("ALTER TABLE chat_sessions ADD COLUMN is_owner INTEGER NOT NULL DEFAULT 0").run();
+      }
+      if (!csCols.includes("device_label")) {
+        await db.prepare("ALTER TABLE chat_sessions ADD COLUMN device_label TEXT").run();
+      }
+      if (!csCols.includes("visitor_id")) {
+        await db.prepare("ALTER TABLE chat_sessions ADD COLUMN visitor_id TEXT").run();
+      }
+    }
+  } catch (err) {
+    console.error("chat_sessions migration error:", err);
+  }
   // Transcript emails only cover chats that were active after this moment, so old conversations are never mass-mailed.
   await db.prepare("INSERT OR IGNORE INTO chat_meta (key, value) VALUES ('email_since', ?1)").bind(new Date().toISOString()).run();
   // Index everything that was logged before the search index existed.

@@ -27,17 +27,24 @@ async function listConversations(db, url) {
   const p = url.searchParams;
   const type = ["intro", "fit"].includes(p.get("type")) ? p.get("type") : null;
   const mode = ["bot", "human"].includes(p.get("mode")) ? p.get("mode") : null;
+  const device = p.get("device") || p.get("owner") || null;
   const fts = ftsQuery(p.get("q"));
   const limit = Math.min(parseInt(p.get("limit"), 10) || 50, 200);
   const rows = (await db.prepare(
     `SELECT s.session_id, s.user_id, s.chat_type, s.mode, s.created_at, s.last_activity_at, s.message_count,
+            s.is_owner, s.device_label,
             (SELECT content FROM chat_messages m WHERE m.session_id = s.session_id AND m.role = 'visitor' ORDER BY m.id LIMIT 1) AS preview
        FROM chat_sessions s
       WHERE (?1 IS NULL OR s.chat_type = ?1) AND (?2 IS NULL OR s.mode = ?2)
         AND (?3 IS NULL OR s.last_activity_at >= ?3) AND (?4 IS NULL OR s.created_at <= ?4)
         AND (?5 IS NULL OR s.session_id IN (SELECT m2.session_id FROM chat_messages_fts f JOIN chat_messages m2 ON m2.id = f.rowid WHERE chat_messages_fts MATCH ?5))
-      ORDER BY s.last_activity_at DESC LIMIT ?6`
-  ).bind(type, mode, dayStart(p.get("from")), dayEnd(p.get("to")), fts, limit).all()).results;
+        AND (?6 IS NULL
+             OR (?6 = 'visitors' AND (s.is_owner IS NULL OR s.is_owner = 0))
+             OR (?6 = 'owner' AND s.is_owner = 1)
+             OR (?6 = 'macbook' AND (s.device_label LIKE '%Macbook%' OR s.device_label LIKE '%MacBook%'))
+             OR (?6 = 'iphone' AND s.device_label LIKE '%iPhone%'))
+      ORDER BY s.last_activity_at DESC LIMIT ?7`
+  ).bind(type, mode, dayStart(p.get("from")), dayEnd(p.get("to")), fts, device, limit).all()).results;
   let snippets = {};
   if (fts && rows.length) {
     const hits = (await db.prepare(
@@ -54,7 +61,7 @@ async function getConversation(db, url) {
   const id = url.searchParams.get("id") || "";
   if (!SESSION_RE.test(id)) return null;
   const after = parseInt(url.searchParams.get("after"), 10) || 0;
-  const session = await db.prepare("SELECT session_id, user_id, chat_type, mode, created_at, last_activity_at, message_count FROM chat_sessions WHERE session_id = ?1").bind(id).first();
+  const session = await db.prepare("SELECT session_id, user_id, chat_type, mode, created_at, last_activity_at, message_count, is_owner, device_label FROM chat_sessions WHERE session_id = ?1").bind(id).first();
   if (!session) return null;
   const messages = (await db.prepare("SELECT id, role, content, created_at FROM chat_messages WHERE session_id = ?1 AND id > ?2 ORDER BY id LIMIT 500").bind(id, after).all()).results;
   const attachments = (await db.prepare("SELECT message_id, url FROM chat_attachments WHERE session_id = ?1").bind(id).all()).results;

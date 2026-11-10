@@ -94,6 +94,52 @@ test("list, search, filters and transcript", async () => {
   });
 });
 
+test("owner device tagging and filtering (MacBook Air vs iPhone)", async () => {
+  const { sqlite, db } = freshDb();
+  const k = await accessKeys();
+  const S_MAC = "macb1111222233334444";
+  const S_IPH = "iph11112222333344445";
+  const S_EXT = "ext11112222333344446";
+
+  seed(sqlite, { id: S_MAC, ip: "107.191.0.3", is_owner: 1, device_label: "Adam's Macbook Air", msgs: [["visitor", "testing from macbook"]], at: "2026-11-10T05:00:00.000Z" });
+  seed(sqlite, { id: S_IPH, ip: "107.191.0.3", is_owner: 1, device_label: "Adam's iPhone", msgs: [["visitor", "testing from phone"]], at: "2026-11-10T05:05:00.000Z" });
+  seed(sqlite, { id: S_EXT, ip: "203.0.113.1", is_owner: 0, device_label: null, msgs: [["visitor", "hello from external visitor"]], at: "2026-11-10T05:10:00.000Z" });
+
+  await withFetch(k.jwksHandler, async () => {
+    const env = { ...k.env, SMS_OPTIN_DB: db };
+    const t = await k.sign();
+    const get = async (q) => (await (await api("conversations", req("/api/admin/conversations" + q, { token: t }), env)).json()).conversations;
+
+    const all = await get("");
+    assert.equal(all.length, 3);
+    assert.deepEqual(all.map((c) => c.session_id), [S_EXT, S_IPH, S_MAC]);
+
+    const macConv = all.find((c) => c.session_id === S_MAC);
+    assert.equal(macConv.is_owner, 1);
+    assert.equal(macConv.device_label, "Adam's Macbook Air");
+
+    const iphConv = all.find((c) => c.session_id === S_IPH);
+    assert.equal(iphConv.is_owner, 1);
+    assert.equal(iphConv.device_label, "Adam's iPhone");
+
+    const extOnly = await get("?device=visitors");
+    assert.deepEqual(extOnly.map((c) => c.session_id), [S_EXT]);
+
+    const ownerOnly = await get("?device=owner");
+    assert.deepEqual(ownerOnly.map((c) => c.session_id), [S_IPH, S_MAC]);
+
+    const macOnly = await get("?device=macbook");
+    assert.deepEqual(macOnly.map((c) => c.session_id), [S_MAC]);
+
+    const iphOnly = await get("?device=iphone");
+    assert.deepEqual(iphOnly.map((c) => c.session_id), [S_IPH]);
+
+    const convDetail = await (await api("conversation", req(`/api/admin/conversation?id=${S_MAC}`, { token: t }), env)).json();
+    assert.equal(convDetail.session.is_owner, 1);
+    assert.equal(convDetail.session.device_label, "Adam's Macbook Air");
+  });
+});
+
 test("takeover: reply puts the session in human mode, the visitor can poll it, hand-back returns it to the bot", async () => {
   const { sqlite, db } = freshDb();
   const k = await accessKeys();

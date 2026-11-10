@@ -13,7 +13,10 @@ CREATE TABLE IF NOT EXISTS chat_sessions (
   mode             TEXT NOT NULL DEFAULT 'bot' CHECK (mode IN ('bot','human')),
   created_at       TEXT NOT NULL,                       -- ISO 8601 UTC
   last_activity_at TEXT NOT NULL,
-  message_count    INTEGER NOT NULL DEFAULT 0
+  message_count    INTEGER NOT NULL DEFAULT 0,
+  is_owner         INTEGER NOT NULL DEFAULT 0,
+  device_label     TEXT,
+  visitor_id       TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_chat_sessions_activity ON chat_sessions (last_activity_at DESC);
 

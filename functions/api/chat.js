@@ -14,6 +14,7 @@ import { makeNameFilter } from "../_lib/nameguard.js";
 import { sweepIdleSessions } from "../_lib/sweep.js";
 import { alertNewSession, forwardVisitorMessage } from "../_lib/alerts.js";
 import { looksLikeUrl, fetchPosting, cacheKey, PostingError } from "../_lib/jobfetch.js";
+import { getVisitorId, isOwnerRequest, detectDeviceLabel } from "../_lib/analytics.js";
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -52,12 +53,59 @@ export async function onRequestPost({ request, env, waitUntil }) {
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const ts = now();
 
+  // Detect owner & device label
+  const visitorId = getVisitorId(request);
+  let isOwner = false;
+  let devLabel = null;
+  try {
+    const url = new URL(request.url);
+    isOwner = isOwnerRequest(request, url);
+    devLabel = detectDeviceLabel(request);
+  } catch {}
+
+  if (!isOwner && visitorId && db) {
+    try {
+      const visitor = await db.prepare("SELECT is_owner, device_label FROM site_visitors WHERE visitor_id = ?1").bind(visitorId).first();
+      if (visitor?.is_owner) {
+        isOwner = true;
+        if (visitor.device_label) devLabel = visitor.device_label;
+      }
+    } catch {}
+  }
+
+  // Format distinct owner device label: "Adam's Macbook Air" or "Adam's iPhone"
+  let ownerDeviceLabel = null;
+  if (isOwner) {
+    const ua = request.headers.get("user-agent") || "";
+    if (/iPhone|iPad/i.test(ua) || (devLabel && /iPhone/i.test(devLabel))) {
+      ownerDeviceLabel = "Adam's iPhone";
+    } else if (/Macintosh/i.test(ua) || (devLabel && /MacBook/i.test(devLabel))) {
+      ownerDeviceLabel = "Adam's Macbook Air";
+    } else if (devLabel) {
+      ownerDeviceLabel = `Adam's ${devLabel}`;
+    } else {
+      ownerDeviceLabel = "Adam's Device";
+    }
+  }
+
   // Session (chat type is fixed by its first message).
-  let session = await db.prepare("SELECT chat_type, mode, message_count FROM chat_sessions WHERE session_id = ?1").bind(sessionId).first();
+  let session = await db.prepare("SELECT chat_type, mode, message_count, is_owner, device_label FROM chat_sessions WHERE session_id = ?1").bind(sessionId).first();
   if (!session) {
-    await db.prepare("INSERT INTO chat_sessions (session_id, user_id, chat_type, created_at, last_activity_at) VALUES (?1,?2,?3,?4,?4)")
-      .bind(sessionId, ip, mode, ts).run();
-    session = { chat_type: mode, mode: "bot", message_count: 0 };
+    try {
+      await db.prepare("INSERT INTO chat_sessions (session_id, user_id, chat_type, created_at, last_activity_at, is_owner, device_label, visitor_id) VALUES (?1,?2,?3,?4,?4,?5,?6,?7)")
+        .bind(sessionId, ip, mode, ts, isOwner ? 1 : 0, ownerDeviceLabel, visitorId).run();
+    } catch {
+      await db.prepare("INSERT INTO chat_sessions (session_id, user_id, chat_type, created_at, last_activity_at) VALUES (?1,?2,?3,?4,?4)")
+        .bind(sessionId, ip, mode, ts).run();
+    }
+    session = { chat_type: mode, mode: "bot", message_count: 0, is_owner: isOwner ? 1 : 0, device_label: ownerDeviceLabel };
+  } else if (isOwner && (!session.is_owner || !session.device_label)) {
+    try {
+      await db.prepare("UPDATE chat_sessions SET is_owner = 1, device_label = ?1 WHERE session_id = ?2")
+        .bind(ownerDeviceLabel, sessionId).run();
+      session.is_owner = 1;
+      session.device_label = ownerDeviceLabel;
+    } catch {}
   }
   const chatType = session.chat_type;
 
