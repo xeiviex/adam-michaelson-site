@@ -13,9 +13,17 @@ export function buildTranscriptEmail({ env, session, messages, attachments = [] 
   const first = messages.find((m) => m.role === "visitor");
   const kind = session.chat_type === "fit" ? "job-fit chat" : "intro chat";
   const link = adminLink(env, session.session_id);
-  const subject = `Chat transcript: "${clip((first ? first.content : "(no message)").replace(/\s+/g, " "), 60)}" (${kind}, ${messages.length} messages)`;
+
+  const whoFrom = session.is_owner
+    ? (session.device_label || "Adam's Device")
+    : (session.location ? `Someone in ${session.location}` : null);
+
+  const whoSubject = whoFrom ? `${whoFrom}, ` : "";
+  const subject = `Chat transcript: "${clip((first ? first.content : "(no message)").replace(/\s+/g, " "), 60)}" (${whoSubject}${kind}, ${messages.length} messages)`;
   const facts = [
     `Type: ${kind}`,
+    ...(whoFrom ? [`From: ${whoFrom}`] : []),
+    ...(session.location && !session.is_owner ? [`Location: ${session.location}`] : []),
     `Visitor IP: ${session.user_id}`,
     `Started: ${when(session.created_at, tz)}`,
     `Last activity: ${when(session.last_activity_at, tz)}`,

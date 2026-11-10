@@ -65,6 +65,27 @@ test("transcript email: subject, admin link, roles, job link, and hostile text e
   assert.doesNotMatch(e.html, /<img/);
   assert.match(e.html, /&lt;img src=x onerror=alert\(1\)&gt; &amp; more/);
   assert.match(e.html, /href="https:\/\/adam-michaelson\.com\/admin#aaaa1111bbbb2222cccc"/);
+
+  // With visitor location (e.g. Someone in Denver, CO)
+  const eLoc = buildTranscriptEmail({
+    env: ENV,
+    session: { ...session, location: "Denver, CO" },
+    messages,
+  });
+  assert.match(eLoc.subject, /Someone in Denver, CO/);
+  assert.match(eLoc.text, /From: Someone in Denver, CO/);
+  assert.match(eLoc.text, /Location: Denver, CO/);
+  assert.match(eLoc.html, /Someone in Denver, CO/);
+
+  // With owner device label
+  const eOwner = buildTranscriptEmail({
+    env: ENV,
+    session: { ...session, is_owner: 1, device_label: "Adam's Macbook Air" },
+    messages,
+  });
+  assert.match(eOwner.subject, /Adam's Macbook Air/);
+  assert.match(eOwner.text, /From: Adam's Macbook Air/);
+  assert.match(eOwner.html, /Adam's Macbook Air/);
 });
 
 test("a session is emailed once per batch of messages, and again with the full transcript if the chat continues", async () => {

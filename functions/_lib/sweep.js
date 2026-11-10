@@ -18,7 +18,7 @@ const MAX_ATTEMPTS = 5;
 export async function emailSession({ db, env, sessionId }, fetchImpl) {
   if (!emailConfigured(env)) return "skipped";
   await ensureSchema(db);
-  const session = await db.prepare("SELECT session_id, user_id, chat_type, mode, created_at, last_activity_at, message_count FROM chat_sessions WHERE session_id = ?1").bind(sessionId).first();
+  const session = await db.prepare("SELECT session_id, user_id, chat_type, mode, created_at, last_activity_at, message_count, is_owner, device_label, location FROM chat_sessions WHERE session_id = ?1").bind(sessionId).first();
   if (!session) return "skipped";
   const messages = (await db.prepare("SELECT id, role, content, created_at FROM chat_messages WHERE session_id = ?1 ORDER BY id").bind(sessionId).all()).results;
   if (!messages.some((m) => m.role === "visitor")) return "skipped";

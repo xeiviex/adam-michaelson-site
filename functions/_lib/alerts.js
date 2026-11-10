@@ -70,14 +70,15 @@ async function withinDailyCap(db, env) {
 /* ---------------- outbound alerts ---------------- */
 
 /** First message of a new chat. Fit chats where a job description or link was sent get a "hot" alert. */
-export async function alertNewSession({ db, env, sessionId, chatType, ip, text, hot = false }, fetchImpl) {
+export async function alertNewSession({ db, env, sessionId, chatType, ip, text, hot = false, location = null, deviceLabel = null }, fetchImpl) {
   const p = provider(env);
   if (!p || inQuietHours(env)) return;
   await ensureSchema(db);
   const prior = await db.prepare("SELECT COUNT(*) n FROM chat_alerts WHERE session_id = ?1 AND kind IN ('new','hot')").bind(sessionId).first();
   if (prior.n > 0 || !(await withinDailyCap(db, env))) return;
   const head = hot ? "🔥 Job description sent in fit chat" : chatType === "fit" ? "💬 New fit chat" : "💬 New chat";
-  const r = await p.send(env, `${head} [${shortCode(sessionId)}] from ${ip}\n\n“${clip(text.replace(/\s+/g, " "), 300)}”\n\n${adminLink(env, sessionId)}\n\nReply to this message to answer as yourself.`, fetchImpl);
+  const fromWho = deviceLabel ? `${deviceLabel} (${ip})` : (location ? `Someone in ${location} (${ip})` : ip);
+  const r = await p.send(env, `${head} [${shortCode(sessionId)}] from ${fromWho}\n\n“${clip(text.replace(/\s+/g, " "), 300)}”\n\n${adminLink(env, sessionId)}\n\nReply to this message to answer as yourself.`, fetchImpl);
   if (r.ok) await record(db, sessionId, hot ? "hot" : "new", r.id);
 }
 

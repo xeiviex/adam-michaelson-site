@@ -150,7 +150,17 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
   // First message of a new chat: tell Adam (a job description or link in the fit chat is a "hot" alert).
   if (visitorTurns === 0) {
-    background(alertNewSession({ db, env, sessionId, chatType, ip, text: message, hot: chatType === "fit" && (looksLikeUrl(message) || message.length > 400) }));
+    background(alertNewSession({
+      db,
+      env,
+      sessionId,
+      chatType,
+      ip,
+      text: message,
+      hot: chatType === "fit" && (looksLikeUrl(message) || message.length > 400),
+      location: session.location,
+      deviceLabel: session.device_label
+    }));
   }
 
   // Takeover: Adam is in this conversation, so the bot stays quiet and the message goes to him.
