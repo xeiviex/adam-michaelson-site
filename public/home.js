@@ -357,6 +357,8 @@
   var vv = window.visualViewport;
   function syncKeyboard() {
     var chat = $('chat'), fd = $('fdlg'), narrow = !canMid() && !!vv;
+    /* Keyboard open: lets the CSS tighten the input area (drop the notice line, add room above the browser's own keyboard bar). */
+    document.documentElement.classList.toggle('kb', narrow && (chat.classList.contains('max') || fd.classList.contains('on')) && window.innerHeight - vv.height > 120);
     if (chat.classList.contains('max') && narrow) {
       chat.style.top = vv.offsetTop + 'px'; chat.style.height = vv.height + 'px'; log.scrollTop = log.scrollHeight;
     } else { chat.style.top = ''; if (!chat.classList.contains('mid')) chat.style.height = ''; }

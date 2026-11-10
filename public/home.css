@@ -205,3 +205,10 @@ footer { border-top: 1px solid var(--line); padding-block: 36px 56px; display: f
 .live-bolt::after { content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 8px); width: max-content; max-width: 240px; padding: 6px 10px; border-radius: 4px; background: #050709; border: 1px solid var(--line); color: var(--ink); font: 500 .74rem/1.35 var(--sans); letter-spacing: 0; text-transform: none; white-space: normal; box-shadow: 0 8px 24px rgba(0,0,0,.55); opacity: 0; visibility: hidden; transform: translateY(4px); pointer-events: none; transition: opacity .16s ease, transform .16s ease, visibility 0s .16s; z-index: 20; }
 .live-bolt:hover::after, .live-bolt:focus-visible::after { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
 .row.note { justify-content: center; font-size: .8rem; opacity: .75; padding: 2px 0; }
+
+/* On-screen keyboard open (narrow screens): the input sits snug on the keyboard like a native chat app. The notice line goes, and the
+   bottom padding keeps the field clear of the browser's own keyboard toolbar, which overlaps the page's last few pixels on iOS. */
+.kb .chat.max .sample, .kb #fdlg .fnote { display: none; }
+.kb .chat.max form, .kb #fform { padding-top: 10px; padding-bottom: 26px; border-top: 0; }
+.kb .chat.max .field, .kb #fform .field { box-shadow: 0 0 0 1px var(--line), 0 6px 22px rgba(0,0,0,.35); }
+.kb .chat.max .log { padding-bottom: 10px; }
