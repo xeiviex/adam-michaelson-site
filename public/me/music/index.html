@@ -71,6 +71,453 @@
     <h2 class="rv">What I listen to</h2>
     <div class="body rv">
       <p>The music and artists I love.</p>
+<div id="amp" class="amp" aria-label="Adam's VERY favorites playlist">
+<style>
+.amp{--bg:#000;--panel:#0b0e15;--line:rgba(190,210,255,.16);--text:#f2f2f3;--mute:#9a9aa3;--accent:var(--accent-text,#ff4d6d);--rowh:56px;--rows:10;
+  max-width:none;margin:8px 0;container-type:inline-size;color:var(--text);font:15px/1.35 var(--sans,system-ui,sans-serif)}
+.amp *{box-sizing:border-box}
+.amp-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding:0 4px 10px;flex-wrap:wrap}
+.amp-title{font:600 1.15rem/1.2 var(--serif,Georgia,serif);color:var(--ink,#fff);margin:0}
+.amp-sub{color:var(--mute);font-size:.85rem}
+.amp-skip{color:var(--mute);font-size:.85rem;text-decoration:none;border-bottom:1px solid transparent}
+.amp-skip:hover,.amp-skip:focus-visible{color:var(--text);border-color:var(--text)}
+.amp-frame{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.amp-list{height:calc(var(--rowh)*var(--rows));overflow-y:auto;overscroll-behavior:auto;scroll-behavior:smooth;
+  scrollbar-width:thin;scrollbar-color:#5a5a64 transparent;list-style:none;margin:0;padding:0}
+.amp-list::-webkit-scrollbar{width:10px}
+.amp-list::-webkit-scrollbar-track{background:#101012}
+.amp-list::-webkit-scrollbar-thumb{background:#5a5a64;border-radius:6px;border:2px solid #101012}
+.amp-list::-webkit-scrollbar-thumb:hover{background:#7a7a86}
+.amp-row{position:relative;display:grid;grid-template-columns:44px 40px minmax(0,2.2fr) minmax(0,1.5fr) minmax(0,1.5fr) 52px;
+  align-items:center;gap:12px;height:var(--rowh);padding:0 16px 0 12px;border-bottom:1px solid var(--line)}
+.amp-row:hover{background:#121724}
+.amp-row.on{background:#161b2c}
+.amp-row.on .amp-name{color:var(--accent)}
+.amp-art{width:40px;height:40px;border-radius:6px;background:#26262b;object-fit:cover;display:block}
+.amp-btn{width:36px;height:36px;border-radius:50%;border:0;background:#26262b;color:var(--text);cursor:pointer;display:grid;place-items:center;padding:0}
+.amp-btn:hover:not(:disabled){background:var(--accent)}
+.amp-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.amp-btn:disabled{opacity:.3;cursor:default}
+.amp-btn svg{width:16px;height:16px;fill:currentColor}
+.amp-btn .p{display:none}
+.amp-row.playing .amp-btn{background:var(--accent)}
+.amp-row.playing .amp-btn .p{display:block}
+.amp-row.playing .amp-btn .g{display:none}
+.amp-name,.amp-artist,.amp-album{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.amp-name{font-weight:600}
+.amp-artist,.amp-album,.amp-time{color:var(--mute);font-size:.9rem}
+.amp-time{text-align:right;font-variant-numeric:tabular-nums}
+.amp-bar{position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--accent)}
+.amp-fade{position:absolute;left:0;right:10px;bottom:0;height:72px;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(11,14,21,0),var(--panel) 85%);transition:opacity .2s}
+.amp-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);pointer-events:none;display:flex;align-items:center;gap:6px;
+  background:rgba(0,0,0,.72);border:1px solid #3a3a42;color:var(--text);padding:5px 12px;border-radius:999px;font-size:.8rem;transition:opacity .2s;white-space:nowrap}
+.amp-hint svg{width:12px;height:12px;fill:currentColor;animation:ampb 1.4s ease-in-out infinite}
+@keyframes ampb{0%,100%{transform:translateY(-1px)}50%{transform:translateY(3px)}}
+@media (prefers-reduced-motion:reduce){.amp-hint svg{animation:none}.amp-list{scroll-behavior:auto}}
+.amp.end .amp-fade,.amp.end .amp-hint{opacity:0}
+.amp-foot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:10px 4px 0;color:var(--mute);font-size:.8rem}
+@container (max-width:560px){
+  .amp-row{grid-template-columns:44px 40px minmax(0,1fr) 46px;grid-template-rows:auto auto;row-gap:2px;align-content:center}
+  .amp-album{display:none}
+  .amp-art,.amp-btn,.amp-time{grid-row:1/3}
+  .amp-art{grid-column:1}.amp-btn{grid-column:2}
+  .amp-name{grid-column:3;grid-row:1;align-self:end}
+  .amp-artist{grid-column:3;grid-row:2;align-self:start;font-size:.82rem}
+  .amp-time{grid-column:4}
+}
+</style>
+
+<div class="amp-head">
+  <h3 class="amp-title">Adam's VERY favorites</h3>
+  <span class="amp-sub"><span id="amp-count">224</span> songs · tap ▶ for a 30-second preview</span>
+</div>
+
+<div class="amp-frame">
+  <ul class="amp-list" id="amp-list" tabindex="0" aria-label="Song list, scrollable"></ul>
+  <div class="amp-fade" aria-hidden="true"></div>
+  <div class="amp-hint" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M1 3.5 6 9l5-5.5z"/></svg><span id="amp-more">Scroll for more</span></div>
+</div>
+
+<div class="amp-foot">
+  <span>Previews courtesy of Apple Music</span>
+  <a class="amp-skip" id="amp-skip" href="#amp-after">Skip the list ↓</a>
+</div>
+<span id="amp-after"></span>
+
+<script>
+(function(){
+var DATA = `I Will Not Take These Things for Granted|Toad the Wet Sprocket|Fear|5:46
+Lost Boy|The Midnight|Kids|4:37
+Robbers|The 1975|The 1975 (Deluxe)|4:14
+Live to Tell|Madonna|True Blue|5:51
+Dance With Me (Empire Remix) [2021 Remaster]|Alphaville|Dance With Me - EP|8:14
+I Still Haven't Found What I'm Looking For|U2|The Joshua Tree|4:37
+Hallowed Ground|Erasure|The Innocents|4:05
+Everybody Wants to Rule the World|Tears for Fears|Songs from the Big Chair (Deluxe)|4:11
+Heart and Soul|T'Pau|Bridge of Spies|4:16
+Futureproof|Nothing But Thieves|Moral Panic (The Complete Edition)|3:27
+Life & Soul|The Sundays|Blind|2:37
+China (2015 Remastered Version)|Tori Amos|Little Earthquakes (Remastered)|4:58
+Don't Let Go|The Lightning Seeds|Cloudcuckooland|3:59
+Atoms (Said the Sky Remix) [feat. Jeremy Zucker]|RL Grime|NOVA (The Remixes, Vol. 1)|4:15
+Gods of War|Def Leppard|Hysteria|6:37
+The Haunting|Anberlin|Lost Songs|5:49
+The Remedy (I Won't Worry)|Jason Mraz|Waiting for My Rocket to Come|4:16
+Here (In Your Arms)|Hellogoodbye|Zombies! Aliens! Vampires! Dinosaurs!|4:00
+Cry|Faith Hill|Cry|3:46
+The Best Man's Fall|Trashcan Sinatras|Cake|3:40
+Bay of Pigs|Rogue Valley|False Floors|3:46
+Over My Head|Aztec Camera|Stray|5:53
+Worlds Apart|Jars of Clay|Jars of Clay|5:18
+Laid Low|The Naked and Famous|Simple Forms|3:55
+Red|Pale Waves|My Mind Makes Noises|3:56
+Running in the Night|FM-84, Ollie Wride|Atlas|4:30
+Everywhere|PRIZM|Everywhere - Single|3:22
+Fell in Love in America|The Motion Epic|Deep in the Heart of America|3:57
+Lovetap!|Smallpools|LOVETAP!|3:47
+Legends Never Die|League of Legends Music, Against The Current|Legends Never Die - Single|3:55
+Breathe|Michelle Branch|Hotel Paper|3:31
+In Flames (feat. Lexi Norton)|Dabin|Wild Youth|3:24
+Too Pieces|Yaz|Upstairs at Eric's|3:15
+Seen|Jupiter Winter|Seen - Single|4:16
+Wicked Game|Chris Isaak|Heart Shaped World|4:49
+That Smiling Face|Camouflage|Voices & Images|4:59
+Imagination|Xymox|Twist of Shadows|5:05
+Come Back When You Can|Barcelona|Absolutes|3:44
+Where's My Love|SYML|Where's My Love (Slowed) - Single|3:22
+Clearest Blue|CHVRCHES|Every Open Eye|3:53
+Until I Fall Away|Gin Blossoms|New Miserable Experience|3:52
+In the Air Tonight|Phil Collins|Face Value (Deluxe Edition)|5:35
+Alive|Pearl Jam|Ten|5:40
+Lullaby|Book of Love|Lullaby|6:15
+Crash|The Primitives|Lovely|2:31
+Don't Go Away|Toad the Wet Sprocket|Pale|4:33
+Are We Afraid|Toad the Wet Sprocket|In Light Syrup|3:35
+Stories I Tell|Toad the Wet Sprocket|Fear|5:33
+Pray Your Gods|Toad the Wet Sprocket|Fear|5:01
+Overcome|Nothing But Thieves|Dead Club City|3:34
+Welcome to the DCC|Nothing But Thieves|Welcome to the DCC - Single|3:18
+The Unwinding Cable Car|Anberlin|Cities|4:17
+Alexithymia|Anberlin|Cities|3:23
+We Owe This to Ourselves|Anberlin|Dark Is the Way, Light Is a Place|3:12
+Late Show|Book of Love|Book of Love|3:38
+So In Love|Orchestral Manoeuvres In the Dark|Crush|3:29
+Watch Us Fall|Orchestral Manoeuvres In the Dark|The Pacific Age|4:13
+Walking On Air|Orchestral Manoeuvres In the Dark|Sugar Tax|4:49
+Worked a Miracle|The Trash Can Sinatras|I've Seen Everything|3:14
+Circling the Circumference|Trashcan Sinatras|Cake|2:40
+Shoulder to Shoulder Around the Fire|Rogue Valley|False Floors|4:08
+The Bottom of the Riverbed|Rogue Valley|Geese in the Flyway|3:43
+Orion|Rogue Valley|False Floors|3:40
+The Wolves & the Ravens|Rogue Valley|False Floors|4:16
+Broadway|Alison Krauss|Now That I've Found You: A Collection|3:57
+Stay|Alison Krauss|Forget About It|3:25
+Forget About It|Alison Krauss|Forget About It|3:28
+It Wouldn't Have Made Any Difference|Alison Krauss|Forget About It|4:27
+The Lucky One|Alison Krauss & Union Station|New Favorite|3:10
+New Favorite|Alison Krauss & Union Station|New Favorite|4:34
+When You Say Nothing At All|Alison Krauss & Union Station|Now That I've Found You: A Collection|4:20
+There Is a Reason|Alison Krauss & Union Station|So Long So Wrong|5:34
+Feather in the Wind|Mindy Gledhill|Feather in the Wind|4:51
+One Moment More|Mindy Smith|One Moment More|3:47
+Falling|Mindy Smith|One Moment More|3:35
+Angel Doves|Mindy Smith|One Moment More|3:56
+Last Forever|The Naked and Famous|Simple Forms|4:13
+Punching in a Dream (Stripped)|The Naked and Famous|A Still Heart|3:28
+Lonely Place Alone|The Origin|The Origin|4:07
+Suspension|Mae|The Everglow|4:00
+Let It Die|Mae|Multisensory Aesthetic Experience|4:36
+Ghost|Indigo Girls|Rites of Passage (Bonus Track Version)|5:14
+Love Will Come to You|Indigo Girls|Rites of Passage (Bonus Track Version)|4:37
+The One I Love|R.E.M.|Document|3:17
+Stray|Aztec Camera|Stray|5:34
+The Gentle Kind|Aztec Camera|Stray|5:32
+Mr. Brightside|The Killers|Hot Fuss|3:42
+The Way It Was|The Killers|Battle Born|3:54
+Caution|The Killers|Imploding the Mirage|4:29
+Run for Cover|The Killers|Wonderful Wonderful|3:42
+Stressed Out|twenty one pilots|Blurryface|3:22
+Ride|twenty one pilots|Blurryface|3:34
+There's No Other Way|Blur|Leisure (Special Edition)|3:24
+Day by Day|Perlo|Day by Day - EP|3:11
+Are You Lonely Now?|Boy On A Dolphin|Words Inside|3:48
+Mess In My Head|RYLY|Mess In My Head - Single|3:00
+Cold Air|Acceptance|Wild, Free|4:01
+Symphony of Blasé'|Anberlin|Never Take Friendship Personal|4:23
+Hysteria|Def Leppard|Hysteria (Super Deluxe Edition)|5:54
+The Resistance|Anberlin|New Surrender|3:16
+Readyfuels|Anberlin|Blueprints For the Black Market|3:37
+Naive Orleans|Anberlin|Blueprints For the Black Market|4:08
+Only You (Live)|Yazoo|Reconnected Live|3:09
+Precious Things (Remastered)|Tori Amos|Little Earthquakes (Deluxe Edition)|4:26
+Stealing My Time|RYLY|Stealing My Time - Single|3:32
+Running for Cover|RYLY|Young + Naive|3:30
+All the Way|PRIZM|All the Way - Single|3:12
+Midnight Fm|PRIZM|Midnight Fm - Single|3:58
+Fire|Boy On A Dolphin|Words Inside|3:26
+One World|Boy On A Dolphin|Words Inside|4:09
+Malaika - Your Land|Boy On A Dolphin|Words Inside|3:57
+Just What I Needed|The Cars|Top Tracks of the 1970s|3:45
+Magic|The Cars|Heartbeat City|3:57
+You Might Think|The Cars|Heartbeat City (Expanded Edition)|3:04
+Please Don't Go|Barcelona|Absolutes|4:33
+First Floor People|Barcelona|Absolutes|5:53
+It's About Time|Barcelona|Absolutes|3:58
+Colors|Barcelona|Absolutes|3:39
+Get Up|Barcelona|Absolutes|3:59
+Stars|Barcelona|Absolutes|4:10
+Never Let You Go|Third Eye Blind|Blue|3:57
+Blinded (When I See You)|Third Eye Blind|Out of the Vein|4:21
+Motorcycle Drive By|Third Eye Blind|A Collection (Remastered)|4:23
+Slide|The Goo Goo Dolls|Dizzy Up the Girl|3:32
+Name|The Goo Goo Dolls|A Boy Named Goo|4:29
+Black Balloon|The Goo Goo Dolls|Dizzy Up the Girl|4:09
+Alone|Cause and Effect|Trip|4:29
+The Beginning of the End|Cause and Effect|Another Minute|4:37
+Are You Happy Now?|Michelle Branch|Hotel Paper|3:50
+Everywhere|Michelle Branch|The Spirit Room|3:34
+All You Wanted|Michelle Branch|The Spirit Room|3:37
+Goodbye to You|Michelle Branch|The Spirit Room|4:11
+Drive|Incubus|Make Yourself|3:52
+Running Away|Hoobastank|Hoobastank (20th Anniversary Edition)|2:58
+I Will Follow|U2|Boy (Deluxe Edition)|3:37
+With or Without You|U2|The Joshua Tree (30th Anniversary Super Deluxe Edition)|4:55
+Give Me Your Fire, Give Me Your Rain|The Paper Kites|On the Corner Where You Live|3:32
+Wild Horses|The Sundays|Blind|4:45
+Here's Where The Story Ends|The Sundays|Reading, Writing And Arithmetic|3:54
+I Kicked A Boy|The Sundays|Reading, Writing And Arithmetic|2:14
+Standing Still|Jewel|This Way|4:30
+Every Breath You Take (Remastered 2003)|The Police|Synchronicity (Remastered 2003)|4:13
+Blue and Red|Sky Sailing|An Airplane Carried Me to Bed|3:39
+I Live Alone|Sky Sailing|An Airplane Carried Me to Bed|4:05
+Up All Night|Owl City|Ultraviolet - Single|3:51
+A Little Respect|Erasure|The Innocents|3:33
+Chains of Love|Erasure|The Innocents|3:35
+The Hardest Part|Erasure|Crackers International - EP|3:39
+Take On Me (2015 Remastered)|a-ha|Hunting High and Low (30th Anniversary Deluxe)|3:48
+Just Another Day|Oingo Boingo|Dead Man's Party|5:12
+pink starburst|Nightly|wear your heart out|2:55
+What I Want|The Band CAMINO|tryhard|3:50
+wear your heart out|Nightly|wear your heart out|3:19
+Hot Tonight|Tokyo Police Club|Forcefield|3:05
+Miserable|Tokyo Police Club|Forcefield|2:46
+Argentina (Parts I, II, III)|Tokyo Police Club|Forcefield|8:32
+Summer in Berlin (Remaster)|Alphaville|Forever Young (Super Deluxe) [Remaster]|4:46
+Summer Rain (2021 Remaster)|Alphaville|The Breathtaking Blue (2021 Remaster)|4:10
+Sunset|The Midnight|Endless Summer|5:26
+The Comeback Kid|The Midnight|Endless Summer (5 Year Anniversary Edition)|5:21
+Don't Dream It's Over|Crowded House|Crowded House|3:59
+The Best Is Yet To Come|Sheppard|Bombs Away|4:06
+Lingering|Sheppard|Bombs Away|3:52
+Atlas (From "The Hunger Games: Catching Fire" Soundtrack)|Coldplay|Atlas (From "The Hunger Games: Catching Fire" Soundtrack) - Single|3:56
+Test Drive|John Powell|How To Train Your Dragon (Music From the Motion Picture)|2:36
+Wild Things|Ladyhawke|Wild Things|5:13
+Heart Worth Breaking|The Midnight|Heroes|5:07
+Something On My Mind|Purple Disco Machine, Duke Dumont, Nothing But Thieves|Something On My Mind - Single|3:36
+Electric Love|BØRNS|Dopamine|3:38
+The Night We Met|Lord Huron|Strange Trails|3:28
+Life In a Northern Town (LP Version)|The Dream Academy|The Dream Academy|4:19
+Crazy for You|Madonna|Something to Remember|3:44
+Somebody That I Used to Know (feat. Kimbra)|Gotye|Making Mirrors (Deluxe Version)|4:04
+Anyone|Justin Bieber|Justice|3:10
+Man In the Mirror|Michael Jackson|HIStory - PAST, PRESENT AND FUTURE - BOOK I|5:18
+Will You Still Love Me?|Chicago|Chicago 18|5:42
+Big Yellow Taxi (feat. Vanessa Carlton)|Counting Crows|Hard Candy|3:46
+Eighteen|Pale Waves|My Mind Makes Noises|3:00
+All Right|Toad the Wet Sprocket|In Light Syrup|5:47
+Risk|Metric|Art of Doubt|5:24
+Never Stop|FM-84, Ollie Wride|Never Stop - Single|4:46
+Cloud Catcher|Mike Dawes|Cloud Catcher - Single|7:02
+When Can I See You Again?|Owl City|Wreck-It Ralph (Original Score)|3:38
+Hear You Me|Jimmy Eat World|Bleed American|4:44
+139/Dead of Night|Leeland|Invisible|5:57
+Human|The Killers|Day & Age|4:05
+Iou|Rogue Valley|Shell Game|3:39
+Early Days|Rogue Valley|Shell Game|3:40
+What Hurts the Most|Rascal Flatts|Me and My Gang (Bonus Track Version)|3:34
+The War|Angels & Airwaves|We Don't Need To Whisper|5:07
+The Gift|Angels & Airwaves|We Don't Need to Whisper (Digital Version)|5:02
+Shove|Angels & Airwaves|Love, Pt. 1 & 2|6:34
+Cloud Catcher|Mike Dawes|Galactic Acid|7:02
+Elsewhere|Sarah McLachlan|Fumbling Towards Ecstasy (Legacy Edition)|4:44
+Sweet Surrender|Sarah McLachlan|Surfacing|4:00
+Building a Mystery|Sarah McLachlan|Surfacing|4:07
+symptom of life|WILLOW|empathogen|3:09
+Free Fallin' (Live at the Nokia Theatre, Los Angeles, CA - December 2007)|John Mayer|Where the Light Is: John Mayer Live In Los Angeles|4:23
+The Outside|twenty one pilots|Scaled And Icy|3:36
+Close to You|Dayglow|Harmony House|3:14
+What I Like About You|The Romantics|The Romantics|2:55
+Avid (feat. mizuki)|SawanoHiroyuki[nZk]|Avid (feat. mizuki) - Single|4:10
+Dirty Laundry|All Time Low|Last Young Renegade|3:17
+Lightyears (feat. September 87)|Dream Fiend|Lightyears (feat. September 87) - Single|4:23
+Rewind|Jet Black Alley Cat|[ The Black Era ] - EP|4:00
+Alright|Pilot Speed|Into the West|5:07
+Heaven Is a Place|The Wldlfe|Heaven is a place, 2024|4:07
+Hold On|KT Tunstall|Drastic Fantastic|2:57
+Black Horse and the Cherry Tree (Radio Version)|KT Tunstall|Eye To the Telescope|2:52
+Suddenly I See|KT Tunstall|Eye to the Telescope: Stargazer Edition|3:21
+Only You (Live)|Yazoo|Reconnected Live|3:09
+Fields of Gold|Sting|Ten Summoner's Tales|3:42
+Little Wing|Concrete Blonde|The Essential|4:16
+Caroline|Concrete Blonde|Bloodletting|5:31
+Ordinary World (Single Version)|Duran Duran|Greatest|4:37
+Find Our Way (feat. Klei) [Night Drive Edit]|Midnight Kids|Find Our Way (feat. Klei) [Remixes] - Single|3:39
+Here Is Gone|The Goo Goo Dolls|Gutterflower|3:58
+Far Away|Nickelback|All the Right Reasons|3:58
+Fairly Local|twenty one pilots|Blurryface|3:27
+Home|Daughtry|There and Back Again|4:16
+Different Lives|Fly By Midnight|Different Lives - Single|3:17
+Titus Was Born|Young the Giant|Home of the Strange|4:02
+Looking In the Eyes of Love|Alison Krauss & Union Station|So Long So Wrong|4:19
+Blurry|Puddle of Mudd|Come Clean|5:03`;
+
+var tracks = DATA.split('\n').map(function(l){var p=l.split('|');return {title:p[0],artist:p[1],album:p[2],time:p[3]};});
+var list = document.getElementById('amp-list');
+var root = document.getElementById('amp');
+var more = document.getElementById('amp-more');
+document.getElementById('amp-count').textContent = tracks.length;
+
+var PLAY='<svg class="g" viewBox="0 0 16 16"><path d="M4 2.5v11l9-5.5z"/></svg>';
+var PAUSE='<svg class="p" viewBox="0 0 16 16"><path d="M3.5 2h3.5v12H3.5zM9 2h3.5v12H9z"/></svg>';
+var PLACEHOLDER='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#26262b"/><path d="M26 10v14.5a3.5 3.5 0 1 1-2-3.2V14l-8 2v10.5a3.5 3.5 0 1 1-2-3.2V13z" fill="#4a4a54"/></svg>');
+
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+list.innerHTML = tracks.map(function(t,i){
+  return '<li class="amp-row" data-i="'+i+'">'+
+    '<img class="amp-art" alt="" loading="lazy" width="40" height="40" src="'+PLACEHOLDER+'">'+
+    '<button class="amp-btn" type="button" aria-label="Play '+esc(t.title)+' by '+esc(t.artist)+'" disabled>'+PLAY+PAUSE+'</button>'+
+    '<span class="amp-name" title="'+esc(t.title)+'">'+esc(t.title)+'</span>'+
+    '<span class="amp-artist" title="'+esc(t.artist)+'">'+esc(t.artist)+'</span>'+
+    '<span class="amp-album" title="'+esc(t.album)+'">'+esc(t.album)+'</span>'+
+    '<span class="amp-time">'+esc(t.time)+'</span>'+
+    '<span class="amp-bar"></span></li>';
+}).join('');
+
+var rows = list.children;
+
+/* ---------- lookup (iTunes Search API via JSONP, cached in localStorage) ---------- */
+var CK='amp.v1.';
+var cache = {};
+function cget(k){try{var v=localStorage.getItem(CK+k);return v?JSON.parse(v):null;}catch(e){return null;}}
+function cset(k,v){try{localStorage.setItem(CK+k,JSON.stringify(v));}catch(e){}}
+var cbn=0;
+function jsonp(url){
+  return new Promise(function(res,rej){
+    var name='__amp'+(++cbn)+'_'+Date.now(), s=document.createElement('script'), done=false;
+    window[name]=function(d){done=true;res(d);cleanup();};
+    function cleanup(){delete window[name];if(s.parentNode)s.parentNode.removeChild(s);}
+    s.onerror=function(){if(!done){rej(new Error('net'));cleanup();}};
+    s.src=url+(url.indexOf('?')>-1?'&':'?')+'callback='+name;
+    document.head.appendChild(s);
+    setTimeout(function(){if(!done){rej(new Error('timeout'));cleanup();}},9000);
+  });
+}
+function norm(s){return String(s).toLowerCase().replace(/\(.*?\)|\[.*?\]/g,' ').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,' ').trim();}
+function pick(t,results){
+  var tt=norm(t.title), aa=norm(t.artist.split(',')[0]), best=null, bs=-1;
+  results.forEach(function(r){
+    if(!r.previewUrl) return;
+    var s=0, rt=norm(r.trackName||''), ra=norm(r.artistName||''), rc=norm(r.collectionName||'');
+    if(rt===tt) s+=4; else if(rt.indexOf(tt)>-1||tt.indexOf(rt)>-1) s+=2;
+    if(ra.indexOf(aa)>-1||aa.indexOf(ra)>-1) s+=4;
+    if(rc&&norm(t.album)===rc) s+=2; else if(rc&&(rc.indexOf(norm(t.album))>-1||norm(t.album).indexOf(rc)>-1)) s+=1;
+    if(s>bs){bs=s;best=r;}
+  });
+  return bs>=6?best:null;
+}
+function lookup(i){
+  if(cache[i]) return cache[i];
+  var t=tracks[i], key=norm(t.title+' '+t.artist), hit=cget(key);
+  if(hit) return (cache[i]=Promise.resolve(hit));
+  var q=encodeURIComponent(t.title.replace(/\(.*?\)|\[.*?\]/g,' ')+' '+t.artist.split(',')[0]);
+  cache[i]=jsonp('https://itunes.apple.com/search?media=music&entity=song&limit=10&country=us&term='+q).then(function(d){
+    var r=pick(t,d.results||[]);
+    var out=r?{art:(r.artworkUrl100||'').replace('100x100','120x120'),prev:r.previewUrl}:{none:1};
+    cset(key,out); return out;
+  }).catch(function(){delete cache[i];return null;});
+  return cache[i];
+}
+function apply(i,info){
+  var row=rows[i]; if(!row||!info) return;
+  if(info.art) row.querySelector('.amp-art').src=info.art;
+  var b=row.querySelector('.amp-btn');
+  if(info.prev){b.disabled=false;row._prev=info.prev;}
+  else{b.disabled=true;b.title='No preview available';}
+}
+/* load rows as they scroll into view */
+var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){
+  es.forEach(function(e){
+    if(!e.isIntersecting) return;
+    var i=+e.target.getAttribute('data-i'); io.unobserve(e.target);
+    setTimeout(function(){lookup(i).then(function(info){apply(i,info);});}, (i%10)*60);
+  });
+},{root:list,rootMargin:'120px 0px'}):null;
+for(var k=0;k<rows.length;k++){ if(io) io.observe(rows[k]); else lookup(k).then((function(n){return function(x){apply(n,x);};})(k)); }
+
+/* ---------- playback ---------- */
+var audio=new Audio(); audio.preload='none';
+var cur=-1;
+function setState(i,playing){
+  for(var k=0;k<rows.length;k++){rows[k].classList.remove('playing');}
+  if(i>-1){rows[i].classList.add('on'); if(playing) rows[i].classList.add('playing');}
+}
+function clearOn(){for(var k=0;k<rows.length;k++){rows[k].classList.remove('on','playing');rows[k].querySelector('.amp-bar').style.width='0';}}
+function play(i){
+  var row=rows[i]; if(!row) return;
+  var go=function(info){
+    if(!info||!info.prev) return next(i);
+    if(cur!==i){clearOn();cur=i;audio.src=info.prev;}
+    audio.play().catch(function(){});
+  };
+  if(row._prev) go({prev:row._prev}); else lookup(i).then(function(info){apply(i,info);go(info);});
+}
+function next(i){
+  for(var k=i+1;k<rows.length;k++){
+    if(rows[k]._prev||!rows[k].querySelector('.amp-btn').disabled){ play(k); keepVisible(k); return; }
+  }
+  clearOn(); cur=-1;
+}
+function keepVisible(i){
+  var r=rows[i], top=r.offsetTop, h=r.offsetHeight;
+  if(top<list.scrollTop||top+h>list.scrollTop+list.clientHeight) list.scrollTop=top-h;
+}
+list.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('.amp-btn'); if(!b||b.disabled) return;
+  var i=+b.parentNode.getAttribute('data-i');
+  if(cur===i&&!audio.paused) audio.pause(); else play(i);
+});
+audio.addEventListener('play',function(){setState(cur,true);});
+audio.addEventListener('pause',function(){setState(cur,false);});
+audio.addEventListener('ended',function(){next(cur);});
+audio.addEventListener('error',function(){if(cur>-1)next(cur);});
+audio.addEventListener('timeupdate',function(){
+  if(cur<0||!audio.duration) return;
+  rows[cur].querySelector('.amp-bar').style.width=(audio.currentTime/audio.duration*100)+'%';
+});
+
+/* ---------- scroll affordances ---------- */
+function onScroll(){
+  var left=list.scrollHeight-list.clientHeight-list.scrollTop;
+  var atEnd=left<8;
+  root.classList.toggle('end',atEnd);
+  var remaining=Math.max(0,Math.round(left/rows[0].offsetHeight));
+  more.textContent=remaining>0?('Scroll for '+remaining+' more'):'End of list';
+}
+list.addEventListener('scroll',onScroll,{passive:true});
+window.addEventListener('resize',onScroll);
+onScroll();
+
+/* skip link: jump to whatever follows this block */
+document.getElementById('amp-skip').addEventListener('click',function(e){
+  e.preventDefault();
+  var c=root.closest('.chapter'), n=(c&&c.nextElementSibling)||root.nextElementSibling;
+  (n||document.getElementById('amp-after')).scrollIntoView({behavior:'smooth',block:'start'});
+});
+})();
+</script>
+</div>
       <div class="gallery">
         <div class="ph zoom " data-label="What I listen to: photo 1"><img src="/me/music/photos/listen-1.jpg" alt="What I listen to: photo 1" loading="lazy" decoding="async"></div>
         <div class="ph zoom " data-label="What I listen to: photo 2"><img src="/me/music/photos/listen-2.jpg" alt="What I listen to: photo 2" loading="lazy" decoding="async"></div>
