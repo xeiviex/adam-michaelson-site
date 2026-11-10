@@ -27,3 +27,7 @@ html { scroll-padding-top: 64px; }
   .sbar .chapters a { width: 14px; }
   .sbar .chapters { gap: 5px; }
 }
+/* Auto-hiding variant (prototype pages): rolls up out of view, then gives its space back. */
+.sbar-auto .sbar { transition: transform .35s ease, margin-bottom .35s ease; }
+.sbar-auto .sbar.sbar-hidden { transform: translateY(-100%); margin-bottom: -57px; }
+@media (prefers-reduced-motion: reduce) { .sbar-auto .sbar { transition: none; } }
