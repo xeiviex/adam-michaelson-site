@@ -39,19 +39,10 @@
     <div class="body rv">
       <p>Singing with other people is its own kind of magic.</p>
       <div class="gallery">
-        <div class="ph zoom " data-label="Choirs: photo 1"><img src="/me/music/photos/choir-1.jpg" alt="Choirs: photo 1" loading="lazy" decoding="async"></div>
-        <div class="ph zoom wide" data-label="Choirs: photo 2"><img src="/me/music/photos/choir-2.jpg" alt="Choirs: photo 2" loading="lazy" decoding="async"></div>
-        <div class="ph zoom " data-label="Choirs: photo 3"><img src="/me/music/photos/choir-3.jpg" alt="Choirs: photo 3" loading="lazy" decoding="async"></div>
-      </div>
-    </div>
-  </section>
-  <section class="chapter">
-    <h2 class="rv">Original music</h2>
-    <div class="body rv">
-      <p>Songs I’ve written and recorded.</p>
-      <div class="gallery">
-        <div class="ph zoom wide" data-label="Original music: photo 1"><img src="/me/music/photos/original-1.jpg" alt="Original music: photo 1" loading="lazy" decoding="async"></div>
-        <div class="ph zoom " data-label="Original music: photo 2"><img src="/me/music/photos/original-2.jpg" alt="Original music: photo 2" loading="lazy" decoding="async"></div>
+        <div class="ph zoom wide" data-label="Me singing in high school (photo, video or audio)"><img src="/me/music/photos/choir-high-school.jpg" alt="Singing in a choir in high school" loading="lazy" decoding="async"></div>
+        <div class="ph zoom " data-label="My transcription of Valle che de lamenti by de Wert"><img src="/me/music/photos/choir-transcription.jpg" alt="My music transcription of Valle che de lamenti by de Wert" loading="lazy" decoding="async"></div>
+        <div class="ph zoom " data-label="Conducting a choir: photo 1"><img src="/me/music/photos/choir-conducting-1.jpg" alt="Conducting a choir" loading="lazy" decoding="async"></div>
+        <div class="ph zoom " data-label="Conducting a choir: photo 2"><img src="/me/music/photos/choir-conducting-2.jpg" alt="Conducting a choir" loading="lazy" decoding="async"></div>
       </div>
     </div>
   </section>
@@ -68,7 +59,17 @@
     </div>
   </section>
   <section class="chapter">
-    <h2 class="rv">What I listen to</h2>
+    <h2 class="rv">Original music</h2>
+    <div class="body rv">
+      <p>Songs I’ve written and recorded.</p>
+      <div class="gallery">
+        <div class="ph zoom wide" data-label="Original music: photo 1"><img src="/me/music/photos/original-1.jpg" alt="Original music: photo 1" loading="lazy" decoding="async"></div>
+        <div class="ph zoom " data-label="Original music: photo 2"><img src="/me/music/photos/original-2.jpg" alt="Original music: photo 2" loading="lazy" decoding="async"></div>
+      </div>
+    </div>
+  </section>
+  <section class="chapter">
+    <h2 class="rv">Music I like</h2>
     <div class="body rv">
       <p>The music and artists I love.</p>
 <div id="amp" class="amp" aria-label="Adam's VERY favorites playlist">
@@ -108,8 +109,13 @@
 .amp-btn:disabled{opacity:.3;cursor:default}
 .amp-btn svg{width:16px;height:16px;fill:currentColor}
 .amp-btn .p{display:none}
-.amp-row.loading .amp-btn{animation:ampl 1s ease-in-out infinite}
-@keyframes ampl{0%,100%{opacity:1}50%{opacity:.35}}
+.amp-row.loading{background:#121724}
+.amp-row.loading .amp-btn svg{display:none}
+.amp-row.loading .amp-btn{position:relative;background:#26262b}
+.amp-row.loading .amp-btn::after{content:"";width:18px;height:18px;border-radius:50%;border:2px solid #4a4f63;border-top-color:var(--accent);animation:amps .7s linear infinite}
+@keyframes amps{to{transform:rotate(360deg)}}
+.amp-row.loading .amp-name::after{content:" · loading…";color:var(--mute);font-weight:400;font-size:.8rem}
+@media (prefers-reduced-motion:reduce){.amp-row.loading .amp-btn::after{animation-duration:2s}}
 .amp-row.playing .amp-btn{background:var(--accent)}
 .amp-row.playing .amp-btn .p{display:block}
 .amp-row.playing .amp-btn .g{display:none}
@@ -529,8 +535,9 @@ function pump(){
     setTimeout(function(){busy=false;pump();},penalty);
   });
 }
+function keyOf(t){return norm(t.title+' '+t.artist+' '+(t.fix.album||''));}
 function fetchInfo(t){
-  var key=norm(t.title+' '+t.artist+' '+(t.fix.album||'')), hit=cget(key);
+  var key=keyOf(t), hit=cget(key);
   if(hit) return Promise.resolve(hit);
   var clean=t.title.replace(/\(.*?\)|\[.*?\]/g,' ')+' '+t.artist.split(',')[0];
   return search(t.fix.q||clean,10).then(function(d){
@@ -549,6 +556,15 @@ function applyRow(t){
   if(info.prev){t.prev=info.prev;t.retry=false;b.removeAttribute('title');if(t.wantPlay){t.wantPlay=false;play(t);}}
   else{b.disabled=true;b.title='No preview available';if(t.wantPlay){t.wantPlay=false;next(t);}}
 }
+/* songs looked up on an earlier visit: fill in art and previews straight away, no waiting in line, and
+   warm the browser's image cache a few at a time so the art is already there as you scroll */
+var warm=[];
+tracks.forEach(function(t){var hit=cget(keyOf(t)); if(hit&&hit.prev){t.info=hit;applyRow(t);if(hit.art) warm.push(hit.art);}});
+(function drip(){
+  if(!warm.length) return;
+  var n=warm.splice(0,6); n.forEach(function(u){var im=new Image();im.decoding='async';im.src=u;});
+  (window.requestIdleCallback||function(f){setTimeout(f,150);})(drip);
+})();
 /* load rows as they scroll into view */
 var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){
   es.forEach(function(e){
@@ -631,18 +647,10 @@ shuffled();
 </script>
 </div>
       <div class="gallery">
-        <div class="ph zoom " data-label="What I listen to: photo 1"><img src="/me/music/photos/listen-1.jpg" alt="What I listen to: photo 1" loading="lazy" decoding="async"></div>
-        <div class="ph zoom " data-label="What I listen to: photo 2"><img src="/me/music/photos/listen-2.jpg" alt="What I listen to: photo 2" loading="lazy" decoding="async"></div>
+        <div class="ph zoom " data-label="Music I like: photo 1"><img src="/me/music/photos/listen-1.jpg" alt="Music I like: photo 1" loading="lazy" decoding="async"></div>
+        <div class="ph zoom " data-label="Music I like: photo 2"><img src="/me/music/photos/listen-2.jpg" alt="Music I like: photo 2" loading="lazy" decoding="async"></div>
       </div>
     </div>
-  </section>
-  <section class="chapter">
-    <h2 class="rv">Video</h2>
-    <div class="body rv"><div class="videos">
-      <div class="ph" data-label="Video: music-1.mp4"><video data-loop autoplay muted loop controls preload="auto" playsinline poster="/me/music/videos/music-1.jpg"><source src="/me/music/videos/music-1.mp4" type="video/mp4"></video></div>
-      <div class="ph" data-label="Video: music-2.mp4"><video controls preload="metadata" playsinline poster="/me/music/videos/music-2.jpg"><source src="/me/music/videos/music-2.mp4" type="video/mp4"></video></div>
-      <div class="ph" data-label="Video: music-3.mp4"><video controls preload="metadata" playsinline poster="/me/music/videos/music-3.jpg"><source src="/me/music/videos/music-3.mp4" type="video/mp4"></video></div>
-    </div></div>
   </section>
   <nav class="pager" aria-label="More about me">
     <a class="prev" href="/me/faith/"><small>&lsaquo; Previous</small><b>Faith</b></a>
