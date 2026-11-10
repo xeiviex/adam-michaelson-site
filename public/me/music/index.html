@@ -68,15 +68,18 @@
       </div>
     </div>
   </section>
-  <section class="chapter">
+  <section class="chapter wide">
     <h2 class="rv">Music I like</h2>
     <div class="body rv">
-      <p>The music and artists I love.</p>
+      <p>I listen to a lot of genres, from country to classical. Here’s a smattering of more popular music that makes for easy go-tos, some of my very favorites that I’d listen to on an average day.</p>
 <div id="amp" class="amp" aria-label="Adam's VERY favorites playlist">
 <style>
 .amp{--bg:#000;--panel:#0b0e15;--line:rgba(190,210,255,.16);--text:#f2f2f3;--mute:#9a9aa3;--accent:var(--accent-text,#ff4d6d);--rowh:56px;--rows:10;
   max-width:none;margin:8px 0;container-type:inline-size;color:var(--text);font:15px/1.35 var(--sans,system-ui,sans-serif)}
 .amp *{box-sizing:border-box}
+.chapter.wide{grid-template-columns:minmax(0,1fr);row-gap:20px}
+.chapter.wide .body{max-width:none}
+.chapter.wide .body>p{max-width:68ch}
 .amp-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding:0 4px 10px;flex-wrap:wrap}
 .amp-title{font:600 1.15rem/1.2 var(--serif,Georgia,serif);color:var(--ink,#fff);margin:0}
 .amp-sub{color:var(--mute);font-size:.85rem}
