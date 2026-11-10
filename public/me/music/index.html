@@ -20,6 +20,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site-bar.css?v=1">
+<style>.cap-pair{grid-column:1/-1;margin:0}.cap-imgs{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cap-imgs .ph{--ar:1/1}.cap-pair figcaption{margin-top:10px;font-size:.9rem;line-height:1.5;color:var(--muted);max-width:62ch}</style>
 </head>
 <body data-accent="indigo">
 <header class="sbar"><div class="in">
@@ -41,8 +42,13 @@
       <div class="gallery">
         <div class="ph zoom wide" data-label="Me singing in high school (photo, video or audio)"><img src="/me/music/photos/choir-high-school.jpg" alt="Singing in a choir in high school" loading="lazy" decoding="async"></div>
         <div class="ph zoom " data-label="My transcription of Valle che de lamenti by de Wert"><img src="/me/music/photos/choir-transcription.jpg" alt="My music transcription of Valle che de lamenti by de Wert" loading="lazy" decoding="async"></div>
-        <div class="ph zoom " data-label="Conducting a choir: photo 1"><img src="/me/music/photos/choir-conducting-1.jpg" alt="Conducting a choir" loading="lazy" decoding="async"></div>
-        <div class="ph zoom " data-label="Conducting a choir: photo 2"><img src="/me/music/photos/choir-conducting-2.jpg" alt="Conducting a choir" loading="lazy" decoding="async"></div>
+        <figure class="cap-pair">
+          <div class="cap-imgs">
+            <div class="ph zoom " data-label="Conducting a choir: photo 1"><img src="/me/music/photos/choir-conducting-1.jpg" alt="Adam conducting a choir with one arm raised" loading="lazy" decoding="async"></div>
+            <div class="ph zoom " data-label="Conducting a choir: photo 2"><img src="/me/music/photos/choir-conducting-2.jpg" alt="Black-and-white close-up of Adam mid-gesture while conducting" loading="lazy" decoding="async"></div>
+          </div>
+          <figcaption>A tenor in one of the choirs I conducted loved to snap candid shots and post them to social media to embarrass me for my eccentric conducting gestures, but I’ve come to embrace them. It’s just who I am :)</figcaption>
+        </figure>
       </div>
     </div>
   </section>
