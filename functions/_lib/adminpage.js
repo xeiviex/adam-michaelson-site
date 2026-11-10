@@ -33,6 +33,7 @@ main{display:grid;grid-template-columns:minmax(300px,380px) 1fr;height:calc(100v
 .tag.macbook{color:#eff6ff;background:#1e3a8a;border-color:var(--macbook)}
 .tag.iphone{color:#faf5ff;background:#581c87;border-color:var(--iphone)}
 .tag.owner{color:#ecfdf5;background:#065f46;border-color:#10b981}
+.tag.loc{color:#99f6e4;background:#134e4a;border-color:#14b8a6}
 .prev{margin-top:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
 .snip{margin-top:3px;color:var(--mute);font-size:13px}mark{background:#5b4a14;color:#ffe9a8;border-radius:3px}
 #right{display:flex;flex-direction:column;min-height:0}
@@ -110,9 +111,13 @@ function loadList(){return api('conversations?'+filters()).then(function(r){var 
   r1.appendChild(el('span', null, ago(c.last_activity_at)));
   if (c.chat_type === 'fit') r1.appendChild(el('span', 'tag fit', 'fit'));
   if (c.mode === 'human') r1.appendChild(el('span', 'tag human', 'me'));
-  if (lbl) r1.appendChild(el('span', 'tag ' + dev, lbl));
+  if (lbl) {
+    r1.appendChild(el('span', 'tag ' + dev, lbl));
+  } else if (c.location) {
+    r1.appendChild(el('span', 'tag loc', c.location));
+  }
   r1.appendChild(el('span', 'sp'));
-  var idDisplay = lbl ? lbl : c.user_id;
+  var idDisplay = lbl ? lbl : (c.location ? ('Someone in ' + c.location) : c.user_id);
   r1.appendChild(el('span', null, c.message_count + ' msgs · ' + idDisplay));
   it.appendChild(r1);
   it.appendChild(el('div', 'prev', c.preview || '(no visitor message)'));
@@ -146,8 +151,13 @@ function render(c,append){var box=$('msgs');if(!append){box.textContent='';lastI
    var devTag = el('span', 'tag ' + devClass, devMeta);
    metaBox.appendChild(devTag);
    metaBox.appendChild(document.createTextNode(' · '));
+ } else if (s.location) {
+   var locTag = el('span', 'tag loc', s.location);
+   metaBox.appendChild(locTag);
+   metaBox.appendChild(document.createTextNode(' · '));
  }
- metaBox.appendChild(document.createTextNode(s.user_id + ' · started ' + stamp(s.created_at) + ' · #' + s.session_id.slice(0, 4) + (s.mode === 'human' ? ' · you are in this conversation' : '')));
+ var locSubtitle = (!s.is_owner && s.location) ? ('Someone in ' + s.location + ' (' + s.user_id + ')') : s.user_id;
+ metaBox.appendChild(document.createTextNode(locSubtitle + ' · started ' + stamp(s.created_at) + ' · #' + s.session_id.slice(0, 4) + (s.mode === 'human' ? ' · you are in this conversation' : '')));
 
  $('handback').hidden=s.mode!=='human';$('reply').hidden=false;
  if(c.messages.length)box.scrollTop=box.scrollHeight}

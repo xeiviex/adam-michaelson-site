@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { freshDb, seed, withFetch, accessKeys } from "./helpers.mjs";
 import { verifyAccess } from "../functions/_lib/adminauth.js";
 import { ftsQuery } from "../functions/_lib/search.js";
+import { formatLocation } from "../functions/_lib/analytics.js";
 import { onRequest as adminApi } from "../functions/api/admin/[[route]].js";
 import { onRequestGet as adminPage } from "../functions/admin/index.js";
 import { onRequestGet as poll } from "../functions/api/chat/poll.js";
@@ -95,6 +96,11 @@ test("list, search, filters and transcript", async () => {
 });
 
 test("owner device tagging and filtering (MacBook Air vs iPhone)", async () => {
+  assert.equal(formatLocation({ city: "Denver", regionCode: "CO", country: "US" }), "Denver, CO");
+  assert.equal(formatLocation({ city: "London", country: "GB" }), "London, GB");
+  assert.equal(formatLocation({ city: "Toronto", regionCode: "ON", country: "CA" }), "Toronto, ON, CA");
+  assert.equal(formatLocation(null), "");
+
   const { sqlite, db } = freshDb();
   const k = await accessKeys();
   const S_MAC = "macb1111222233334444";
@@ -103,7 +109,7 @@ test("owner device tagging and filtering (MacBook Air vs iPhone)", async () => {
 
   seed(sqlite, { id: S_MAC, ip: "107.191.0.3", is_owner: 1, device_label: "Adam's Macbook Air", msgs: [["visitor", "testing from macbook"]], at: "2026-11-10T05:00:00.000Z" });
   seed(sqlite, { id: S_IPH, ip: "107.191.0.3", is_owner: 1, device_label: "Adam's iPhone", msgs: [["visitor", "testing from phone"]], at: "2026-11-10T05:05:00.000Z" });
-  seed(sqlite, { id: S_EXT, ip: "203.0.113.1", is_owner: 0, device_label: null, msgs: [["visitor", "hello from external visitor"]], at: "2026-11-10T05:10:00.000Z" });
+  seed(sqlite, { id: S_EXT, ip: "203.0.113.1", is_owner: 0, device_label: null, location: "Denver, CO", msgs: [["visitor", "hello from external visitor"]], at: "2026-11-10T05:10:00.000Z" });
 
   await withFetch(k.jwksHandler, async () => {
     const env = { ...k.env, SMS_OPTIN_DB: db };
@@ -122,6 +128,10 @@ test("owner device tagging and filtering (MacBook Air vs iPhone)", async () => {
     assert.equal(iphConv.is_owner, 1);
     assert.equal(iphConv.device_label, "Adam's iPhone");
 
+    const extConv = all.find((c) => c.session_id === S_EXT);
+    assert.equal(extConv.is_owner, 0);
+    assert.equal(extConv.location, "Denver, CO");
+
     const extOnly = await get("?device=visitors");
     assert.deepEqual(extOnly.map((c) => c.session_id), [S_EXT]);
 
@@ -137,6 +147,10 @@ test("owner device tagging and filtering (MacBook Air vs iPhone)", async () => {
     const convDetail = await (await api("conversation", req(`/api/admin/conversation?id=${S_MAC}`, { token: t }), env)).json();
     assert.equal(convDetail.session.is_owner, 1);
     assert.equal(convDetail.session.device_label, "Adam's Macbook Air");
+
+    const extDetail = await (await api("conversation", req(`/api/admin/conversation?id=${S_EXT}`, { token: t }), env)).json();
+    assert.equal(extDetail.session.is_owner, 0);
+    assert.equal(extDetail.session.location, "Denver, CO");
   });
 });
 

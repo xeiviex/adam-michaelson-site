@@ -107,6 +107,24 @@ export function detectDeviceLabel(request, customLabel = null) {
   return detectDevice(request);
 }
 
+export function formatLocation(cf) {
+  if (!cf) return "";
+  const city = cf.city || "";
+  const region = cf.regionCode || cf.region || "";
+  const country = cf.country || "";
+
+  if (city && region) {
+    return country === "US" ? `${city}, ${region}` : `${city}, ${region}, ${country}`;
+  }
+  if (city && country) {
+    return country === "US" ? city : `${city}, ${country}`;
+  }
+  if (region && country) {
+    return `${region}, ${country}`;
+  }
+  return country || "";
+}
+
 export function isOwnerRequest(request, url) {
   if (!request) return false;
   if (url) {

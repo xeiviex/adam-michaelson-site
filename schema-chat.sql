@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS chat_sessions (
   message_count    INTEGER NOT NULL DEFAULT 0,
   is_owner         INTEGER NOT NULL DEFAULT 0,
   device_label     TEXT,
-  visitor_id       TEXT
+  visitor_id       TEXT,
+  location         TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_chat_sessions_activity ON chat_sessions (last_activity_at DESC);
 

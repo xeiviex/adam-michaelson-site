@@ -28,8 +28,8 @@ export function freshDb() {
   return { sqlite, db: d1(sqlite) };
 }
 
-export function seed(sqlite, { id, ip = "1.2.3.4", type = "intro", mode = "bot", is_owner = 0, device_label = null, visitor_id = null, msgs = [], at = new Date().toISOString() }) {
-  sqlite.prepare("INSERT INTO chat_sessions (session_id, user_id, chat_type, mode, created_at, last_activity_at, message_count, is_owner, device_label, visitor_id) VALUES (?,?,?,?,?,?,?,?,?,?)").run(id, ip, type, mode, at, at, msgs.length, is_owner, device_label, visitor_id);
+export function seed(sqlite, { id, ip = "1.2.3.4", type = "intro", mode = "bot", is_owner = 0, device_label = null, visitor_id = null, location = null, msgs = [], at = new Date().toISOString() }) {
+  sqlite.prepare("INSERT INTO chat_sessions (session_id, user_id, chat_type, mode, created_at, last_activity_at, message_count, is_owner, device_label, visitor_id, location) VALUES (?,?,?,?,?,?,?,?,?,?,?)").run(id, ip, type, mode, at, at, msgs.length, is_owner, device_label, visitor_id, location);
   for (const [role, content] of msgs) sqlite.prepare("INSERT INTO chat_messages (user_id, session_id, role, content, created_at) VALUES (?,?,?,?,?)").run(ip, id, role, content, at);
 }
 

@@ -14,7 +14,7 @@ import { makeNameFilter } from "../_lib/nameguard.js";
 import { sweepIdleSessions } from "../_lib/sweep.js";
 import { alertNewSession, forwardVisitorMessage } from "../_lib/alerts.js";
 import { looksLikeUrl, fetchPosting, cacheKey, PostingError } from "../_lib/jobfetch.js";
-import { getVisitorId, isOwnerRequest, detectDeviceLabel } from "../_lib/analytics.js";
+import { getVisitorId, isOwnerRequest, detectDeviceLabel, formatLocation } from "../_lib/analytics.js";
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -88,24 +88,39 @@ export async function onRequestPost({ request, env, waitUntil }) {
     }
   }
 
+  // Geographic location from Cloudflare edge (e.g. "Denver, CO")
+  const location = formatLocation(request?.cf);
+
   // Session (chat type is fixed by its first message).
-  let session = await db.prepare("SELECT chat_type, mode, message_count, is_owner, device_label FROM chat_sessions WHERE session_id = ?1").bind(sessionId).first();
+  let session = await db.prepare("SELECT chat_type, mode, message_count, is_owner, device_label, location FROM chat_sessions WHERE session_id = ?1").bind(sessionId).first();
   if (!session) {
     try {
-      await db.prepare("INSERT INTO chat_sessions (session_id, user_id, chat_type, created_at, last_activity_at, is_owner, device_label, visitor_id) VALUES (?1,?2,?3,?4,?4,?5,?6,?7)")
-        .bind(sessionId, ip, mode, ts, isOwner ? 1 : 0, ownerDeviceLabel, visitorId).run();
+      await db.prepare("INSERT INTO chat_sessions (session_id, user_id, chat_type, created_at, last_activity_at, is_owner, device_label, visitor_id, location) VALUES (?1,?2,?3,?4,?4,?5,?6,?7,?8)")
+        .bind(sessionId, ip, mode, ts, isOwner ? 1 : 0, ownerDeviceLabel, visitorId, location).run();
     } catch {
       await db.prepare("INSERT INTO chat_sessions (session_id, user_id, chat_type, created_at, last_activity_at) VALUES (?1,?2,?3,?4,?4)")
         .bind(sessionId, ip, mode, ts).run();
     }
-    session = { chat_type: mode, mode: "bot", message_count: 0, is_owner: isOwner ? 1 : 0, device_label: ownerDeviceLabel };
-  } else if (isOwner && (!session.is_owner || !session.device_label)) {
-    try {
-      await db.prepare("UPDATE chat_sessions SET is_owner = 1, device_label = ?1 WHERE session_id = ?2")
-        .bind(ownerDeviceLabel, sessionId).run();
+    session = { chat_type: mode, mode: "bot", message_count: 0, is_owner: isOwner ? 1 : 0, device_label: ownerDeviceLabel, location };
+  } else {
+    const updates = [];
+    const binds = [];
+    let bindIdx = 1;
+    if (isOwner && (!session.is_owner || !session.device_label)) {
+      updates.push(`is_owner = 1, device_label = ?${bindIdx++}`);
+      binds.push(ownerDeviceLabel);
       session.is_owner = 1;
       session.device_label = ownerDeviceLabel;
-    } catch {}
+    }
+    if (!session.location && location) {
+      updates.push(`location = ?${bindIdx++}`);
+      binds.push(location);
+      session.location = location;
+    }
+    if (updates.length > 0) {
+      binds.push(sessionId);
+      await db.prepare(`UPDATE chat_sessions SET ${updates.join(", ")} WHERE session_id = ?${bindIdx}`).bind(...binds).run().catch(() => {});
+    }
   }
   const chatType = session.chat_type;
 

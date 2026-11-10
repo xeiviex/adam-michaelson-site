@@ -46,6 +46,9 @@ export async function ensureSchema(db) {
       if (!csCols.includes("visitor_id")) {
         await db.prepare("ALTER TABLE chat_sessions ADD COLUMN visitor_id TEXT").run();
       }
+      if (!csCols.includes("location")) {
+        await db.prepare("ALTER TABLE chat_sessions ADD COLUMN location TEXT").run();
+      }
     }
   } catch (err) {
     console.error("chat_sessions migration error:", err);
