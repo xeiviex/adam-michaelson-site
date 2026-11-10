@@ -89,7 +89,9 @@
 html[data-chat-app] .fscrim { display: none; }
 html[data-chat-app] .fdlg, html[data-chat-app] #cdlg, html[data-chat-app] #fdlg { left: 0; top: 0; width: 100vw; height: 100vh; height: 100dvh; max-width: none; border: 0; border-radius: 0; box-shadow: none; transform: none; padding-top: env(safe-area-inset-top, 0px); background: #0a0d13; }
 html[data-chat-app] .fdlg.on, html[data-chat-app] #cdlg.on, html[data-chat-app] #fdlg.on { transform: none; }
-html[data-chat-app] .fdlg .fhead { padding: 0 12px; justify-content: flex-start; gap: 10px; height: 52px; }
-html[data-chat-app] .fdlg .fhead button { order: -1; }
+html[data-chat-app] .fdlg .fhead { padding: 0 14px; justify-content: flex-start; gap: 10px; height: 44px; border-bottom: 0; }
+html[data-chat-app] .fdlg .fhead button { order: -1; width: 30px; height: 30px; }
+html[data-chat-app] .fdlg .fhead svg { width: 18px; height: 18px; }
+html[data-chat-app] .fdlg .fhead b { font-family: var(--sans); font-weight: 400; font-size: .82rem; letter-spacing: 0; text-transform: none; color: var(--muted); }
 html[data-chat-app] .fdlg .log.flog { padding: 18px 18px 14px; }
 html[data-chat-app] .fdlg .fnote, html[data-chat-app] .fdlg .fform { padding-inline: 18px; }

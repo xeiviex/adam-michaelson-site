@@ -140,11 +140,70 @@
     };
   }
 
+  /* Idle check-ins for the chat dialog: same lines and timing as the home page chat. */
+  var IDLE_LINES = [
+    [
+      "Are you there?",
+      "Still with me?",
+      "Hey, are you still around?",
+      "Everything okay on your end?",
+      "Did I lose you?",
+      "Just checking, are you still there?",
+      "Anyone home?",
+      "Still there?",
+      "Hello? Did I catch you at a bad moment?",
+      "Hey, you still with me?"
+    ],
+    [
+      "Ready when you are.",
+      "No rush. Ask me whenever you're ready.",
+      "Whenever you're ready, I'm here.",
+      "Got a question in mind? I'm ready for it.",
+      "Say the word and we'll get started.",
+      "When you've got something, send it over.",
+      "I'm ready if you are.",
+      "Whenever something comes to mind, go ahead and type it.",
+      "Plenty of room for your question whenever you have one.",
+      "Start anywhere you like. I'm ready."
+    ],
+    [
+      "Take your time, I'll be here.",
+      "No pressure at all. I'll be here if you want to chat.",
+      "If now's not the moment, that's fine. The door's open.",
+      "I'll be here if you decide you want to talk.",
+      "Feel free to look around. Come back and ask anything you like.",
+      "No need to answer. I'm around if something comes up.",
+      "Go explore the rest of the site, and find me here if you have a question.",
+      "Totally fine if you'd rather just browse. I'm here whenever.",
+      "Take your time. If you want to talk, just type.",
+      "No worries if you're busy. I'll be here."
+    ]
+  ];
+  var IDLE_MS = 60000;
+
   /* ---- Two dialogs share this code: "Check my fit" (id prefix f, mode fit) and "Chat with Adam" (prefix c, mode intro). ---- */
   function dialog(p, mode, opener, wait) {
     var dlg = $(p + 'dlg'), scrim = $(p + 'scrim'), flog = $(p + 'log'), fmsg = $(p + 'msg'), ffield = $(p + 'field'), form = $(p + 'form');
     var fgen = 0, lastFocus = null, fSession = newSession(), fBusy = false;
-    var watch = watcher(function () { return fSession; }, flog, function () { return dlg.classList.contains('on'); });
+    var human = false, idleStage = 0, idleTimer = null;
+    /* No check-ins while Adam has taken over; each message from him restarts the countdown. */
+    function idleReset() {
+      clearTimeout(idleTimer); idleStage = 0;
+      if (mode !== 'intro' || human || !dlg.classList.contains('on')) return;
+      idleTimer = setTimeout(idleFire, IDLE_MS);
+    }
+    function idleFire() {
+      if (human || !dlg.classList.contains('on')) return;
+      var list = IDLE_LINES[idleStage];
+      botSay(list[Math.floor(Math.random() * list.length)], 1200, flog, ok(fgen));
+      idleStage++;
+      if (idleStage < IDLE_LINES.length) idleTimer = setTimeout(idleFire, IDLE_MS);
+    }
+    var watch = watcher(function () { return fSession; }, flog, function () { return dlg.classList.contains('on'); }, {
+      onMode: function (h) { human = h; idleReset(); },
+      onMessage: function () { idleReset(); }
+    });
+    ['input', 'keydown', 'pointerdown', 'focusin', 'submit'].forEach(function (ev) { dlg.addEventListener(ev, idleReset, true); });
     function grow() { fmsg.style.height = 'auto'; fmsg.style.height = Math.min(fmsg.scrollHeight, 128) + 'px'; ffield.classList.toggle('has', !!fmsg.value.trim()); }
     function ok(g) { return function () { return g === fgen; }; }
     function open() {
@@ -152,12 +211,13 @@
       flog.innerHTML = ''; flog._hold = false; fmsg.value = ''; grow(); fSession = newSession(); fBusy = false; watch.reset(); watch.stop();
       scrim.classList.add('on'); dlg.classList.add('on'); document.body.style.overflow = 'hidden';
       botSay(typeof opener === 'function' ? opener() : opener, wait, flog, ok(g));
+      human = false; idleReset();
       setTimeout(function () { fmsg.focus(); }, 60);
       syncKeyboard();
     }
     function close() {
       if (!dlg.classList.contains('on')) return;
-      endSession(fSession); fgen++; watch.stop(); flog.innerHTML = ''; fmsg.value = ''; grow();
+      endSession(fSession); fgen++; watch.stop(); clearTimeout(idleTimer); flog.innerHTML = ''; fmsg.value = ''; grow();
       scrim.classList.remove('on'); dlg.classList.remove('on'); document.body.style.overflow = '';
       syncKeyboard();
       if (lastFocus && lastFocus.focus) lastFocus.focus();
@@ -236,7 +296,7 @@
       };
       var cb = app.el.querySelector('.fhead button');
       cb.setAttribute('aria-label', 'Back');
-      cb.innerHTML = '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3L5 9l6 6"/></svg>';
+      cb.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 6.5h-4v-4M2.5 9.5h4v4M9.5 6.5L14 2M6.5 9.5L2 14"/></svg>';
       app.open();
     }
   }
