@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" data-accent="green" data-chat-app data-no-scroll-hint>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Chat with Adam</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0a0d13">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fit.css?v=3">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>html,body{margin:0;height:100%;background:#0a0d13;overflow:hidden;overscroll-behavior:none}</style>
+</head>
+<body>
+<div class="fscrim" id="fscrim"></div>
+<div class="fdlg" id="fdlg" role="dialog" aria-modal="true" aria-labelledby="ftitle">
+  <div class="fhead"><b id="ftitle">Check my fit</b>
+    <button type="button" id="fclose" aria-label="Close"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14"/></svg></button>
+  </div>
+  <div class="log flog" id="flog" aria-live="polite"></div>
+  <div class="fnote">Paste a job description or link, or just a title or description of the role. Conversations are recorded so Adam can review them.</div>
+  <form class="fform" id="fform" autocomplete="off">
+    <div class="field" id="ffield">
+      <textarea autocomplete="off" autocapitalize="sentences" enterkeyhint="send" id="fmsg" rows="1" placeholder="Job description, link, or role title" aria-label="Job description, link, title, or description of the role"></textarea>
+      <button type="submit" class="enter" aria-label="Send"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4v6.5a1.5 1.5 0 0 1-1.5 1.5H4"/><path d="M7.5 8.5L4 12l3.5 3.5"/></svg></button>
+    </div>
+  </form>
+</div>
+<div class="fscrim" id="cscrim"></div>
+<div class="fdlg" id="cdlg" role="dialog" aria-modal="true" aria-labelledby="ctitle">
+  <div class="fhead"><b id="ctitle">Chat with Adam</b>
+    <button type="button" id="cclose" aria-label="Close"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14"/></svg></button>
+  </div>
+  <div class="log flog" id="clog" aria-live="polite"></div>
+  <div class="fnote">Conversations are recorded so Adam can review them.</div>
+  <form class="fform" id="cform" autocomplete="off">
+    <div class="field" id="cfield">
+      <textarea autocomplete="off" autocapitalize="sentences" enterkeyhint="send" id="cmsg" rows="1" placeholder="Chat with Adam" aria-label="Chat with Adam"></textarea>
+      <button type="submit" class="enter" aria-label="Send"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4v6.5a1.5 1.5 0 0 1-1.5 1.5H4"/><path d="M7.5 8.5L4 12l3.5 3.5"/></svg></button>
+    </div>
+  </form>
+</div>
+<script src="/fit.js?v=4" defer></script>
+</body>
+</html>

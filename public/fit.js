@@ -161,6 +161,7 @@
       scrim.classList.remove('on'); dlg.classList.remove('on'); document.body.style.overflow = '';
       syncKeyboard();
       if (lastFocus && lastFocus.focus) lastFocus.focus();
+      if (d.onClose) d.onClose();
     }
     $(p + 'close').addEventListener('click', close);
     scrim.addEventListener('click', close);
@@ -181,7 +182,7 @@
       var f = [$(p + 'close'), fmsg, dlg.querySelector('.enter')], i = f.indexOf(document.activeElement);
       e.preventDefault(); f[(i + (e.shiftKey ? f.length - 1 : 1)) % f.length].focus();
     });
-    var d = { open: open, close: close, el: dlg, log: flog, end: function () { if (dlg.classList.contains('on')) endSession(fSession); } };
+    var d = { open: open, close: close, onClose: null, el: dlg, log: flog, end: function () { if (dlg.classList.contains('on')) endSession(fSession); } };
     dialogs.push(d); return d;
   }
   var openers = [
@@ -194,17 +195,20 @@
   var chat = $('cdlg') ? dialog('c', 'intro', function () { return openers[Math.floor(Math.random() * openers.length)]; }, 1800) : null;
 
   /* On-screen keyboard: on narrow screens pin the open dialog to the visual viewport so the input rides above the keyboard. */
-  var vv = window.visualViewport;
+  var vv = window.visualViewport, appMode = document.documentElement.hasAttribute('data-chat-app');
   function syncKeyboard() {
-    var narrow = window.innerWidth <= 820 && !!vv;
+    var narrow = (window.innerWidth <= 820 || appMode) && !!vv, kbOpen = false;
     dialogs.forEach(function (d) {
-      var fd = d.el, full = fd.id === 'cdlg';
+      var fd = d.el, full = fd.id === 'cdlg' || appMode;
       if (fd.classList.contains('on') && narrow) {
         if (full) { fd.style.top = vv.offsetTop + 'px'; fd.style.height = vv.height + 'px'; }
         else { fd.style.top = (vv.offsetTop + vv.height / 2) + 'px'; fd.style.height = Math.min(720, Math.round(vv.height * 0.92)) + 'px'; }
         if (!d.log._hold) d.log.scrollTop = d.log.scrollHeight;
+        if (window.innerHeight - vv.height > 120) kbOpen = true;
       } else { fd.style.top = ''; fd.style.height = ''; }
     });
+    /* keyboard open: lets the CSS tighten the input area */
+    document.documentElement.classList.toggle('kb', kbOpen);
   }
   if (vv) { vv.addEventListener('resize', syncKeyboard); vv.addEventListener('scroll', syncKeyboard); }
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') dialogs.forEach(function (d) { d.close(); }); });
@@ -212,6 +216,28 @@
     var a = e.target.closest && e.target.closest('[data-modal]');
     if (!a) return;
     var m = a.getAttribute('data-modal'), d = m === 'fit' ? fit : m === 'chat' ? chat : null;
-    if (d) { e.preventDefault(); d.open(); }
+    if (!d) return;
+    e.preventDefault();
+    /* Phones get the chat as its own full-screen page (with a way back) instead of a modal over the page. */
+    if (window.innerWidth <= 820 && !appMode) { location.href = '/chat/?m=' + m + '&from=' + encodeURIComponent(location.pathname + location.search); return; }
+    d.open();
   });
+
+  /* The /chat/ page: open the requested conversation at once; closing it goes back to where the visitor came from. */
+  if (appMode) {
+    var q = new URLSearchParams(location.search), from = q.get('from') || '/';
+    if (from.charAt(0) !== '/' || from.charAt(1) === '/') from = '/';
+    var app = q.get('m') === 'fit' ? fit : chat;
+    if (app) {
+      app.onClose = function () {
+        var back = false;
+        try { back = history.length > 1 && document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) {}
+        if (back) history.back(); else location.replace(from);
+      };
+      var cb = app.el.querySelector('.fhead button');
+      cb.setAttribute('aria-label', 'Back');
+      cb.innerHTML = '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3L5 9l6 6"/></svg>';
+      app.open();
+    }
+  }
 })();

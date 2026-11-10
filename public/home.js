@@ -399,7 +399,7 @@
     var a = e.target.closest && e.target.closest('a');
     if (!a) return;
     var href = a.getAttribute('href') || '';
-    if (a.getAttribute('data-modal') === 'fit') { e.preventDefault(); openFit(); return; }
+    if (a.getAttribute('data-modal') === 'fit') { e.preventDefault(); if (window.innerWidth <= 820) { location.href = '/chat/?m=fit&from=' + encodeURIComponent(location.pathname + location.search); return; } openFit(); return; }
     if (href === '#') e.preventDefault();
   });
 })();
