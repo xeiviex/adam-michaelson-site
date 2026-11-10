@@ -95,3 +95,14 @@ footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
 .unmute:hover { background: rgba(0,0,0,.85); }
 .fig { margin: 0; min-width: 0; }
 .fig figcaption { margin-top: 10px; font-size: .9rem; line-height: 1.45; color: var(--muted); max-width: 52ch; }
+
+/* places */
+.place { border-top: 1px solid var(--line); padding-block: 64px 24px; }
+.place-head { max-width: 760px; margin-bottom: 28px; }
+.place-head h2 { font-size: clamp(2rem, 4.6vw, 3.4rem); line-height: 1.08; margin-block: 10px 14px; }
+.place-head .sub { font-size: 1.1rem; max-width: 68ch; }
+.place-hero { margin: 0 0 12px; }
+.place-hero .hero-ph { --ar: 16 / 9; }
+.place-hero .credit { font-size: .8rem; color: var(--muted); margin-top: 8px; }
+.gallery.trio { grid-template-columns: repeat(3, 1fr); margin-top: 0; }
+@media (max-width: 560px) { .gallery.trio { gap: 6px; } }
