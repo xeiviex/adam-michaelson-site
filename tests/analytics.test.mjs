@@ -10,6 +10,8 @@ import {
   categorizeReferrer,
   isBot,
   detectDevice,
+  detectDeviceLabel,
+  isOwnerRequest,
   getVisitorId,
   normalizePath
 } from "../functions/_lib/analytics.js";
@@ -28,6 +30,43 @@ test("detects bots vs human user agents", () => {
   assert.equal(isBot("LinkedInBot/1.0 (compatible; Mozilla/5.0)"), true);
   assert.equal(isBot("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"), false);
   assert.equal(isBot("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148"), false);
+});
+
+test("detects device labels (MacBook Air vs iPhone)", () => {
+  const macReq = new Request("https://adam-michaelson.com/", {
+    headers: { "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36" }
+  });
+  assert.equal(detectDeviceLabel(macReq), "MacBook Air");
+
+  const iphoneReq = new Request("https://adam-michaelson.com/", {
+    headers: { "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15" }
+  });
+  assert.equal(detectDeviceLabel(iphoneReq), "iPhone");
+
+  const customReq = new Request("https://adam-michaelson.com/");
+  assert.equal(detectDeviceLabel(customReq, "iphone"), "iPhone");
+  assert.equal(detectDeviceLabel(customReq, "macbook"), "MacBook Air");
+});
+
+test("recognizes owner request via query param, cookie, or CF Access header", () => {
+  const normalReq = new Request("https://adam-michaelson.com/");
+  assert.equal(isOwnerRequest(normalReq, new URL("https://adam-michaelson.com/")), false);
+
+  const queryReq1 = new Request("https://adam-michaelson.com/?owner=adam");
+  assert.equal(isOwnerRequest(queryReq1, new URL("https://adam-michaelson.com/?owner=adam")), true);
+
+  const queryReq2 = new Request("https://adam-michaelson.com/?me=adam");
+  assert.equal(isOwnerRequest(queryReq2, new URL("https://adam-michaelson.com/?me=adam")), true);
+
+  const cookieReq = new Request("https://adam-michaelson.com/", {
+    headers: { cookie: "session=123; _am_owner=1" }
+  });
+  assert.equal(isOwnerRequest(cookieReq, new URL("https://adam-michaelson.com/")), true);
+
+  const accessReq = new Request("https://adam-michaelson.com/", {
+    headers: { "cf-access-jwt-assertion": "valid.token.here" }
+  });
+  assert.equal(isOwnerRequest(accessReq, new URL("https://adam-michaelson.com/")), true);
 });
 
 test("categorizes referrers cleanly", () => {
@@ -133,6 +172,84 @@ test("records pageviews and computes full analytics", async () => {
   // Including bots when requested
   const botStats = await getStats(db, { days: 30, includeBots: true });
   assert.equal(botStats.totals.total_views, 4);
+});
+
+test("recognizes and isolates owner traffic (MacBook Air & iPhone)", async () => {
+  const { db } = freshAnalyticsDb();
+
+  // 1. External recruiter visit
+  const recruiterReq = new Request("https://adam-michaelson.com/bio/", {
+    headers: { "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" }
+  });
+  await recordPageView(db, {
+    request: recruiterReq,
+    url: new URL("https://adam-michaelson.com/bio/"),
+    visitorId: "recruiter-123",
+    isReturning: false,
+    isOwner: false
+  });
+
+  // 2. Adam visiting from MacBook Air (?owner=adam)
+  const macReq = new Request("https://adam-michaelson.com/?owner=adam", {
+    headers: { "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36" }
+  });
+  await recordPageView(db, {
+    request: macReq,
+    url: new URL("https://adam-michaelson.com/?owner=adam"),
+    visitorId: "adam-mac-vid",
+    isReturning: false,
+    isOwner: true
+  });
+
+  // 3. Adam visiting later from MacBook Air WITHOUT ?owner=adam (auto-recognized via DB visitor record)
+  const macReq2 = new Request("https://adam-michaelson.com/product/", {
+    headers: { "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36" }
+  });
+  await recordPageView(db, {
+    request: macReq2,
+    url: new URL("https://adam-michaelson.com/product/"),
+    visitorId: "adam-mac-vid",
+    isReturning: true,
+    isOwner: false // should be auto-promoted by visitor_id in DB!
+  });
+
+  // 4. Adam visiting from iPhone (?owner=adam)
+  const iphoneReq = new Request("https://adam-michaelson.com/bio/?owner=adam", {
+    headers: { "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15" }
+  });
+  await recordPageView(db, {
+    request: iphoneReq,
+    url: new URL("https://adam-michaelson.com/bio/?owner=adam"),
+    visitorId: "adam-iphone-vid",
+    isReturning: false,
+    isOwner: true
+  });
+
+  // Query default: visitors_only (Adam's views MUST be excluded!)
+  const visitorStats = await getStats(db, { filter: "visitors_only" });
+  assert.equal(visitorStats.totals.total_views, 1);
+  assert.equal(visitorStats.totals.unique_visitors, 1);
+  assert.equal(visitorStats.page_rank.length, 1);
+  assert.equal(visitorStats.page_rank[0].path, "/bio/");
+
+  // Owner activity is reported separately
+  assert.equal(visitorStats.owner_activity.total_views, 3);
+  assert.equal(visitorStats.owner_activity.unique_devices, 2);
+  const macEntry = visitorStats.owner_activity.devices.find((d) => d.device === "MacBook Air");
+  const iphoneEntry = visitorStats.owner_activity.devices.find((d) => d.device === "iPhone");
+  assert.ok(macEntry);
+  assert.equal(macEntry.views, 2);
+  assert.ok(iphoneEntry);
+  assert.equal(iphoneEntry.views, 1);
+
+  // Query filter=owner_only
+  const ownerStats = await getStats(db, { filter: "owner_only" });
+  assert.equal(ownerStats.totals.total_views, 3);
+  assert.equal(ownerStats.totals.unique_visitors, 2);
+
+  // Query filter=all
+  const allStats = await getStats(db, { filter: "all" });
+  assert.equal(allStats.totals.total_views, 4);
 });
 
 test("/api/stats authentication and response", async () => {

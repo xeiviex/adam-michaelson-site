@@ -1,7 +1,7 @@
 /* Site-wide: adds the scroll hint (public/scroll-hint.js) and Google Analytics (G-1TRY7CFCFG)
    to every public HTML page, records privacy-friendly pageviews to D1, and skips API/admin.
    A page can opt out of scroll hint with <html data-no-scroll-hint>. */
-import { getVisitorId, recordPageView } from "./_lib/analytics.js";
+import { getVisitorId, recordPageView, isOwnerRequest, detectDeviceLabel } from "./_lib/analytics.js";
 
 const SKIP = [/^\/api\//, /^\/admin(\/|$)/, /^\/clever\//];
 const TAG = '<script src="/scroll-hint.js?v=1" defer></script>';
@@ -25,13 +25,20 @@ export async function onRequest(ctx) {
   const isReturning = Boolean(existingVid);
   const visitorId = existingVid || (typeof crypto?.randomUUID === 'function' ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36));
 
+  // Recognize owner traffic (MacBook Air / iPhone)
+  const isOwner = isOwnerRequest(ctx.request, url);
+  const customDevice = url.searchParams.get('device') || null;
+  const deviceLabel = detectDeviceLabel(ctx.request, customDevice);
+
   // Record pageview in D1 asynchronously without blocking the response
   if (ctx.env?.SMS_OPTIN_DB) {
     const recordPromise = recordPageView(ctx.env.SMS_OPTIN_DB, {
       request: ctx.request,
       url,
       visitorId,
-      isReturning
+      isReturning,
+      isOwner,
+      customDevice
     }).catch(function (err) {
       console.error('analytics recording error:', err);
     });
@@ -50,13 +57,22 @@ export async function onRequest(ctx) {
     .on('body', { element: function (el) { el.append(TAG, { html: true }); } })
     .transform(res);
 
+  const cookiesToSet = [];
   if (!isReturning) {
+    cookiesToSet.push(`_am_vid=${visitorId}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`);
+  }
+  if (isOwner) {
+    cookiesToSet.push(`_am_owner=1; Path=/; Max-Age=63072000; SameSite=Lax; Secure`);
+    cookiesToSet.push(`_am_dev_label=${encodeURIComponent(deviceLabel)}; Path=/; Max-Age=63072000; SameSite=Lax; Secure`);
+  }
+
+  for (const c of cookiesToSet) {
     try {
-      transformed.headers.append('Set-Cookie', `_am_vid=${visitorId}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`);
+      transformed.headers.append('Set-Cookie', c);
     } catch {
       const copy = new Response(transformed.body, transformed);
       if (transformed.__rewritten) copy.__rewritten = transformed.__rewritten;
-      copy.headers.append('Set-Cookie', `_am_vid=${visitorId}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`);
+      copy.headers.append('Set-Cookie', c);
       transformed = copy;
     }
   }

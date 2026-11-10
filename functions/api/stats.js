@@ -2,6 +2,10 @@
  * GET /api/stats
  * Secure API endpoint for querying site visitor metrics, page rank, return users, and daily trends.
  * Supports authentication via query parameter (?key=...), Authorization Bearer token, or X-Stats-Key header.
+ * Filter parameter:
+ *   - filter=visitors_only (default): excludes owner traffic (Adam's MacBook Air & iPhone)
+ *   - filter=owner_only: shows only owner activity
+ *   - filter=all: shows all traffic combined
  */
 import { getStats } from "../_lib/analytics.js";
 
@@ -47,9 +51,10 @@ export async function onRequestGet({ request, env }) {
   const days = url.searchParams.get("days") || "30";
   const path = url.searchParams.get("path") || null;
   const includeBots = ["1", "true", "yes"].includes(url.searchParams.get("bots") || "");
+  const filter = url.searchParams.get("filter") || "visitors_only";
 
   try {
-    const data = await getStats(env?.SMS_OPTIN_DB, { days, path, includeBots });
+    const data = await getStats(env?.SMS_OPTIN_DB, { days, path, includeBots, filter });
     return json(data);
   } catch (err) {
     return json({ error: "Failed to query analytics", message: err.message }, 500);

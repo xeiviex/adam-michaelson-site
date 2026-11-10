@@ -17,19 +17,24 @@ export const ANALYTICS_STATEMENTS = [
      country TEXT,
      city TEXT,
      device TEXT,
-     is_bot INTEGER NOT NULL DEFAULT 0
+     is_bot INTEGER NOT NULL DEFAULT 0,
+     is_owner INTEGER NOT NULL DEFAULT 0
    )`,
   `CREATE INDEX IF NOT EXISTS idx_pv_date ON page_views (date)`,
   `CREATE INDEX IF NOT EXISTS idx_pv_path ON page_views (path)`,
   `CREATE INDEX IF NOT EXISTS idx_pv_visitor ON page_views (visitor_id)`,
   `CREATE INDEX IF NOT EXISTS idx_pv_date_path ON page_views (date, path)`,
+  `CREATE INDEX IF NOT EXISTS idx_pv_owner ON page_views (is_owner)`,
   `CREATE TABLE IF NOT EXISTS site_visitors (
      visitor_id TEXT PRIMARY KEY,
      first_seen_at TEXT NOT NULL,
      last_seen_at TEXT NOT NULL,
-     total_views INTEGER NOT NULL DEFAULT 1
+     total_views INTEGER NOT NULL DEFAULT 1,
+     is_owner INTEGER NOT NULL DEFAULT 0,
+     device_label TEXT
    )`,
-  `CREATE INDEX IF NOT EXISTS idx_sv_last_seen ON site_visitors (last_seen_at)`
+  `CREATE INDEX IF NOT EXISTS idx_sv_last_seen ON site_visitors (last_seen_at)`,
+  `CREATE INDEX IF NOT EXISTS idx_sv_owner ON site_visitors (is_owner)`
 ];
 
 let schemaReady = false;
@@ -39,6 +44,16 @@ export async function ensureAnalyticsSchema(db) {
   for (const sql of ANALYTICS_STATEMENTS) {
     await db.prepare(sql).run();
   }
+  // Idempotent column migrations for existing tables
+  try {
+    await db.prepare("ALTER TABLE page_views ADD COLUMN is_owner INTEGER NOT NULL DEFAULT 0").run();
+  } catch {}
+  try {
+    await db.prepare("ALTER TABLE site_visitors ADD COLUMN is_owner INTEGER NOT NULL DEFAULT 0").run();
+  } catch {}
+  try {
+    await db.prepare("ALTER TABLE site_visitors ADD COLUMN device_label TEXT").run();
+  } catch {}
   schemaReady = true;
 }
 
@@ -59,6 +74,32 @@ export function detectDevice(request) {
   if (/tablet|ipad|playbook|silk/i.test(ua)) return "tablet";
   if (/mobile|iphone|android|ipod|blackberry|opera mini|iemobile/i.test(ua)) return "mobile";
   return "desktop";
+}
+
+export function detectDeviceLabel(request, customLabel = null) {
+  if (customLabel) {
+    if (/iphone/i.test(customLabel)) return "iPhone";
+    if (/mac|macbook/i.test(customLabel)) return "MacBook Air";
+    return customLabel;
+  }
+  const ua = request?.headers?.get?.("user-agent") || "";
+  if (/iphone/i.test(ua)) return "iPhone";
+  if (/ipad/i.test(ua)) return "iPad";
+  if (/macintosh|mac os x/i.test(ua)) return "MacBook Air";
+  return detectDevice(request);
+}
+
+export function isOwnerRequest(request, url) {
+  if (!request) return false;
+  if (url) {
+    const me = url.searchParams.get("me");
+    const owner = url.searchParams.get("owner");
+    if (me === "adam" || owner === "adam" || me === "1" || owner === "1") return true;
+  }
+  const cookieHeader = request.headers?.get?.("cookie") || "";
+  if (/(?:^|;\s*)_am_owner=1/.test(cookieHeader)) return true;
+  if (request.headers?.has?.("cf-access-jwt-assertion")) return true;
+  return false;
 }
 
 export function categorizeReferrer(refUrl, siteHost = "adam-michaelson.com") {
@@ -100,9 +141,23 @@ export function normalizePath(rawPath) {
   return p;
 }
 
-export async function recordPageView(db, { request, url, visitorId, isReturning }) {
+export async function recordPageView(db, { request, url, visitorId, isReturning, isOwner = false, customDevice = null }) {
   if (!db) return;
   await ensureAnalyticsSchema(db);
+
+  let owner = isOwner;
+  let deviceLabel = detectDeviceLabel(request, customDevice);
+
+  // If not flagged as owner in this request, check if visitor_id was already flagged previously
+  if (!owner) {
+    const existing = await db.prepare(
+      `SELECT is_owner, device_label FROM site_visitors WHERE visitor_id = ?1`
+    ).bind(visitorId).first();
+    if (existing?.is_owner) {
+      owner = true;
+      if (existing.device_label) deviceLabel = existing.device_label;
+    }
+  }
 
   const now = new Date();
   const createdAt = now.toISOString();
@@ -119,17 +174,17 @@ export async function recordPageView(db, { request, url, visitorId, isReturning 
 
   if (isReturning) {
     await db.prepare(
-      `UPDATE site_visitors SET last_seen_at = ?1, total_views = total_views + 1 WHERE visitor_id = ?2`
-    ).bind(createdAt, visitorId).run();
+      `UPDATE site_visitors SET last_seen_at = ?1, total_views = total_views + 1, is_owner = MAX(is_owner, ?2), device_label = COALESCE(device_label, ?3) WHERE visitor_id = ?4`
+    ).bind(createdAt, owner ? 1 : 0, owner ? deviceLabel : null, visitorId).run();
   } else {
     await db.prepare(
-      `INSERT OR IGNORE INTO site_visitors (visitor_id, first_seen_at, last_seen_at, total_views) VALUES (?1, ?2, ?2, 1)`
-    ).bind(visitorId, createdAt).run();
+      `INSERT OR IGNORE INTO site_visitors (visitor_id, first_seen_at, last_seen_at, total_views, is_owner, device_label) VALUES (?1, ?2, ?2, 1, ?3, ?4)`
+    ).bind(visitorId, createdAt, owner ? 1 : 0, owner ? deviceLabel : null).run();
   }
 
   await db.prepare(
-    `INSERT INTO page_views (created_at, date, path, visitor_id, is_returning, referrer, referrer_source, country, city, device, is_bot)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)`
+    `INSERT INTO page_views (created_at, date, path, visitor_id, is_returning, referrer, referrer_source, country, city, device, is_bot, is_owner)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)`
   ).bind(
     createdAt,
     date,
@@ -141,11 +196,12 @@ export async function recordPageView(db, { request, url, visitorId, isReturning 
     country,
     city,
     device,
-    bot
+    bot,
+    owner ? 1 : 0
   ).run();
 }
 
-export async function getStats(db, { days = 30, path = null, includeBots = false } = {}) {
+export async function getStats(db, { days = 30, path = null, includeBots = false, filter = "visitors_only" } = {}) {
   if (!db) return { error: "No database" };
   await ensureAnalyticsSchema(db);
 
@@ -158,6 +214,13 @@ export async function getStats(db, { days = 30, path = null, includeBots = false
   const normPath = path ? normalizePath(path) : null;
   const maxBot = includeBots ? 1 : 0;
 
+  // Owner filter:
+  // "visitors_only" (default): is_owner = 0
+  // "owner_only": is_owner = 1
+  // "all": no owner filter (is_owner >= 0)
+  const minOwner = filter === "owner_only" ? 1 : 0;
+  const maxOwner = filter === "visitors_only" ? 0 : 1;
+
   // 1. Overall totals
   const totalsRow = await db.prepare(
     `SELECT
@@ -167,9 +230,10 @@ export async function getStats(db, { days = 30, path = null, includeBots = false
        COUNT(DISTINCT path || '::' || visitor_id) AS unique_page_views
      FROM page_views
      WHERE is_bot <= ?3
+       AND is_owner >= ?4 AND is_owner <= ?5
        AND (?1 IS NULL OR date >= ?1)
        AND (?2 IS NULL OR path = ?2)`
-  ).bind(sinceDate, normPath, maxBot).first() || {};
+  ).bind(sinceDate, normPath, maxBot, minOwner, maxOwner).first() || {};
 
   const totalViews = Number(totalsRow.total_views || 0);
   const uniqueVisitors = Number(totalsRow.unique_visitors || 0);
@@ -186,11 +250,12 @@ export async function getStats(db, { days = 30, path = null, includeBots = false
        COUNT(DISTINCT CASE WHEN is_returning = 1 THEN visitor_id END) AS returning_visitors
      FROM page_views
      WHERE is_bot <= ?2
+       AND is_owner >= ?3 AND is_owner <= ?4
        AND (?1 IS NULL OR date >= ?1)
      GROUP BY path
      ORDER BY views DESC, unique_visitors DESC
      LIMIT 50`
-  ).bind(sinceDate, maxBot).all()).results || [];
+  ).bind(sinceDate, maxBot, minOwner, maxOwner).all()).results || [];
 
   // 3. Daily trends over time
   const dailyRows = (await db.prepare(
@@ -201,11 +266,12 @@ export async function getStats(db, { days = 30, path = null, includeBots = false
        COUNT(DISTINCT CASE WHEN is_returning = 1 THEN visitor_id END) AS returning_visitors
      FROM page_views
      WHERE is_bot <= ?3
+       AND is_owner >= ?4 AND is_owner <= ?5
        AND (?1 IS NULL OR date >= ?1)
        AND (?2 IS NULL OR path = ?2)
      GROUP BY date
      ORDER BY date ASC`
-  ).bind(sinceDate, normPath, maxBot).all()).results || [];
+  ).bind(sinceDate, normPath, maxBot, minOwner, maxOwner).all()).results || [];
 
   // 4. Return users per page
   const returnUsersRows = (await db.prepare(
@@ -215,12 +281,13 @@ export async function getStats(db, { days = 30, path = null, includeBots = false
        COUNT(DISTINCT visitor_id) AS returning_unique_visitors
      FROM page_views
      WHERE is_bot <= ?2
+       AND is_owner >= ?3 AND is_owner <= ?4
        AND is_returning = 1
        AND (?1 IS NULL OR date >= ?1)
      GROUP BY path
      ORDER BY returning_views DESC, returning_unique_visitors DESC
      LIMIT 50`
-  ).bind(sinceDate, maxBot).all()).results || [];
+  ).bind(sinceDate, maxBot, minOwner, maxOwner).all()).results || [];
 
   // 5. Top referrers
   const referrerRows = (await db.prepare(
@@ -230,13 +297,14 @@ export async function getStats(db, { days = 30, path = null, includeBots = false
        COUNT(DISTINCT visitor_id) AS unique_visitors
      FROM page_views
      WHERE is_bot <= ?3
+       AND is_owner >= ?4 AND is_owner <= ?5
        AND referrer_source != 'internal'
        AND (?1 IS NULL OR date >= ?1)
        AND (?2 IS NULL OR path = ?2)
      GROUP BY referrer_source
      ORDER BY views DESC
      LIMIT 15`
-  ).bind(sinceDate, normPath, maxBot).all()).results || [];
+  ).bind(sinceDate, normPath, maxBot, minOwner, maxOwner).all()).results || [];
 
   // 6. Device breakdown
   const deviceRows = (await db.prepare(
@@ -246,11 +314,12 @@ export async function getStats(db, { days = 30, path = null, includeBots = false
        COUNT(DISTINCT visitor_id) AS unique_visitors
      FROM page_views
      WHERE is_bot <= ?3
+       AND is_owner >= ?4 AND is_owner <= ?5
        AND (?1 IS NULL OR date >= ?1)
        AND (?2 IS NULL OR path = ?2)
      GROUP BY device
      ORDER BY views DESC`
-  ).bind(sinceDate, normPath, maxBot).all()).results || [];
+  ).bind(sinceDate, normPath, maxBot, minOwner, maxOwner).all()).results || [];
 
   // 7. Top countries
   const countryRows = (await db.prepare(
@@ -260,20 +329,46 @@ export async function getStats(db, { days = 30, path = null, includeBots = false
        COUNT(DISTINCT visitor_id) AS unique_visitors
      FROM page_views
      WHERE is_bot <= ?3
+       AND is_owner >= ?4 AND is_owner <= ?5
        AND country != ''
        AND (?1 IS NULL OR date >= ?1)
        AND (?2 IS NULL OR path = ?2)
      GROUP BY country
      ORDER BY views DESC
      LIMIT 10`
-  ).bind(sinceDate, normPath, maxBot).all()).results || [];
+  ).bind(sinceDate, normPath, maxBot, minOwner, maxOwner).all()).results || [];
+
+  // 8. Owner activity summary (isolated from public stats)
+  const ownerTotals = await db.prepare(
+    `SELECT
+       COUNT(*) AS total_views,
+       COUNT(DISTINCT visitor_id) AS unique_devices
+     FROM page_views
+     WHERE is_owner = 1
+       AND (?1 IS NULL OR date >= ?1)
+       AND (?2 IS NULL OR path = ?2)`
+  ).bind(sinceDate, normPath).first() || {};
+
+  const ownerDeviceRows = (await db.prepare(
+    `SELECT
+       COALESCE(sv.device_label, pv.device) AS device,
+       COUNT(*) AS views,
+       MAX(pv.created_at) AS last_seen
+     FROM page_views pv
+     LEFT JOIN site_visitors sv ON sv.visitor_id = pv.visitor_id
+     WHERE pv.is_owner = 1
+       AND (?1 IS NULL OR pv.date >= ?1)
+     GROUP BY device
+     ORDER BY views DESC`
+  ).bind(sinceDate).all()).results || [];
 
   return {
     query: {
       days: days === "all" ? "all" : numDays,
       since_date: sinceDate,
       path: normPath,
-      include_bots: includeBots
+      include_bots: includeBots,
+      filter
     },
     totals: {
       total_views: totalViews,
@@ -313,6 +408,15 @@ export async function getStats(db, { days = 30, path = null, includeBots = false
       country: r.country,
       views: Number(r.views),
       unique_visitors: Number(r.unique_visitors)
-    }))
+    })),
+    owner_activity: {
+      total_views: Number(ownerTotals.total_views || 0),
+      unique_devices: Number(ownerTotals.unique_devices || 0),
+      devices: ownerDeviceRows.map((r) => ({
+        device: r.device,
+        views: Number(r.views),
+        last_seen: r.last_seen
+      }))
+    }
   };
 }
