@@ -372,7 +372,15 @@ Titus Was Born|Young the Giant|Home of the Strange|4:02
 Looking In the Eyes of Love|Alison Krauss & Union Station|So Long So Wrong|4:19
 Blurry|Puddle of Mudd|Come Clean|5:03`;
 
-var tracks = DATA.split('\n').map(function(l){var p=l.split('|');return {title:p[0],artist:p[1],album:p[2],time:p[3]};});
+/* Per-song fixes: q = search text, album = album the preview must come from (studio original), title = title to match. */
+var FIX = {
+ 'Only You (Live)|Yazoo':{title:'Only You',album:"Upstairs at Eric's",q:"Yazoo Only You Upstairs at Eric's"},
+ 'Gods of War|Def Leppard':{album:'Hysteria',q:'Def Leppard Gods of War Hysteria'},
+ 'With or Without You|U2':{album:'The Joshua Tree',q:'U2 With or Without You The Joshua Tree'},
+ "There's No Other Way|Blur":{album:'Leisure',q:"Blur There's No Other Way Leisure"},
+ 'Lost Boy|The Midnight':{album:'Kids',q:'The Midnight Lost Boy Kids'}
+};
+var tracks = DATA.split('\n').map(function(l){var p=l.split('|');var t={title:p[0],artist:p[1],album:p[2],time:p[3]},f=FIX[p[0]+'|'+p[1]]||{};t.fix=f;t.mtitle=f.title||p[0];t.malbum=f.album||p[2];return t;});
 var list = document.getElementById('amp-list');
 var root = document.getElementById('amp');
 var more = document.getElementById('amp-more');
@@ -398,7 +406,7 @@ list.innerHTML = tracks.map(function(t,i){
 var rows = list.children;
 
 /* ---------- lookup (iTunes Search API via JSONP, cached in localStorage) ---------- */
-var CK='amp.v1.';
+var CK='amp.v2.';
 var cache = {};
 function cget(k){try{var v=localStorage.getItem(CK+k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function cset(k,v){try{localStorage.setItem(CK+k,JSON.stringify(v));}catch(e){}}
@@ -415,35 +423,50 @@ function jsonp(url){
   });
 }
 function norm(s){return String(s).toLowerCase().replace(/\(.*?\)|\[.*?\]/g,' ').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,' ').trim();}
+var BAD=/\b(live|remix|mix|instrumentals?|karaoke|slowed|sped|acoustic|demo|extended|reprise|tribute|cover|rehearsal)\b/;
 function pick(t,results){
-  var tt=norm(t.title), aa=norm(t.artist.split(',')[0]), best=null, bs=-1;
+  var tt=norm(t.mtitle), aa=norm(t.artist.split(',')[0]), wa=norm(t.malbum), want=tt+' '+wa, best=null, bs=-99;
   results.forEach(function(r){
     if(!r.previewUrl) return;
     var s=0, rt=norm(r.trackName||''), ra=norm(r.artistName||''), rc=norm(r.collectionName||'');
     if(rt===tt) s+=4; else if(rt.indexOf(tt)>-1||tt.indexOf(rt)>-1) s+=2;
     if(ra.indexOf(aa)>-1||aa.indexOf(ra)>-1) s+=4;
-    if(rc&&norm(t.album)===rc) s+=2; else if(rc&&(rc.indexOf(norm(t.album))>-1||norm(t.album).indexOf(rc)>-1)) s+=1;
+    if(rc&&wa===rc) s+=3; else if(rc&&(rc.indexOf(wa)>-1||wa.indexOf(rc)>-1)) s+=2;
+    var bw=(((r.trackName||'')+' '+(r.collectionName||'')).toLowerCase().match(new RegExp(BAD.source,'g'))||[]);
+    bw.forEach(function(w){if(want.indexOf(w)<0) s-=6;});
+    if(t.fix.album&&!(rc===wa||rc.indexOf(wa)>-1)) s-=6;
     if(s>bs){bs=s;best=r;}
   });
   return bs>=6?best:null;
 }
+function search(q,limit){return jsonp('https://itunes.apple.com/search?media=music&entity=song&limit='+limit+'&country=us&term='+encodeURIComponent(q));}
+function retry(fn,n){return fn().catch(function(e){if(n<=0) throw e;return new Promise(function(ok){setTimeout(ok,1500*(4-n)+500);}).then(function(){return retry(fn,n-1);});});}
+/* one request at a time: Apple rate-limits bursts, which made some songs look unavailable */
+var qchain=Promise.resolve();
+function queued(fn){var p=qchain.then(fn);qchain=p.catch(function(){}).then(function(){return new Promise(function(ok){setTimeout(ok,250);});});return p;}
 function lookup(i){
   if(cache[i]) return cache[i];
-  var t=tracks[i], key=norm(t.title+' '+t.artist), hit=cget(key);
+  var t=tracks[i], key=norm(t.title+' '+t.artist+' '+(t.fix.album||'')), hit=cget(key);
   if(hit) return (cache[i]=Promise.resolve(hit));
-  var q=encodeURIComponent(t.title.replace(/\(.*?\)|\[.*?\]/g,' ')+' '+t.artist.split(',')[0]);
-  cache[i]=jsonp('https://itunes.apple.com/search?media=music&entity=song&limit=10&country=us&term='+q).then(function(d){
-    var r=pick(t,d.results||[]);
+  var clean=t.title.replace(/\(.*?\)|\[.*?\]/g,' ')+' '+t.artist.split(',')[0];
+  cache[i]=queued(function(){
+    return retry(function(){return search(t.fix.q||clean,10);},3).then(function(d){
+      var r=pick(t,d.results||[]);
+      if(r) return r;
+      return retry(function(){return search(t.mtitle.replace(/\(.*?\)|\[.*?\]/g,' ')+' '+t.artist.split(',')[0],40);},2).then(function(d2){return pick(t,d2.results||[]);});
+    });
+  }).then(function(r){
     var out=r?{art:(r.artworkUrl100||'').replace('100x100','120x120'),prev:r.previewUrl}:{none:1};
-    cset(key,out); return out;
+    if(r) cset(key,out); return out;
   }).catch(function(){delete cache[i];return null;});
   return cache[i];
 }
 function apply(i,info){
-  var row=rows[i]; if(!row||!info) return;
+  var row=rows[i]; if(!row) return;
+  if(!info){row.querySelector('.amp-btn').disabled=false;row._retry=1;return;}
   if(info.art) row.querySelector('.amp-art').src=info.art;
   var b=row.querySelector('.amp-btn');
-  if(info.prev){b.disabled=false;row._prev=info.prev;}
+  if(info.prev){b.disabled=false;row._prev=info.prev;row._retry=0;}
   else{b.disabled=true;b.title='No preview available';}
 }
 /* load rows as they scroll into view */
@@ -471,7 +494,7 @@ function play(i){
     if(cur!==i){clearOn();cur=i;audio.src=info.prev;}
     audio.play().catch(function(){});
   };
-  if(row._prev) go({prev:row._prev}); else lookup(i).then(function(info){apply(i,info);go(info);});
+  if(row._prev) go({prev:row._prev}); else lookup(i).then(function(info){apply(i,info);if(!info&&row._retry){row.querySelector('.amp-btn').title='Could not reach Apple; tap to retry';return;}go(info);});
 }
 function next(i){
   for(var k=i+1;k<rows.length;k++){
