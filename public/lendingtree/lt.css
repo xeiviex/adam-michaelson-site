@@ -254,8 +254,8 @@ footer a { color: #0a0d12; text-underline-offset: 3px; }
   .gr.hd .gt span { font-size: .6rem; letter-spacing: .04em; }
   .gt { min-height: 30px; }
   /* number/diamond on top, text beneath, bar beneath that: all on one left edge */
-  .gl { grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; row-gap: 4px; align-items: baseline; }
-  .gl i { grid-row: auto; grid-column: 1; padding-top: 0; min-width: 1.5em; }
+  .gl { grid-template-columns: auto minmax(0, 1fr); column-gap: 2px; row-gap: 4px; align-items: baseline; }
+  .gl i { grid-row: auto; grid-column: 1; padding-top: 0; min-width: 1.25em; }
   .gl i.dot::before { margin: 0 4px 0 0; }
   .gl b { grid-column: 2; }
   .gl small { grid-column: 1 / -1; color: #e3e8ef; }
