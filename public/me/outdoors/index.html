@@ -27,6 +27,11 @@
 .hike-pair figure { margin: 0; }
 .hike-pair p { margin-top: 12px; }
 @media (max-width: 720px) { .hike-pair { grid-template-columns: 1fr; } }
+.scout-row { display: flex; gap: 28px; align-items: flex-start; }
+.scout-row .scout-text { flex: 1 1 0; min-width: 0; }
+.scout-row .scout-text p { margin-top: 0; }
+.scout-row .ph { flex: 0 0 min(42%, 340px); }
+@media (max-width: 720px) { .scout-row { flex-direction: column; } .scout-row .ph { flex: none; width: 100%; max-width: 340px; } }
 .mtb-row { display: flex; gap: 10px; align-items: stretch; }
 .mtb-row .mtb-v { flex: var(--g) 1 0; min-width: 0; aspect-ratio: var(--ar); }
 @media (max-width: 720px) { .mtb-row { flex-wrap: wrap; } .mtb-row .mtb-v { flex: 1 1 calc(50% - 5px); } .mtb-row .mtb-v[style*="16 / 9"] { flex-basis: 100%; order: 5; } }
@@ -45,14 +50,6 @@
     <p class="intro">Hiking, mountain biking, kayaking, rock climbing, cliff diving, and hunting. Wherever the trail, river, or cliff goes.</p>
   </header>
   <div class="ph zoom hero-ph rv" data-label="Outdoors cover photo"><img src="/me/outdoors/photos/cover.jpg" style="object-position:50% 8%" alt="Outdoors cover photo" loading="lazy" decoding="async"></div>
-  <section class="chapter">
-    <h2 class="rv">Scouting</h2>
-    <div class="body rv">
-      <div class="ph zoom" style="--ar:3 / 4;max-width:380px" data-label="Scouts on a backpacking trip"><img src="/me/outdoors/photos/scouts.jpg" alt="Adam taking a selfie on a backpacking trip with a group of young Scouts, several waving at the camera" loading="lazy" decoding="async"></div>
-      <p>I have been a Scout leader for decades. Every week I work with a group of young men on the things I wish more people learned early: how to take care of themselves, how to handle money responsibly, how to stay physically strong, and how to be comfortable and capable in the outdoors.</p>
-      <p>Much of it happens on the trail. Packing your own gear, reading a map, building a fire, and getting the group to camp teach more than a classroom can. I get to watch boys turn into capable young men, and it keeps me honest about what I'm willing to carry myself.</p>
-    </div>
-  </section>
   <section class="chapter mtb">
     <h2 class="rv">Hiking</h2>
     <div class="body rv">
@@ -128,6 +125,17 @@
     <div class="body rv">
       <div class="ph zoom" style="--ar:9 / 16;max-width:340px" data-label="Hunting photo"><img src="/me/outdoors/photos/hunting.jpg" alt="Adam in blaze orange with a rifle on a hunting trip in the high desert" loading="lazy" decoding="async"></div>
       <p>Hunting is a brand new adventure for me. I had never hunted in my life until 2026. I took the hunter safety courses and got licensed. I love to learn new skills and adventures and I’m hoping to learn how to hunt for food to provide for my family. This was my first attempt at a cotton-tail hunt. No luck yet.</p>
+    </div>
+  </section>
+  <section class="chapter">
+    <h2 class="rv">Scouting</h2>
+    <div class="body rv">
+      <div class="scout-row">
+        <div class="scout-text">
+      <p>I have been a Scout leader for decades. Every week I work with a group of young men on the things I wish more people learned early: how to take care of themselves, how to handle money responsibly, how to stay physically strong, and how to be comfortable and capable in the outdoors.</p>
+        </div>
+      <div class="ph zoom" style="--ar:3 / 4" data-label="Scouts on a backpacking trip"><img src="/me/outdoors/photos/scouts.jpg" alt="Adam taking a selfie on a backpacking trip with a group of young Scouts, several waving at the camera" loading="lazy" decoding="async"></div>
+      </div>
     </div>
   </section>
   <nav class="pager" aria-label="More about me">
