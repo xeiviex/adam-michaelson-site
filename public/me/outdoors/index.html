@@ -20,6 +20,13 @@
 <link rel="manifest" href="/site.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site-bar.css?v=2">
+<style>
+.chapter.mtb { grid-template-columns: 1fr; }
+.chapter.mtb .body { max-width: none; }
+.mtb-row { display: flex; gap: 10px; align-items: stretch; }
+.mtb-row .mtb-v { flex: 0 0 auto; aspect-ratio: var(--ar); height: clamp(220px, 32vw, 380px); }
+@media (max-width: 720px) { .mtb-row { flex-wrap: wrap; } .mtb-row .mtb-v { height: auto; flex: 1 1 calc(50% - 5px); } .mtb-row .mtb-v[style*="16 / 9"] { flex-basis: 100%; order: 5; } }
+</style>
 </head>
 <body data-accent="green">
 <header class="sbar"><div class="in">
@@ -91,6 +98,19 @@
     <div class="body rv">
       <div class="ph zoom" style="--ar:3 / 4;max-width:380px" data-label="Lone Peak summit photo"><img src="/me/outdoors/photos/lone-peak.jpg" alt="Adam and Summer standing on a granite summit above the Salt Lake valley" loading="lazy" decoding="async"></div>
       <p>Summer and I climbed to the top of Lone Peak, a 12k mountain about 30 min from our home. This was one of the harder peaks I’ve hiked. At one point, I had two charley horses — one in each leg. But I pushed through and we made it to this precipice that is surrounded by 600 ft drop offs.</p>
+    </div>
+  </section>
+  <section class="chapter mtb">
+    <h2 class="rv">Mountain biking</h2>
+    <div class="body rv">
+      <div class="ph zoom" style="--ar:4 / 3" data-label="Fall colors above Midway, Utah"><img src="/me/outdoors/photos/fall-landscape.jpg" alt="Fall aspen and oak colors in the mountains above a valley" loading="lazy" decoding="async"></div>
+      <div class="mtb-row">
+        <div class="ph mtb-v" style="--ar:9 / 16"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/mtb-1.jpg" aria-label="Mountain biking clip 1"><source src="/me/outdoors/videos/mtb-1.mp4" type="video/mp4"></video></div>
+        <div class="ph mtb-v" style="--ar:9 / 16"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/mtb-2.jpg" aria-label="Mountain biking clip 2"><source src="/me/outdoors/videos/mtb-2.mp4" type="video/mp4"></video></div>
+        <div class="ph mtb-v" style="--ar:16 / 9"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/mtb-3.jpg" aria-label="Mountain biking clip 3"><source src="/me/outdoors/videos/mtb-3.mp4" type="video/mp4"></video></div>
+        <div class="ph mtb-v" style="--ar:9 / 16"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/mtb-4.jpg" aria-label="Mountain biking clip 4"><source src="/me/outdoors/videos/mtb-4.mp4" type="video/mp4"></video></div>
+      </div>
+      <p>This was a recent mountain biking run in Fall 2026 with my son and some others. We ran 11 miles on the WOW trail near Midway, Utah. This trail had a wide variety of terrain. So fun.</p>
     </div>
   </section>
   <section class="chapter">
