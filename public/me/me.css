@@ -106,3 +106,6 @@ footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
 .place-hero .credit { font-size: .8rem; color: var(--muted); margin-top: 8px; }
 .gallery.trio { grid-template-columns: repeat(3, 1fr); margin-top: 0; }
 @media (max-width: 560px) { .gallery.trio { gap: 6px; } }
+.gallery.feature { grid-template-columns: 2.56fr 1fr; }
+.gallery.feature .ph:first-child { grid-row: span 2; aspect-ratio: auto; }
+@media (max-width: 560px) { .gallery.feature { grid-template-columns: 1fr 1fr; } .gallery.feature .ph:first-child { grid-column: span 2; grid-row: auto; aspect-ratio: 4 / 3; } }
