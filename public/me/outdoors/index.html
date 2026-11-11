@@ -23,8 +23,6 @@
 <style>
 .chapter.mtb { grid-template-columns: 1fr; }
 .chapter.mtb .body { max-width: none; }
-.mtb-pair { max-width: 760px; }
-.mtb-pair .ph { --ar: 3 / 4; }
 .mtb-row { display: flex; gap: 10px; align-items: stretch; }
 .mtb-row .mtb-v { flex: var(--g) 1 0; min-width: 0; aspect-ratio: var(--ar); }
 @media (max-width: 720px) { .mtb-row { flex-wrap: wrap; } .mtb-row .mtb-v { flex: 1 1 calc(50% - 5px); } .mtb-row .mtb-v[style*="16 / 9"] { flex-basis: 100%; order: 5; } }
@@ -113,9 +111,10 @@
         <div class="ph mtb-v" style="--ar:16 / 9;--g:1.7778"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/mtb-3.jpg" aria-label="Mountain biking clip 3"><source src="/me/outdoors/videos/mtb-3.mp4" type="video/mp4"></video></div>
         <div class="ph mtb-v" style="--ar:9 / 16;--g:0.5625"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/mtb-4.jpg" aria-label="Mountain biking clip 4"><source src="/me/outdoors/videos/mtb-4.mp4" type="video/mp4"></video></div>
       </div>
-      <div class="gallery pair mtb-pair">
-        <div class="ph zoom" data-label="Mountain biking photo 6"><img src="/me/outdoors/photos/mtb-6.jpg" alt="Adam in a bike helmet looking out over a desert valley from a rocky overlook" loading="lazy" decoding="async"></div>
-        <div class="ph zoom" data-label="Mountain biking photo 7"><img src="/me/outdoors/photos/mtb-7.jpg" alt="Adam and his son in bike helmets beside their mountain bikes" loading="lazy" decoding="async"></div>
+      <div class="mtb-row mtb-photos">
+        <div class="ph zoom mtb-v" style="--ar:3 / 4;--g:0.75" data-label="Mountain biking photo 6"><img src="/me/outdoors/photos/mtb-6.jpg" alt="Adam in a bike helmet looking out over a desert valley from a rocky overlook" loading="lazy" decoding="async"></div>
+        <div class="ph zoom mtb-v" style="--ar:3 / 4;--g:0.75" data-label="Mountain biking photo 7"><img src="/me/outdoors/photos/mtb-7.jpg" alt="Adam and his son in bike helmets beside their mountain bikes" loading="lazy" decoding="async"></div>
+        <div class="ph zoom mtb-v" style="--ar:4 / 3;--g:1.3333" data-label="Mountain biking photo 8"><img src="/me/outdoors/photos/mtb-8.jpg" alt="Adam in a helmet taking a selfie with his son and their bikes in a grassy field behind him" loading="lazy" decoding="async"></div>
       </div>
       <p>This was a recent mountain biking run in Fall 2026 with my son and some others. We ran 11 miles on the WOW trail near Midway, Utah. This trail had a wide variety of terrain. So fun.</p>
     </div>
