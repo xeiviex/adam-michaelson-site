@@ -239,7 +239,7 @@ export async function recordPageView(db, { request, url, visitorId, isReturning,
   ).run();
 }
 
-export async function getStats(db, { days = 30, path = null, includeBots = false, filter = "visitors_only" } = {}) {
+export async function getStats(db, { days = 30, hours = null, path = null, includeBots = false, filter = "visitors_only" } = {}) {
   if (!db) return { error: "No database" };
   await ensureAnalyticsSchema(db);
 
@@ -400,14 +400,59 @@ export async function getStats(db, { days = 30, path = null, includeBots = false
      ORDER BY views DESC`
   ).bind(sinceDate).all()).results || [];
 
+  // 9. Recent individual visitor sessions (if hours > 0)
+  let recentVisitors = null;
+  const numHours = hours !== null && hours !== undefined ? parseInt(hours, 10) : null;
+  if (numHours && numHours > 0) {
+    const recentRows = (await db.prepare(
+      `SELECT
+         visitor_id,
+         city,
+         country,
+         device,
+         COUNT(*) as pageviews,
+         MIN(created_at) as first_seen,
+         MAX(created_at) as last_seen,
+         GROUP_CONCAT(path, ' -> ') as journey,
+         GROUP_CONCAT(DISTINCT path) as unique_paths,
+         GROUP_CONCAT(DISTINCT referrer) as referrers,
+         GROUP_CONCAT(DISTINCT referrer_source) as referrer_sources,
+         MAX(is_returning) as is_returning
+       FROM page_views
+       WHERE is_bot <= ?2
+         AND is_owner >= ?3 AND is_owner <= ?4
+         AND created_at >= datetime('now', '-' || ?1 || ' hours')
+       GROUP BY visitor_id
+       ORDER BY last_seen DESC
+       LIMIT 50`
+    ).bind(numHours, maxBot, minOwner, maxOwner).all()).results || [];
+
+    recentVisitors = recentRows.map(r => ({
+      visitor_id: r.visitor_id,
+      city: r.city || "Unknown",
+      country: r.country || "Unknown",
+      device: r.device || "desktop",
+      pageviews: Number(r.pageviews || 0),
+      first_seen: r.first_seen,
+      last_seen: r.last_seen,
+      journey: r.journey || "",
+      paths: (r.unique_paths || "").split(",").filter(Boolean),
+      referrers: (r.referrers || "").split(",").filter(Boolean),
+      referrer_sources: (r.referrer_sources || "").split(",").filter(Boolean),
+      is_returning: Number(r.is_returning || 0) === 1
+    }));
+  }
+
   return {
     query: {
       days: days === "all" ? "all" : numDays,
+      hours: numHours,
       since_date: sinceDate,
       path: normPath,
       include_bots: includeBots,
       filter
     },
+    ...(recentVisitors !== null ? { recent_visitors: recentVisitors } : {}),
     totals: {
       total_views: totalViews,
       unique_page_views: uniquePageViews,

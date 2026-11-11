@@ -49,12 +49,13 @@ export async function onRequestGet({ request, env }) {
 
   const url = new URL(request.url);
   const days = url.searchParams.get("days") || "30";
+  const hours = url.searchParams.get("hours") || url.searchParams.get("recent") || null;
   const path = url.searchParams.get("path") || null;
   const includeBots = ["1", "true", "yes"].includes(url.searchParams.get("bots") || "");
   const filter = url.searchParams.get("filter") || "visitors_only";
 
   try {
-    const data = await getStats(env?.SMS_OPTIN_DB, { days, path, includeBots, filter });
+    const data = await getStats(env?.SMS_OPTIN_DB, { days, hours, path, includeBots, filter });
     return json(data);
   } catch (err) {
     return json({ error: "Failed to query analytics", message: err.message }, 500);

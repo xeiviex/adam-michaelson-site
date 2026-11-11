@@ -285,9 +285,13 @@ test("/api/stats authentication and response", async () => {
   const bearerRes = await onRequestGet({ request: bearerReq, env });
   assert.equal(bearerRes.status, 200);
 
-  // 4. Default key when env.STATS_KEY is not set
-  const defEnv = { SMS_OPTIN_DB: db };
-  const defReq = new Request(`https://adam-michaelson.com/api/stats?key=${DEFAULT_STATS_KEY}`);
-  const defRes = await onRequestGet({ request: defReq, env: defEnv });
-  assert.equal(defRes.status, 200);
+  // 5. Recent visitors query with hours
+  const recentReq = new Request(`https://adam-michaelson.com/api/stats?key=my_secret_token_123&hours=2`);
+  const recentRes = await onRequestGet({ request: recentReq, env });
+  assert.equal(recentRes.status, 200);
+  const recentData = await recentRes.json();
+  assert.ok(Array.isArray(recentData.recent_visitors));
+  assert.equal(recentData.recent_visitors.length, 1);
+  assert.equal(recentData.recent_visitors[0].visitor_id, "test-v1");
+  assert.equal(recentData.query.hours, 2);
 });
