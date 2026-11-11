@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Outdoors | Adam Michaelson</title>
-<meta name="description" content="Rock climbing, mountain biking, hiking, 4x4, backpacking, kayaking, and shooting. Wherever the road, trail, or river goes.">
+<meta name="description" content="Hiking, mountain biking, kayaking, rock climbing, cliff diving, and hunting. Wherever the trail, river, or cliff goes.">
 <meta name="theme-color" content="#000000">
 <meta property="og:title" content="Outdoors | Adam Michaelson">
-<meta property="og:description" content="Rock climbing, mountain biking, hiking, 4x4, backpacking, kayaking, and shooting. Wherever the road, trail, or river goes.">
+<meta property="og:description" content="Hiking, mountain biking, kayaking, rock climbing, cliff diving, and hunting. Wherever the trail, river, or cliff goes.">
 <meta property="og:image" content="https://adam-michaelson.com/home-portrait.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,6 +23,10 @@
 <style>
 .chapter.mtb { grid-template-columns: 1fr; }
 .chapter.mtb .body { max-width: none; }
+.hike-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 18px; align-items: start; }
+.hike-pair figure { margin: 0; }
+.hike-pair p { margin-top: 12px; }
+@media (max-width: 720px) { .hike-pair { grid-template-columns: 1fr; } }
 .mtb-row { display: flex; gap: 10px; align-items: stretch; }
 .mtb-row .mtb-v { flex: var(--g) 1 0; min-width: 0; aspect-ratio: var(--ar); }
 @media (max-width: 720px) { .mtb-row { flex-wrap: wrap; } .mtb-row .mtb-v { flex: 1 1 calc(50% - 5px); } .mtb-row .mtb-v[style*="16 / 9"] { flex-basis: 100%; order: 5; } }
@@ -38,59 +42,15 @@
   <header class="page-head rv">
     <span class="eyebrow">Outdoors</span>
     <h1>Outdoors</h1>
-    <p class="intro">Rock climbing, mountain biking, hiking, 4x4, backpacking, kayaking, and shooting. Wherever the road, trail, or river goes.</p>
+    <p class="intro">Hiking, mountain biking, kayaking, rock climbing, cliff diving, and hunting. Wherever the trail, river, or cliff goes.</p>
   </header>
   <div class="ph zoom hero-ph rv" data-label="Outdoors cover photo"><img src="/me/outdoors/photos/cover.jpg" alt="Outdoors cover photo" loading="lazy" decoding="async"></div>
-  <section class="cards">
-    <article class="card rv">
-      <div class="ph zoom " data-label="Rock climbing photo"><img src="/me/outdoors/photos/climbing.jpg" alt="Rock climbing photo" loading="lazy" decoding="async"></div>
-      <h3>Rock climbing</h3>
-      <p>Rope, rock, and the quiet focus of the next move.</p>
-    </article>
-    <article class="card rv">
-      <div class="ph zoom " data-label="Mountain biking photo"><img src="/me/outdoors/photos/biking.jpg" alt="Mountain biking photo" loading="lazy" decoding="async"></div>
-      <h3>Mountain biking</h3>
-      <p>Singletrack, dirt, and the downhill you earned.</p>
-    </article>
-    <article class="card rv">
-      <div class="ph zoom " data-label="Hiking photo"><img src="/me/outdoors/photos/hiking.jpg" alt="Hiking photo" loading="lazy" decoding="async"></div>
-      <h3>Hiking</h3>
-      <p>Trails, summits, and the long way back.</p>
-    </article>
-    <article class="card rv">
-      <div class="ph zoom " data-label="4x4 photo"><img src="/me/outdoors/photos/4x4.jpg" alt="4x4 photo" loading="lazy" decoding="async"></div>
-      <h3>4x4</h3>
-      <p>Off-road and out of cell range.</p>
-    </article>
-    <article class="card rv">
-      <div class="ph zoom " data-label="Backpacking photo"><img src="/me/outdoors/photos/backpacking.jpg" alt="Backpacking photo" loading="lazy" decoding="async"></div>
-      <h3>Backpacking</h3>
-      <p>Everything I need on my back, for as many days as it takes.</p>
-    </article>
-    <article class="card rv">
-      <div class="ph zoom " data-label="Kayaking photo"><img src="/me/outdoors/photos/kayaking.jpg" alt="Kayaking photo" loading="lazy" decoding="async"></div>
-      <h3>Kayaking</h3>
-      <p>Flat water, moving water, and the view from the river.</p>
-    </article>
-    <article class="card rv">
-      <div class="ph zoom " data-label="Shooting photo"><img src="/me/outdoors/photos/shooting.jpg" alt="Shooting photo" loading="lazy" decoding="async"></div>
-      <h3>Shooting</h3>
-      <p>Range days, practice, and safe handling.</p>
-    </article>
-  </section>
   <section class="chapter">
     <h2 class="rv">Scouting</h2>
     <div class="body rv">
       <div class="ph zoom" style="--ar:3 / 4;max-width:380px" data-label="Scouts on a backpacking trip"><img src="/me/outdoors/photos/scouts.jpg" alt="Adam taking a selfie on a backpacking trip with a group of young Scouts, several waving at the camera" loading="lazy" decoding="async"></div>
       <p>I have been a Scout leader for decades. Every week I work with a group of young men on the things I wish more people learned early: how to take care of themselves, how to handle money responsibly, how to stay physically strong, and how to be comfortable and capable in the outdoors.</p>
       <p>Much of it happens on the trail. Packing your own gear, reading a map, building a fire, and getting the group to camp teach more than a classroom can. I get to watch boys turn into capable young men, and it keeps me honest about what I'm willing to carry myself.</p>
-    </div>
-  </section>
-  <section class="chapter">
-    <h2 class="rv">Hunting</h2>
-    <div class="body rv">
-      <div class="ph zoom" style="--ar:9 / 16;max-width:340px" data-label="Hunting photo"><img src="/me/outdoors/photos/hunting.jpg" alt="Adam in blaze orange with a rifle on a hunting trip in the high desert" loading="lazy" decoding="async"></div>
-      <p>Hunting is a brand new adventure for me. I had never hunted in my life until 2026. I took the hunter safety courses and got licensed. I love to learn new skills and adventures and I’m hoping to learn how to hunt for food to provide for my family. This was my first attempt at a cotton-tail hunt. No luck yet.</p>
     </div>
   </section>
   <section class="chapter mtb">
@@ -102,8 +62,16 @@
         <div class="ph zoom" style="grid-column:span 2;--ar:4 / 3" data-label="Hiking photo 3"><img src="/me/outdoors/photos/hike-3.jpg" alt="Adam and his son in backpacks on a green mountain summit with lichen-covered rocks" loading="lazy" decoding="async"></div>
         <div class="ph zoom" data-label="Hiking photo 4"><img src="/me/outdoors/photos/hike-4.jpg" alt="Hiking photo" loading="lazy" decoding="async"></div>
       </div>
-      <div class="ph zoom" style="--ar:3 / 4;max-width:380px" data-label="Lone Peak summit photo"><img src="/me/outdoors/photos/lone-peak.jpg" alt="Adam and Summer standing on a granite summit above the Salt Lake valley" loading="lazy" decoding="async"></div>
+      <div class="hike-pair">
+        <figure>
+      <div class="ph zoom" style="--ar:3 / 4" data-label="Lone Peak summit photo"><img src="/me/outdoors/photos/lone-peak.jpg" alt="Adam and Summer standing on a granite summit above the Salt Lake valley" loading="lazy" decoding="async"></div>
       <p>Summer and I climbed to the top of Lone Peak, a 12k mountain about 30 min from our home. This was one of the harder peaks I’ve hiked. At one point, I had two charley horses — one in each leg. But I pushed through and we made it to this precipice that is surrounded by 600 ft drop offs.</p>
+        </figure>
+        <figure>
+      <div class="ph" style="--ar:9 / 16"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/prayer-flags.jpg" aria-label="Himalayan prayer flags fluttering at a hilltop shrine"><source src="/me/outdoors/videos/prayer-flags.mp4" type="video/mp4"></video></div>
+      <p>About 5 min from our house is a gentle hike up to a spot where the mountain bikers (including us) maintain a shrine of Himalayan prayer flags. We take the kids and dogs up there from time to time.</p>
+        </figure>
+      </div>
     </div>
   </section>
   <section class="chapter mtb">
@@ -125,55 +93,42 @@
       <p>This was a recent mountain biking run in Fall 2026 with my son and some others. We ran 11 miles on the WOW trail near Midway, Utah. This trail had a wide variety of terrain. So fun.</p>
     </div>
   </section>
-  <section class="chapter">
-    <h2 class="rv">Prayer flags</h2>
-    <div class="body rv">
-      <div class="ph" style="--ar:9 / 16;max-width:340px"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/prayer-flags.jpg" aria-label="Himalayan prayer flags fluttering at a hilltop shrine"><source src="/me/outdoors/videos/prayer-flags.mp4" type="video/mp4"></video></div>
-      <p>About 5 min from our house is a gentle hike up to a spot where the mountain bikers (including us) maintain a shrine of Himalayan prayer flags. We take the kids and dogs up there from time to time.</p>
-    </div>
-  </section>
   <section class="chapter mtb">
     <h2 class="rv">Kayaking</h2>
     <div class="body rv">
-      <div class="gallery collage">
-      <div class="ph zoom" style="grid-column:span 2;grid-row:span 2" data-label="Kayaking photo 1"><img src="/me/outdoors/photos/kayak-1.jpg" alt="A guide pointing the way from the river's edge as two paddlers flex in a blue kayak below a basalt rock formation" loading="lazy" decoding="async"></div>
-      <div class="ph zoom" data-label="Kayaking photo 2"><img src="/me/outdoors/photos/kayak-2.jpg" alt="Kayaking photo" loading="lazy" decoding="async"></div>
-      <div class="ph zoom" data-label="Kayaking photo 3"><img src="/me/outdoors/photos/kayak-3.jpg" alt="Kayaking photo" loading="lazy" decoding="async"></div>
-      <div class="ph zoom" data-label="Kayaking photo 4"><img src="/me/outdoors/photos/kayak-4.jpg" style="object-position:20% 50%" alt="Adam and his son at a mountain river" loading="lazy" decoding="async"></div>
-      <div class="ph zoom" data-label="Kayaking photo 5"><img src="/me/outdoors/photos/kayak-5.jpg" alt="Kayaking photo" loading="lazy" decoding="async"></div>
-      <div class="ph zoom" data-label="Kayaking photo 6"><img src="/me/outdoors/photos/kayak-6.jpg" alt="Kayaking photo" loading="lazy" decoding="async"></div>
+      <div class="gallery" style="grid-template-columns:1fr 1fr">
+      <div class="ph zoom" style="--ar:4 / 3" data-label="Kayaking photo 1"><img src="/me/outdoors/photos/kayak-1.jpg" alt="A guide pointing the way from the river's edge as two paddlers flex in a blue kayak below a basalt rock formation" loading="lazy" decoding="async"></div>
+      <div class="ph zoom" style="--ar:4 / 3" data-label="Kayaking photo 2"><img src="/me/outdoors/photos/kayak-2.jpg" alt="Adam kayaking" loading="lazy" decoding="async"></div>
+      <div class="ph zoom" style="--ar:4 / 3" data-label="Kayaking photo 3"><img src="/me/outdoors/photos/kayak-3.jpg" alt="Adam kayaking" loading="lazy" decoding="async"></div>
+      <div class="ph zoom" style="--ar:4 / 3" data-label="Kayaking photo 4"><img src="/me/outdoors/photos/kayak-4.jpg" style="object-position:20% 50%" alt="Adam and his son at a mountain river" loading="lazy" decoding="async"></div>
       </div>
     </div>
   </section>
   <section class="chapter mtb">
     <h2 class="rv">Rock climbing</h2>
     <div class="body rv">
-      <div class="gallery collage">
-      <div class="ph zoom" style="grid-row:span 2;aspect-ratio:auto" data-label="Climbing photo 1"><img src="/me/outdoors/photos/climb-1.jpg" alt="Adam climbing a sandstone face on a roped route against a blue sky" loading="lazy" decoding="async"></div>
-      <div class="ph" style="grid-row:span 2;aspect-ratio:auto"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/climb-2.jpg" aria-label="Adam climbing a sandstone route"><source src="/me/outdoors/videos/climb-2.mp4" type="video/mp4"></video></div>
-      <div class="ph zoom" data-label="Climbing photo 3"><img src="/me/outdoors/photos/climb-3.jpg" alt="Rock climbing photo" loading="lazy" decoding="async"></div>
-      <div class="ph zoom" data-label="Climbing photo 4"><img src="/me/outdoors/photos/climb-4.jpg" alt="Rock climbing photo" loading="lazy" decoding="async"></div>
+      <div class="mtb-row" style="max-width:560px">
+      <div class="ph zoom mtb-v" style="--ar:940 / 1672;--g:0.5622" data-label="Climbing photo 1"><img src="/me/outdoors/photos/climb-1.jpg" alt="Adam climbing a sandstone face on a roped route against a blue sky" loading="lazy" decoding="async"></div>
+      <div class="ph mtb-v" style="--ar:9 / 16;--g:0.5625"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/climb-2.jpg" aria-label="Adam climbing a sandstone route"><source src="/me/outdoors/videos/climb-2.mp4" type="video/mp4"></video></div>
       </div>
     </div>
   </section>
   <section class="chapter mtb">
     <h2 class="rv">Cliff diving</h2>
     <div class="body rv">
-      <div class="gallery collage">
-      <div class="ph" style="grid-column:span 2;--ar:16 / 9"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/dive-1.jpg" aria-label="Adam cliff diving"><source src="/me/outdoors/videos/dive-1.mp4" type="video/mp4"></video></div>
-      <div class="ph zoom" data-label="Cliff diving photo 2"><img src="/me/outdoors/photos/dive-2.jpg" alt="Cliff diving photo" loading="lazy" decoding="async"></div>
-      <div class="ph" style="grid-column:span 2;--ar:16 / 9"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/dive-2.jpg" aria-label="Adam cliff diving, second clip"><source src="/me/outdoors/videos/dive-2.mp4" type="video/mp4"></video></div>
-      <div class="ph zoom" data-label="Cliff diving photo 3"><img src="/me/outdoors/photos/dive-3.jpg" alt="Cliff diving photo" loading="lazy" decoding="async"></div>
+      <div class="mtb-row">
+      <div class="ph zoom mtb-v" style="--ar:3 / 4;--g:0.75" data-label="Cliff diving photo 3"><img src="/me/outdoors/photos/dive-3.jpg" alt="Adam mid-jump off a cliff above the water" loading="lazy" decoding="async"></div>
+      <div class="ph mtb-v" style="--ar:16 / 9;--g:1.7778"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/dive-1.jpg" aria-label="Adam cliff diving"><source src="/me/outdoors/videos/dive-1.mp4" type="video/mp4"></video></div>
+      <div class="ph mtb-v" style="--ar:16 / 9;--g:1.7778"><video autoplay muted loop playsinline preload="metadata" poster="/me/outdoors/videos/dive-2.jpg" aria-label="Adam cliff diving, second clip"><source src="/me/outdoors/videos/dive-2.mp4" type="video/mp4"></video></div>
       </div>
     </div>
   </section>
   <section class="chapter">
-    <h2 class="rv">Video</h2>
-    <div class="body rv"><div class="videos">
-      <div class="ph" data-label="Video: outdoors-1.mp4"><video controls preload="metadata" playsinline poster="/me/outdoors/videos/outdoors-1.jpg"><source src="/me/outdoors/videos/outdoors-1.mp4" type="video/mp4"></video></div>
-      <div class="ph" data-label="Video: outdoors-2.mp4"><video controls preload="metadata" playsinline poster="/me/outdoors/videos/outdoors-2.jpg"><source src="/me/outdoors/videos/outdoors-2.mp4" type="video/mp4"></video></div>
-      <div class="ph" data-label="Video: outdoors-3.mp4"><video controls preload="metadata" playsinline poster="/me/outdoors/videos/outdoors-3.jpg"><source src="/me/outdoors/videos/outdoors-3.mp4" type="video/mp4"></video></div>
-    </div></div>
+    <h2 class="rv">Hunting</h2>
+    <div class="body rv">
+      <div class="ph zoom" style="--ar:9 / 16;max-width:340px" data-label="Hunting photo"><img src="/me/outdoors/photos/hunting.jpg" alt="Adam in blaze orange with a rifle on a hunting trip in the high desert" loading="lazy" decoding="async"></div>
+      <p>Hunting is a brand new adventure for me. I had never hunted in my life until 2026. I took the hunter safety courses and got licensed. I love to learn new skills and adventures and I’m hoping to learn how to hunt for food to provide for my family. This was my first attempt at a cotton-tail hunt. No luck yet.</p>
+    </div>
   </section>
   <nav class="pager" aria-label="More about me">
     <a class="prev" href="/me/music/"><small>&lsaquo; Previous</small><b>Music</b></a>
