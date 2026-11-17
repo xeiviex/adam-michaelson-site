@@ -1,7 +1,6 @@
 /* /lendingtree deck: seven screens, navigation, tabbed sheets. Content comes from data.js.
    Each slide is a title, one message, and one large drawing. Economics, the 180-day plan and details open in a sheet. */
-import { SLIDES, DAYS, LEGACY, LEGACY_ARCHIVE_IDS, MEASURES, MEASURE_HEAD, TAGS, rollup } from './data.js';
-import { mountCalculator, onCalcChange, summary, fmt } from './roi-ui.js';
+import { SLIDES, DAYS, LEGACY, LEGACY_ARCHIVE_IDS, MEASURES, MEASURE_HEAD, TAGS, BARS, rollup } from './data.js';
 import { mountPreview, mountLab, E as EMB, setEmbed, onEmbedChange } from './embed.js';
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -23,25 +22,41 @@ const tag = (t) => '<span class="tag tag-' + t + '">' + TAGS[t] + '</span> ';
 
 /* A track is a line with stations. Horizontal on wide screens, vertical on phones. */
 const track = (items, cls = '', label = '') => '<ol class="trk ' + cls + '"' + (label ? ' aria-label="' + esc(label) + '"' : '') + '>' +
-  items.map((i) => '<li class="' + (i.c || '') + '"><span class="st"><b>' + esc(i.t) + '</b>' + (i.s ? '<small>' + esc(i.s) + '</small>' : '') + '</span></li>').join('') + '</ol>';
+  items.map((i) => '<li class="' + (i.c || '') + '"><span class="st">' + (i.k ? '<em>' + esc(i.k) + '</em>' : '') + '<b>' + esc(i.t) + '</b>' + (i.s ? '<small>' + esc(i.s) + '</small>' : '') + '</span></li>').join('') + '</ol>';
 
 /* ---------- the seven drawings ---------- */
 const VIS = {
   overview() {
     const toc = SLIDES.slice(1).map((s, i) => '<li><a href="#' + s.id + '"><i>' + two(i + 2) + '</i><span>' + esc(NAMES[s.id]) + '</span></a></li>').join('');
-    return '<div class="ov">' +
-      '<div class="life">' +
-      '<p class="span today"><b>Today</b><span>Paid at the match. Then the shopper is gone.</span></p>' +
-      '<p class="span next"><b>The next chapter</b><span>Win the offer decision, then earn the rest of the lifecycle.</span></p>' +
-      track([{ t: 'Shop', c: 'was' }, { t: 'Match', s: 'Fee earned here', c: 'was peak' }, { t: 'Offers and quotes', s: 'First investment', c: 'on' }, { t: 'Compare and choose', s: 'First investment', c: 'on link' }, { t: 'Transaction', s: 'Funded or bound', c: 'later' }, { t: 'Relationship', s: 'Servicing, renewal', c: 'later' }], 'life-t', 'From lead marketplace to financial lifecycle') +
-      '</div>' +
+    const li = (x) => '<li>' + x + '</li>';
+    return '<div class="ov"><div class="shift">' +
+      '<section class="era was" aria-labelledby="era-a"><h3 id="era-a"><b>Today</b> Lead generation</h3>' +
+      '<ol class="pipe"><li>Shopper</li><li class="mid">LendingTree<small>Sells the lead</small></li><li>Lender or carrier</li></ol>' +
+      '<p>One handoff, paid once at the match. Then the relationship ends, for the shopper and for the partner.</p></section>' +
+      '<section class="era will" aria-labelledby="era-b"><h3 id="era-b"><b>The next chapter</b> Financial products platform</h3>' +
+      '<div class="plat"><div class="side"><h4>Shoppers reach it through</h4><ul>' + ['LendingTree.com', 'AI assistants', 'Partner products'].map(li).join('') + '</ul></div>' +
+      '<span class="both" aria-hidden="true"></span>' +
+      '<div class="core"><b>LendingTree platform</b><ul>' + ['Offers and quotes', 'Compare and choose', 'Transactions', 'Servicing and renewal'].map(li).join('') + '</ul></div>' +
+      '<span class="both" aria-hidden="true"></span>' +
+      '<div class="side"><h4>Lenders and carriers</h4><ul>' + ['Publish offers and quotes', 'Win customers who chose them', 'See outcomes and improve'].map(li).join('') + '</ul></div></div>' +
+      '<p>Value flows both ways, across the whole lifecycle. Shoppers come back. Partners build on it.</p></section></div>' +
       '<nav class="tocn" aria-label="Six strategies"><h3>Six strategies</h3><ol class="toc">' + toc + '</ol></nav></div>';
   },
-  roadmap() { return '<div class="rmap" data-rmv></div>'; },
+  roadmap() {
+    const seg = (c, f, t) => '<i class="' + c + '" style="flex:' + f + ' 0 0"><span>' + t + '</span></i>';
+    const bar = (label, segs) => '<div class="capb"><p><b>' + label + '</b></p><div class="cbt"><div class="cbs">' + segs + '</div></div></div>';
+    return '<div class="rmap"><div class="rm-bars" role="group" aria-label="Illustration: today’s roadmap is sorted into continue, re-scope and stop, and the freed capacity funds new work">' +
+      bar('Today’s roadmap', seg('keep', 5, 'Continue') + seg('keep', 3, 'Continue') + seg('stop', 4, 'Re-scope') + seg('stop', 5, 'Stop')) +
+      '<p class="turn" aria-hidden="true">Score every commitment, then decide</p>' +
+      bar('Six-month roadmap, within capacity', seg('keep', 5, 'Continue') + seg('keep', 3, 'Continue') + seg('start', 4, 'Start') + seg('start', 3, 'Start') + seg('start', 2, 'Start')) +
+      '<p class="fine">Illustration, not LendingTree data.</p></div>' +
+      '<div class="roi-how"><h3>How we calculate ROI</h3><p class="eq">Net value <span>÷</span> remaining cost</p>' +
+      '<ul><li>Net value is new contribution plus savings, minus what it still costs.</li><li>Money already spent does not count.</li><li>Rank by net value per team-month.</li></ul></div></div>';
+  },
   'down-funnel'() {
     const lane = (pre, first, later) => [{ t: pre, c: 'was' }, ...first.map((t, i) => ({ t, c: 'on' + (i ? ' link' : '') })), ...later.map((t) => ({ t, c: 'later' }))];
     return '<div class="df">' +
-      '<p class="zone"><b>First investment</b><span>What a shopper can do in the first release</span></p>' +
+      '<p class="before"><b>Today</b><span>Paid at the match</span></p><p class="zone"><b>First investment</b><span>What a shopper can do in the first release</span></p>' +
       '<h3 class="ln l1">Lending</h3>' + track(lane('Discover, consent, match', ['Generate offers', 'Present and compare', 'Select'], ['Application', 'Underwriting or approval', 'Funding', 'Servicing or refinance']), 'l1', 'Lending path') +
       '<h3 class="ln l2">Insurance</h3>' + track(lane('Discover, consent, match', ['Generate quotes', 'Present and compare', 'Select'], ['Application or underwriting', 'Bind', 'Servicing', 'Renewal and re-shop']), 'l2', 'Insurance path') +
       '<p class="after"><b>Later</b><span>Funded as evidence supports. Partner status feeds back to measure the pilot.</span></p></div>';
@@ -67,53 +82,23 @@ const VIS = {
       '<p class="fine">Charters stay open until the principals shape them.</p></div>';
   },
   teams() {
-    const t = (n, s) => '<li><b>' + n + '</b><small>' + s + '</small></li>';
-    return '<div class="org"><p class="roof">One roadmap, ranked by return</p>' +
-      '<div class="floor"><div><h3>Four delivery teams</h3><ul class="teams">' + t('Lending Down-Funnel', 'Offers and handoff') + t('Insurance Down-Funnel', 'Quotes and handoff') + t('MCP/API', 'Contract and adapter') + t('Embedded', 'SDK and partners') + '</ul></div>' +
-      '<div><h3>Three disruption pods</h3><ul class="pods3">' + t('Pod A', 'Principal-led') + t('Pod B', 'Principal-led') + t('Pod C', 'Principal-led') + '</ul></div></div>' +
-      '<div class="base"><h3>Shared architecture <span>CTO and principal architect</span></h3><ul><li>Identity and consent</li><li>Offers and eligibility</li><li>Partner integrations</li><li>Transaction orchestration</li><li>Analytics and economics</li><li>Security and compliance</li></ul></div>' +
-      '<p class="fine">Illustrative missions, to validate with the CTO.</p></div>';
+    return '<div class="tcy">' +
+      track([{ k: 'By Day 30', t: 'Set expectations', s: 'Outputs and outcomes for every role', c: 'on' }, { k: 'By Day 60', t: 'Assess the team', s: 'Each person’s capabilities and engagement', c: 'on link' }, { k: 'By Day 90', t: 'Act', s: 'Develop, redeploy, hire, or contract', c: 'on link' }, { k: 'From Day 90', t: 'Assess new members', s: 'Same expectations, then repeat', c: 'later' }], 'tsteps', 'Team optimization steps') +
+      '<p class="hire"><b>Hiring pipeline</b><span>Open from day one, for employees and contractors</span></p></div>';
   },
 };
 
 /* ---------- build the slides ---------- */
 const trackEl = $('#track');
-const LIVE_METS = ['Projected return of retained work', 'Avoidable spending', 'Engineering capacity redeployed'];
-trackEl.innerHTML = SLIDES.map((s, i) => {
-  const by = (s.metrics === 'live' ? LIVE_METS : s.metrics.map((m) => m.k)).map(esc).join('<i> · </i>');
-  const calc = s.id === 'roadmap' ? '<button type="button" class="btn pri" data-open="roadmap" data-view="calc">Open ROI calculator</button>' : '';
-  return '<section class="slide" id="slide-' + s.id + '" data-i="' + i + '" aria-roledescription="slide" aria-labelledby="h-' + s.id + '"><div class="sb">' +
-    '<header class="sh"><p class="kicker"><i>' + two(i + 1) + '</i>' + esc(NAMES[s.id]) + '</p><h2 id="h-' + s.id + '" tabindex="-1">' + esc(s.title) + '</h2><p class="msg">' + esc(s.message) + '</p></header>' +
-    '<div class="vis">' + VIS[s.id]() + '</div>' +
-    '<footer class="rail"><p class="by"><b>' + (i ? 'Measured by' : 'Scorecard') + '</b> ' + by + '</p><div class="acts">' + calc +
-    '<button type="button" class="btn" data-open="' + s.id + '" data-view="econ" aria-haspopup="dialog">Economics</button><button type="button" class="btn" data-open="' + s.id + '" data-view="plan" aria-haspopup="dialog">180-day plan</button><button type="button" class="btn" data-open="' + s.id + '" data-view="more" aria-haspopup="dialog">Details</button></div></footer></div></section>';
-}).join('');
+trackEl.innerHTML = SLIDES.map((s, i) =>
+  '<section class="slide" id="slide-' + s.id + '" data-i="' + i + '" aria-roledescription="slide" aria-labelledby="h-' + s.id + '"><div class="sb">' +
+  '<header class="sh"><p class="kicker"><i>' + two(i + 1) + '</i>' + esc(NAMES[s.id]) + '</p><h2 id="h-' + s.id + '" tabindex="-1">' + esc(s.title) + '</h2></header>' +
+  '<div class="vis">' + VIS[s.id]() + '</div>' +
+  '<footer class="rail"><button type="button" class="btn" data-open="' + s.id + '" aria-haspopup="dialog">Details</button></footer></div></section>').join('');
 const slides = [...trackEl.querySelectorAll('.slide')];
 
 const dots = $('#dots');
 dots.innerHTML = SLIDES.map((s, i) => '<li><a href="#' + s.id + '" data-go="' + i + '" aria-label="Slide ' + (i + 1) + ': ' + esc(NAMES[s.id]) + '"><span aria-hidden="true"></span></a></li>').join('');
-
-/* ---------- roadmap drawing: live from the calculator ---------- */
-function paintRoadmap() {
-  const sm = summary(), ev = sm.ev, lim = ev.cap.limit;
-  const isIn = (r) => r.n.mandatory || r.n.included;
-  const max = Math.max(lim || 0, ev.cap.baselineUsed, ev.cap.proposedUsed, 1);
-  const seg = (r, c) => r.n.teamMonths > 0 ? '<i class="' + c + '" style="flex:' + r.n.teamMonths + ' 0 0"><span>' + fmt.tm(r.n.teamMonths) + '</span></i>' : '';
-  const base = ev.rows.filter((r) => r.n.inBaseline).sort((a, b) => isIn(b) - isIn(a));
-  const now = base.map((r) => seg(r, isIn(r) ? 'keep' : 'stop')).join('');
-  const prop = ev.rows.filter((r) => r.n.inBaseline && isIn(r)).map((r) => seg(r, 'keep')).join('') + ev.rows.filter((r) => !r.n.inBaseline && isIn(r)).map((r) => seg(r, 'start')).join('');
-  const bar = (label, used, segs) => '<div class="capb"><p><b>' + label + '</b><span>' + fmt.tm(used) + (lim !== null ? ' of ' + fmt.tm(lim) : '') + ' team-months</span></p><div class="cbt"><div class="cbs" style="width:' + (used / max * 100) + '%">' + segs + '</div>' + (lim ? '<u style="left:' + (lim / max * 100) + '%"></u>' : '') + '</div></div>';
-  const v = $('[data-rmv]');
-  v.innerHTML = '<div class="rm-bars" role="group" aria-label="Team-month capacity before and after the stop, start, continue decision">' + bar('Today’s roadmap', ev.cap.baselineUsed, now) + '<p class="turn" aria-hidden="true">Stop · start · continue · re-scope</p>' + bar('Proposed six-month roadmap', ev.cap.proposedUsed, prop) +
-    '<ul class="key"><li><i class="keep"></i>Continue</li><li><i class="stop"></i>Stop or re-scope</li><li><i class="start"></i>Start</li>' + (lim ? '<li><i class="cap"></i>Capacity limit</li>' : '') + '</ul></div>' +
-    '<ul class="figs"><li><b>' + fmt.tm(sm.redeployed) + '</b><span>team-months redeployed</span></li><li><b>' + fmt.money(sm.avoided) + '</b><span>spending avoided</span></li><li><b>' + fmt.pct(sm.roi) + '</b><span>ROI of the proposed roadmap, confidence-weighted</span></li><li class="fine">Illustrative example. Edit it in the calculator.</li></ul>';
-  const m = $('[data-live-mets]');
-  if (m) m.innerHTML = '<li><span class="mk">Projected return of retained work</span><span class="mv">' + fmt.pct(sm.roi) + '</span><small>Confidence-weighted ROI, ' + sm.scen + ' case</small></li>' +
-    '<li><span class="mk">Avoidable spending</span><span class="mv">' + fmt.money(sm.avoided) + '</span><small>Remaining cost of stopped or deferred work</small></li>' +
-    '<li><span class="mk">Engineering capacity redeployed</span><span class="mv">' + fmt.tm(sm.redeployed) + ' team-months</span><small>Off stopped work; net released ' + fmt.tm(sm.released) + '</small></li>' +
-    '<li class="exm"><small>Illustrative example data. Edit it in the calculator.</small></li>';
-}
-paintRoadmap(); onCalcChange(paintRoadmap);
 
 /* ---------- embedded drawing ---------- */
 mountPreview($('[data-embed-preview]'), { controls: false });
@@ -232,28 +217,27 @@ function rollupHTML() {
   return table('Proposed milestones by strategy. Built from the same data as each plan.', ['Strategy'].concat(DAYS.map((d) => 'Day ' + d)), rollup().map((x) => [{ html: '<a href="#' + x.id + '" data-jump="' + x.id + '">' + esc(NAMES[x.id]) + '</a>' }].concat(x.cells.map((c) => c.short))), 'Milestone rollup');
 }
 function econHTML(s) {
-  const mets = s.metrics === 'live' ? '<ul class="mets" data-live-mets></ul>' : '<ul class="mets">' + s.metrics.map((m) => '<li><span class="mk">' + esc(m.k) + '</span><span class="mv">' + esc(m.v) + '</span>' + (m.note ? '<small>' + esc(m.note) + '</small>' : '') + '</li>').join('') + '</ul>';
+  const mets = '<ul class="mets">' + s.metrics.map((m) => '<li><span class="mk">' + esc(m.k) + '</span><span class="mv">' + esc(m.v) + '</span>' + (m.note ? '<small>' + esc(m.note) + '</small>' : '') + '</li>').join('') + '</ul>';
   const meas = MEASURES[s.id] ? '<section class="ds"><h3>Measurement plan</h3>' + table('Unknown internal numbers are marked to establish.', MEASURE_HEAD, MEASURES[s.id], 'Measures') + '<p class="note">Each experiment names a comparison cohort or holdout and its earliest credible review window. Results are counted once on the common event spine.</p></section>' : '';
   return '<dl class="econ"><div><dt>Economic contribution</dt><dd>' + esc(s.econ) + '</dd></div><div><dt>How we measure it</dt><dd>' + esc(s.measure) + '</dd></div></dl>' + mets + meas;
 }
 function planHTML(s) {
   const pos = (d) => (d / 180) * 100;
-  const rows = s.gantt.map((m, i) => { const from = i ? DAYS[i - 1] : 0; return '<li><p><b>Day ' + m.d + '</b>' + esc(m.short) + '</p><div class="gb" aria-hidden="true"><i style="margin-left:' + pos(from) + '%;width:' + (pos(m.d) - pos(from)) + '%"></i></div></li>'; }).join('');
-  const scale = '<div class="gs" aria-hidden="true">' + [0].concat(DAYS).map((d) => '<span style="left:' + pos(d) + '%">' + (d ? 'D' + d : 'Start') + '</span>').join('') + '</div>';
-  const cards = s.gantt.map((m) => '<article class="ml"><h4>Day ' + m.d + '</h4><p class="mt">' + esc(m.short) + '</p><dl><dt>Owner role</dt><dd>' + esc(m.owner) + '</dd><dt>' + tag('commitment') + '</dt><dd>' + esc(m.commit) + '</dd><dt>' + tag('target') + '</dt><dd>' + esc(m.target) + '</dd><dt>' + tag('dependency') + '</dt><dd>' + esc(m.dep) + '</dd><dt>Success evidence</dt><dd>' + esc(m.evidence) + '</dd></dl></article>').join('');
-  return '<p class="note">Proposed milestones, not yet calibrated. Bars are drawn to scale in days.</p><figure class="gantt">' + scale + '<ol class="gr">' + rows + '</ol></figure><div class="mls">' + cards + '</div>';
+  const rows = s.gantt.map((m, i) => { const from = i ? DAYS[i - 1] : 0; return '<li><div class="gb"><i style="margin-left:' + pos(from) + '%;width:' + (pos(m.d) - pos(from)) + '%"><b>Day ' + m.d + '</b><span>' + esc(BARS[s.id][i]) + '</span></i></div></li>'; }).join('');
+  const scale = '<div class="gs" aria-hidden="true">' + [0].concat(DAYS).map((d) => '<span style="left:' + pos(d) + '%">' + (d ? 'Day ' + d : 'Start') + '</span>').join('') + '</div>';
+  const cards = s.gantt.map((m) => '<article class="ml"><h4>Day ' + m.d + '</h4><p class="mt">' + esc(m.short) + '</p><dl><dt>Owner</dt><dd>' + esc(m.owner) + '</dd><dt>Commitment</dt><dd>' + esc(m.commit) + '</dd><dt>Target</dt><dd>' + esc(m.target) + '</dd><dt>Dependency</dt><dd>' + esc(m.dep) + '</dd><dt>Success evidence</dt><dd>' + esc(m.evidence) + '</dd></dl></article>').join('');
+  return '<figure class="gantt" aria-label="Proposed milestones at days 30, 60, 90 and 180">' + scale + '<ol class="gr">' + rows + '</ol></figure><div class="mls">' + cards + '</div><p class="note">Proposed milestones, not yet calibrated. A commitment is a deliverable the team controls. A target is an outcome to pursue. A dependency is outside help it needs.</p>';
 }
 
 function build(id) {
   const s = SLIDES.find((x) => x.id === id), d = document.createElement('dialog');
   d.className = 'dlg'; d.setAttribute('aria-labelledby', 'dt-' + id);
   const more = s.details.sections.filter((x) => !x.blocks.every((b) => b.measure)).map((x) => '<section class="ds"><h3>' + esc(x.h) + '</h3>' + blocks(x.blocks) + '</section>').join('');
-  const tabs = [['econ', 'Economics'], ['plan', '180-day plan'], ['more', 'Details']].concat(id === 'roadmap' ? [['calc', 'ROI calculator']] : []);
-  d.innerHTML = '<div class="dh"><div><p class="kicker"><i>' + two(ids.indexOf(id) + 1) + '</i>' + esc(NAMES[id]) + '</p><h2 id="dt-' + id + '">' + esc(s.title) + '</h2></div><button type="button" class="btn x" data-close>Close</button></div>' +
+  const tabs = [['more', 'Details'], ['econ', 'Economics'], ['plan', '180-day plan']];
+  d.innerHTML = '<div class="dh"><h2 id="dt-' + id + '">' + esc(s.title) + '</h2><button type="button" class="btn x" data-close>Close</button></div>' +
     '<div class="tabs" role="group" aria-label="Sections">' + tabs.map((t) => '<button type="button" data-view="' + t[0] + '" aria-pressed="false">' + t[1] + '</button>').join('') + '</div>' +
-    '<div class="db"><div data-pane="econ">' + econHTML(s) + '</div><div data-pane="plan" hidden>' + planHTML(s) + '</div><div data-pane="more" hidden><p class="intro">' + esc(s.details.intro) + '</p>' + more + '</div>' + (id === 'roadmap' ? '<div data-pane="calc" hidden><div data-calc-host></div></div>' : '') + '</div>';
+    '<div class="db"><div data-pane="more">' + more + '</div><div data-pane="econ" hidden>' + econHTML(s) + '</div><div data-pane="plan" hidden>' + planHTML(s) + '</div></div>';
   document.body.appendChild(d);
-  if (id === 'roadmap') paintRoadmap();
   d.addEventListener('click', (e) => {
     if (e.target === d || e.target.closest('[data-close]')) return d.close();
     const j = e.target.closest('[data-jump]'); if (j) { e.preventDefault(); d.close(); return go(ids.indexOf(j.dataset.jump)); }
@@ -269,21 +253,18 @@ function build(id) {
   if (id === 'embedded') mountLab($('[data-lab]', d));
   return d;
 }
-let calcMounted = false;
 function setView(d, v) {
   d.querySelectorAll('.tabs [data-view]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.view === v ? 'true' : 'false'));
   d.querySelectorAll('[data-pane]').forEach((p) => { p.hidden = p.dataset.pane !== v; });
-  d.classList.toggle('wide', v === 'calc');
-  if (v === 'calc' && !calcMounted) { mountCalculator($('[data-calc-host]', d)); calcMounted = true; }
   $('.db', d).scrollTop = 0;
 }
-function openSheet(id, from, view) {
+function openSheet(id, from) {
   const d = dialogs[id] || (dialogs[id] = build(id));
-  opener = from; setView(d, view || 'econ');
+  opener = from; setView(d, 'more');
   d.showModal(); $('.db', d).scrollTop = 0;
   const c = $('[data-close]', d); if (c) c.focus();
 }
-trackEl.addEventListener('click', (e) => { const b = e.target.closest('[data-open]'); if (b) openSheet(b.dataset.open, b, b.dataset.view); });
+trackEl.addEventListener('click', (e) => { const b = e.target.closest('[data-open]'); if (b) openSheet(b.dataset.open, b); });
 
 /* ---------- start ---------- */
 const start = ids.indexOf(decodeURIComponent(location.hash.slice(1)));

@@ -8,9 +8,10 @@ const PARTNERS = {
 };
 const STEPS = [['discover', 'Details'], ['offers', 'Offers'], ['compare', 'Compare'], ['select', 'Choose'], ['handoff', 'Hand off'], ['status', 'Status']];
 const OFFERS = {
-  lending: { title: 'Compare lending offers', unit: 'Illustrative home equity offers', rows: [['Sample lender A', 'Est. 8.4% APR', 'Funds in 2 to 3 days', 'Offer, expires in 24h'], ['Sample lender B', 'Est. 7.9% APR', 'Funds in 2 to 3 weeks', 'Indicative terms'], ['Sample lender C', 'Est. 8.9% APR', 'Funds next business day', 'Offer, expires in 24h']] },
-  insurance: { title: 'Compare auto insurance quotes', unit: 'Illustrative auto quotes', rows: [['Sample carrier A', '$118 per month', '$500 deductible', 'Quote, bindable today'], ['Sample carrier B', '$104 per month', '$1,000 deductible', 'Indicative terms'], ['Sample carrier C', '$126 per month', '$250 deductible', 'Quote, bindable today']] },
+  lending: { title: 'Compare offers for your project', unit: 'Illustrative home equity offers', rows: [['Sample lender A', '8.4%', 'est. APR', 'Funds in 2 to 3 days', 'Offer · expires in 24h'], ['Sample lender B', '7.9%', 'est. APR', 'Funds in 2 to 3 weeks', 'Indicative terms'], ['Sample lender C', '8.9%', 'est. APR', 'Funds next business day', 'Offer · expires in 24h']] },
+  insurance: { title: 'Compare auto insurance quotes', unit: 'Illustrative auto quotes', rows: [['Sample carrier A', '$118', 'per month', '$500 deductible', 'Quote · bindable today'], ['Sample carrier B', '$104', 'per month', '$1,000 deductible', 'Indicative terms'], ['Sample carrier C', '$126', 'per month', '$250 deductible', 'Quote · bindable today']] },
 };
+const PAGE = { northbeam: ['Projects', 'Kitchen remodel', 'Estimate $48,200'], fernhill: ['Rewards', 'Your dashboard', '12,480 points'] };
 
 export const E = {
   partner: 'northbeam', vertical: 'lending', placement: 'inline', entry: 'banner', presentation: 'cards', prefill: false,
@@ -25,28 +26,30 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 let uid = 0;
 
 function moduleHTML() {
-  const p = PARTNERS[E.partner], o = OFFERS[E.vertical], st = E.steps;
+  const p = PARTNERS[E.partner], o = OFFERS[E.vertical], st = E.steps, pg = PAGE[E.partner];
   const on = STEPS.filter(([k]) => st[k]);
-  const chips = on.length ? '<ol class="em-steps" aria-label="Enabled journey steps">' + on.map(([, n], i) => '<li><b>' + (i + 1) + '</b> ' + n + '</li>').join('') + '</ol>' : '<p class="em-none">No steps enabled. The module shows a link to the standard LendingTree experience.</p>';
+  const chips = on.length ? '<ol class="em-steps" aria-label="Enabled journey steps">' + on.map(([, n], i) => '<li' + (i === Math.min(2, on.length - 1) ? ' class="now"' : '') + '>' + n + '</li>').join('') + '</ol>' : '<p class="em-none">No steps enabled. The module shows a link to the standard LendingTree experience.</p>';
   let body = '';
   if (st.offers || st.compare) {
-    const list = o.rows.map((r) => {
+    const best = E.vertical === 'lending' ? 1 : 1;
+    const list = o.rows.map((r, i) => {
       const choose = st.select ? '<span class="em-btn" aria-hidden="true">Choose</span>' : '';
       return E.presentation === 'table' || !st.compare
-        ? '<tr><th scope="row">' + esc(r[0]) + '</th>' + (st.compare ? '<td>' + esc(r[1]) + '</td><td>' + esc(r[2]) + '</td>' : '') + '<td>' + esc(r[3]) + '</td><td>' + choose + '</td></tr>'
-        : '<li class="em-card"><b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span><span>' + esc(r[2]) + '</span><small>' + esc(r[3]) + '</small>' + choose + '</li>';
+        ? '<tr><th scope="row">' + esc(r[0]) + '</th>' + (st.compare ? '<td><b>' + esc(r[1]) + '</b> ' + esc(r[2]) + '</td><td>' + esc(r[3]) + '</td>' : '') + '<td>' + esc(r[4]) + '</td><td>' + choose + '</td></tr>'
+        : '<li class="em-card' + (i === best ? ' best' : '') + '">' + (i === best ? '<em>Lowest cost</em>' : '') + '<small>' + esc(r[0]) + '</small><b>' + esc(r[1]) + ' <i>' + esc(r[2]) + '</i></b><span>' + esc(r[3]) + '</span><small class="stt">' + esc(r[4]) + '</small>' + choose + '</li>';
     }).join('');
     body = (E.presentation === 'table' || !st.compare)
       ? '<table class="em-table"><caption class="sr">' + esc(o.unit) + '</caption><tbody>' + list + '</tbody></table>'
       : '<ul class="em-cards" aria-label="' + esc(o.unit) + '">' + list + '</ul>';
   } else if (st.discover) body = '<p class="em-note">Collects only the details needed for the offer or quote.</p>';
-  const hand = st.handoff ? '<p class="em-consent">By continuing you consent to share your details with the partner you choose. <u>Disclosures</u></p>' : '';
+  const hand = st.handoff ? '<p class="em-consent">By continuing you agree to share your details with the partner you choose. <u>Disclosures</u></p>' : '';
   const prefill = E.prefill ? '<p class="em-prefill">Prefilled from your ' + esc(p.name) + ' profile, with your consent.</p>' : '';
   const status = st.status ? '<p class="em-status">Status: application received. Updates appear here.</p>' : '';
   return '<div class="em-host" data-placement="' + E.placement + '" style="--pb:' + p.brand + '">' +
-    '<div class="em-bar"><b>' + esc(p.name) + '</b><span>' + esc(p.tag) + '</span></div>' +
-    '<div class="em-entry">' + ({ banner: 'Banner: See your options without leaving ' + p.name, button: 'Button: Compare offers', checkout: 'At checkout: Pay less with a better offer' }[E.entry]) + '</div>' +
-    '<div class="em-mod"><div class="em-hd"><strong>' + esc(o.title) + '</strong><small>Powered by LendingTree</small></div>' + chips + prefill + body + hand + status + '</div></div>';
+    '<div class="em-bar"><span class="em-logo" aria-hidden="true"></span><b>' + esc(p.name) + '</b><span class="em-nav" aria-hidden="true"><i>Home</i><i class="cur">' + pg[0] + '</i><i>Account</i></span></div>' +
+    '<div class="em-page"><div class="em-ph"><b>' + pg[1] + '</b><span>' + pg[2] + '</span></div>' +
+    '<p class="em-entry">' + ({ banner: 'See your options without leaving ' + esc(p.name), button: 'Compare offers', checkout: 'Pay less with a better offer' }[E.entry]) + '</p>' +
+    '<div class="em-mod"><div class="em-hd"><strong>' + esc(o.title) + '</strong><small>Powered by LendingTree</small></div>' + chips + prefill + body + hand + status + '</div></div></div>';
 }
 
 export function mountPreview(el, { controls = true } = {}) {

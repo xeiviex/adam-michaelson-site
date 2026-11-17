@@ -38,13 +38,13 @@ const ms = (d, short, owner, commit, target, dep, evidence) => ({ d, short, owne
 export const SLIDES = [
   /* ---------------------------------------------------------------- 1 */
   {
-    id: 'overview', nav: 'Overview', kicker: '1 of 7 · Overview', title: 'From lead marketplace to financial lifecycle',
+    id: 'overview', nav: 'Overview', kicker: '1 of 7 · Overview', title: 'From lead generation to financial products platform',
     message: 'Win the offer decision first, then earn the right to serve and measure the customer across the lifecycle.',
     econ: 'Incremental contribution from offer-stage pilots and new channels, net of channel costs and displaced match fees. Conditional on partner participation.',
     measure: 'One event spine counted once per transaction, holdouts for every test, and Finance reconciling results to observed costs.',
     metrics: [
       { k: 'Incremental contribution', v: TBD, note: 'Conditional on partners' },
-      { k: 'Capacity redeployed', v: 'Team-months, set at Day 60', note: 'Example in the calculator' },
+      { k: 'Capacity redeployed', v: 'Team-months, set at Day 60', note: '' },
       { k: 'Evidence for more investment', v: 'Lift vs holdout, mature outcomes', note: 'And partner economics' },
     ],
     gantt: [
@@ -96,7 +96,6 @@ export const SLIDES = [
             P('The archive cites three alpha partners as an example. The split across lenders and carriers is not confirmed, so no allocation is published here.'),
             P('Pilot thresholds reused from the archive keep their original cohort, metric definition, and proposed status. See the down-funnel details.'),
             D('Internal baselines for revenue per lead, contact rates, funded and bound rates, and channel costs are not yet available.'),
-            I('All figures in the ROI calculator are made-up examples, not LendingTree data.'),
           ] },
         ] },
         { h: 'Archived strategy', blocks: [
@@ -112,7 +111,7 @@ export const SLIDES = [
     message: 'Score every in-flight commitment, then fund a capacity-constrained six-month roadmap.',
     econ: 'Return from the work we keep, spending we avoid, and engineering time we move to higher-return work.',
     measure: 'Finance and product score each initiative on forward cost and benefit. Sunk cost is excluded. Projected results are compared with observed ones at Day 180.',
-    metrics: 'live',
+    metrics: [{ k: 'Projected return of retained work', v: TBD }, { k: 'Avoidable spending', v: TBD }, { k: 'Engineering capacity redeployed', v: TBD }],
     gantt: [
       ms(30, 'Score portfolio, propose stop, start, continue', 'Product lead, Engineering lead, Finance partner', 'Scored inventory of in-flight work with validated costs and dependencies', 'Proposed stop, start, continue, and re-scope decisions', 'Cost and effort data from engineering and Finance', 'Every initiative has a forward cost, benefit range, and confidence'),
       ms(60, 'Approve reallocations, commit six-month roadmap', 'Product lead and CTO', 'Six-month roadmap within capacity', 'At least one meaningful release per team per month', 'Sales, Marketing, and Operations review of sequencing', 'Roadmap and capacity reallocations approved'),
@@ -121,8 +120,20 @@ export const SLIDES = [
     ],
     details: {
       title: 'Roadmap ROI details',
-      intro: 'The roadmap is a portfolio decision. The calculator turns assumptions into an explicit comparison of the current plan and a proposed one. It informs the call. It does not make it.',
+      intro: 'The roadmap is a portfolio decision.',
       sections: [
+        { h: 'How we calculate ROI', blocks: [
+          { ol: [
+            'Estimate what each initiative adds from here: the new contribution it brings in (revenue minus the costs that come with it), plus any savings it creates elsewhere.',
+            'Subtract what it still costs: the remaining build cost and the added running cost. The result is its net value.',
+            'ROI is net value divided by that remaining cost.',
+            'Money already spent does not count. Only what is still ahead of us does.',
+            'Where a benefit is uncertain, reduce it by how confident we are. Never reduce the costs.',
+            'Engineering time is the constraint, so rank discretionary work by net value per team-month. Mandatory work stays in regardless.',
+            'Stopping work saves its remaining cost once. Do not also count that as a saving.',
+            'Compare the proposed roadmap with today\u2019s roadmap, then have Finance check projected against observed results at Day 180.',
+          ] },
+        ] },
         { h: 'How the work gets done', blocks: [
           { ol: [
             'Product, engineering, and Finance inventory every in-flight initiative.',
@@ -371,40 +382,46 @@ export const SLIDES = [
   /* ---------------------------------------------------------------- 7 */
   {
     id: 'teams', nav: 'Teams', kicker: '7 of 7 · Team optimization', title: 'Deliver more value per dollar with the CTO',
-    message: 'Four delivery teams and three disruption pods share one federated architecture.',
-    econ: 'More outcomes per delivery dollar, from clearer ownership, less rework, and reusable shared capabilities.',
-    measure: 'Lead time, release cadence, quality, operating load, cost, and outcomes, baselined first and reviewed with the CTO.',
+    message: 'Set expectations per role, assess every team member, act on what we learn, and keep hiring open.',
+    econ: 'More outcomes per delivery dollar, from clear expectations, the right people in the right roles, and gaps filled quickly.',
+    measure: 'Outputs and outcomes per role against written expectations, plus lead time, release cadence, quality, and cost per team.',
     metrics: [
       { k: 'Delivery throughput', v: TBD }, { k: 'Quality', v: TBD }, { k: 'Business outcomes per team', v: TBD }, { k: 'Cost efficiency', v: TBD },
     ],
     gantt: [
-      ms(30, 'Assess capacity and architecture with the CTO', 'Product lead and CTO', 'Capacity and architecture assessment', 'Baselines for lead time, cadence, quality, and cost', 'Engineering and Finance data access', 'Assessment reviewed with the CTO'),
-      ms(60, 'Agree missions, ownership, shared contracts, staffing actions', 'Product lead and CTO', 'Team missions, outcome ownership, shared contracts, staffing actions', 'Each team has one mission and a named outcome owner', 'CTO and executive approval for staffing actions', 'Missions and contracts written and approved'),
-      ms(90, 'Review throughput, quality, cross-team integration against baselines', 'Product lead and CTO', 'Review against baselines', 'No decline in quality; throughput moving toward target', 'Baselines from Day 30', 'Metrics compared with baselines'),
-      ms(180, 'Evaluate outcomes and cost per team; expand, rebalance, or fund platform capacity', 'Executive team with CTO and Finance partner', 'Outcome and cost review per team', 'A decision to expand, rebalance, or fund dedicated platform capacity', 'Enough delivery history to read', 'Decision recorded with the evidence'),
+      ms(30, 'Set output and outcome expectations per role; open the hiring pipeline', 'Product lead and CTO', 'Written expectations for outputs and outcomes per role; hiring pipeline open', 'Every product team member knows what is expected', 'CTO alignment on roles and team missions', 'Expectations published and reviewed with each team'),
+      ms(60, 'Assess each team member\u2019s capabilities and engagement; agree actions', 'Product lead and CTO', 'An assessment of each product team member against the expectations', 'An agreed action for every gap: develop, redeploy, hire, or contract', 'Executive approval for staffing actions and budget', 'Assessments complete and actions approved'),
+      ms(90, 'Changes made, new people on board, their assessment begun', 'Product lead and CTO', 'Staffing changes made; new employees or contractors onboarded', 'Assessment of new team members under way', 'Candidates available from the pipeline', 'Roles filled; first check-ins against expectations'),
+      ms(180, 'Review outputs, outcomes, and cost per team; adjust', 'Executive team with CTO and Finance partner', 'Review of outputs, outcomes, and cost per team', 'Value per dollar improving against the Day 30 baseline', 'Enough delivery history to read', 'Decisions recorded with the evidence'),
     ],
     details: {
       title: 'Team optimization details',
-      intro: 'Team layouts here are illustrative and subject to validation with the CTO against the actual organization. Individual personnel decisions are out of scope.',
+      intro: '',
       sections: [
-        { h: 'Partnership and ownership', blocks: [{ ul: [
-          C('Product and the CTO co-design team topology. The CTO owns architectural direction.'),
-          C('Each team owns named outcomes, not a list of features.'),
-          C('Assess roles and staffing against the missions, then decide where to redeploy, hire selectively, or use contractors where a gap justifies the cost.'),
-          G('Expand delivery capacity as the economics support it.'),
-        ] }] },
-        { h: 'Proposed baseline and review', blocks: [{ p: 'Baseline lead time, release cadence, quality, operating load, cost, and outcomes. Product and the CTO review them together on a regular cadence.' }] },
-        { h: 'Illustrative team missions', blocks: [{ ul: [
-          I('Lending Down-Funnel: offers, comparison, and handoff for lending.'),
-          I('Insurance Down-Funnel: quotes, comparison, and handoff for insurance.'),
-          I('MCP/API: the programmatic contract and the AI-native adapter.'),
-          I('Embedded: the SDK, partner configuration, and test host.'),
-        ] }, { p: 'Three principal-led disruption pods sit alongside, with their own charters and bounds.' }] },
-        { h: 'Shared architecture', blocks: [
-          { p: 'Shopping, MCP/API, and Embedded sit on the same shared capabilities. The CTO and a designated principal architect own the standards and contracts.' },
-          { ul: ['Common identity and consent', 'Offers and eligibility', 'Lending and insurance partner integrations', 'Transaction orchestration', 'Analytics and economics', 'Security and compliance'] },
-          { p: 'Delivery teams contribute reusable capabilities while serving near-term commitments. Teams agree on:' },
-          { ul: ['Shared schemas and API versions', 'Ownership of each capability', 'Access and consent boundaries', 'Observability standards'] },
+        { h: 'Expectations per role', blocks: [
+          { p: 'Every role gets written expectations in two parts. Outputs are what the role produces. Outcomes are the results it is accountable for.' },
+          { ul: [C('Expectations for product, design, and engineering roles, agreed with the CTO.'), C('Each team owns named outcomes, not a list of features.')] },
+        ] },
+        { h: 'Assessment', blocks: [
+          { p: 'Each product team member is assessed against those expectations on two things: capability and engagement. Managers and the CTO take part. Individual results stay private.' },
+        ] },
+        { h: 'Action', blocks: [
+          { ul: ['Develop: coaching and a clear plan where the gap is closable.', 'Redeploy: move people to the work that fits them and the missions.', 'Hire selectively, or use contractors, where a gap justifies the cost.', G('By Day 90: changes made, new people on board, and their assessment begun.')] },
+        ] },
+        { h: 'Continuous hiring pipeline', blocks: [
+          { p: 'The pipeline opens on day one and stays open. When a gap appears, candidates are already in conversation, for employees and contractors alike.' },
+          { ul: [D('Approval for targeted hiring or contractors.')] },
+        ] },
+        { h: 'Team structure and shared architecture', blocks: [
+          { p: 'Illustrative, to validate with the CTO against the actual organization. The CTO co-designs the topology and owns architectural direction.' },
+          { ul: [
+            I('Lending Down-Funnel: offers, comparison, and handoff for lending.'),
+            I('Insurance Down-Funnel: quotes, comparison, and handoff for insurance.'),
+            I('MCP/API: the programmatic contract and the AI-native adapter.'),
+            I('Embedded: the SDK, partner configuration, and test host.'),
+            I('Three principal-led disruption pods, with their own charters and bounds.'),
+          ] },
+          { p: 'Shopping, MCP/API, and Embedded sit on the same shared capabilities: identity and consent, offers and eligibility, partner integrations, transaction orchestration, analytics and economics, security and compliance. The CTO and a designated principal architect own the standards and contracts. Teams agree on shared schemas, API versions, ownership, access and consent boundaries, and observability.' },
           { p: 'Launch federated. Reassess a dedicated platform team if fragmentation, reliability, or repeat integration bottlenecks make it worthwhile.' },
         ] },
         { h: 'Measures', blocks: [{ measure: 'teams' }] },
@@ -452,6 +469,7 @@ export const MEASURES = {
     ['Delivery throughput', TB, 'Lead time and releases per team per month', 'Delivery tooling', 'CTO and product lead, monthly', 'Teams are comparable only after baselines are set.'],
     ['Quality', TB, 'Escaped defects and incidents per release', 'Incident and defect data', 'CTO, monthly', 'Threshold TBD at Day 60.'],
     ['Business outcomes per team', TB, 'Outcome owned by each team, per its mission', 'Event spine', 'Team leads, monthly', 'Each team has one named outcome.'],
+    ['Outputs and outcomes per role', TB, 'Roles meeting written expectations, per quarter', 'Manager and CTO assessment', 'Product lead and CTO, quarterly', 'Individual results stay private; reported in aggregate.'],
     ['Cost efficiency', TB, 'Fully loaded team cost per outcome', 'Finance', 'Finance partner, quarterly', 'Contractors and hires tracked separately.'],
   ],
 };
@@ -460,3 +478,14 @@ export const MEASURES = {
 export function rollup() {
   return SLIDES.slice(1).map((s) => ({ id: s.id, nav: s.nav, cells: DAYS.map((d) => s.gantt.find((m) => m.d === d)) }));
 }
+
+/* One-line labels that fit inside the plan bars. The first three bars are each one sixth of the width, so keep them short. */
+export const BARS = {
+  overview: ['Baseline, sponsors', 'Commit the plan', 'Interim direction', 'Review economics: scale, revise, or stop'],
+  roadmap: ['Score the portfolio', 'Commit the roadmap', 'Verify releases', 'Compare projected with observed; reallocate'],
+  'down-funnel': ['Cohorts, baselines', 'Working prototypes', 'Limited alpha', 'Review outcomes; fund the next capability'],
+  mcp: ['Pick use cases', 'Sandbox and docs', 'Partner pilot', 'Production where gates clear; review economics'],
+  embedded: ['Partner archetypes', 'Reference SDK', 'Partner launch', 'Review repeatability and the case to scale'],
+  disruption: ['Name leads, scan', 'Launch first tests', 'Review evidence', 'Investment decisions; graduate work to delivery'],
+  teams: ['Set expectations', 'Assess the team', 'Make the changes', 'Review outputs, outcomes, and cost per team'],
+};
