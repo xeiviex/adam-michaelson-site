@@ -340,7 +340,9 @@ input[type=checkbox], input[type=radio] { width: 1.05rem; height: 1.05rem; accen
   .lab .em-cards { grid-template-columns: 1fr; } .lab .em-card .stt, .lab .em-hd small, .lab .em-consent { display: block; }
 
 }
-@media (max-width: 940px) {.gs { display: none; } .gr { background: none; padding-top: 0; } .gb i { margin-left: 0 !important; width: auto !important; height: auto; min-height: 2.6em; white-space: normal; padding-block: .5em; gap: .7em; } .gb b { display: inline; flex: none; } }
+/* plan bars: stacked list on portrait phones, a to-scale Gantt everywhere else */
+@media (max-width: 760px) { .gs { display: none; } .gr { background: none; padding-top: 0; } .gb i { margin-left: 0 !important; width: auto !important; height: auto; min-height: 2.6em; white-space: normal; padding-block: .5em; gap: .7em; } .gb b { display: inline; flex: none; } }
+@media (min-width: 761px) and (max-width: 1000px) { .gb i { font-size: clamp(.6rem, 1.35vw, .84rem); padding-inline: .45em; } }
 @media (max-width: 360px) { .dots a { width: 14px; } .nb { width: 36px; height: 36px; } .nav { gap: 6px; } }
 @media (forced-colors: active) { .cbs i, .gb i, .trk > li.on::before { forced-color-adjust: none; } }
 .tsteps > li.on .st small { color: var(--body); }
