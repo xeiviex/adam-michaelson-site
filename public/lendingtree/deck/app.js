@@ -9,6 +9,9 @@ const ids = SLIDES.map((s) => s.id);
 const root = document.documentElement;
 const NAMES = { overview: 'Overview', roadmap: 'Roadmap ROI optimization', 'down-funnel': 'Down-funnel lending and insurance', mcp: 'MCP/API', embedded: 'Embedded', disruption: 'Disruption', teams: 'Team optimization' };
 const two = (n) => String(n).padStart(2, '0');
+/* Heading pattern on every screen: number and topic large, one supporting line small. */
+const BIG = (s) => s.id === 'overview' ? s.title : NAMES[s.id];
+const SUB = (s) => s.id === 'overview' ? 'A two-sided platform across the lending and insurance lifecycle' : s.title;
 
 /* ---------- old fragments (before anything renders) ---------- */
 (function legacy() {
@@ -92,7 +95,7 @@ const VIS = {
 const trackEl = $('#track');
 trackEl.innerHTML = SLIDES.map((s, i) =>
   '<section class="slide" id="slide-' + s.id + '" data-i="' + i + '" aria-roledescription="slide" aria-labelledby="h-' + s.id + '"><div class="sb">' +
-  '<header class="sh"><p class="kicker"><i>' + two(i + 1) + '</i>' + esc(NAMES[s.id]) + '</p><h2 id="h-' + s.id + '" tabindex="-1">' + esc(s.title) + '</h2></header>' +
+  '<header class="sh"><h2 id="h-' + s.id + '" tabindex="-1"><i>' + two(i + 1) + '</i> ' + esc(BIG(s)) + '</h2><p class="sub">' + esc(SUB(s)) + '</p></header>' +
   '<div class="vis">' + VIS[s.id]() + '</div>' +
   '<footer class="rail"><button type="button" class="btn" data-open="' + s.id + '" aria-haspopup="dialog">Details</button></footer></div></section>').join('');
 const slides = [...trackEl.querySelectorAll('.slide')];
@@ -124,7 +127,7 @@ function show(i, announce = true) {
   dots.querySelectorAll('a').forEach((d, k) => { if (k === idx) d.setAttribute('aria-current', 'step'); else d.removeAttribute('aria-current'); d.classList.toggle('done', k < idx); });
   document.title = SLIDES[idx].title + ' | The next chapter at LendingTree | Adam Michaelson';
   if (hadFocus && old !== idx) a.querySelector('h2').focus({ preventScroll: true });
-  if (announce && ready && old !== idx) say('Slide ' + (idx + 1) + ' of ' + SLIDES.length + ': ' + SLIDES[idx].title);
+  if (announce && ready && old !== idx) say('Slide ' + (idx + 1) + ' of ' + SLIDES.length + ': ' + BIG(SLIDES[idx]));
   fitOverflow();
 }
 let sayT; function say(m) { clearTimeout(sayT); live.textContent = ''; sayT = setTimeout(() => { live.textContent = m; }, 60); }
@@ -234,7 +237,7 @@ function build(id) {
   d.className = 'dlg'; d.setAttribute('aria-labelledby', 'dt-' + id);
   const more = s.details.sections.filter((x) => !x.blocks.every((b) => b.measure)).map((x) => '<section class="ds"><h3>' + esc(x.h) + '</h3>' + blocks(x.blocks) + '</section>').join('');
   const tabs = [['more', 'Details'], ['econ', 'Economics'], ['plan', '180-day plan']];
-  d.innerHTML = '<div class="dh"><h2 id="dt-' + id + '">' + esc(s.title) + '</h2><button type="button" class="btn x" data-close>Close</button></div>' +
+  d.innerHTML = '<div class="dh"><h2 id="dt-' + id + '"><i>' + two(ids.indexOf(id) + 1) + '</i> ' + esc(BIG(s)) + '</h2><button type="button" class="btn x" data-close>Close</button></div>' +
     '<div class="tabs" role="group" aria-label="Sections">' + tabs.map((t) => '<button type="button" data-view="' + t[0] + '" aria-pressed="false">' + t[1] + '</button>').join('') + '</div>' +
     '<div class="db"><div data-pane="more">' + more + '</div><div data-pane="econ" hidden>' + econHTML(s) + '</div><div data-pane="plan" hidden>' + planHTML(s) + '</div></div>';
   document.body.appendChild(d);

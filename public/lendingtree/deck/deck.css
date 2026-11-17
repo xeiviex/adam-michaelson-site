@@ -315,7 +315,7 @@ input[type=checkbox], input[type=radio] { width: 1.05rem; height: 1.05rem; accen
 .lab .locked ul { list-style: none; display: grid; gap: 3px; font-size: .86rem; color: var(--muted); }
 
 /* short screens: tighten, keep everything */
-@media (max-height: 800px) and (min-width: 761px) { .era > p { display: none; } }
+@media (max-height: 960px) and (min-width: 761px) { .era > p { display: none; } }
 @media (max-height: 780px) and (min-width: 761px) { .em-entry, .em-consent { display: none; } .em-mod { padding: .8em 1em .9em; gap: .55em; } .em-page { padding-block: .7em .9em; gap: .5em; } .em-side { gap: .5em; } .em-side h3:not(:first-child) { margin-top: .3em; padding-top: .7em; } }
 @media (max-height: 680px) and (min-width: 761px) { .em-card small, .em-side .fine { display: none; } }
 @media (max-height: 700px) and (min-width: 761px) { h2 { font-size: 2.7em; } .em-ph { display: none; } }
@@ -361,3 +361,13 @@ input[type=checkbox], input[type=radio] { width: 1.05rem; height: 1.05rem; accen
 @media (max-width: 360px) { .dots a { width: 14px; } .nb { width: 36px; height: 36px; } .nav { gap: 6px; } }
 @media (forced-colors: active) { .cbs i, .gb i, .trk > li.on::before { forced-color-adjust: none; } }
 .tsteps > li.on .st small { color: var(--body); }
+/* heading pattern: number and topic large, one supporting line small */
+h2 i { font-style: normal; color: var(--acc-hi); font-weight: 600; margin-right: .12em; font-variant-numeric: tabular-nums; }
+.sub { color: var(--body); font-size: 1.3em; line-height: 1.35; max-width: 60ch; margin-top: .55em; }
+h2 { max-width: 28ch; }
+@media (max-width: 760px) { .sub { font-size: 1.05em; margin-top: .35em; } }
+/* heading pattern: number and topic large, one supporting line small */
+h2 i { font-style: normal; color: var(--acc-hi); font-weight: 600; margin-right: .12em; font-variant-numeric: tabular-nums; }
+.sub { color: var(--body); font-size: 1.3em; line-height: 1.35; max-width: 60ch; margin-top: .55em; }
+h2 { max-width: 28ch; }
+@media (max-width: 760px) { .sub { font-size: 1.05em; margin-top: .35em; } }
