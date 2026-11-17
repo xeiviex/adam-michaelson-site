@@ -78,7 +78,7 @@ const VIS = {
   },
   teams() {
     return '<div class="tcy">' +
-      track([{ k: 'By Day 30', t: 'Set expectations', s: 'Outputs and outcomes for every role', c: 'on' }, { k: 'By Day 60', t: 'Assess the team', s: 'Each person’s capabilities and engagement', c: 'on link' }, { k: 'By Day 90', t: 'Act', s: 'Develop, redeploy, hire, or contract', c: 'on link' }, { k: 'From Day 90', t: 'Assess new members', s: 'Same expectations, then repeat', c: 'later' }], 'tsteps', 'Team optimization steps') +
+      track([{ k: 'By Day 30', t: 'Set expectations', s: 'Outputs and outcomes for every role', c: 'on' }, { k: 'By Day 60', t: 'Assess and guide', s: 'One-on-one help for those who can and want to grow', c: 'on link' }, { k: 'By Day 90', t: 'Act', s: 'Develop, redeploy, hire, or contract', c: 'on link' }, { k: 'From Day 90', t: 'Assess new members', s: 'Same expectations, then repeat', c: 'later' }], 'tsteps', 'Team optimization steps') +
       '<p class="hire"><b>Hiring pipeline</b><span>Open from day one, for employees and contractors</span></p></div>';
   },
 };

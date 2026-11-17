@@ -390,7 +390,7 @@ export const SLIDES = [
     ],
     gantt: [
       ms(30, 'Set output and outcome expectations per role; open the hiring pipeline', 'Product lead and CTO', 'Written expectations for outputs and outcomes per role; hiring pipeline open', 'Every product team member knows what is expected', 'CTO alignment on roles and team missions', 'Expectations published and reviewed with each team'),
-      ms(60, 'Assess each team member\u2019s capabilities and engagement; agree actions', 'Product lead and CTO', 'An assessment of each product team member against the expectations', 'An agreed action for every gap: develop, redeploy, hire, or contract', 'Executive approval for staffing actions and budget', 'Assessments complete and actions approved'),
+      ms(60, 'Assess each team member and guide them one-on-one; agree actions', 'Product lead and CTO', 'An assessment of each product team member against the expectations, with one-on-one guidance for those who can and want to grow', 'An agreed action for every gap: develop, redeploy, hire, or contract', 'Executive approval for staffing actions and budget', 'Assessments complete and actions approved'),
       ms(90, 'Changes made, new people on board, their assessment begun', 'Product lead and CTO', 'Staffing changes made; new employees or contractors onboarded', 'Assessment of new team members under way', 'Candidates available from the pipeline', 'Roles filled; first check-ins against expectations'),
       ms(180, 'Review outputs, outcomes, and cost per team; adjust', 'Executive team with CTO and Finance partner', 'Review of outputs, outcomes, and cost per team', 'Value per dollar improving against the Day 30 baseline', 'Enough delivery history to read', 'Decisions recorded with the evidence'),
     ],
@@ -402,11 +402,12 @@ export const SLIDES = [
           { p: 'Every role gets written expectations in two parts. Outputs are what the role produces. Outcomes are the results it is accountable for.' },
           { ul: [C('Expectations for product, design, and engineering roles, agreed with the CTO.'), C('Each team owns named outcomes, not a list of features.')] },
         ] },
-        { h: 'Assessment', blocks: [
+        { h: 'Assess and guide', blocks: [
           { p: 'Each product team member is assessed against those expectations on two things: capability and engagement. Managers and the CTO take part. Individual results stay private.' },
+          { p: 'Assessment comes with guidance. Everyone who can and wants to close a gap gets one-on-one help: a clear picture of where they stand, a plan, and regular coaching against it.' },
         ] },
         { h: 'Action', blocks: [
-          { ul: ['Develop: coaching and a clear plan where the gap is closable.', 'Redeploy: move people to the work that fits them and the missions.', 'Hire selectively, or use contractors, where a gap justifies the cost.', G('By Day 90: changes made, new people on board, and their assessment begun.')] },
+          { ul: ['Develop: keep guiding one-on-one where the gap is closing.', 'Redeploy: move people to the work that fits them and the missions.', 'Hire selectively, or use contractors, where a gap justifies the cost.', G('By Day 90: changes made, new people on board, and their assessment begun.')] },
         ] },
         { h: 'Continuous hiring pipeline', blocks: [
           { p: 'The pipeline opens on day one and stays open. When a gap appears, candidates are already in conversation, for employees and contractors alike.' },
@@ -487,5 +488,5 @@ export const BARS = {
   mcp: ['Pick use cases', 'Sandbox and docs', 'Partner pilot', 'Production where gates clear; review economics'],
   embedded: ['Partner archetypes', 'Reference SDK', 'Partner launch', 'Review repeatability and the case to scale'],
   disruption: ['Name leads, scan', 'Launch first tests', 'Review evidence', 'Investment decisions; graduate work to delivery'],
-  teams: ['Set expectations', 'Assess the team', 'Make the changes', 'Review outputs, outcomes, and cost per team'],
+  teams: ['Set expectations', 'Assess and guide', 'Make the changes', 'Review outputs, outcomes, and cost per team'],
 };

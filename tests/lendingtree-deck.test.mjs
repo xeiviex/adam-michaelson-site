@@ -46,7 +46,7 @@ test('leadership asks, three charters, team plan, offer-first lifecycle stages a
   for (const t of ['Executive introductions', 'reallocate roadmap capacity', 'CTO', 'hiring or contractors', 'performance measures and a review cadence', 'Executive phase gate']) assert.match(ov, new RegExp(t));
   assert.match(JSON.stringify(SLIDES[5].details), /Pod A[\s\S]*Pod B[\s\S]*Pod C/);
   const all = read('lendingtree/deck/app.js') + JSON.stringify(SLIDES);
-  for (const t of ['Lending Down-Funnel', 'Insurance Down-Funnel', 'MCP/API', 'Embedded', 'Generate offers', 'Generate quotes', 'Present and compare', 'Select', 'Underwriting or approval', 'Funding', 'Servicing or refinance', 'Bind', 'Renewal and re-shop', 'Set expectations', 'Assess the team', 'Hiring pipeline', 'How we calculate ROI', 'Financial products platform']) assert.ok(all.includes(t), t);
+  for (const t of ['Lending Down-Funnel', 'Insurance Down-Funnel', 'MCP/API', 'Embedded', 'Generate offers', 'Generate quotes', 'Present and compare', 'Select', 'Underwriting or approval', 'Funding', 'Servicing or refinance', 'Bind', 'Renewal and re-shop', 'Set expectations', 'Assess and guide', 'Hiring pipeline', 'How we calculate ROI', 'Financial products platform']) assert.ok(all.includes(t), t);
 });
 
 test('every plan bar has a short one-line label, and the calculator is gone', () => {
