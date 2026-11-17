@@ -45,8 +45,8 @@ const VIS = {
       '<p class="turn" aria-hidden="true">Score every commitment, then decide</p>' +
       bar('Six-month roadmap, within capacity', seg('keep', 5, 'Continue') + seg('keep', 3, 'Continue') + seg('start', 4, 'Start') + seg('start', 3, 'Start') + seg('start', 2, 'Start')) +
       '<p class="fine">Illustration, not LendingTree data.</p></div>' +
-      '<div class="roi-how"><h3>How we calculate ROI</h3><p class="eq">Net value <span>÷</span> remaining cost</p>' +
-      '<ul><li>Net value is new contribution plus savings, minus what it still costs.</li><li>Money already spent does not count.</li><li>Rank by net value per team-month.</li></ul></div></div>';
+      '<div class="roi-how"><h3>How we calculate ROI</h3><p class="eq">(Benefit <span>−</span> remaining cost) <span>÷</span> remaining cost</p>' +
+      '<ul><li>Benefit is new contribution plus savings.</li><li>Money already spent does not count.</li><li>Rank work by benefit minus remaining cost, per team-month.</li></ul></div></div>';
   },
   'down-funnel'() {
     const lane = (pre, first, later) => [{ t: pre, c: 'was' }, ...first.map((t, i) => ({ t, c: 'on' + (i ? ' link' : '') })), ...later.map((t) => ({ t, c: 'later' }))];

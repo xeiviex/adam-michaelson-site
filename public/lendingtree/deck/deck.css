@@ -322,7 +322,7 @@ input[type=checkbox], input[type=radio] { width: 1.05rem; height: 1.05rem; accen
   .st small { display: inline; margin-left: .5em; }
   .ov { gap: 2em; } .orow { gap: .7em; } .tri { grid-template-columns: minmax(0, 1fr) 1.1em minmax(0, 1.15fr) 1.1em minmax(0, 1fr); }
   .n { padding: .7em .6em; border-radius: 10px; } .n b { font-size: .92em; } .n small { font-size: .74em; } .was .n { padding-block: .5em; } .was .n b { font-size: .82em; } .will .n.core { padding-block: 1.3em; } .will .core b { font-size: 1.05em; }
-  .rmap { grid-template-columns: minmax(0, 1fr); gap: 1.4em; } .cbt { height: 2.8em; } .cbs i { font-size: .74em; } .turn { padding-block: .5em; margin-block: .3em; } .roi-how { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 1em; gap: .7em; } .eq { font-size: 1.5em; }
+  .rmap { grid-template-columns: minmax(0, 1fr); gap: 1.4em; } .cbt { height: 2.8em; } .cbs i { font-size: .74em; } .turn { padding-block: .5em; margin-block: .3em; } .roi-how { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 1em; gap: .7em; } .eq { font-size: 1.2em; }
   .tcy { font-size: 1.05em; gap: 1.2em; } .tsteps > li { padding: .7em 0; } .hire { border-radius: 14px; padding: .7em 1em; flex-direction: column; gap: .1em; }
   .df { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto repeat(8, auto); row-gap: 0; column-gap: 1em; }
   .ln.l1 { grid-column: 1; grid-row: 1; } .ln.l2 { grid-column: 2; grid-row: 1; } .ln { padding-bottom: .5em; }

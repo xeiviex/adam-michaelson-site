@@ -124,9 +124,9 @@ export const SLIDES = [
       sections: [
         { h: 'How we calculate ROI', blocks: [
           { ol: [
-            'Estimate what each initiative adds from here: the new contribution it brings in (revenue minus the costs that come with it), plus any savings it creates elsewhere.',
-            'Subtract what it still costs: the remaining build cost and the added running cost. The result is its net value.',
-            'ROI is net value divided by that remaining cost.',
+            'Estimate what each initiative adds from here: the new contribution it brings in (revenue minus the costs that come with it), plus any savings it creates elsewhere. This is its benefit.',
+            'Subtract what it still costs: the remaining build cost and the added running cost. Benefit minus remaining cost is its net value.',
+            'ROI is net value divided by that remaining cost: (benefit \u2212 remaining cost) \u00f7 remaining cost.',
             'Money already spent does not count. Only what is still ahead of us does.',
             'Where a benefit is uncertain, reduce it by how confident we are. Never reduce the costs.',
             'Engineering time is the constraint, so rank discretionary work by net value per team-month. Mandatory work stays in regardless.',
