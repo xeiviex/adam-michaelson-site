@@ -30,20 +30,12 @@ const track = (items, cls = '', label = '') => '<ol class="trk ' + cls + '"' + (
 /* ---------- the seven drawings ---------- */
 const VIS = {
   overview() {
-    const toc = SLIDES.slice(1).map((s, i) => '<li><a href="#' + s.id + '"><i>' + two(i + 2) + '</i><span>' + esc(NAMES[s.id]) + '</span></a></li>').join('');
-    const li = (x) => '<li>' + x + '</li>';
-    return '<div class="ov"><div class="shift">' +
-      '<section class="era was" aria-labelledby="era-a"><h3 id="era-a"><b>Today</b> Lead generation</h3>' +
-      '<ol class="pipe"><li>Shopper</li><li class="mid">LendingTree<small>Sells the lead</small></li><li>Lender or carrier</li></ol>' +
-      '<p>One handoff, paid once at the match. Then the relationship ends, for the shopper and for the partner.</p></section>' +
-      '<section class="era will" aria-labelledby="era-b"><h3 id="era-b"><b>The next chapter</b> Financial products platform</h3>' +
-      '<div class="plat"><div class="side"><h4>Shoppers reach it through</h4><ul>' + ['LendingTree.com', 'AI assistants', 'Partner products'].map(li).join('') + '</ul></div>' +
-      '<span class="both" aria-hidden="true"></span>' +
-      '<div class="core"><b>LendingTree platform</b><ul>' + ['Offers and quotes', 'Compare and choose', 'Transactions', 'Servicing and renewal'].map(li).join('') + '</ul></div>' +
-      '<span class="both" aria-hidden="true"></span>' +
-      '<div class="side"><h4>Lenders and carriers</h4><ul>' + ['Publish offers and quotes', 'Win customers who chose them', 'See outcomes and improve'].map(li).join('') + '</ul></div></div>' +
-      '<p>Value flows both ways, across the whole lifecycle. Shoppers come back. Partners build on it.</p></section></div>' +
-      '<nav class="tocn" aria-label="Six strategies"><h3>Six strategies</h3><ol class="toc">' + toc + '</ol></nav></div>';
+    const n = (t, s, c = '') => '<div class="n ' + c + '"><b>' + t + '</b>' + (s ? '<small>' + s + '</small>' : '') + '</div>';
+    return '<div class="ov">' +
+      '<section class="orow was" aria-labelledby="era-a"><h3 id="era-a"><b>Today</b> Lead generation</h3>' +
+      '<div class="tri">' + n('Shopper') + '<span class="one" aria-hidden="true"></span>' + n('LendingTree', 'Sells the lead, once') + '<span class="one" aria-hidden="true"></span>' + n('Lender or carrier') + '</div></section>' +
+      '<section class="orow will" aria-labelledby="era-b"><h3 id="era-b"><b>The next chapter</b> Financial products platform</h3>' +
+      '<div class="tri">' + n('Shoppers', 'On LendingTree.com, AI assistants, and partner products') + '<span class="both" aria-hidden="true"></span>' + n('LendingTree platform', 'Offers, comparison, transactions, servicing', 'core') + '<span class="both" aria-hidden="true"></span>' + n('Lenders and carriers', 'Publish offers, win customers, see outcomes') + '</div></section></div>';
   },
   roadmap() {
     const seg = (c, f, t) => '<i class="' + c + '" style="flex:' + f + ' 0 0"><span>' + t + '</span></i>';
