@@ -84,12 +84,17 @@ const VIS = {
 };
 
 /* ---------- build the slides ---------- */
+/* Links to the prototypes that already exist, shown beside the Details button. */
+const PROTOS = {
+  'down-funnel': [['/lendingtree/choice/', 'Offer'], ['/lendingtree/companion/', 'Insurance wallet']],
+  mcp: [['/lendingtree/outcomes/', 'API']],
+};
 const trackEl = $('#track');
 trackEl.innerHTML = SLIDES.map((s, i) =>
   '<section class="slide" id="slide-' + s.id + '" data-i="' + i + '" aria-roledescription="slide" aria-labelledby="h-' + s.id + '"><div class="sb">' +
   '<header class="sh"><h2 id="h-' + s.id + '" tabindex="-1"><i>' + two(i + 1) + '</i> ' + esc(BIG(s)) + '</h2><p class="sub">' + esc(SUB(s)) + '</p></header>' +
   '<div class="vis">' + VIS[s.id]() + '</div>' +
-  '<footer class="rail"><button type="button" class="btn" data-open="' + s.id + '" aria-haspopup="dialog">Details</button></footer></div></section>').join('');
+  '<footer class="rail">' + (PROTOS[s.id] || []).map((l) => '<a class="btn link" href="' + l[0] + '" aria-label="' + l[1] + ' prototype">' + l[1] + '<span> prototype</span></a>').join('') + '<button type="button" class="btn" data-open="' + s.id + '" aria-haspopup="dialog">Details</button></footer></div></section>').join('');
 const slides = [...trackEl.querySelectorAll('.slide')];
 
 const dots = $('#dots');

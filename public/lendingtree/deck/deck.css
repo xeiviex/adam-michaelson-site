@@ -354,3 +354,10 @@ h2 i { font-style: normal; color: var(--acc-hi); font-weight: 600; margin-right:
 .sub { color: var(--body); font-size: 1.3em; line-height: 1.35; max-width: 60ch; margin-top: .55em; }
 h2 { max-width: 28ch; }
 @media (max-width: 760px) { .sub { font-size: 1.05em; margin-top: .35em; } }
+
+/* prototype links beside Details */
+.rail { gap: 8px; flex-wrap: wrap; }
+a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+a.btn.link::after { content: '\2197'; margin-left: .45em; color: var(--acc-hi); }
+a.btn span { white-space: pre; }
+@media (max-width: 760px) { .rail .btn { min-height: 38px; padding-inline: .7rem; font-size: .8rem; } .rail { flex-wrap: nowrap; } a.btn span { display: none; } }
