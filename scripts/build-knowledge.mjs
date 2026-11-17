@@ -35,6 +35,7 @@ export const PAGES = [
 // Site routes whose published pages (and sub-pages) are included as [PUBLIC] knowledge: [route, section heading].
 export const SITE_ROUTES = [
   ["lendingtree", "LendingTree: my point of view and prototypes (adam-michaelson.com/lendingtree)"],
+  ["lendingtree1", "LendingTree: my October 2026 point of view, archived (adam-michaelson.com/lendingtree1)"],
   ["bio", "My executive bio and career pages (adam-michaelson.com/bio and each employer sub-page)"],
   ["product", "How I do product: people, principles, practices and role pages (adam-michaelson.com/product and sub-pages)"],
   ["me", "Getting to know me: history, family, faith, music, outdoors, mission and beliefs (adam-michaelson.com/me and sub-pages)"],

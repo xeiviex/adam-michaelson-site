@@ -41,3 +41,11 @@ Updated 2026-10-08.
 - "Prototype" pill (bottom-left, top on phones) is the drop-out simulator and reset. Not part of the product.
 - Human consultant "Maya" is simulated; she uses `/achieve/img/maya.jpg` if present, else an illustration. Drop a photo there to replace it.
 - Offers are illustrative samples, not real Achieve pricing. Tests: `tests/achieve.test.mjs`.
+
+## LendingTree strategy deck (2026-11-17)
+- `/lendingtree/` is now a seven-screen strategy deck (`public/lendingtree/index.html`, code in `public/lendingtree/deck/`: `data.js` content, `roi.js` calculator math, `roi-ui.js`, `embed.js`, `app.js`, `deck.css`). Slides render from `data.js`; the Gantt, the overlays and the overview rollup all read the same milestone data.
+- The previous page is preserved unchanged at `/lendingtree1/` (own `lt.css`/`lt.js` copies; images stay under `/lendingtree/img/`). It was verified pixel-identical to the original at 1280 and 390 px.
+- The three prototypes keep their URLs. `public/lendingtree/backlink.js` sends the back link to `/lendingtree1/` when the visitor came from the archive.
+- Old `/lendingtree/#...` fragments: section ids map to new slides, everything else (problems, notes, footnotes) redirects to the same anchor on `/lendingtree1/`. The table is `LEGACY` in `deck/data.js`; `tests/lendingtree-deck.test.mjs` fails if an archive id is unmapped.
+- Chat knowledge: `scripts/build-knowledge.mjs` now also reads `/lendingtree1` (the archive text). The deck itself is rendered by script, so its copy is not in chat knowledge.
+- Tests: `node --test tests/lendingtree-deck.test.mjs` (calculator math, deck data, archive parity, link resolution). Twelve other tests (achieve, chat-endpoint) already failed before this change.
