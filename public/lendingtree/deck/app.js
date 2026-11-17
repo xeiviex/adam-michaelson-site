@@ -30,7 +30,6 @@ function ganttHTML(s) {
 
 function roiHTML(s) {
   let mets;
-  if (s.id === 'overview') return '<section class="roi solo" aria-label="ROI and measurement"><dl class="econ"><div><dt>Economic contribution</dt><dd>' + esc(s.econ) + '</dd></div><div><dt>How we measure it</dt><dd>' + esc(s.measure) + '</dd></div></dl></section>';
   if (s.metrics === 'live') mets = '<ul class="mets" data-live-mets></ul>';
   else mets = '<ul class="mets">' + s.metrics.map((m) => '<li><span class="mk">' + esc(m.k) + '</span><span class="mv">' + esc(m.v) + '</span>' + (m.note ? '<small>' + esc(m.note) + '</small>' : '') + '</li>').join('') + '</ul>';
   return '<section class="roi" aria-label="ROI and measurement"><dl class="econ"><div><dt>Economic contribution</dt><dd>' + esc(s.econ) + '</dd></div><div><dt>How we measure it</dt><dd>' + esc(s.measure) + '</dd></div></dl>' + mets + '</section>';
@@ -45,7 +44,7 @@ const VIS = {
       '<div><h3>Today: value is earned at the match</h3>' + flow([{ t: 'Shopper form' }, { t: 'Match', c: 'peak', s: 'Fee earned here' }, { t: 'Handoff to partner' }, { t: 'Little visibility', c: 'dim' }], 'cur', 'Current model') + '</div>' +
       '<div><h3>Proposed: win the offer, then the lifecycle</h3>' + flow([{ t: 'Offers and quotes', c: 'first' }, { t: 'Compare and choose', c: 'first' }, { t: 'Handoff', s: 'Consented' }, { t: 'Transaction', s: 'Funded or bound' }, { t: 'Ongoing relationship', s: 'Servicing, renewal' }], 'new', 'Proposed model') + '</div></div>' +
       '<div class="ov2"><nav aria-label="Six strategies"><h3>Six strategies</h3><ol class="toc">' + toc + '</ol></nav>' +
-      '<section aria-labelledby="sc-h" class="score"><h3 id="sc-h">Portfolio scorecard</h3><ul class="mets">' + SLIDES[0].metrics.map((m) => '<li><span class="mk">' + esc(m.k) + '</span><span class="mv">' + esc(m.v) + '</span>' + (m.note ? '<small>' + esc(m.note) + '</small>' : '') + '</li>').join('') + '</ul></section></div></div>';
+      '</div></div>';
   },
   roadmap() {
     return '<div class="rmv" data-rmv></div>';
@@ -88,8 +87,8 @@ track.innerHTML = SLIDES.map((s, i) => {
   const ov = s.id === 'overview' ? '' : '';
   return '<section class="slide" id="slide-' + s.id + '" data-i="' + i + '" aria-roledescription="slide" aria-labelledby="h-' + s.id + '"><div class="sb">' +
     '<header class="sh"><div><p class="kicker">' + esc(s.kicker) + '</p><h2 id="h-' + s.id + '" tabindex="-1">' + esc(s.title) + '</h2><p class="msg">' + esc(s.message) + '</p></div>' +
-    '<div class="acts">' + calcBtn + '<button type="button" class="btn" data-details="' + s.id + '" aria-haspopup="dialog">Details</button></div></header>' +
-    '<div class="vis">' + VIS[s.id]() + '</div>' + roiHTML(s) + ganttHTML(s) + ov + '</div></section>';
+    '<div class="acts">' + calcBtn + '<button type="button" class="btn" data-details="' + s.id + '" aria-haspopup="dialog">Economics, timeline and details</button></div></header>' +
+    '<div class="vis">' + VIS[s.id]() + '</div></div></section>';
 }).join('');
 const slides = [...track.querySelectorAll('.slide')];
 
@@ -110,6 +109,7 @@ function paintRoadmap() {
     '<div class="rm-c"><h3>Six-month roadmap</h3><p>Capacity-constrained, at least one meaningful release per team per month</p></div></div>' +
     '<div class="capv"><p class="cap">Team-month capacity, illustrative example</p><ul class="cbars">' + bar('Current plan', ev.cap.baselineUsed) + bar('Proposed', ev.cap.proposedUsed) + '</ul></div>';
   const m = $('[data-live-mets]');
+  if (!m) return;
   m.innerHTML = '<li><span class="mk">Projected return of retained work</span><span class="mv">' + fmt.pct(sm.roi) + '</span><small>Confidence-weighted ROI, ' + sm.scen + ' case</small></li>' +
     '<li><span class="mk">Avoidable spending</span><span class="mv">' + fmt.money(sm.avoided) + '</span><small>Remaining cost of stopped or deferred work</small></li>' +
     '<li><span class="mk">Engineering capacity redeployed</span><span class="mv">' + fmt.tm(sm.redeployed) + ' team-months</span><small>Off stopped work; net released ' + fmt.tm(sm.released) + '</small></li>' +
@@ -245,7 +245,8 @@ function milestonesHTML(s) {
 function build(id) {
   const s = SLIDES.find((x) => x.id === id), d = document.createElement('dialog');
   d.className = 'dlg' + (id === 'roadmap' ? ' wide' : ''); d.setAttribute('aria-labelledby', 'dt-' + id);
-  const body = s.details.sections.map((x) => '<section class="ds"><h3>' + esc(x.h) + '</h3>' + blocks(x.blocks) + '</section>').join('');
+  const top = '<section class="ds"><h3>Economics and measurement</h3>' + roiHTML(s) + '</section><section class="ds"><h3>Timeline</h3>' + ganttHTML(s) + '</section>';
+  const body = top + s.details.sections.map((x) => '<section class="ds"><h3>' + esc(x.h) + '</h3>' + blocks(x.blocks) + '</section>').join('');
   if (id === 'roadmap') {
     d.innerHTML = '<div class="dh"><h2 id="dt-roadmap">' + esc(s.details.title) + '</h2><button type="button" class="btn" data-close>Close</button></div>' +
       '<div class="seg2" role="group" aria-label="Details view"><button type="button" class="btn" data-view="plan" aria-pressed="true">Method and plan</button><button type="button" class="btn" data-view="calc" aria-pressed="false">ROI calculator</button></div>' +
@@ -254,6 +255,7 @@ function build(id) {
     d.innerHTML = '<div class="dh"><h2 id="dt-' + id + '">' + esc(s.details.title) + '</h2><button type="button" class="btn" data-close>Close</button></div><div class="db"><p class="intro">' + esc(s.details.intro) + '</p>' + body + milestonesHTML(s) + '</div>';
   }
   document.body.appendChild(d);
+  if (id === 'roadmap') paintRoadmap();
   d.addEventListener('click', (e) => {
     if (e.target === d || e.target.closest('[data-close]')) return d.close();
     const j = e.target.closest('[data-jump]'); if (j) { e.preventDefault(); d.close(); go(ids.indexOf(j.dataset.jump)); }

@@ -329,3 +329,17 @@ input[type=checkbox], input[type=radio] { width: 1.05rem; height: 1.05rem; accen
 .lab .locked ul { list-style: none; display: grid; gap: 3px; font-size: .86rem; color: var(--muted); } .lab .locked li::before { content: '\1F512\00a0'; filter: grayscale(1); }
 .lab .em-view { max-width: 100%; }
 @media (max-width: 760px) { .lab .em-cards { grid-template-columns: 1fr; } .lab .em-card small { display: block; } .lab .em-hd small, .lab .em-consent { display: block; } }
+
+/* calmer slides: title, one message, one diagram */
+.sb { grid-template-rows: auto minmax(0, 1fr); gap: clamp(16px, 4vh, 48px); padding-block: clamp(16px, 4vh, 48px); }
+.vis { justify-content: center; font-size: 1.2em; }
+.vis .cap, .legend { display: none; }
+.rmv .capv { display: none; }
+.flow b { font-size: 1.05em; } .flow span { font-size: .85em; }
+.msg { font-size: 1.2em; max-width: 44ch; }
+.dialog-roi .roi, .dlg .roi { border-top: 0; padding-top: 0; }
+.dlg .gantt .gm { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.dlg .roi { grid-template-columns: 1fr; }
+@media (max-width: 760px) { .sb { gap: 14px; padding-block: 12px; } .vis { font-size: 1.05em; } .msg { font-size: 1em; } }
+.ov2 { grid-template-columns: 1fr; } .toc { grid-template-columns: repeat(3, minmax(0, 1fr)); } .toc a { height: 100%; }
+.stages b { font-size: .9em; } .stages > li { padding: .5em .55em; }
