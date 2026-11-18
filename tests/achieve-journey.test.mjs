@@ -86,7 +86,7 @@ test('a bigger deposit shortens the plan, never below the minimum months', () =>
 test('expectations cover credit, calls, lawsuits, taxes and fees honestly', () => {
   const ids = C.expectations(38).map((x) => x.id);
   for (const k of ['time', 'credit', 'calls', 'suit', 'tax', 'fees', 'us']) assert.ok(ids.includes(k), k);
-  assert.match(C.expectations(38)[1].b, /drop/);
+  assert.match(C.expectations(38)[1].b, /lowers your score/);
   assert.match(C.expectations(38)[0].b, /38 months/);
 });
 test('listening replies are warm and the default never dead-ends', () => {
