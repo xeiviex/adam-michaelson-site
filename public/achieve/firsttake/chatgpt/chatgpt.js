@@ -22,7 +22,7 @@ function actions() {
   return h('div', { class: 'acts' }, ['copy', 'thumb', 'speaker', 'refresh'].map((n) => h('button', { type: 'button', class: 'ib', 'aria-label': n, html: icon(n, 16) })));
 }
 function linkCard(l) {
-  return h('a', { class: 'card', href: l.url }, h('span', { class: 'cl' }, h('img', { src: '/achieve/img/logo-mark.png', alt: '' })), h('div', null, h('b', null, l.title), h('span', null, l.host)), h('span', { class: 'go', html: icon('chevR', 18) }));
+  return h('a', { class: 'card', href: l.url }, h('span', { class: 'cl' }, h('img', { src: '/achieve/firsttake/img/logo-mark.png', alt: '' })), h('div', null, h('b', null, l.title), h('span', null, l.host)), h('span', { class: 'go', html: icon('chevR', 18) }));
 }
 function userRow(text) {
   const m = h('div', { class: 'msg user' }, h('div', { class: 'ub' }, text));
@@ -30,7 +30,7 @@ function userRow(text) {
 }
 function botShell(first) {
   const m = h('div', { class: 'msg bot' });
-  if (first) m.append(h('div', { class: 'used' }, h('img', { src: '/achieve/img/logo-mark.png', alt: '' }), 'Achieve'));
+  if (first) m.append(h('div', { class: 'used' }, h('img', { src: '/achieve/firsttake/img/logo-mark.png', alt: '' }), 'Achieve'));
   const t = h('div', { class: 'bt' });
   m.append(t); col.append(m);
   return { m, t };
@@ -80,12 +80,12 @@ const toggle = (on) => { side.classList.toggle('open', on); scrim.classList.togg
 $('#menuBtn').addEventListener('click', () => toggle(true));
 $('#sideClose').addEventListener('click', () => toggle(false));
 scrim.addEventListener('click', () => toggle(false));
-$('#cmpBtn').addEventListener('click', () => { location.href = '/achieve/chatgpt/'; });
+$('#cmpBtn').addEventListener('click', () => { location.href = '/achieve/firsttake/chatgpt/'; });
 
 const devBtn = $('#devBtn'), devMenu = $('#devMenu');
 devBtn.addEventListener('click', () => { devMenu.hidden = !devMenu.hidden; devBtn.setAttribute('aria-expanded', String(!devMenu.hidden)); });
 document.addEventListener('click', (e) => { if (!$('#dev').contains(e.target)) devMenu.hidden = true; });
-$('#doReset').addEventListener('click', () => { S.reset(); location.href = '/achieve/chatgpt/'; });
+$('#doReset').addEventListener('click', () => { S.reset(); location.href = '/achieve/firsttake/chatgpt/'; });
 
 async function boot() {
   const d = S.get().dropout;

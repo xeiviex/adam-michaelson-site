@@ -36,7 +36,7 @@ function addRow(who, text, link, at, instant) {
   }
   if (link) {
     const a = h('a', { class: 'link', href: link.url },
-      h('div', { class: 'lg' }, h('img', { src: '/achieve/img/logo-full.png', alt: 'achieve' })),
+      h('div', { class: 'lg' }, h('img', { src: '/achieve/firsttake/img/logo-full.png', alt: 'achieve' })),
       h('div', { class: 'lt' }, h('b', null, link.title), h('span', null, link.host)));
     const r = h('div', { class: 'row tail hasLink' + (text ? '' : (same ? '' : ' gap')) }, h('div', { class: 'bub' }, a));
     if (instant) r.firstChild.style.animation = 'none';
@@ -96,7 +96,7 @@ function convos() {
   const items = [['Achieve', lastMsg, 'now', true], ['Mom', 'Sounds good, see you Sunday!', 'Yesterday'], ['Jordan Lee', 'Haha that was great', 'Tuesday'], ['Weekend Hike Crew', 'Trail looks clear', 'Monday'], ['Delivery updates', 'Your package arrives today', 'Sunday']];
   const ul = $('#convos');
   ul.replaceChildren(...items.map((c) => h('li', { class: 'convo' + (c[3] ? ' on' : '') },
-    h('span', { class: 'cav' }, c[3] ? h('img', { src: '/achieve/img/logo-mark.png', alt: '' }) : c[0].charAt(0)),
+    h('span', { class: 'cav' }, c[3] ? h('img', { src: '/achieve/firsttake/img/logo-mark.png', alt: '' }) : c[0].charAt(0)),
     h('div', null, h('b', null, c[0]), h('span', null, c[1])), h('time', null, c[2]))));
 }
 
@@ -104,7 +104,7 @@ function convos() {
 const devBtn = $('#devBtn'), devMenu = $('#devMenu');
 devBtn.addEventListener('click', () => { devMenu.hidden = !devMenu.hidden; devBtn.setAttribute('aria-expanded', String(!devMenu.hidden)); });
 document.addEventListener('click', (e) => { if (!$('#dev').contains(e.target)) devMenu.hidden = true; });
-$('#doReset').addEventListener('click', () => { S.reset(); location.href = '/achieve/messages/'; });
+$('#doReset').addEventListener('click', () => { S.reset(); location.href = '/achieve/firsttake/messages/'; });
 
 async function boot() {
   const d = S.get().dropout;

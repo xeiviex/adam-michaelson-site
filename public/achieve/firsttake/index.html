@@ -10,12 +10,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/achieve/achieve.css?v=1">
-<link rel="icon" href="/achieve/img/logo-mark.png" type="image/png">
+<link rel="stylesheet" href="/achieve/firsttake/achieve.css?v=1">
+<link rel="icon" href="/achieve/firsttake/img/logo-mark.png" type="image/png">
 </head>
 <body class="ach">
 <header class="top">
-  <a class="brand" href="/achieve/" aria-label="Achieve home"><img src="/achieve/img/logo-full.png" alt="achieve" width="124" height="32"></a>
+  <a class="brand" href="/achieve/firsttake/" aria-label="Achieve home"><img src="/achieve/firsttake/img/logo-full.png" alt="achieve" width="124" height="32"></a>
   <div class="top-r">
     <span class="mins" aria-live="polite"></span>
     <a class="tel" href="tel:+18334352021"><span class="ico" id="telIc"></span><span class="tel-t">(833) 435-2021</span></a>
@@ -81,13 +81,13 @@
 </div>
 
 <script type="module">
-  import { icon } from '/achieve/shared/dom.js';
+  import { icon } from '/achieve/firsttake/shared/dom.js';
   const put = (id, name, size, sw) => { const e = document.getElementById(id); if (e) e.innerHTML = icon(name, size, sw); };
   put('telIc', 'phone', 18); put('hdIc', 'headset', 18); put('hd2Ic', 'headset', 20); put('stripIc', 'menu', 20, 2);
   put('upIc', 'up', 14, 2.4); put('xIc', 'x', 20); put('infoIc', 'info', 18); put('sendBtn', 'send', 18, 2);
   const av = document.getElementById('hbAv');
-  import('/achieve/shared/dom.js').then((m) => av.append(m.avatarImg('hb-img')));
+  import('/achieve/firsttake/shared/dom.js').then((m) => av.append(m.avatarImg('hb-img')));
 </script>
-<script type="module" src="/achieve/app.js?v=1"></script>
+<script type="module" src="/achieve/firsttake/app.js?v=1"></script>
 </body>
 </html>

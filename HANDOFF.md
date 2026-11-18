@@ -34,12 +34,13 @@ Updated 2026-10-08.
 3. Records privacy-friendly pageviews to D1 (`SMS_OPTIN_DB`) asynchronously with zero page latency, assigning a 1-year first-party cookie (`_am_vid`) to identify unique and returning visitors without PII.
 4. Exposes `/api/stats` (authenticated via `STATS_KEY` or `am_stats_k9x2m4p8v7w1n5q3`) and `/api/admin/stats` for real-time querying of totals, unique visitors, returning users, page rank, and daily trends.
 
-## Achieve prototype (2026-11-06)
-`/achieve/` (web funnel), `/achieve/messages/` (Apple Messages) and `/achieve/chatgpt/` (ChatGPT) are one prototype for a CEO conversation: a hybrid of conversation and progressive forms that mirrors Achieve's real application flow (screenshots in the "Achieve" Google Slides deck) with Aktify-style conventions.
-- Shared logic lives in `public/achieve/shared/`: `flow.js` (steps, fields, parsers, time estimate), `store.js` (session data model in localStorage: applicant, document, step, step_applicant; 30-minute idle expiry; SSN is never stored), `offers.js` (sample Achieve-only offers), `agent.js` (the chasing agent for Messages/ChatGPT: next incomplete step, links back with `?resume=<step>` for anything sensitive), `kb.js` + `bot.js` (assistant knowledge and client; offline FAQ fallback), `dom.js`.
+## Achieve first-take prototype (2026-11-06, moved to /achieve/firsttake 2026-11-17)
+- The new Achieve debt-relief prototype (case study for Sean Fox) is being built at `/achieve/`. Until it ships, `/achieve/` has no page.
+`/achieve/firsttake/` (web funnel), `/achieve/firsttake/messages/` (Apple Messages) and `/achieve/firsttake/chatgpt/` (ChatGPT) are one prototype for a CEO conversation: a hybrid of conversation and progressive forms that mirrors Achieve's real application flow (screenshots in the "Achieve" Google Slides deck) with Aktify-style conventions.
+- Shared logic lives in `public/achieve/firsttake/shared/`: `flow.js` (steps, fields, parsers, time estimate), `store.js` (session data model in localStorage: applicant, document, step, step_applicant; 30-minute idle expiry; SSN is never stored), `offers.js` (sample Achieve-only offers), `agent.js` (the chasing agent for Messages/ChatGPT: next incomplete step, links back with `?resume=<step>` for anything sensitive), `kb.js` + `bot.js` (assistant knowledge and client; offline FAQ fallback), `dom.js`.
 - The assistant is `functions/api/achieve-assistant.js` (Claude via ANTHROPIC_API_KEY, optional ACHIEVE_MODEL). Only non-sensitive context is sent.
 - "Prototype" pill (bottom-left, top on phones) is the drop-out simulator and reset. Not part of the product.
-- Human consultant "Maya" is simulated; she uses `/achieve/img/maya.jpg` if present, else an illustration. Drop a photo there to replace it.
+- Human consultant "Maya" is simulated; she uses `/achieve/firsttake/img/maya.jpg` if present, else an illustration. Drop a photo there to replace it.
 - Offers are illustrative samples, not real Achieve pricing. Tests: `tests/achieve.test.mjs`.
 
 ## LendingTree strategy deck (2026-11-17)

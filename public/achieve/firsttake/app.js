@@ -318,7 +318,7 @@ function userMsg(text) {
   return m;
 }
 function dots(who) {
-  const m = h('div', { class: 'msg ' + who + ' wait' }, who === 'human' ? avatarImg('mav') : h('img', { class: 'mav mark', src: '/achieve/img/logo-mark.png', alt: '' }),
+  const m = h('div', { class: 'msg ' + who + ' wait' }, who === 'human' ? avatarImg('mav') : h('img', { class: 'mav mark', src: '/achieve/firsttake/img/logo-mark.png', alt: '' }),
     h('div', { class: 'mb' }, h('span', { class: 'dots', 'aria-label': 'Typing' }, h('i'), h('i'), h('i'))));
   stream.insertBefore(m, tail); requestAnimationFrame(() => m.classList.add('in'));
   return m;
@@ -408,11 +408,11 @@ document.addEventListener('click', (e) => { if (!dev.contains(e.target)) { devMe
 function dropOut(to) {
   S.dropOut('web', to);
   document.body.classList.add('leaving');
-  setTimeout(() => { location.href = to === 'chatgpt' ? '/achieve/chatgpt/' : '/achieve/messages/'; }, reduced() ? 0 : 450);
+  setTimeout(() => { location.href = to === 'chatgpt' ? '/achieve/firsttake/chatgpt/' : '/achieve/firsttake/messages/'; }, reduced() ? 0 : 450);
 }
 $('#doDropMsg').addEventListener('click', () => dropOut('messages'));
 $('#doDropGpt').addEventListener('click', () => dropOut('chatgpt'));
-$('#doReset').addEventListener('click', () => { S.reset(); location.href = '/achieve/'; });
+$('#doReset').addEventListener('click', () => { S.reset(); location.href = '/achieve/firsttake/'; });
 
 /* ---------- start ---------- */
 async function boot() {
@@ -423,7 +423,7 @@ async function boot() {
   F.STEPS.forEach((s) => { if (S.isDone(s.id)) renderAnswered(s); });
   renderRoad();
   if (dropped) S.clearDropout();
-  if (resume) history.replaceState(null, '', '/achieve/');
+  if (resume) history.replaceState(null, '', '/achieve/firsttake/');
 
   const next = S.nextIncomplete();
   const target = resume && F.stepById(resume) && !S.isDone(resume) ? resume : next;

@@ -75,7 +75,7 @@ export function icon(name, size, sw) {
 export const ico = (name, size, sw) => h('span', { class: 'ico', html: icon(name, size, sw) });
 
 /* A friendly illustrated stand-in for the human consultant. Replace by dropping a real photo at
-   /achieve/img/maya.jpg: the <img> below tries that first and falls back to this drawing. */
+   /achieve/firsttake/img/maya.jpg: the <img> below tries that first and falls back to this drawing. */
 export const MAYA_SVG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3defe"/><stop offset="1" stop-color="#c4ebdc"/></linearGradient></defs><rect width="96" height="96" fill="url(#g)"/>' +
   '<path d="M20 52c-2-22 10-38 28-38s30 16 28 38c-1 14 2 24 6 30H14c4-6 7-16 6-30z" fill="#6b3f2a"/>' +
@@ -89,7 +89,7 @@ export const MAYA_SVG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
   '<circle cx="31" cy="49" r="2" fill="#f1d27a"/><circle cx="65" cy="49" r="2" fill="#f1d27a"/></svg>');
 
 export function avatarImg(cls) {
-  const img = h('img', { class: cls || 'avatar', alt: 'Maya, Achieve loan consultant', src: '/achieve/img/maya.jpg', width: 96, height: 96 });
+  const img = h('img', { class: cls || 'avatar', alt: 'Maya, Achieve loan consultant', src: '/achieve/firsttake/img/maya.jpg', width: 96, height: 96 });
   img.addEventListener('error', () => { img.onerror = null; img.src = MAYA_SVG; }, { once: true });
   return img;
 }

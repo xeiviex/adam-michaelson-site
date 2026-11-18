@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as F from '../public/achieve/shared/flow.js';
-import { createStore, TTL } from '../public/achieve/shared/store.js';
-import { buildOffers, pmt } from '../public/achieve/shared/offers.js';
-import { createAgent, isQuestion } from '../public/achieve/shared/agent.js';
-import { localAnswer } from '../public/achieve/shared/kb.js';
+import * as F from '../public/achieve/firsttake/shared/flow.js';
+import { createStore, TTL } from '../public/achieve/firsttake/shared/store.js';
+import { buildOffers, pmt } from '../public/achieve/firsttake/shared/offers.js';
+import { createAgent, isQuestion } from '../public/achieve/firsttake/shared/agent.js';
+import { localAnswer } from '../public/achieve/firsttake/shared/kb.js';
 import { contextBlock } from '../functions/api/achieve-assistant.js';
 
 const mem = () => { const m = {}; return { getItem: (k) => m[k] ?? null, setItem: (k, v) => { m[k] = String(v); }, removeItem: (k) => { delete m[k]; }, m }; };
@@ -96,7 +96,7 @@ test('agent: picks up at the next incomplete step, never takes sensitive data, l
   let out = agent.start();
   assert.match(out[0].text, /^Hi there/);
   assert.match(out[1].text, /How much/);
-  assert.ok(out.some((m) => m.link && m.link.url === 'https://example.test/achieve/'));
+  assert.ok(out.some((m) => m.link && m.link.url === 'https://example.test/achieve/firsttake/'));
   const hist = [];
   const say = async (t) => { const r = await agent.reply(t, hist); hist.push({ who: 'user', text: t }); r.forEach((m) => hist.push({ who: 'agent', text: m.text })); return r; };
   await say('$25k'); await say('debt consolidation'); await say('$80k');

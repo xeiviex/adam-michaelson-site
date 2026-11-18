@@ -1,11 +1,11 @@
-/* Achieve prototype: the assistant behind /achieve, /achieve/messages and /achieve/chatgpt.
+/* Achieve prototype: the assistant behind /achieve, /achieve/firsttake/messages and /achieve/firsttake/chatgpt.
    POST { messages: [{role, content}], ctx: { step, amount, purpose, first, offerId, offers, persona, channel } } -> { text }
    Uses ANTHROPIC_API_KEY (already set for /api/chat). Optional ACHIEVE_MODEL overrides the model.
-   Knowledge is server-side (public/achieve/shared/kb.js); the caller can only add light context, never change the rules.
+   Knowledge is server-side (public/achieve/firsttake/shared/kb.js); the caller can only add light context, never change the rules.
    The client never sends a Social Security number or birth date. */
 import Anthropic from "@anthropic-ai/sdk";
-import { KNOWLEDGE_TEXT } from "../../public/achieve/shared/kb.js";
-import { STEPS } from "../../public/achieve/shared/flow.js";
+import { KNOWLEDGE_TEXT } from "../../public/achieve/firsttake/shared/kb.js";
+import { STEPS } from "../../public/achieve/firsttake/shared/flow.js";
 
 const RULES = `You are the assistant inside a prototype of Achieve's loan application. Visitors are going through a step-by-step flow (a form, delivered as a conversation) and can ask you anything at any time.
 

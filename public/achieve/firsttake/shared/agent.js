@@ -29,7 +29,7 @@ export function createAgent(o) {
     return (s.agent[channel] = s.agent[channel] || { pending: null, linked: [], n: 0 });
   };
   const A = () => S.applicant();
-  const linkFor = (stepId) => ({ url: origin + '/achieve/' + (stepId ? '?resume=' + stepId : ''), title: 'Continue your Achieve application', host: 'adam-michaelson.com/achieve' });
+  const linkFor = (stepId) => ({ url: origin + '/achieve/firsttake/' + (stepId ? '?resume=' + stepId : ''), title: 'Continue your Achieve application', host: 'adam-michaelson.com/achieve/firsttake' });
   const msg = (text, extra) => Object.assign({ text }, extra || {});
 
   /* Decide what to do next. Completes steps whose answers are all in hand. */
