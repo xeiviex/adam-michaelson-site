@@ -4,6 +4,9 @@ import { h, $, $$, sleep, reduced, typeInto, tween, ico, icon } from './firsttak
 import { money } from './firsttake/shared/flow.js';
 import { buildForm } from './firsttake/forms.js';
 import * as J from './journey.js';
+import { fx } from './effects.js';
+import { paintingBlock } from './art-ui.js';
+import * as MU from './movie-ui.js';
 import { pace, getSpeed, setSpeed, SPEEDS } from './speed.js';
 import * as Q from './qualify.js';
 import * as QU from './qualify-ui.js';
@@ -178,7 +181,7 @@ function proceed() {
 async function stageDone(id, o) {
   if (!state.stageDone.includes(id)) state.stageDone.push(id);
   save(); renderRoad();
-  if (!o.quiet) burst();
+  if (!o.quiet) burst(o.fx || 'confetti');
   const t = await say(o.line, 'win');
   const stage = J.stageById(id), next = J.STAGES[J.STAGES.indexOf(stage) + 1];
   const my = ui.run;
@@ -189,17 +192,18 @@ async function stageDone(id, o) {
     h('div', { class: 'win-ic' }, ico('check', 26, 3)),
     h('h3', null, 'Step ' + stage.n + ' of ' + J.STAGES.length + ' complete'),
     h('p', null, o.body),
+    o.extra ? o.extra() : null,
     next && !next.built ? h('div', { class: 'soon-note' }, ico('info', 16), h('span', null, 'Prototype note: "' + next.label + '" is the next piece to be built. The path on the right shows the whole journey.')) : null,
     go);
   t.append(card); scrollToEl(t);
-  if (state.auto && next && next.built) { await sleep(reduced() ? 0 : pace(2600)); if (my === ui.run && state.auto) o.onNext(); }
+  if (state.auto && next && next.built) { await sleep(reduced() ? 0 : pace(o.hold || 2600)); if (my === ui.run && state.auto) o.onNext(); }
 }
-const completeLead = (quiet) => stageDone('lead', { quiet, line: 'You took the first step, ' + (state.applicant.first || 'there') + '. Nice work.',
+const completeLead = (quiet) => stageDone('lead', { quiet, fx: 'confetti', line: 'You took the first step, ' + (state.applicant.first || 'there') + '. Nice work.',
   body: 'Telling us about your debt is done. Next, a few questions to see which program fits and what has made payments hard.', onNext: startQualify });
-const completeQualify = (quiet) => stageDone('qualify', { quiet, line: "That's two steps down, " + (state.applicant.first || 'there') + '.',
+const completeQualify = (quiet) => stageDone('qualify', { quiet, fx: 'streamers', line: "That's two steps down, " + (state.applicant.first || 'there') + '.',
   body: 'You told us about your debt, what changed, and your budget. Next you meet your plan: we confirm your debts, listen, set honest expectations, and show what you would pay.', onNext: startConsult });
 
-const completeConsult = (quiet) => stageDone('consult', { quiet, line: 'You have a plan, ' + (state.applicant.first || 'there') + '.',
+const completeConsult = (quiet) => stageDone('consult', { quiet, fx: 'band', line: 'You have a plan, ' + (state.applicant.first || 'there') + '.',
   body: 'You confirmed your debts, told us what matters, heard exactly what to expect, and chose a deposit. Next you review the agreement, sign, and open your account.', onNext: startEnroll });
 
 /* ---------- stage 2: qualification ---------- */
@@ -375,7 +379,7 @@ async function finishE(id, patch, turn) {
 const completeEnroll = (quiet) => {
   const d = state.e.draft || {};
   const first = d.first ? E.fmtDate(new Date(d.first)) : 'soon';
-  return stageDone('enroll', { quiet, line: "You're enrolled, " + (state.applicant.first || 'there') + '!',
+  return stageDone('enroll', { quiet, fx: 'fireworks', line: "You're enrolled, " + (state.applicant.first || 'there') + '!',
     body: 'Your agreement is signed and your dedicated account is open. Your first deposit is set for ' + first + '. Next you sign in and make it.', onNext: startDeposit });
 };
 
@@ -423,7 +427,7 @@ async function finishD(id, patch, turn) {
   await sleep(reduced() ? 0 : pace(650));
   if (D.nextDStep(state.ddone)) proceedD(); else completeDeposit();
 }
-const completeDeposit = (quiet) => stageDone('deposit', { quiet, line: 'Your first deposit is in, ' + (state.applicant.first || 'there') + '.',
+const completeDeposit = (quiet) => stageDone('deposit', { quiet, fx: 'streamers', line: 'Your first deposit is in, ' + (state.applicant.first || 'there') + '.',
   body: 'Your account is funded, your first deposit cleared, and you know how to tell us about creditor contact. Next you watch your fund grow toward your first settlement.', onNext: startBuild });
 
 /* ---------- stage 6: build your fund ---------- */
@@ -466,7 +470,7 @@ async function finishB(id, patch, turn) {
   await sleep(reduced() ? 0 : pace(650));
   if (B.nextBStep(state.bdone)) proceedB(); else completeBuild();
 }
-const completeBuild = (quiet) => stageDone('build', { quiet, line: 'Your fund is growing, ' + (state.applicant.first || 'there') + '.',
+const completeBuild = (quiet) => stageDone('build', { quiet, fx: 'band', hold: 9000, extra: () => paintingBlock(state.applicant), line: 'Your fund is growing, ' + (state.applicant.first || 'there') + '. We commissioned some serious art for you!',
   body: 'You can see your progress, you know how we will stay in touch, and you can speed things up whenever you like. Next the negotiators go to work, and you approve every settlement.', onNext: startSettle });
 
 /* ---------- stage 7: settle ---------- */
@@ -512,13 +516,14 @@ async function finishS(id, patch, turn) {
   await sleep(reduced() ? 0 : pace(650));
   if (S.nextSStep(state.sdone)) proceedS(); else completeSettle();
 }
-const completeSettle = (quiet) => stageDone('negotiate', { quiet, line: 'Your first debt is handled, ' + (state.applicant.first || 'there') + '.',
+const completeSettle = (quiet) => stageDone('negotiate', { quiet, fx: 'streamers', line: 'Your first debt is handled, ' + (state.applicant.first || 'there') + '.',
   body: 'You met your negotiator, saw every conversation, and approved your first offer. Next comes the finish line.', onNext: startFree });
 
 /* ---------- stage 8: debt free ---------- */
 const FMETA = {
   graduate: { q: 'You made it', sub: 'Take a second. This is a big one.' },
   rave: { q: 'Celebrate', sub: 'Your account, tonight.' },
+  movie: { q: 'We made you a movie', sub: 'Starring you. Press play.' },
   box: { q: 'Your graduation box', sub: 'A small thank you, shipped to your door.' },
   next: { q: 'What comes next', sub: 'Pick what interests you. Skip anything you like.' },
 };
@@ -526,6 +531,7 @@ const recapNow = () => F.recap({ selected: selectedDebts(), deposit: deposit(), 
 function fSummary(id) {
   if (id === 'graduate') return 'Debt free';
   if (id === 'rave') return 'Celebrated with the team';
+  if (id === 'movie') return 'Watched your movie';
   if (id === 'box') return state.f.box ? 'Box going to ' + state.f.box.city + ', ' + state.f.box.state : 'Box on its way';
   if (id === 'next') return F.nextFlowSummary(state.f.next || []);
   return '';
@@ -538,8 +544,10 @@ async function startFree() {
 const proceedF = () => { const n = F.nextFStep(state.fdone); if (n) askF(n); };
 const askF = (id) => runTurn(id, FMETA[id], (t) => {
   const done = (patch) => finishF(id, patch, t);
-  const hooks = { burst: (n) => burst(n) };
+  const seq = ['fireworks', 'streamers', 'band']; let si = 0;
+  const hooks = { burst: (n) => burst(n === undefined ? seq[si++ % seq.length] : n) };
   if (id === 'graduate') return FU.graduateCard(state.applicant, recapNow(), hooks, done);
+  if (id === 'movie') return MU.movieCard(state.applicant, hooks, done);
   if (id === 'rave') return FU.raveCard(state.applicant, recapNow(), hooks, done);
   if (id === 'box') return FU.boxCard(state.applicant, done);
   return FU.nextCard(state.applicant, done);
@@ -558,32 +566,11 @@ async function finishF(id, patch, turn) {
   await sleep(reduced() ? 0 : pace(650));
   if (F.nextFStep(state.fdone)) proceedF(); else completeFree();
 }
-const completeFree = (quiet) => stageDone('free', { quiet, line: 'You are debt free, ' + (state.applicant.first || 'there') + '.',
+const completeFree = (quiet) => stageDone('free', { quiet, fx: 'fireworks', line: 'You are debt free, ' + (state.applicant.first || 'there') + '.',
   body: 'You started with a pile of debt and finished with a plan, a team, and a clean slate. Your graduation box is on its way, and your next steps are waiting whenever you are ready.', onNext: () => {} });
 
-/* ---------- confetti (small, dependency free) ---------- */
-const parts = [];
-let bursting = false;
-function burst(n) {
-  if (reduced()) return;
-  const cv = $('#confetti'), cx = cv.getContext('2d');
-  cv.width = innerWidth; cv.height = innerHeight; cv.classList.add('on');
-  const colors = ['#3300ff', '#5a4cf0', '#146c55', '#ffb703', '#ff5d8f', '#00c2a8'];
-  const now = performance.now();
-  for (let i = 0; i < (n || 140); i++) parts.push({ x: innerWidth / 2 + (Math.random() - .5) * 260, y: innerHeight * .45, vx: (Math.random() - .5) * 14, vy: -Math.random() * 16 - 4, s: 5 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - .5) * .3, c: colors[(Math.random() * colors.length) | 0], t0: now });
-  if (bursting) return;
-  bursting = true;
-  (function frame(t) {
-    cx.clearRect(0, 0, cv.width, cv.height);
-    for (let i = parts.length - 1; i >= 0; i--) {
-      const p = parts[i], age = t - p.t0;
-      p.vy += .42; p.x += p.vx; p.y += p.vy; p.r += p.vr;
-      if (age > 2800 || p.y > cv.height + 40) { parts.splice(i, 1); continue; }
-      cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c; cx.globalAlpha = Math.max(0, 1 - age / 2800); cx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * .6); cx.restore();
-    }
-    if (parts.length) requestAnimationFrame(frame); else { cx.clearRect(0, 0, cv.width, cv.height); cv.classList.remove('on'); bursting = false; }
-  })(now);
-}
+/* ---------- celebrations: confetti, streamers, fireworks, band (effects.js) ---------- */
+const burst = (n, kind) => fx(typeof n === 'string' ? n : (kind || 'confetti'), typeof n === 'string' ? undefined : n);
 
 /* ---------- assistant dock ---------- */
 const askForm = $('#askForm'), askInput = $('#askInput');
@@ -625,19 +612,26 @@ $('#suggRow').append(...SUGGESTIONS.map((s) => h('button', { type: 'button', onc
 
 /* ---------- prototype controls ---------- */
 const devBtn = $('#devBtn'), devMenu = $('#devMenu');
-const paintSpeed = () => { $('#doSpeed').textContent = 'Auto-play speed: ' + SPEEDS[getSpeed()].label + ' (tap to switch)'; };
-$('#doSpeed').addEventListener('click', () => { setSpeed(getSpeed() === 'fast' ? 'slow' : 'fast'); paintSpeed(); });
+const SPEED_LABEL = () => 'Auto-play speed: ' + SPEEDS[getSpeed()].label;
+const paintSpeed = () => { $('#doSpeed').textContent = SPEED_LABEL(); };
 paintSpeed();
-const paintAuto = () => { devBtn.textContent = state.auto ? 'Auto-play on' : 'Auto-play off'; $('#doAuto').textContent = 'Auto-play: ' + (state.auto ? 'on (tap to take over)' : 'off (tap to turn on)'); };
-devBtn.addEventListener('click', () => { const open = devMenu.hidden; devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); });
-$('#doAuto').addEventListener('click', () => {
-  state.auto = !state.auto; save(); paintAuto(); devMenu.hidden = true; devBtn.setAttribute('aria-expanded', 'false');
+const paintAuto = () => { devBtn.textContent = state.auto ? 'Auto-play on' : 'Auto-play off'; $('#doAuto').textContent = 'Auto-play: ' + (state.auto ? 'on' : 'off'); };
+/* the menu opens from the pill, closes on a tap away, on Escape, and a second after a choice (the choice pulses first) */
+let closeTimer = 0;
+const setMenu = (open) => { clearTimeout(closeTimer); $$('.dev-menu button', devMenu).forEach((b) => b.classList.remove('picked')); devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); };
+const choose = (btn, then, wait) => { clearTimeout(closeTimer); $$('.dev-menu button', devMenu).forEach((b) => b.classList.remove('picked')); void btn.offsetWidth; btn.classList.add('picked'); closeTimer = setTimeout(() => { setMenu(false); }, 1000); if (then) setTimeout(then, wait || 0); };
+devBtn.addEventListener('click', () => setMenu(devMenu.hidden));
+document.addEventListener('pointerdown', (e) => { if (!devMenu.hidden && !$('#dev').contains(e.target)) setMenu(false); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !devMenu.hidden) { setMenu(false); devBtn.focus(); } });
+$('#doSpeed').addEventListener('click', (e) => { setSpeed(getSpeed() === 'fast' ? 'slow' : 'fast'); paintSpeed(); choose(e.currentTarget); });
+$('#doAuto').addEventListener('click', (e) => {
+  state.auto = !state.auto; save(); paintAuto(); choose(e.currentTarget);
   const pending = $('.turn.pending', stream);
   if (state.auto && pending) { const step = J.stepById(pending.dataset.step); const form = pending.querySelector('form'); if (step && form) autoFill(form, step, ui.run); }
 });
-$('#doSkip').addEventListener('click', () => {
+$('#doSkip').addEventListener('click', (e) => choose(e.currentTarget, () => {
   if (!state.stageDone.includes('lead')) { Object.assign(state.applicant, J.PERSONA); state.done = J.LEAD_STEPS.map((s) => s.id); }
-  else if (state.stageDone.includes('negotiate')) { state.f = {}; state.fdone = ['graduate', 'rave']; }
+  else if (state.stageDone.includes('negotiate')) { state.f = {}; state.fdone = ['graduate', 'rave', 'movie']; }
   else if (state.stageDone.includes('build')) { state.s = { offer: { debtId: firstDebtNow().id, amount: S.offerFor(firstDebtNow()).amount, fee: S.offerFor(firstDebtNow()).fee, saved: S.offerFor(firstDebtNow()).saved, status: 'approved', pct: S.offerFor(firstDebtNow()).pct } }; state.sdone = ['advocate', 'activity', 'offer']; }
   else if (state.stageDone.includes('deposit')) { state.b = {}; state.bdone = ['fund', 'messages']; }
   else if (state.stageDone.includes('enroll')) { state.d = { login: true, deposit: { cleared: true, amount: deposit(), date: 'Today', bank: bankNow().name + ' ••' + bankNow().last4 } }; state.ddone = ['login', 'deposit']; }
@@ -645,9 +639,9 @@ $('#doSkip').addEventListener('click', () => {
   else if (state.stageDone.includes('qualify')) { Object.assign(state.c, JSON.parse(JSON.stringify(C.PERSONA_C))); state.c.custom = []; state.cdone = C.C_STEPS.filter((x) => x !== 'plan'); }
   else { state.q = JSON.parse(JSON.stringify(Q.PERSONA_Q)); state.qdone = Q.qSteps(state.q).filter((x) => x !== 'result'); state.stageDone.includes('lead') || state.stageDone.push('lead'); }
   save(); devMenu.hidden = true; location.reload();
-});
+}, 700));
 function resetAll() { ui.run++; try { sessionStorage.removeItem(KEY); } catch { /* ignore */ } location.reload(); }
-$('#doReset').addEventListener('click', () => { state.auto = false; try { sessionStorage.setItem(KEY, JSON.stringify({ auto: false })); } catch { /* ignore */ } location.reload(); });
+$('#doReset').addEventListener('click', (e) => choose(e.currentTarget, () => { state.auto = false; try { sessionStorage.setItem(KEY, JSON.stringify({ auto: false })); } catch { /* ignore */ } location.reload(); }, 700));
 
 /* ---------- start ---------- */
 const answeredTurn = (id, q, text) => { const t = addTurn(id, 'answered'); t.append(h('div', { class: 'q' }, h('span', { class: 'qt' }, q)), h('div', { class: 'ans in' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, text)))); };

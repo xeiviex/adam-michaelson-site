@@ -26,17 +26,7 @@ export function graduateCard(applicant, r, hooks, onDone) {
 /* ---- the rave: a party view of the logged-in account ---- */
 export function raveCard(applicant, r, hooks, onDone) {
   const n = applicant.first || 'friend';
-  const s = F.song({ first: n, months: r.months });
-  const eq = h('span', { class: 'eq', 'aria-hidden': 'true' }, h('i'), h('i'), h('i'), h('i'));
-  const lyr = h('div', { class: 'lyrics', 'aria-live': 'polite' });
   const badges = h('div', { class: 'badges' });
-  let playing = false;
-  const play = h('button', { type: 'button', class: 'btn line', onclick: playSong }, ico('speaker', 18), 'Play my song');
-  async function playSong() {
-    if (playing) return; playing = true; play.disabled = true; eq.classList.add('on'); lyr.replaceChildren();
-    for (const l of s.lines) { lyr.append(h('div', { class: 'ly' }, l)); lyr.lastChild.scrollIntoView({ block: 'nearest' }); await pause(1000); }
-    eq.classList.remove('on'); play.disabled = false; playing = false;
-  }
   async function reveal() {
     for (const b of F.BADGES) { badges.append(h('div', { class: 'badge' }, h('span', { class: 'bdg-ic' }, ico('check', 14, 3.4)), h('span', null, h('b', null, b.t), h('em', null, b.d)))); hooks && hooks.burst && hooks.burst(24); await pause(650); }
   }
@@ -47,9 +37,9 @@ export function raveCard(applicant, r, hooks, onDone) {
     h('div', { class: 'rave-zero' }, '$0', h('small', null, 'owed on every enrolled debt')),
     h('div', { class: 'qlab' }, 'Your milestones'), badges,
     h('div', { class: 'qlab' }, 'From your team'), h('div', { class: 'notes' }, notes),
-    h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'A song about you'))), lyr, play, h('p', { class: 'fine' }, s.note)), go);
+    go);
   reveal();
-  return { el, async auto(alive) { await pause(F.BADGES.length * 650 + 1200); if (!alive()) return; playSong(); await pause(s.lines.length * (reduced() ? 0 : 1000) + 2400); if (alive()) go.click(); } };
+  return { el, async auto(alive) { await pause(F.BADGES.length * 650 + 4200); if (alive()) go.click(); } };
 }
 
 /* ---- the gift box ---- */

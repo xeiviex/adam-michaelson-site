@@ -237,3 +237,23 @@ textarea.inp.note { height: auto; padding: 12px 14px; margin-top: 18px; resize: 
 .nx-grid { display: grid; gap: 10px; } .nx { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; text-align: left; cursor: pointer; font-size: 15px; color: var(--ink); } .nx.on { border-color: var(--ind); background: var(--ind-t); } .nx-t { display: flex; flex-direction: column; } .nx-t em { font-style: normal; font-size: 13px; color: var(--mut); margin-top: 2px; }
 .nx-c { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--line-d); display: inline-flex; align-items: center; justify-content: center; color: #fff; } .nx.on .nx-c { background: var(--ind); border-color: var(--ind); }
 .nx-detail { display: grid; gap: 10px; margin-top: 12px; } .nx-step { padding: 12px 14px; border-radius: 10px; background: var(--tint); font-size: 14px; line-height: 1.5; } .nx-step p { margin: 4px 0 0; color: var(--mut); }
+
+/* prototype menu: the chosen item pulses before the menu closes */
+.dev-menu button.picked { background: var(--ind); color: #fff; animation: devpick 1s ease both; }
+.dev-menu button.picked::after { content: '\2713'; float: right; font-weight: 800; }
+@keyframes devpick { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(51, 0, 255, .45); } 25% { transform: scale(1.045); box-shadow: 0 0 0 8px rgba(51, 0, 255, .18); } 55% { transform: scale(.985); } 80% { transform: scale(1.025); box-shadow: 0 0 0 6px rgba(51, 0, 255, 0); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .dev-menu button.picked { animation: none; } }
+
+/* painting and movie */
+.art { margin: 16px 0 6px; display: grid; gap: 10px; justify-items: center; }
+.art-frame { width: 100%; max-width: 460px; filter: drop-shadow(0 14px 22px rgba(30, 10, 60, .35)); animation: arthang .8s cubic-bezier(.2, .9, .3, 1.2) both; } .art-frame svg { display: block; width: 100%; height: auto; }
+@keyframes arthang { from { transform: translateY(-30px) rotate(-3deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.plaque { padding: 8px 16px; border-radius: 6px; background: linear-gradient(135deg, #f3d77a, #b98a2a); color: #2a1a00; text-align: center; font-size: 13px; display: grid; gap: 2px; } .art-print { width: auto; }
+#printSheet { display: none; }
+@media print { body.printing-art > *:not(#printSheet) { display: none !important; } body.printing-art #printSheet { display: block !important; position: static; padding: 24px; text-align: center; } body.printing-art #printSheet svg { width: 100%; max-width: 7in; height: auto; } body.printing-art #printSheet p { font: 16px Georgia, serif; margin-top: 12px; } }
+.movie { padding: 14px; } .mv { position: relative; border-radius: 12px; overflow: hidden; background: #0e0a2e; aspect-ratio: 16 / 9; } .mv-cv { display: block; width: 100%; height: 100%; }
+.mv-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 84px; height: 84px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .92); color: var(--ind); display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 30px rgba(0, 0, 0, .35); cursor: pointer; animation: mvpulse 1.6s ease-in-out infinite; } .mv-play[hidden], .mv-title[hidden] { display: none; }
+@keyframes mvpulse { 0%,100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.08); } }
+.mv-title { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, .6); pointer-events: none; } .mv-title b { display: block; font-size: clamp(20px, 5vw, 34px); letter-spacing: .04em; font-weight: 900; } .mv-title span { font-size: 13px; text-transform: uppercase; letter-spacing: .3em; } .mv-title em { display: block; font-style: normal; font-size: 12px; opacity: .8; margin-top: 4px; }
+.mv-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255, 255, 255, .25); } .mv-bar i { display: block; height: 100%; width: 0; background: #ffb703; }
+.mv-ctl { display: flex; justify-content: center; margin-top: 10px; } .mv-ctl .btn { width: auto; }

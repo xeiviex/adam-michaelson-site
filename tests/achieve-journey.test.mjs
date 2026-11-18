@@ -219,7 +219,7 @@ test('settle: step order', () => {
 import * as F8 from '../public/achieve/free.js';
 test('free: step order and labels', () => {
   assert.equal(F8.nextFStep([]), 'graduate');
-  assert.equal(F8.nextFStep(['graduate', 'rave', 'box']), 'next');
+  assert.equal(F8.nextFStep(['graduate', 'rave', 'movie', 'box']), 'next');
   assert.equal(F8.nextFStep(F8.F_STEPS), null);
   F8.F_STEPS.forEach((s) => assert.ok(F8.fStepLabel(s)));
 });
@@ -243,3 +243,22 @@ test('speed: defaults to fast, slow is slower, unknown values fall back', () => 
   assert.equal(SP.pace(1000), 1000);
   assert.ok(SP.SPEEDS.slow.k > SP.SPEEDS.fast.k);
 });
+
+/* ---- celebrations: movie, painting, effects ---- */
+import * as MV from '../public/achieve/movie.js';
+import { FX_KINDS } from '../public/achieve/effects.js';
+const fakeCtx = () => new Proxy(function () {}, {
+  get: (_, k) => (k === 'measureText' ? () => ({ width: 100 }) : k === 'createLinearGradient' || k === 'createRadialGradient' ? () => ({ addColorStop() {} }) : () => {}),
+  set: () => true,
+});
+test('movie: scenes tile the full runtime', () => {
+  assert.equal(MV.SCENES[0].t0, 0); assert.equal(MV.SCENES[MV.SCENES.length - 1].t1, MV.DUR);
+  MV.SCENES.slice(1).forEach((s, i) => assert.equal(s.t0, MV.SCENES[i].t1));
+  assert.equal(MV.sceneAt(0).id, 'race'); assert.equal(MV.sceneAt(7).id, 'climb'); assert.equal(MV.sceneAt(29.9).id, 'jump');
+});
+test('movie: every frame draws without throwing', () => {
+  const c = fakeCtx();
+  for (let t = 0; t <= MV.DUR + 1; t += 0.25) MV.drawMovie(c, t, 'Jordan Rivera');
+  MV.drawMovie(c, MV.POSTER_T, ''); MV.drawMovie(c, -3, 'X');
+});
+test('effects: four celebration kinds', () => { assert.deepEqual(FX_KINDS, ['confetti', 'streamers', 'fireworks', 'band']); });

@@ -79,7 +79,7 @@ export function celebrateCard(applicant, st, hooks, onDone) {
     h('h3', null, 'The hardest part is done, ' + (applicant.first || 'friend') + '.'),
     h('p', { class: 'party-sub' }, 'You made your first deposit. Most people never take that step. You did.'),
     h('div', { class: 'gift' }, h('div', { class: 'gift-card' }, h('b', null, applicant.first + ', you did it.'), h('span', null, 'From your Achieve team')), h('div', { class: 'gift-t' }, h('b', null, 'A welcome box is on its way'), h('span', null, 'A handwritten card and a few small treats. We will confirm where to send it in your account.'))),
-    h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'A song about you'))), lyr, play, h('p', { class: 'fine' }, s.note)), go);
+    h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'We wrote you a song!'))), lyr, play, h('p', { class: 'fine' }, s.note)), go);
   hooks && hooks.burst && setTimeout(hooks.burst, 250);
   return { el, async auto(alive) { await pause(2400); if (!alive()) return; playSong(); await pause(s.lines.length * (reduced() ? 0 : 1100) + 2600); if (alive()) go.click(); } };
 }

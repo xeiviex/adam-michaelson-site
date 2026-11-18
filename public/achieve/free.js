@@ -3,9 +3,9 @@
    credit scores, rates and mortgage readiness depend on the person and the lender. */
 import { money } from './firsttake/shared/flow.js';
 
-export const F_STEPS = ['graduate', 'rave', 'box', 'next'];
+export const F_STEPS = ['graduate', 'rave', 'movie', 'box', 'next'];
 export const nextFStep = (fdone) => F_STEPS.find((s) => !fdone.includes(s)) || null;
-export const fStepLabel = (id) => ({ graduate: 'You did it', rave: 'Celebrate', box: 'Your gift box', next: 'What comes next' }[id]);
+export const fStepLabel = (id) => ({ graduate: 'You did it', rave: 'Celebrate', movie: 'Your movie', box: 'Your gift box', next: 'What comes next' }[id]);
 
 /* The story of the journey, from what the person already told us. */
 export function recap({ selected, deposit, months, fee }) {
