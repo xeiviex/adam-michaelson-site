@@ -189,7 +189,7 @@ textarea.inp.note { height: auto; padding: 12px 14px; margin-top: 18px; resize: 
 .th-tube { position: relative; width: 42px; height: 300px; border-radius: 21px 21px 0 0; background: #ece9f9; border: 2px solid var(--line-d); border-bottom: 0; overflow: visible; }
 .th-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: linear-gradient(to top, #146c55, #5a4cf0 60%, #3300ff); border-radius: 19px 19px 0 0; transition: height .35s ease; }
 .th-bulb { width: 70px; height: 70px; margin-top: -8px; border-radius: 50%; background: #146c55; border: 2px solid #0f5a46; box-shadow: 0 6px 16px rgba(20, 108, 85, .3); }
-.th-pct { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 17px; }
+.th-pct { position: absolute; bottom: 0; left: 50%; width: 70px; height: 70px; margin-top: 0; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; line-height: 1; color: #fff; font-size: 17px; }
 .th-mark { position: absolute; left: 100%; width: 100px; height: 0; border-top: 1px dashed #9a97b0; } .th-mark span { position: absolute; left: 8px; top: -9px; font-size: 11.5px; color: var(--mut); white-space: nowrap; background: #fff; padding: 0 3px; }
 .th-mark.ofr { border-top: 2px solid var(--mint-ink); } .th-mark.ofr span { color: var(--mint-ink); font-weight: 700; }
 .fd-big { font-size: 24px; font-weight: 800; letter-spacing: -.02em; } .fd-sub { margin-top: 2px; font-size: 14px; color: var(--mut); }
