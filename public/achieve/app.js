@@ -16,11 +16,13 @@ import * as B from './fund.js';
 import * as BU from './fund-ui.js';
 import * as S from './settle.js';
 import * as SU from './settle-ui.js';
+import * as F from './free.js';
+import * as FU from './free-ui.js';
 import { localAnswer, FALLBACK, SUGGESTIONS } from './debt-kb.js';
 
 const KEY = 'achv1';
 const load = () => { try { return JSON.parse(sessionStorage.getItem(KEY)) || null; } catch { return null; } };
-const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], d: {}, ddone: [], b: {}, bdone: [], s: {}, sdone: [], auto: true }, load());
+const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], d: {}, ddone: [], b: {}, bdone: [], s: {}, sdone: [], f: {}, fdone: [], auto: true }, load());
 const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch { /* private mode */ } };
 
 const stream = $('#stream'), tail = $('#tail'), road = $('#roadInner');
@@ -41,7 +43,7 @@ function scrollEnd() {
 
 /* ---------- the path nav ---------- */
 const currentStage = () => J.STAGES.find((s) => !state.stageDone.includes(s.id)) || J.STAGES[J.STAGES.length - 1];
-const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : id === 'enroll' ? { all: E.E_STEPS, done: state.edone, label: E.eStepLabel } : id === 'deposit' ? { all: D.D_STEPS, done: state.ddone, label: D.dStepLabel } : id === 'build' ? { all: B.B_STEPS, done: state.bdone, label: B.bStepLabel } : id === 'negotiate' ? { all: S.S_STEPS, done: state.sdone, label: S.sStepLabel } : null;
+const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : id === 'enroll' ? { all: E.E_STEPS, done: state.edone, label: E.eStepLabel } : id === 'deposit' ? { all: D.D_STEPS, done: state.ddone, label: D.dStepLabel } : id === 'build' ? { all: B.B_STEPS, done: state.bdone, label: B.bStepLabel } : id === 'negotiate' ? { all: S.S_STEPS, done: state.sdone, label: S.sStepLabel } : id === 'free' ? { all: F.F_STEPS, done: state.fdone, label: F.fStepLabel } : null;
 function renderRoad() {
   const cur = currentStage();
   const ss = stageSteps(cur.id);
@@ -510,7 +512,53 @@ async function finishS(id, patch, turn) {
   if (S.nextSStep(state.sdone)) proceedS(); else completeSettle();
 }
 const completeSettle = (quiet) => stageDone('negotiate', { quiet, line: 'Your first debt is handled, ' + (state.applicant.first || 'there') + '.',
-  body: 'You met your negotiator, saw every conversation, and approved your first offer. Next comes the finish line.', onNext: () => {} });
+  body: 'You met your negotiator, saw every conversation, and approved your first offer. Next comes the finish line.', onNext: startFree });
+
+/* ---------- stage 8: debt free ---------- */
+const FMETA = {
+  graduate: { q: 'You made it', sub: 'Take a second. This is a big one.' },
+  rave: { q: 'Celebrate', sub: 'Your account, tonight.' },
+  box: { q: 'Your graduation box', sub: 'A small thank you, shipped to your door.' },
+  next: { q: 'What comes next', sub: 'Pick what interests you. Skip anything you like.' },
+};
+const recapNow = () => F.recap({ selected: selectedDebts(), deposit: deposit(), months: fundModel().months });
+function fSummary(id) {
+  if (id === 'graduate') return 'Debt free';
+  if (id === 'rave') return 'Celebrated with the team';
+  if (id === 'box') return state.f.box ? 'Box going to ' + state.f.box.city + ', ' + state.f.box.state : 'Box on its way';
+  if (id === 'next') return F.nextFlowSummary(state.f.next || []);
+  return '';
+}
+async function startFree() {
+  ui.run++;
+  await say('You finished. Let us celebrate, and then talk about what comes next.');
+  proceedF();
+}
+const proceedF = () => { const n = F.nextFStep(state.fdone); if (n) askF(n); };
+const askF = (id) => runTurn(id, FMETA[id], (t) => {
+  const done = (patch) => finishF(id, patch, t);
+  const hooks = { burst: (n) => burst(n) };
+  if (id === 'graduate') return FU.graduateCard(state.applicant, recapNow(), hooks, done);
+  if (id === 'rave') return FU.raveCard(state.applicant, recapNow(), hooks, done);
+  if (id === 'box') return FU.boxCard(state.applicant, done);
+  return FU.nextCard(state.applicant, done);
+});
+async function finishF(id, patch, turn) {
+  Object.assign(state.f, patch);
+  if (!state.fdone.includes(id)) state.fdone.push(id);
+  save();
+  turn.classList.remove('pending'); turn.classList.add('answered');
+  const card = turn.querySelector('.card'), sub = turn.querySelector('.sub');
+  if (card) { card.style.maxHeight = card.offsetHeight + 'px'; requestAnimationFrame(() => card.classList.add('out')); setTimeout(() => card.remove(), 420); }
+  if (sub) sub.classList.add('fade');
+  const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, fSummary(id))));
+  turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
+  renderRoad();
+  await sleep(reduced() ? 0 : 650);
+  if (F.nextFStep(state.fdone)) proceedF(); else completeFree();
+}
+const completeFree = (quiet) => stageDone('free', { quiet, line: 'You are debt free, ' + (state.applicant.first || 'there') + '.',
+  body: 'You started with a pile of debt and finished with a plan, a team, and a clean slate. Your graduation box is on its way, and your next steps are waiting whenever you are ready.', onNext: () => {} });
 
 /* ---------- confetti (small, dependency free) ---------- */
 const parts = [];
@@ -565,6 +613,7 @@ $('#doAuto').addEventListener('click', () => {
 });
 $('#doSkip').addEventListener('click', () => {
   if (!state.stageDone.includes('lead')) { Object.assign(state.applicant, J.PERSONA); state.done = J.LEAD_STEPS.map((s) => s.id); }
+  else if (state.stageDone.includes('negotiate')) { state.f = {}; state.fdone = ['graduate', 'rave']; }
   else if (state.stageDone.includes('build')) { state.s = { offer: { debtId: firstDebtNow().id, amount: S.offerFor(firstDebtNow()).amount, fee: S.offerFor(firstDebtNow()).fee, saved: S.offerFor(firstDebtNow()).saved, status: 'approved', pct: S.offerFor(firstDebtNow()).pct } }; state.sdone = ['advocate', 'activity', 'offer']; }
   else if (state.stageDone.includes('deposit')) { state.b = {}; state.bdone = ['fund', 'messages']; }
   else if (state.stageDone.includes('enroll')) { state.d = { login: true, deposit: { cleared: true, amount: deposit(), date: 'Today', bank: bankNow().name + ' ••' + bankNow().last4 } }; state.ddone = ['login', 'deposit']; }
@@ -585,6 +634,7 @@ const FLOWS = [
   { id: 'deposit', prev: () => completeEnroll(true), done: () => state.ddone, meta: (id) => DMETA[id], sum: dSummary, go: proceedD, finish: completeDeposit },
   { id: 'build', prev: () => completeDeposit(true), done: () => state.bdone, meta: (id) => BMETA[id], sum: bSummary, go: proceedB, finish: completeBuild },
   { id: 'negotiate', prev: () => completeBuild(true), done: () => state.sdone, meta: (id) => SMETA[id], sum: sSummary, go: proceedS, finish: completeSettle },
+  { id: 'free', prev: () => completeSettle(true), done: () => state.fdone, meta: (id) => FMETA[id], sum: fSummary, go: proceedF, finish: completeFree },
 ];
 (async function start() {
   paintAuto();

@@ -13,7 +13,7 @@ export const STAGES = [
   { id: 'deposit', n: 5, label: 'First deposit', goal: 'Make your first deposit', built: true },
   { id: 'build', n: 6, label: 'Build your fund', goal: 'Save toward your first settlement', built: true },
   { id: 'negotiate', n: 7, label: 'Settle', goal: 'We negotiate, you approve', built: true },
-  { id: 'free', n: 8, label: 'Debt free', goal: 'Graduate and celebrate', built: false },
+  { id: 'free', n: 8, label: 'Debt free', goal: 'Graduate and celebrate', built: true },
 ];
 export const stageById = (id) => STAGES.find((s) => s.id === id);
 

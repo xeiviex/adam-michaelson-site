@@ -4,9 +4,9 @@ import * as J from '../public/achieve/journey.js';
 import { validateStep } from '../public/achieve/firsttake/shared/flow.js';
 import { localAnswer } from '../public/achieve/debt-kb.js';
 
-test('eight stages, first seven built', () => {
+test('eight stages, all eight built', () => {
   assert.equal(J.STAGES.length, 8);
-  assert.deepEqual(J.STAGES.filter((s) => s.built).map((s) => s.id), ['lead', 'qualify', 'consult', 'enroll', 'deposit', 'build', 'negotiate']);
+  assert.deepEqual(J.STAGES.filter((s) => s.built).map((s) => s.id), ['lead', 'qualify', 'consult', 'enroll', 'deposit', 'build', 'negotiate', 'free']);
 });
 test('persona passes every lead step', () => {
   for (const s of J.LEAD_STEPS) assert.deepEqual(validateStep(s, J.PERSONA), {}, s.id);
@@ -213,4 +213,25 @@ test('settle: step order', () => {
   assert.equal(S7.nextSStep([]), 'advocate');
   assert.equal(S7.nextSStep(['advocate', 'activity', 'offer']), 'board');
   assert.equal(S7.nextSStep(S7.S_STEPS), null);
+});
+
+/* ---- stage 8: debt free ---- */
+import * as F8 from '../public/achieve/free.js';
+test('free: step order and labels', () => {
+  assert.equal(F8.nextFStep([]), 'graduate');
+  assert.equal(F8.nextFStep(['graduate', 'rave', 'box']), 'next');
+  assert.equal(F8.nextFStep(F8.F_STEPS), null);
+  F8.F_STEPS.forEach((s) => assert.ok(F8.fStepLabel(s)));
+});
+test('free: recap totals', () => {
+  const r = F8.recap({ selected: [{ balance: 20000 }, { balance: 12000 }], deposit: 600, months: 38 });
+  assert.equal(r.owed, 32000); assert.equal(r.total, 22800); assert.equal(r.debts, 2);
+});
+test('free: address validation', () => {
+  assert.equal(F8.addressOk(F8.PERSONA_ADDR), true);
+  assert.equal(F8.addressOk({ line1: '1 Main', city: 'X', state: 'Utah', zip: '84601' }), false);
+  assert.equal(F8.addressOk({ line1: '123 Main', city: 'X', state: 'UT', zip: '846' }), false);
+});
+test('free: next steps are hedged, no guarantees', () => {
+  F8.NEXT.forEach((x) => assert.doesNotMatch(x.step + x.d, /guaranteed|will raise your score/i));
 });
