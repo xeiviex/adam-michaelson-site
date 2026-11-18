@@ -47,3 +47,50 @@
 
 /* keep the prototype pill clear of the path nav (desktop) */
 @media (min-width: 900px) { .dev { right: auto; left: 16px; } .dev-menu { right: auto; left: 0; } }
+
+/* stage 2 cards */
+.qopts { display: grid; gap: 10px; }
+.qopts.two { grid-template-columns: 1fr 1fr; }
+.qopts.seg { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.qopts .opt { height: auto; min-height: 50px; padding: 10px 14px; line-height: 1.3; }
+.qopts.seg .opt { justify-content: center; text-align: center; font-size: 15px; }
+.qopts .opt[role="checkbox"]::after { content: ''; margin-left: auto; width: 18px; height: 18px; flex: none; border-radius: 5px; border: 1.5px solid var(--line-d); background: #fff; }
+.qopts .opt[role="checkbox"].on::after { background: var(--ind) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.500l4.500 4.500L19 7.500'/%3E%3C/svg%3E") center/13px no-repeat; border-color: var(--ind); }
+.qgroup { margin-top: 20px; }
+.qgroup:first-child { margin-top: 0; }
+.qlab { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.help { margin: 10px 0 0; font-size: 13px; color: var(--mut); line-height: 1.45; }
+.warn { display: flex; gap: 10px; margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: #fff6e5; color: #8a5a00; font-size: 13.5px; line-height: 1.45; }
+.warn[hidden] { display: none; }
+.warn .ico { flex: none; margin-top: 1px; }
+.updoc { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 12px 14px; margin-top: 8px; border: 1px dashed var(--line-d); border-radius: 10px; background: var(--tint); }
+.updoc.has { border-style: solid; border-color: var(--mint-ink); background: var(--mint); }
+.ud-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: 13px; color: var(--mut); }
+.ud-t b { font-size: 14px; color: var(--ink); }
+.fname { color: var(--mint-ink); font-weight: 600; overflow-wrap: anywhere; }
+.ud-a { display: flex; align-items: center; gap: 12px; flex: none; }
+.updoc .btn { margin-top: 0; width: auto; }
+textarea.inp.note { height: auto; padding: 12px 14px; margin-top: 18px; resize: vertical; font-family: inherit; }
+.strength { margin: 12px 0 0; font-size: 13px; color: var(--mut); min-height: 18px; }
+.strength[data-level="documented"], .strength[data-level="described"] { color: var(--mint-ink); font-weight: 600; }
+.bud-live { margin: 16px 0 0; padding: 12px 14px; border-radius: 10px; background: var(--ind-t); color: var(--ind-d); font-size: 14px; font-weight: 600; min-height: 20px; }
+.bud-live:empty { display: none; }
+
+/* the result */
+.res-h { text-align: center; }
+.res-h h3 { margin: 12px 0 6px; font-size: 22px; letter-spacing: -.01em; }
+.res-h p { margin: 0; color: var(--mut); line-height: 1.5; }
+.win-ic.soft { background: #8a869c; }
+.glance { margin-top: 18px; padding: 16px; border-radius: 12px; background: var(--tint); }
+.glance-t { font-size: 13px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--mut); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.glance-t em { font-style: normal; text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--ind); }
+.rs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.rs-stat { display: flex; flex-direction: column; gap: 2px; padding: 12px; border-radius: 10px; background: #fff; border: 1px solid var(--line); }
+.rs-stat .k { font-size: 12.5px; color: var(--mut); }
+.rs-stat b { font-size: 22px; letter-spacing: -.01em; }
+.rs-stat small { font-size: 12px; color: var(--mut); line-height: 1.35; }
+.fine { margin: 12px 0 0; font-size: 12px; color: #77758a; line-height: 1.5; }
+.why { margin: 16px 0 0; padding-left: 18px; font-size: 14px; color: var(--ink); line-height: 1.5; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 14px; background: var(--mint); color: var(--mint-ink); font-size: 12.5px; font-weight: 600; }
+@media (max-width: 560px) { .qopts.two, .rs-grid { grid-template-columns: 1fr; } .updoc { flex-direction: column; align-items: stretch; } }

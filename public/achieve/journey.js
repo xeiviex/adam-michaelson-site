@@ -7,7 +7,7 @@ export const BRAND = { name: 'Achieve', phone: '(833) 435-2021' };
 
 export const STAGES = [
   { id: 'lead', n: 1, label: 'Get started', goal: 'Tell us about your debt', built: true },
-  { id: 'qualify', n: 2, label: 'Qualify', goal: 'See if a program fits', built: false },
+  { id: 'qualify', n: 2, label: 'Qualify', goal: 'See if a program fits', built: true },
   { id: 'consult', n: 3, label: 'Your plan', goal: 'Build your plan with a specialist', built: false },
   { id: 'enroll', n: 4, label: 'Enroll', goal: 'Review, sign and open your account', built: false },
   { id: 'deposit', n: 5, label: 'First deposit', goal: 'Make your first deposit', built: false },
@@ -75,10 +75,11 @@ export function leadComplete(done) { return LEAD_STEPS.every((s) => done.include
 export function nextStep(done) { return LEAD_STEPS.find((s) => !done.includes(s.id)) || null; }
 
 /* Overall progress on the path: each stage is an equal share; the current stage counts by its own steps. */
-export function pathPct(stageDone, leadDone) {
+export function pathPct(stageDone, leadDone, qFrac) {
   const per = 100 / STAGES.length;
   let p = stageDone.length * per;
   if (!stageDone.includes('lead')) p += per * (leadDone.length / LEAD_STEPS.length);
+  else if (!stageDone.includes('qualify')) p += per * (qFrac || 0);
   return Math.round(Math.min(100, p));
 }
 
