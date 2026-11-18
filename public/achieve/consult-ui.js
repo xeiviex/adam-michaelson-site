@@ -117,7 +117,7 @@ export function expectCard(months, onDone) {
     next.replaceChildren(i === items.length - 1 ? 'I understand. Continue' : 'Next', ico('chevR', 16, 2.4));
   }
   show(0);
-  const el = h('div', { class: 'card expect' }, h('div', { class: 'ex-count' }, 'Please read each one. It is how we start honest.'), body, dots, h('div', { class: 'ex-nav' }, back, next));
+  const el = h('div', { class: 'card expect' }, h('div', { class: 'ex-count' }, 'Please read each one so you know exactly what to expect.'), body, dots, h('div', { class: 'ex-nav' }, back, next));
   return { el, async auto(alive) {
     for (let k = 0; k < items.length; k++) { await pause(1500 + items[k].b.length * 11); if (!alive()) return; next.click(); }
   } };
