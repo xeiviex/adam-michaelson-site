@@ -403,3 +403,7 @@ body.acct-open { overflow: hidden; }
 @keyframes sfin { from { opacity: 0; transform: translate(-50%, -8px); } to { opacity: 1; transform: translate(-50%, 0); } }
 @media (max-width: 899px) { .song-float { top: 112px; } }
 @media (prefers-reduced-motion: reduce) { .song-float { animation: none; } }
+
+/* lists and rows inside centered cards read left to right, so every row lines up */
+.after, .after li, .how, .how li, .notes, .note, .badges, .badge, .tl, .tl li { text-align: left; }
+.after li > span, .after li > div, .note > div:last-child { text-align: left; }
