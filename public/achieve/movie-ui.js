@@ -58,7 +58,7 @@ export function movieCard(applicant, hooks, onDone, opts) {
   stage.append(bar);
   ctrl.append(toggle, replay, share, dl);
   const el = h('div', { class: 'card movie' }, stage, ctrl, go);
-  return { el, async auto(alive) {
+  return { el, focus: stage, async auto(alive) {
     await sleep(reduced() ? 0 : 1800); if (!alive()) return;
     start();
     const ended = new Promise((r) => { vid.addEventListener('ended', r, { once: true }); });

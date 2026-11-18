@@ -42,6 +42,12 @@ function scrollToEl(el) {
   const top = Math.max(0, el.offsetTop - Math.min(110, stream.clientHeight * 0.14));
   stream.scrollTo({ top, behavior: reduced() ? 'auto' : 'smooth' });
 }
+/* bring a payoff into view: its top sits about a third of the way down, so the heading above stays partly visible and the rest invites a scroll */
+function revealEl(el) {
+  if (!el) return;
+  const top = Math.max(0, el.getBoundingClientRect().top - stream.getBoundingClientRect().top + stream.scrollTop - stream.clientHeight * 0.3);
+  stream.scrollTo({ top, behavior: reduced() ? 'auto' : 'smooth' });
+}
 function scrollEnd() {
   const last = tail.previousElementSibling;
   const top = last ? last.offsetTop + last.offsetHeight - stream.clientHeight + 28 : stream.scrollHeight;
@@ -197,13 +203,15 @@ async function stageDone(id, o) {
   const go = next && next.built
     ? h('button', { class: 'btn', type: 'button', onclick: o.onNext }, 'Continue to ' + next.label.toLowerCase(), ico('chevR', 16, 2.4))
     : h('button', { class: 'btn line', type: 'button', onclick: () => { state.auto = true; resetAll(); } }, 'Replay from the start');
+  const extra = o.extra ? o.extra() : null;
   const card = h('div', { class: 'card stage-card in' },
     h('div', { class: 'win-ic' }, ico('check', 26, 3)),
     h('h3', null, 'Step ' + stage.n + ' of ' + J.STAGES.length + ' complete'),
     h('p', null, o.body),
-    o.extra ? o.extra() : null,
+    extra,
     go);
   t.append(card); scrollToEl(t);
+  if (extra) after(reduced() ? 0 : 900, () => { if (my === ui.run) revealEl(extra); });
   if (next && next.built) {
     const wait = async () => { const g = ui.gen; await sleep(reduced() ? 0 : pace(o.hold || 2600)); if (my === ui.run && state.auto && g === ui.gen) { t._resume = null; o.onNext(); } };
     t._resume = wait;
@@ -260,6 +268,7 @@ async function runTurn(id, meta, build) {
   card.el.classList.add('card-in'); t.append(card.el);
   requestAnimationFrame(() => card.el.classList.add('in'));
   scrollToEl(t);
+  if (card.focus) after(reduced() ? 0 : 900, () => { if (my === ui.run) revealEl(card.focus); });
   t._resume = () => card.auto(mk());
   if (state.auto) card.auto(mk());
 }
@@ -483,7 +492,7 @@ async function finishB(id, patch, turn) {
   await sleep(reduced() ? 0 : pace(650));
   if (B.nextBStep(state.bdone)) proceedB(); else completeBuild();
 }
-const completeBuild = (quiet) => stageDone('build', { quiet, fx: 'band', hold: 9000, extra: () => paintingBlock(state.applicant), line: 'Your fund is growing, ' + (state.applicant.first || 'there') + '. We commissioned some serious art for you!',
+const completeBuild = (quiet) => stageDone('build', { quiet, fx: 'band', hold: 15000, extra: () => paintingBlock(state.applicant), line: 'Your fund is growing, ' + (state.applicant.first || 'there') + '. We commissioned some serious art for you!',
   body: 'You can see your progress, you know how we will stay in touch, and you can speed things up whenever you like. Next the negotiators go to work, and you approve every settlement.', onNext: startSettle });
 
 /* ---------- stage 7: settle ---------- */

@@ -88,10 +88,10 @@ export function celebrateCard(applicant, st, hooks, onDone) {
     h('div', { class: 'party-ring' }, h('div', { class: 'win-ic big' }, ico('star', 34, 2))),
     h('h3', null, 'The hardest part is done, ' + (applicant.first || 'friend') + '.'),
     h('p', { class: 'party-sub' }, 'You made your first deposit. Most people never take that step. You did.'),
-    h('div', { class: 'gift' }, h('div', { class: 'gift-card' }, h('b', null, applicant.first + ', you did it.'), h('span', null, 'From your Achieve team')), h('div', { class: 'gift-t' }, h('b', null, 'A welcome box is on its way'), h('span', null, 'A handwritten card and a few small treats. We will confirm where to send it in your account.'))),
-    h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'We wrote you a song!'))), h('div', { class: 'pl' }, pb, h('div', { class: 'pl-mid' }, bar, time), dl), audio), go);
+    h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'We wrote you a song!'))), h('div', { class: 'pl' }, pb, h('div', { class: 'pl-mid' }, bar, time), dl), audio),
+    h('div', { class: 'gift' }, h('div', { class: 'gift-card' }, h('b', null, applicant.first + ', you did it.'), h('span', null, 'From your Achieve team')), h('div', { class: 'gift-t' }, h('b', null, 'A welcome box is on its way'), h('span', null, 'A handwritten card and a few small treats. We will confirm where to send it in your account.'))), go);
   hooks && hooks.burst && after(250, hooks.burst);
-  return { el, async auto(alive) { await pause(2400); if (!alive()) return; await pause(4500); while (alive() && !audio.paused && !audio.ended) await sleep(500); if (alive()) go.click(); } };
+  return { el, focus: el.querySelector('.song'), async auto(alive) { await pause(2400); if (!alive()) return; await pause(9500); while (alive() && !audio.paused && !audio.ended) await sleep(500); if (alive()) go.click(); } };
 }
 
 /* ---- creditor outreach log ---- */

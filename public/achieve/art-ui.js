@@ -38,6 +38,11 @@ export function paintingBlock(applicant) {
     chips.forEach((c, k) => { const on = STYLES[k].id === style; c.classList.toggle('on', on); c.setAttribute('aria-pressed', String(on)); });
   }
   show(false);
+  /* the callout starts wobbling only once the portrait is actually on screen */
+  if (typeof IntersectionObserver !== 'undefined') {
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting && e.intersectionRatio >= 0.55)) { io.disconnect(); const y = frameEl.querySelector('.art-you'); if (y) y.classList.add('go'); } }, { threshold: [0.55] });
+    io.observe(frameEl);
+  }
   return h('div', { class: 'art' }, h('p', { class: 'art-lead' }, 'Look who is standing on the summit. That is ', h('b', null, 'you'), ', ' + (applicant.first || 'friend') + '.'), h('div', { class: 'tabs' }, chips), frameEl, plaque,
     h('button', { type: 'button', class: 'btn line art-print', onclick: () => printPainting(n, titleFor(), style) }, ico('file', 18), 'Print my portrait'));
 }

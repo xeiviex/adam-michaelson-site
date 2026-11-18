@@ -349,9 +349,12 @@ body.acct-open { overflow: hidden; }
 
 .art-frame { position: relative; }
 .art-lead { margin: 0 0 10px; font-size: 15px; text-align: center; color: var(--ink); } .art-lead b { color: var(--ind); font-weight: 800; }
-.art-you { position: absolute; left: 6%; top: 24%; display: flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; background: #ffb703; color: #1b1340; font: 800 12.5px var(--font); letter-spacing: .03em; box-shadow: 0 8px 20px rgba(0, 0, 0, .4); pointer-events: none; animation: youpulse 1s ease-in-out 1s 8 alternate; }
-.art-you .art-arr { display: inline-flex; animation: youarr .7s ease-in-out 1s 12 alternate; }
-@keyframes youpulse { from { transform: translateX(0); } to { transform: translateX(10px); } }
-@keyframes youarr { from { transform: translateX(-2px); } to { transform: translateX(6px); } }
-@media (prefers-reduced-motion: reduce) { .art-you, .art-you .art-arr { animation: none; } }
-@media (max-width: 480px) { .art-you { left: 3%; top: 18%; font-size: 11px; padding: 6px 10px; } }
+
+.art-you { position: absolute; left: 3%; top: 34%; display: flex; align-items: center; gap: 4px; max-width: 112px; padding: 9px 8px 9px 12px; border-radius: 18px; background: #ffb703; color: #1b1340; font: 800 12px/1.15 var(--font); letter-spacing: .03em; text-align: left; box-shadow: 0 8px 20px rgba(0, 0, 0, .4); pointer-events: none; opacity: 0; }
+.art-you .art-arr { display: inline-flex; align-self: center; flex: none; }
+.art-you.go { animation: youwob .5s ease-in-out 0s 10 alternate, youfade .7s ease 5s forwards; }
+.art-you.go .art-arr { animation: youarr .5s ease-in-out 0s 10 alternate; }
+@keyframes youwob { from { opacity: 1; transform: translateX(-6px) rotate(-3deg); } to { opacity: 1; transform: translateX(8px) rotate(3deg); } }
+@keyframes youfade { from { opacity: 1; } to { opacity: 0; } }
+@keyframes youarr { from { transform: translateX(-3px); } to { transform: translateX(5px); } }
+@media (prefers-reduced-motion: reduce) { .art-you.go, .art-you.go .art-arr { animation: none; opacity: 1; } }
