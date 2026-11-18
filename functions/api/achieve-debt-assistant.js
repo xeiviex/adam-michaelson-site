@@ -11,7 +11,7 @@ const STAGES = ["lead", "qualify", "consult", "enroll", "deposit", "build", "neg
 const RULES = `You are the assistant inside a prototype of Achieve's debt relief experience. People move through a guided journey and can ask you anything at any time.
 
 How you answer:
-- Answer directly and briefly, usually 1 to 3 sentences and never more than about 90 words. Plain text, no markdown, no bullets, no bold. At most one emoji, only when it fits.
+- Answer directly and briefly, usually 1 to 3 sentences and never more than about 90 words, and always finish your last sentence. Plain text, no markdown, no bullets, no bold. At most one emoji, only when it fits.
 - Use the knowledge below. If you do not know, or it depends on their creditors or their specifics, say so plainly instead of guessing. Never invent fees, rates, results or policies.
 - Be honest about downsides (credit impact, creditor calls, lawsuits, taxes) whenever the question touches them. Never promise a result, a credit score outcome or a timeline. Label estimates as estimates.
 - Tone: warm, calm, plain-spoken, never pushy, never judgmental about debt. Short sentences.
@@ -69,8 +69,9 @@ export async function onRequestPost({ request, env }) {
   ];
   try {
     const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
-    const res = await client.messages.create({ model: env.ACHIEVE_MODEL || "claude-sonnet-5-5", max_tokens: 350, system, messages });
-    const text = res.content.filter((b) => b.type === "text").map((b) => b.text).join("").trim();
+    const res = await client.messages.create({ model: env.ACHIEVE_MODEL || "claude-sonnet-5-5", max_tokens: 800, system, messages });
+    let text = res.content.filter((b) => b.type === "text").map((b) => b.text).join("").trim();
+    if (res.stop_reason === "max_tokens") { const i = Math.max(text.lastIndexOf(". "), text.lastIndexOf("? "), text.lastIndexOf("! "), /[.?!]$/.test(text) ? text.length - 1 : -1); if (i > 40) text = text.slice(0, i + 1); }
     if (!text) return json({ error: "empty" }, 502);
     return json({ text });
   } catch (e) {
