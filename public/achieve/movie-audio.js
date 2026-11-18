@@ -49,5 +49,7 @@ export function createScore() {
   }
   function stop() { try { if (master) { master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setTargetAtTime(0, ctx.currentTime, 0.04); } const c = ctx; setTimeout(() => { try { nodes.forEach((n) => { try { n.stop(); } catch { /* already stopped */ } }); c && c.close(); } catch { /* ignore */ } }, 200); } catch { /* ignore */ } nodes = []; ctx = null; master = null; }
   function setMuted(m) { muted = m; try { if (master) master.gain.setTargetAtTime(m ? 0 : 0.55, ctx.currentTime, 0.03); } catch { /* ignore */ } }
-  return { start, stop, setMuted };
+  function pause() { try { ctx && ctx.suspend(); } catch { /* ignore */ } }
+  function resume() { try { ctx && ctx.resume(); } catch { /* ignore */ } }
+  return { start, stop, setMuted, pause, resume };
 }

@@ -17,7 +17,7 @@ export function movieCard(applicant, hooks, onDone, opts) {
   const replay = h('button', { type: 'button', class: 'btn line sm', onclick: () => start() }, ico('refresh', 16), 'Watch again');
   replay.hidden = true;
   const go = cont('Continue', () => { stop(); onDone({ movie: true }); });
-  let raf = 0, t0 = 0, playing = false, score = null, muted = !!o.muted;
+  let raf = 0, t0 = 0, playing = false, score = null, muted = !!o.muted, pausedAt = 0, loop = null;
   const soundBtn = h('button', { type: 'button', class: 'btn line sm', 'aria-pressed': String(!muted), onclick: () => { muted = !muted; paintSound(); score && score.setMuted(muted); } });
   const paintSound = () => { soundBtn.replaceChildren(ico('speaker', 16), muted ? 'Sound off' : 'Sound on'); soundBtn.setAttribute('aria-pressed', String(!muted)); };
   paintSound();
@@ -33,7 +33,7 @@ export function movieCard(applicant, hooks, onDone, opts) {
   function start() {
     stop(); playing = true; playBtn.hidden = true; label.hidden = true; replay.hidden = true; share.hidden = true; t0 = performance.now();
     score = createScore(); if (score) { score.setMuted(muted); score.start(); }
-    const step = (now) => {
+    const step = loop = (now) => {
       if (!playing) return;
       const t = Math.min(M.DUR - 0.01, (now - t0) / 1000); draw(t); bar.firstChild.style.width = (t / M.DUR * 100) + '%';
       if (t >= M.DUR - 0.01) { playing = false; replay.hidden = false; share.hidden = false; if (score) { const sc = score; score = null; setTimeout(() => sc.stop(), 1500); } return; }
@@ -41,6 +41,12 @@ export function movieCard(applicant, hooks, onDone, opts) {
     };
     raf = requestAnimationFrame(step);
   }
+  /* the viewer looked away: freeze the film and the score, then continue from the same frame */
+  window.addEventListener('achieve:attention', (ev) => {
+    if (!playing || !loop) return;
+    if (!ev.detail.attentive) { cancelAnimationFrame(raf); pausedAt = performance.now(); score && score.pause(); }
+    else if (pausedAt) { t0 += performance.now() - pausedAt; pausedAt = 0; score && score.resume(); raf = requestAnimationFrame(loop); }
+  });
   playBtn.addEventListener('click', start); cv.addEventListener('click', () => { if (!playing && !playBtn.hidden) start(); });
   stage.append(bar);
   ctrl.append(soundBtn, replay, share);

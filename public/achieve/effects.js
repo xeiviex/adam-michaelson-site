@@ -218,3 +218,8 @@ function frame(t) {
   if (busy || S.confetti.length || S.streamers.length || S.rockets.length || S.sparks.length || S.bands.length || S.notes.length || S.balloons.length || S.strips.length || S.coins.length || S.scenes.length) requestAnimationFrame(frame);
   else { cx.clearRect(0, 0, W, H); cv.classList.remove('on'); S.on = false; }
 }
+
+/* when the viewer looks away the clock stops, so shift every running effect forward by the time they were gone */
+export function shiftTime(delta) {
+  ['confetti', 'streamers', 'rockets', 'sparks', 'notes', 'bands', 'balloons', 'strips', 'coins', 'scenes'].forEach((k) => S[k].forEach((p) => { if (p.t0 != null) p.t0 += delta; }));
+}

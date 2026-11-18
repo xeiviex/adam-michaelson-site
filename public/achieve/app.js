@@ -1,10 +1,10 @@
 /* Achieve debt relief prototype. Slice 1: the shell (path nav, assistant dock, auto-play) and stage 1, lead intake.
    Reuses the first take's form cards, DOM helpers and styles. Everything is sample data and stays in the browser. */
-import { h, $, $$, sleep, reduced, typeInto, tween, ico, icon } from './firsttake/shared/dom.js';
+import { h, $, $$, sleep, after, setPaused, reduced, typeInto, tween, ico, icon } from './firsttake/shared/dom.js';
 import { money } from './firsttake/shared/flow.js';
 import { buildForm } from './firsttake/forms.js';
 import * as J from './journey.js';
-import { fx } from './effects.js';
+import { fx, shiftTime } from './effects.js';
 import { paintingBlock } from './art-ui.js';
 import * as MU from './movie-ui.js';
 import { pace, getSpeed, setSpeed, SPEEDS } from './speed.js';
@@ -405,7 +405,7 @@ async function startDeposit() {
   proceedD();
 }
 const proceedD = () => { const n = D.nextDStep(state.ddone); if (n) askD(n); };
-const celebrateBurst = () => { burst('trophy'); setTimeout(() => burst(220), 900); setTimeout(() => burst(180), 1600); setTimeout(() => burst(180), 2400); };
+const celebrateBurst = () => { burst('trophy'); after(900, () => burst(220)); after(1600, () => burst(180)); after(2400, () => burst(180)); };
 const askD = (id) => runTurn(id, DMETA[id], (t) => {
   const done = (patch) => finishD(id, patch, t);
   if (id === 'login') return DU.loginCard(state.applicant, done);
@@ -642,6 +642,22 @@ $('#doSkip').addEventListener('click', (e) => choose(e.currentTarget, () => {
 }, 700));
 function resetAll() { ui.run++; try { sessionStorage.removeItem(KEY); } catch { /* ignore */ } location.reload(); }
 $('#doReset').addEventListener('click', (e) => choose(e.currentTarget, () => { state.auto = true; try { sessionStorage.setItem(KEY, JSON.stringify({ auto: true })); } catch { /* ignore */ } location.reload(); }, 700));
+
+/* ---------- attention: pause everything when the viewer looks away, resume when they are back ---------- */
+const away = h('div', { class: 'away', role: 'status', 'aria-live': 'polite', hidden: true }, h('b', null), h('span', null));
+document.body.append(away);
+let attentive = true, awayAt = 0, resumeTimer = 0;
+const tell = (a, b) => { away.firstChild.textContent = a; away.lastChild.textContent = b; away.hidden = false; };
+function setAttention(v) {
+  if (v === attentive) return; attentive = v; clearTimeout(resumeTimer);
+  if (!v) { awayAt = performance.now(); setPaused(true); tell('Paused', 'Come back and we will pick up right where you left off.'); window.dispatchEvent(new CustomEvent('achieve:attention', { detail: { attentive: false } })); return; }
+  tell('Welcome back', 'Picking up where you left off...');
+  resumeTimer = setTimeout(() => { away.hidden = true; shiftTime(performance.now() - awayAt); setPaused(false); window.dispatchEvent(new CustomEvent('achieve:attention', { detail: { attentive: true } })); }, 900);
+}
+const isHere = () => !document.hidden && document.hasFocus();
+document.addEventListener('visibilitychange', () => setAttention(isHere()));
+window.addEventListener('blur', () => setAttention(false));
+window.addEventListener('focus', () => setTimeout(() => setAttention(isHere()), 0));
 
 /* ---------- start ---------- */
 const answeredTurn = (id, q, text) => { const t = addTurn(id, 'answered'); t.append(h('div', { class: 'q' }, h('span', { class: 'qt' }, q)), h('div', { class: 'ans in' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, text)))); };

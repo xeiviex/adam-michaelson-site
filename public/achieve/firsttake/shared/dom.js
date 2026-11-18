@@ -23,7 +23,19 @@ export function h(tag, attrs, ...kids) {
 
 export const $ = (s, r) => (r || document).querySelector(s);
 export const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
-export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+/* A sleep that stops its clock while the page is paused (the viewer looked away) and picks up where it left off. */
+const sleepers = new Set(); let paused = false;
+export const isPaused = () => paused;
+export function setPaused(p) { if (p === paused) return; paused = p; sleepers.forEach((s) => (p ? s.pause() : s.resume())); }
+export const sleep = (ms) => new Promise((resolve) => {
+  const s = { left: ms, id: 0, t0: 0,
+    run() { s.t0 = performance.now(); s.id = setTimeout(finish, s.left); },
+    pause() { clearTimeout(s.id); s.left = Math.max(0, s.left - (performance.now() - s.t0)); },
+    resume() { s.run(); } };
+  function finish() { sleepers.delete(s); resolve(); }
+  sleepers.add(s); if (!paused) s.run();
+});
+export const after = (ms, fn) => sleep(ms).then(fn);
 export const reduced = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 

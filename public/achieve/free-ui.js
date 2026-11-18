@@ -1,6 +1,6 @@
 /* Achieve debt relief prototype, stage 8: the cards. Each card returns { el, auto(alive) }.
    No audio plays, nothing ships, and no account is opened. */
-import { h, sleep, reduced, ico } from './firsttake/shared/dom.js';
+import { h, sleep, after, reduced, ico } from './firsttake/shared/dom.js';
 import { cont } from './qualify-ui.js';
 import * as F from './free.js';
 import { money } from './firsttake/shared/flow.js';
@@ -19,7 +19,7 @@ export function graduateCard(applicant, r, hooks, onDone) {
     h('p', { class: 'party-sub' }, r.debts + ' debts. ' + r.months + ' months. Every deposit, every call, every hard day. You finished.'),
     h('div', { class: 'rs-grid' }, stat('Debt you started with', money(r.owed), r.debts + ' accounts'), stat('You put in', money(r.total), money(r.deposit) + ' a month'), stat('Time', r.months + ' months', 'start to finish')),
     h('p', { class: 'fine' }, 'Illustrative example. Your own numbers will differ.'), go);
-  [250, 1500, 3200].forEach((t) => hooks && hooks.burst && setTimeout(() => hooks.burst(), t));
+  [250, 1500, 3200].forEach((t) => hooks && hooks.burst && after(t, () => hooks.burst()));
   return { el, async auto(alive) { await pause(4200); if (alive()) go.click(); } };
 }
 

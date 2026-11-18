@@ -1,6 +1,6 @@
 /* Achieve debt relief prototype, stage 5: the cards. Each card returns { el, auto(alive) }.
    No bank, no transfer, no audio. The transfer runs in seconds so the demo shows the whole arc. */
-import { h, sleep, reduced, ico, tween } from './firsttake/shared/dom.js';
+import { h, sleep, reduced, ico, tween, after } from './firsttake/shared/dom.js';
 import { chooser, cont } from './qualify-ui.js';
 import * as D from './deposit.js';
 import { money } from './firsttake/shared/flow.js';
@@ -80,7 +80,7 @@ export function celebrateCard(applicant, st, hooks, onDone) {
     h('p', { class: 'party-sub' }, 'You made your first deposit. Most people never take that step. You did.'),
     h('div', { class: 'gift' }, h('div', { class: 'gift-card' }, h('b', null, applicant.first + ', you did it.'), h('span', null, 'From your Achieve team')), h('div', { class: 'gift-t' }, h('b', null, 'A welcome box is on its way'), h('span', null, 'A handwritten card and a few small treats. We will confirm where to send it in your account.'))),
     h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'We wrote you a song!'))), lyr, play, h('p', { class: 'fine' }, s.note)), go);
-  hooks && hooks.burst && setTimeout(hooks.burst, 250);
+  hooks && hooks.burst && after(250, hooks.burst);
   return { el, async auto(alive) { await pause(2400); if (!alive()) return; playSong(); await pause(s.lines.length * (reduced() ? 0 : 1100) + 2600); if (alive()) go.click(); } };
 }
 
