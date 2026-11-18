@@ -90,6 +90,29 @@ export function celebrateCard(applicant, st, hooks, onDone) {
     h('p', { class: 'party-sub' }, 'You made your first deposit. Most people never take that step. You did. In recognition of your awesomeness, we produced a song about you.'),
     h('div', { class: 'song' }, h('div', { class: 'song-pt', 'aria-hidden': 'true' }, 'A song about YOU!'), h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'Achieve Debt Relief Band'))), h('div', { class: 'pl' }, pb, h('div', { class: 'pl-mid' }, bar, time), dl), audio),
     h('div', { class: 'gift' }, h('div', { class: 'gift-card' }, h('b', null, applicant.first + ', you did it.'), h('span', null, 'From your Achieve team')), h('div', { class: 'gift-t' }, h('b', null, 'A welcome box is on its way'), h('span', null, 'A handwritten card and a few small treats. We will confirm where to send it in your account.'))), go);
+  /* floating mini player: shows only while the song is playing and its card has scrolled out of view.
+     It stays (paused or playing) until its own X is pressed, which also stops the music. */
+  const sfBtn = h('button', { type: 'button', class: 'sf-btn', 'aria-label': 'Pause' }), sfFill = h('i');
+  const sfX = h('button', { type: 'button', class: 'sf-x', 'aria-label': 'Close the player and stop the song' });
+  sfX.innerHTML = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>';
+  const fl = h('div', { class: 'song-float', role: 'region', 'aria-label': 'Song player', hidden: true }, sfBtn, h('div', { class: 'sf-mid' }, h('b', null, s.title), h('em', null, 'Achieve Debt Relief Band'), h('div', { class: 'sf-bar' }, sfFill)), sfX);
+  document.body.append(fl);
+  let outOfView = false, shown = false, dismissed = false;
+  const syncFloat = () => {
+    if (!el.isConnected) { fl.remove(); return; }
+    if (outOfView && !audio.paused && !dismissed) shown = true;
+    if (!outOfView || dismissed) shown = false;
+    fl.hidden = !shown;
+    sfBtn.innerHTML = audio.paused ? IC_PLAY : IC_PAUSE; sfBtn.setAttribute('aria-label', audio.paused ? 'Play' : 'Pause');
+  };
+  sfBtn.addEventListener('click', () => { if (audio.paused) audio.play().catch(() => {}); else audio.pause(); });
+  sfX.addEventListener('click', () => { audio.pause(); dismissed = true; syncFloat(); });
+  audio.addEventListener('play', () => { dismissed = false; syncFloat(); }); audio.addEventListener('pause', syncFloat); audio.addEventListener('ended', syncFloat);
+  audio.addEventListener('timeupdate', () => { if (audio.duration) sfFill.style.width = (audio.currentTime / audio.duration) * 100 + '%'; });
+  if (typeof IntersectionObserver !== 'undefined') {
+    const vis = new IntersectionObserver((es) => { es.forEach((e) => { outOfView = e.intersectionRatio < 0.1; }); syncFloat(); }, { threshold: [0, 0.1] });
+    after(0, () => { const sg = el.querySelector('.song'); if (sg) vis.observe(sg); });
+  }
   /* the callout starts wobbling only once the song is actually on screen */
   if (typeof IntersectionObserver !== 'undefined') {
     const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting && e.intersectionRatio >= 0.6)) { io.disconnect(); const p = el.querySelector('.song-pt'); if (p) p.classList.add('go'); } }, { threshold: [0.6] });
