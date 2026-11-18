@@ -587,6 +587,26 @@ function burst(n) {
 /* ---------- assistant dock ---------- */
 const askForm = $('#askForm'), askInput = $('#askInput');
 const userMsg = (text) => { const m = h('div', { class: 'msg user' }, h('div', { class: 'mb' }, text)); stream.insertBefore(m, tail); requestAnimationFrame(() => m.classList.add('in')); return m; };
+const chat = [];
+function chatCtx() {
+  const next = J.STAGES.find((x) => !state.stageDone.includes(x.id));
+  const debts = selectedDebts().map((d) => ({ name: d.name, kind: d.kind, balance: d.balance }));
+  return { stage: next ? next.id : 'free', first: state.applicant.first || '', deposit: state.c.deposit || null, months: state.c.deposit ? fundModel().months : null, debts };
+}
+/* Real assistant first; the offline answers keep the demo alive without a key or a connection. */
+async function askAssistant(q) {
+  chat.push({ role: 'user', content: q });
+  let text = null;
+  try {
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 15000);
+    const res = await fetch('/api/achieve-debt-assistant', { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: ctl.signal, body: JSON.stringify({ messages: chat.slice(-12), ctx: chatCtx() }) });
+    clearTimeout(to);
+    if (res.ok) { const j = await res.json(); if (j && j.text) text = j.text; }
+  } catch { /* offline answers below */ }
+  if (!text) { await sleep(reduced() ? 0 : 700); text = localAnswer(q) || FALLBACK; }
+  chat.push({ role: 'assistant', content: text });
+  return text;
+}
 async function handleSend(text) {
   const q = String(text || '').trim();
   if (!q) return;
@@ -595,8 +615,8 @@ async function handleSend(text) {
   const m = h('div', { class: 'msg bot wait' }, h('img', { class: 'mav mark', src: '/achieve/firsttake/img/logo-mark.png', alt: '' }),
     h('div', { class: 'mb' }, h('span', { class: 'dots', 'aria-label': 'Typing' }, h('i'), h('i'), h('i'))));
   stream.insertBefore(m, tail); requestAnimationFrame(() => m.classList.add('in')); scrollEnd();
-  await sleep(reduced() ? 0 : 700);
-  m.querySelector('.mb').textContent = localAnswer(q) || FALLBACK;
+  const reply = await askAssistant(q);
+  m.querySelector('.mb').textContent = reply;
   m.classList.remove('wait'); m.classList.add('said'); scrollEnd();
 }
 askForm.addEventListener('submit', (e) => { e.preventDefault(); handleSend(askInput.value); });
