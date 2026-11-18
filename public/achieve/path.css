@@ -94,3 +94,42 @@ textarea.inp.note { height: auto; padding: 12px 14px; margin-top: 18px; resize: 
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 14px; background: var(--mint); color: var(--mint-ink); font-size: 12.5px; font-weight: 600; }
 @media (max-width: 560px) { .qopts.two, .rs-grid { grid-template-columns: 1fr; } .updoc { flex-direction: column; align-items: stretch; } }
+
+/* stage 3 cards */
+.tl-list { display: grid; gap: 8px; margin-top: 14px; }
+.tl { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 1px solid var(--line-d); border-radius: 10px; background: #fff; text-align: left; cursor: pointer; font-size: 15px; color: var(--ink); transition: border-color .15s, background .15s; }
+.tl.on { border: 2px solid var(--ind); background: var(--ind-t); padding: 11px 13px; }
+.tl-box { flex: none; width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--line-d); background: #fff; display: inline-flex; align-items: center; justify-content: center; color: #fff; }
+.tl.on .tl-box { background: var(--ind); border-color: var(--ind); }
+.tl-main { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
+.tl-main em { font-style: normal; font-size: 12.5px; color: var(--mut); }
+.tl-amt { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.pill { font-style: normal; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+.pill.ok { background: var(--mint); color: var(--mint-ink); } .pill.warn { background: #fff0cf; color: #8a5a00; } .pill.bad { background: #fde3df; color: var(--bad); }
+.tl-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; font-size: 14px; }
+.tl-add { display: grid; grid-template-columns: 1fr 120px auto; gap: 8px; margin-top: 10px; }
+.tl-add[hidden] { display: none; }
+.tl-add .btn { margin-top: 0; }
+.tk-log { display: grid; gap: 10px; }
+.tk { display: flex; } .tk.user { justify-content: flex-end; }
+.tkb { max-width: 86%; padding: 10px 14px; border-radius: 14px 14px 14px 4px; background: var(--tint); font-size: 15px; line-height: 1.45; }
+.tk.user .tkb { border-radius: 14px 14px 4px 14px; background: var(--ind); color: #fff; }
+.tk.wait .tkb { color: var(--mut); }
+.tk-form { display: flex; gap: 8px; margin-top: 12px; } .tk-form .btn { margin-top: 0; width: auto; }
+.card > .sugg-row { margin: 12px 0 0; }
+.expect { text-align: center; }
+.ex-count { font-size: 13px; color: var(--mut); }
+.ex-body { min-height: 190px; padding: 18px 6px 4px; }
+.ex-body.swap { animation: exin .35s ease; }
+@keyframes exin { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+.ex-ic { width: 56px; height: 56px; margin: 0 auto 10px; border-radius: 50%; background: var(--ind-t); color: var(--ind); display: flex; align-items: center; justify-content: center; }
+.ex-body h3 { margin: 0 0 8px; font-size: 20px; letter-spacing: -.01em; }
+.ex-body p { margin: 0 auto; max-width: 460px; color: var(--mut); line-height: 1.55; font-size: 15px; }
+.ex-dots { display: flex; justify-content: center; gap: 6px; margin: 16px 0 4px; }
+.ex-dots i { width: 22px; height: 4px; border-radius: 2px; background: var(--line-d); transition: background .3s; } .ex-dots i.on { background: var(--ind); }
+.ex-nav { display: flex; gap: 10px; justify-content: center; margin-top: 12px; } .ex-nav .btn { margin-top: 0; width: auto; min-width: 110px; }
+.dep { margin-top: 16px; } .dep input[type=range] { width: 100%; margin-top: 8px; accent-color: var(--ind); } .dep-val { color: var(--ind); }
+.ord, .miles { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ord li { display: flex; justify-content: space-between; padding: 10px 12px; border-radius: 8px; background: var(--tint); font-size: 14px; }
+.miles li { display: flex; flex-direction: column; padding-left: 16px; border-left: 3px solid var(--ind); font-size: 14px; } .miles li span { color: var(--mut); }
+@media (max-width: 560px) { .tl-add { grid-template-columns: 1fr; } }

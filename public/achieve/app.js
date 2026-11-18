@@ -6,11 +6,13 @@ import { buildForm } from './firsttake/forms.js';
 import * as J from './journey.js';
 import * as Q from './qualify.js';
 import * as QU from './qualify-ui.js';
+import * as C from './consult.js';
+import * as CU from './consult-ui.js';
 import { localAnswer, FALLBACK, SUGGESTIONS } from './debt-kb.js';
 
 const KEY = 'achv1';
 const load = () => { try { return JSON.parse(sessionStorage.getItem(KEY)) || null; } catch { return null; } };
-const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], auto: true }, load());
+const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], auto: true }, load());
 const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch { /* private mode */ } };
 
 const stream = $('#stream'), tail = $('#tail'), road = $('#roadInner');
@@ -31,15 +33,15 @@ function scrollEnd() {
 
 /* ---------- the path nav ---------- */
 const currentStage = () => J.STAGES.find((s) => !state.stageDone.includes(s.id)) || J.STAGES[J.STAGES.length - 1];
-const qLeft = () => Q.qSteps(state.q).filter((x) => !state.qdone.includes(x)).length;
+const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : null;
 function renderRoad() {
   const cur = currentStage();
-  const qSteps = Q.qSteps(state.q);
-  const qFrac = state.qdone.filter((x) => qSteps.includes(x)).length / qSteps.length;
-  const pct = J.pathPct(state.stageDone, state.done, qFrac);
-  const inQ = state.stageDone.includes('lead') && !state.stageDone.includes('qualify');
+  const ss = stageSteps(cur.id);
+  const frac = ss ? ss.done.filter((x) => ss.all.includes(x)).length / ss.all.length : 0;
+  const pct = J.pathPct(state.stageDone, state.done, frac);
+  const left = ss ? ss.all.filter((x) => !ss.done.includes(x)).length : 0;
   const label = !state.stageDone.includes('lead') ? J.minsLabel(J.secsLeft(state.done))
-    : inQ ? (qLeft() <= 1 ? 'Almost there' : qLeft() + ' steps left in this stage') : 'Stage ' + (cur.n - 1) + ' complete';
+    : ss && !state.stageDone.includes(cur.id) ? (left <= 1 ? 'Almost there' : left + ' steps left in this stage') : 'Stage ' + (cur.n - 1) + ' complete';
   tween(ui.lastPct, pct, 700, (v) => { $('#pct').textContent = v + '%'; });
   ui.lastPct = pct;
   $$('.mins').forEach((e) => { e.textContent = label; });
@@ -49,8 +51,9 @@ function renderRoad() {
   const subList = (items) => '<ul class="subs">' + items.map(([lbl, d]) => `<li class="${d ? 'done' : ''}">${lbl}</li>`).join('') + '</ul>';
   road.innerHTML = '<ol class="stages">' + J.STAGES.map((s) => {
     const done = state.stageDone.includes(s.id), on = s.id === cur.id && !done;
+    const sx = stageSteps(s.id);
     const subs = !on ? '' : s.id === 'lead' ? subList(J.LEAD_STEPS.map((x) => [x.label, state.done.includes(x.id)]))
-      : s.id === 'qualify' ? subList(qSteps.map((x) => [Q.qStepLabel(x), state.qdone.includes(x)])) : '';
+      : sx ? subList(sx.all.map((x) => [sx.label(x), sx.done.includes(x)])) : '';
     return `<li class="st ${done ? 'done' : ''} ${on ? 'cur' : ''} ${s.built ? '' : 'soon'}">
       <span class="dot">${done ? icon('check', 13, 3) : s.n}</span>
       <span class="stx"><b>${s.label}</b><em>${s.goal}</em>${subs}</span></li>`;
@@ -183,7 +186,10 @@ async function stageDone(id, o) {
 const completeLead = (quiet) => stageDone('lead', { quiet, line: 'You took the first step, ' + (state.applicant.first || 'there') + '. Nice work.',
   body: 'Telling us about your debt is done. Next, a few questions to see which program fits and what has made payments hard.', onNext: startQualify });
 const completeQualify = (quiet) => stageDone('qualify', { quiet, line: "That's two steps down, " + (state.applicant.first || 'there') + '.',
-  body: 'You told us about your debt, what changed, and your budget. Next you meet your plan: what you will pay, how long it takes, and what to expect.', onNext: () => {} });
+  body: 'You told us about your debt, what changed, and your budget. Next you meet your plan: we confirm your debts, listen, set honest expectations, and show what you would pay.', onNext: startConsult });
+
+const completeConsult = (quiet) => stageDone('consult', { quiet, line: 'You have a plan, ' + (state.applicant.first || 'there') + '.',
+  body: 'You confirmed your debts, told us what matters, heard exactly what to expect, and chose a deposit. Next you review the agreement, sign, and open your account.', onNext: () => {} });
 
 /* ---------- stage 2: qualification ---------- */
 const QMETA = {
@@ -215,33 +221,35 @@ function proceedQ() {
   const next = Q.nextQStep(state.qdone, state.q);
   if (next) askQ(next);
 }
-async function askQ(id) {
+async function runTurn(id, meta, build) {
   const my = ++ui.run;
-  const meta = qMeta(id);
   const t = addTurn(id, 'pending');
   const qe = h('div', { class: 'q' }, h('span', { class: 'qt' }));
   t.append(qe); scrollToEl(t);
   if (!(await typeInto(qe.firstChild, meta.q, { cancelled: cancelled(my) })) || my !== ui.run) return;
   if (meta.sub) { const s = h('p', { class: 'sub' }, meta.sub); t.append(s); requestAnimationFrame(() => s.classList.add('in')); await sleep(reduced() ? 0 : 200); }
   const alive = () => my === ui.run && state.auto;
-  const done = (patch) => finishQ(id, patch, t);
-  let card;
-  if (id === 'dtypes') card = QU.dtypesCard(state.q, done);
-  else if (id === 'status') card = QU.statusCard(state.q, done);
-  else if (id === 'hardship') card = QU.hardshipCard(state.q, done);
-  else if (id.startsWith('detail:')) { const hid = id.slice(7); card = QU.detailCard(hid, (state.q.detail || {})[hid], (p) => done({ detail: Object.assign({}, state.q.detail, { [hid]: p.detail }) })); }
-  else if (id === 'budget') {
-    const live = h('p', { class: 'bud-live', role: 'status' });
-    const draft = {};
-    const f = buildForm(Q.BUDGET_STEP, {}, { mode: 'ask', onSubmit: (v) => done({ budget: v }), onDraft: (k, v) => { draft[k] = v; live.textContent = Q.budgetLine(draft); } });
-    f.el.insertBefore(live, f.el.querySelector('button[type=submit]'));
-    card = { el: f.el, auto: () => autoFill(f.el, Q.BUDGET_STEP, my) };
-  } else if (id === 'result') card = QU.resultCard(state.applicant, state.q, () => finishQ('result', {}, t));
+  const card = build(t, my);
   card.el.classList.add('card-in'); t.append(card.el);
   requestAnimationFrame(() => card.el.classList.add('in'));
   scrollToEl(t);
   if (state.auto) card.auto(alive);
 }
+const askQ = (id) => runTurn(id, qMeta(id), (t, my) => {
+  const done = (patch) => finishQ(id, patch, t);
+  if (id === 'dtypes') return QU.dtypesCard(state.q, done);
+  if (id === 'status') return QU.statusCard(state.q, done);
+  if (id === 'hardship') return QU.hardshipCard(state.q, done);
+  if (id.startsWith('detail:')) { const hid = id.slice(7); return QU.detailCard(hid, (state.q.detail || {})[hid], (p) => done({ detail: Object.assign({}, state.q.detail, { [hid]: p.detail }) })); }
+  if (id === 'budget') {
+    const live = h('p', { class: 'bud-live', role: 'status' });
+    const draft = {};
+    const f = buildForm(Q.BUDGET_STEP, {}, { mode: 'ask', onSubmit: (v) => done({ budget: v }), onDraft: (k, v) => { draft[k] = v; live.textContent = Q.budgetLine(draft); } });
+    f.el.insertBefore(live, f.el.querySelector('button[type=submit]'));
+    return { el: f.el, auto: () => autoFill(f.el, Q.BUDGET_STEP, my) };
+  }
+  return QU.resultCard(state.applicant, state.q, () => finishQ('result', {}, t));
+});
 async function finishQ(id, patch, turn) {
   Object.assign(state.q, patch);
   if (!state.qdone.includes(id)) state.qdone.push(id);
@@ -257,6 +265,54 @@ async function finishQ(id, patch, turn) {
   renderRoad();
   await sleep(reduced() ? 0 : 650);
   if (Q.nextQStep(state.qdone, state.q)) proceedQ(); else completeQualify();
+}
+
+/* ---------- stage 3: your plan ---------- */
+const CMETA = {
+  debts: { q: 'Here is what we found on your credit report', sub: 'Check that these are right. Add anything we missed.' },
+  goals: { q: 'What would make this a win for you?', sub: 'A few questions a specialist would ask on a call.' },
+  talk: { q: 'Tell us in your own words', sub: 'This is where you say what the forms cannot.' },
+  expect: { q: 'Before we go further: what to expect', sub: 'The honest version. We would rather you know now.' },
+  plan: { q: 'Here is your plan', sub: 'Move the deposit to see how it changes the timeline.' },
+};
+const selectedDebts = () => (state.c.debts || []).map((id) => C.tradeById(id) || (state.c.custom || []).find((x) => x.id === id)).filter(Boolean);
+const deposit = () => state.c.deposit || (state.q.budget || {}).deposit || 600;
+function cSummary(id) {
+  const c = state.c;
+  if (id === 'debts') { const d = selectedDebts(); return d.length + ' debts, ' + money0(d.reduce((t, x) => t + x.balance, 0)); }
+  if (id === 'goals') return (c.goals || []).map((g) => C.GOALS.find((x) => x.id === g).label).join(' · ');
+  if (id === 'talk') return c.talk ? (c.talk.length > 70 ? c.talk.slice(0, 67) + '...' : c.talk) : 'Nothing more to add';
+  if (id === 'expect') return 'I understand what to expect';
+  if (id === 'plan') return money0(deposit()) + ' a month';
+  return '';
+}
+async function startConsult() {
+  ui.run++;
+  await say('Now your plan. This is the conversation a specialist would have with you, step by step.');
+  proceedC();
+}
+const proceedC = () => { const n = C.nextCStep(state.cdone); if (n) askC(n); };
+const askC = (id) => runTurn(id, CMETA[id], (t) => {
+  const done = (patch) => finishC(id, patch, t);
+  if (id === 'debts') return CU.debtsCard(state.c, done);
+  if (id === 'goals') return CU.goalsCard(state.c, done);
+  if (id === 'talk') return CU.talkCard(state.c, done);
+  if (id === 'expect') return CU.expectCard(C.plan(selectedDebts(), deposit()).months, done);
+  return CU.planCard(selectedDebts(), deposit(), done);
+});
+async function finishC(id, patch, turn) {
+  Object.assign(state.c, patch);
+  if (!state.cdone.includes(id)) state.cdone.push(id);
+  save();
+  turn.classList.remove('pending'); turn.classList.add('answered');
+  const card = turn.querySelector('.card'), sub = turn.querySelector('.sub');
+  if (card) { card.style.maxHeight = card.offsetHeight + 'px'; requestAnimationFrame(() => card.classList.add('out')); setTimeout(() => card.remove(), 420); }
+  if (sub) sub.classList.add('fade');
+  const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, cSummary(id))));
+  turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
+  renderRoad();
+  await sleep(reduced() ? 0 : 650);
+  if (C.nextCStep(state.cdone)) proceedC(); else completeConsult();
 }
 
 /* ---------- confetti (small, dependency free) ---------- */
@@ -304,6 +360,7 @@ $('#doAuto').addEventListener('click', () => {
 });
 $('#doSkip').addEventListener('click', () => {
   if (!state.stageDone.includes('lead')) { Object.assign(state.applicant, J.PERSONA); state.done = J.LEAD_STEPS.map((s) => s.id); }
+  else if (state.stageDone.includes('qualify')) { Object.assign(state.c, JSON.parse(JSON.stringify(C.PERSONA_C))); state.c.custom = []; state.cdone = C.C_STEPS.filter((x) => x !== 'plan'); }
   else { state.q = JSON.parse(JSON.stringify(Q.PERSONA_Q)); state.qdone = Q.qSteps(state.q).filter((x) => x !== 'result'); state.stageDone.includes('lead') || state.stageDone.push('lead'); }
   save(); devMenu.hidden = true; location.reload();
 });
@@ -320,7 +377,13 @@ const answeredTurn = (id, q, text) => { const t = addTurn(id, 'answered'); t.app
     J.LEAD_STEPS.forEach((s) => answeredTurn(s.id, s.q, s.summary(state.applicant)));
     const qdone = state.qdone.filter((x) => x !== 'result');
     qdone.forEach((id) => answeredTurn(id, qMeta(id).q, qSummary(id)));
+    if (state.qdone.includes('result')) { state.stageDone.includes('qualify') || state.stageDone.push('qualify'); state.cdone.forEach((id) => answeredTurn(id, CMETA[id].q, cSummary(id))); }
     renderRoad();
+    if (state.stageDone.includes('qualify') || (state.qdone.includes('result'))) {
+      if (!C.nextCStep(state.cdone)) { completeConsult(true); return; }
+      if (state.cdone.length) { await say('Welcome back. Let\'s keep going.'); proceedC(); return; }
+      completeQualify(true); return;
+    }
     if (Q.nextQStep(state.qdone, state.q) === null && state.qdone.includes('result')) { completeQualify(true); return; }
     if (qdone.length) { await say('Welcome back. Let\'s keep going.'); proceedQ(); return; }
     completeLead(true); return;

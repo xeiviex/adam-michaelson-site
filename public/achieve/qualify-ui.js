@@ -6,10 +6,10 @@ import { money } from './firsttake/shared/flow.js';
 import * as Q from './qualify.js';
 
 const pause = (ms) => sleep(reduced() ? 0 : ms);
-const cont = (label, onclick) => h('button', { type: 'button', class: 'btn', onclick }, label, ico('chevR', 16, 2.4));
+export const cont = (label, onclick) => h('button', { type: 'button', class: 'btn', onclick }, label, ico('chevR', 16, 2.4));
 
 /* A group of options: one choice or several. items: [{ id, label, ic }]. */
-function chooser(items, o) {
+export function chooser(items, o) {
   const opt = o || {};
   let sel = (opt.value || []).slice();
   const btns = new Map();
