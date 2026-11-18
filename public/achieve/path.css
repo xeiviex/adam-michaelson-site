@@ -256,4 +256,5 @@ textarea.inp.note { height: auto; padding: 12px 14px; margin-top: 18px; resize: 
 @keyframes mvpulse { 0%,100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.08); } }
 .mv-title { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, .6); pointer-events: none; } .mv-title b { display: block; font-size: clamp(20px, 5vw, 34px); letter-spacing: .04em; font-weight: 900; } .mv-title span { font-size: 13px; text-transform: uppercase; letter-spacing: .3em; } .mv-title em { display: block; font-style: normal; font-size: 12px; opacity: .8; margin-top: 4px; }
 .mv-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255, 255, 255, .25); } .mv-bar i { display: block; height: 100%; width: 0; background: #ffb703; }
-.mv-ctl { display: flex; justify-content: center; margin-top: 10px; } .mv-ctl .btn { width: auto; }
+.mv-ctl { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; } .mv-ctl .btn { width: auto; }
+.bd-more { display: flex; justify-content: center; margin-top: 10px; } .bd-more .btn { width: auto; }

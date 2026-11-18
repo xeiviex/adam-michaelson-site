@@ -198,12 +198,12 @@ async function stageDone(id, o) {
   t.append(card); scrollToEl(t);
   if (state.auto && next && next.built) { await sleep(reduced() ? 0 : pace(o.hold || 2600)); if (my === ui.run && state.auto) o.onNext(); }
 }
-const completeLead = (quiet) => stageDone('lead', { quiet, fx: 'confetti', line: 'You took the first step, ' + (state.applicant.first || 'there') + '. Nice work.',
+const completeLead = (quiet) => stageDone('lead', { quiet, fx: 'balloons', line: 'You took the first step, ' + (state.applicant.first || 'there') + '. Nice work.',
   body: 'Telling us about your debt is done. Next, a few questions to see which program fits and what has made payments hard.', onNext: startQualify });
-const completeQualify = (quiet) => stageDone('qualify', { quiet, fx: 'streamers', line: "That's two steps down, " + (state.applicant.first || 'there') + '.',
+const completeQualify = (quiet) => stageDone('qualify', { quiet, fx: 'stamp', line: "That's two steps down, " + (state.applicant.first || 'there') + '.',
   body: 'You told us about your debt, what changed, and your budget. Next you meet your plan: we confirm your debts, listen, set honest expectations, and show what you would pay.', onNext: startConsult });
 
-const completeConsult = (quiet) => stageDone('consult', { quiet, fx: 'band', line: 'You have a plan, ' + (state.applicant.first || 'there') + '.',
+const completeConsult = (quiet) => stageDone('consult', { quiet, fx: 'ribbon', line: 'You have a plan, ' + (state.applicant.first || 'there') + '.',
   body: 'You confirmed your debts, told us what matters, heard exactly what to expect, and chose a deposit. Next you review the agreement, sign, and open your account.', onNext: startEnroll });
 
 /* ---------- stage 2: qualification ---------- */
@@ -379,7 +379,7 @@ async function finishE(id, patch, turn) {
 const completeEnroll = (quiet) => {
   const d = state.e.draft || {};
   const first = d.first ? E.fmtDate(new Date(d.first)) : 'soon';
-  return stageDone('enroll', { quiet, fx: 'fireworks', line: "You're enrolled, " + (state.applicant.first || 'there') + '!',
+  return stageDone('enroll', { quiet, fx: 'seal', line: "You're enrolled, " + (state.applicant.first || 'there') + '!',
     body: 'Your agreement is signed and your dedicated account is open. Your first deposit is set for ' + first + '. Next you sign in and make it.', onNext: startDeposit });
 };
 
@@ -405,7 +405,7 @@ async function startDeposit() {
   proceedD();
 }
 const proceedD = () => { const n = D.nextDStep(state.ddone); if (n) askD(n); };
-const celebrateBurst = () => { burst(220); setTimeout(() => burst(180), 700); setTimeout(() => burst(180), 1500); };
+const celebrateBurst = () => { burst('trophy'); setTimeout(() => burst(220), 900); setTimeout(() => burst(180), 1600); setTimeout(() => burst(180), 2400); };
 const askD = (id) => runTurn(id, DMETA[id], (t) => {
   const done = (patch) => finishD(id, patch, t);
   if (id === 'login') return DU.loginCard(state.applicant, done);
@@ -454,7 +454,7 @@ const askB = (id) => runTurn(id, BMETA[id], (t) => {
   const m = fundModel();
   if (id === 'fund') return BU.fundCard(state.applicant, m, { burst: (n) => burst(n) }, done);
   if (id === 'messages') return BU.messagesCard(state.applicant, m, money0((state.e.draft || {}).amount || deposit()), done);
-  return BU.boostCard(m, state.e.draft || { freq: 'monthly', amount: deposit(), auto: true }, bankNow(), done);
+  return BU.boostCard(m, state.e.draft || { freq: 'monthly', amount: deposit(), auto: true }, bankNow(), { burst: (n) => burst(n) }, done);
 });
 async function finishB(id, patch, turn) {
   Object.assign(state.b, patch);
@@ -499,8 +499,8 @@ const askS = (id) => runTurn(id, SMETA[id], (t) => {
   const debt = firstDebtNow();
   if (id === 'advocate') return SU.advocateCard(state.applicant, done);
   if (id === 'activity') return SU.activityCard(state.applicant, debt, done);
-  if (id === 'offer') return SU.offerCard(state.applicant, debt, S.fundAt(deposit(), fundModel().offerMonth), done);
-  return SU.boardCard(selectedDebts(), deposit(), state.s.offer && state.s.offer.status === 'approved' ? { debtId: state.s.offer.debtId, saved: state.s.offer.saved } : { debtId: null, saved: 0 }, fundModel().months, done);
+  if (id === 'offer') return SU.offerCard(state.applicant, debt, S.fundAt(deposit(), fundModel().offerMonth), { burst: (n) => burst(n) }, done);
+  return SU.boardCard(selectedDebts(), deposit(), { burst: (n) => burst(n) }, state.s.offer && state.s.offer.status === 'approved' ? { debtId: state.s.offer.debtId, saved: state.s.offer.saved } : { debtId: null, saved: 0 }, fundModel().months, done);
 });
 async function finishS(id, patch, turn) {
   Object.assign(state.s, patch);
@@ -516,7 +516,7 @@ async function finishS(id, patch, turn) {
   await sleep(reduced() ? 0 : pace(650));
   if (S.nextSStep(state.sdone)) proceedS(); else completeSettle();
 }
-const completeSettle = (quiet) => stageDone('negotiate', { quiet, fx: 'streamers', line: 'Your first debt is handled, ' + (state.applicant.first || 'there') + '.',
+const completeSettle = (quiet) => stageDone('negotiate', { quiet, fx: 'shred', line: 'Your first debt is handled, ' + (state.applicant.first || 'there') + '.',
   body: 'You met your negotiator, saw every conversation, and approved your first offer. Next comes the finish line.', onNext: startFree });
 
 /* ---------- stage 8: debt free ---------- */
@@ -544,10 +544,10 @@ async function startFree() {
 const proceedF = () => { const n = F.nextFStep(state.fdone); if (n) askF(n); };
 const askF = (id) => runTurn(id, FMETA[id], (t) => {
   const done = (patch) => finishF(id, patch, t);
-  const seq = ['fireworks', 'streamers', 'band']; let si = 0;
+  const seq = ['sunrise', 'fireworks', 'wave']; let si = 0;
   const hooks = { burst: (n) => burst(n === undefined ? seq[si++ % seq.length] : n) };
   if (id === 'graduate') return FU.graduateCard(state.applicant, recapNow(), hooks, done);
-  if (id === 'movie') return MU.movieCard(state.applicant, hooks, done);
+  if (id === 'movie') return MU.movieCard(state.applicant, hooks, done, { muted: state.auto });
   if (id === 'rave') return FU.raveCard(state.applicant, recapNow(), hooks, done);
   if (id === 'box') return FU.boxCard(state.applicant, done);
   return FU.nextCard(state.applicant, done);

@@ -261,4 +261,4 @@ test('movie: every frame draws without throwing', () => {
   for (let t = 0; t <= MV.DUR + 1; t += 0.25) MV.drawMovie(c, t, 'Jordan Rivera');
   MV.drawMovie(c, MV.POSTER_T, ''); MV.drawMovie(c, -3, 'X');
 });
-test('effects: four celebration kinds', () => { assert.deepEqual(FX_KINDS, ['confetti', 'streamers', 'fireworks', 'band']); });
+test('effects: seventeen distinct celebration kinds', () => { assert.equal(new Set(FX_KINDS).size, 17); ['confetti', 'streamers', 'fireworks', 'band', 'balloons', 'stamp', 'ribbon', 'seal', 'trophy', 'beam', 'flag', 'bell', 'gavel', 'sunrise', 'wave', 'shred', 'coins'].forEach((k) => assert.ok(FX_KINDS.includes(k), k)); });

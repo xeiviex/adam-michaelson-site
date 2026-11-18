@@ -54,7 +54,7 @@ export function activityCard(applicant, debt, onDone) {
 }
 
 /* ---- the offer: approve, ask for more, or decline ---- */
-export function offerCard(applicant, debt, fund, onDone) {
+export function offerCard(applicant, debt, fund, hooks, onDone) {
   let o = S.offerFor(debt), stage = 'offer', asked = false;
   const box = h('div', { class: 'ofr-box' });
   const row = (k, v, cls) => h('div', { class: 'ofr-row ' + (cls || '') }, h('span', null, k), h('b', null, v));
@@ -75,7 +75,7 @@ export function offerCard(applicant, debt, fund, onDone) {
       h('div', { class: 'ofr-act' }, approve, ask, decline)];
   };
   let sure = false;
-  const approve = h('button', { type: 'button', class: 'btn', disabled: true, onclick: () => { stage = 'approved'; paint(); go.hidden = false; } }, 'Approve ' + money(o.amount));
+  const approve = h('button', { type: 'button', class: 'btn', disabled: true, onclick: () => { stage = 'approved'; paint(); go.hidden = false; hooks && hooks.burst && hooks.burst('gavel'); } }, 'Approve ' + money(o.amount));
   const ask = h('button', { type: 'button', class: 'btn line', onclick: askBetter }, 'Ask for a better offer');
   const decline = h('button', { type: 'button', class: 'lnk', onclick: () => { stage = 'declined'; paint(); go.hidden = false; } }, 'Decline');
   const sureBtn = h('button', { type: 'button', class: 'tl', role: 'checkbox', 'aria-checked': 'false', onclick: () => { sure = !sure; sync(); } }, h('span', { class: 'tl-box' }), h('span', { class: 'tl-main' }, h('b', { class: 'plainb' }, 'I approve this settlement and authorize payment from my dedicated account.')));
@@ -99,14 +99,21 @@ export function offerCard(applicant, debt, fund, onDone) {
 }
 
 /* ---- the board: every debt and where it stands ---- */
-export function boardCard(selected, deposit, offerRes, months, onDone) {
-  const rows = S.board(selected, deposit, offerRes.debtId);
-  const done = rows.filter((r) => r.status === 'settled').length;
+export function boardCard(selected, deposit, hooks, offerRes, months, onDone) {
+  const settled = offerRes.debtId ? [offerRes.debtId] : [], kept = { [offerRes.debtId]: offerRes.saved };
+  const list = h('div', { class: 'bd-list' }), glance = h('div', { class: 'glance' });
+  const more = h('button', { type: 'button', class: 'btn line sm', onclick: settleNext }, ico('refresh', 16), 'Demo: fast-forward and settle the next debt');
   const go = cont('Continue', () => onDone({ board: true }));
-  const el = h('div', { class: 'card' },
-    h('div', { class: 'glance' }, h('div', { class: 'glance-t' }, 'Home stretch', h('em', null, done + ' of ' + rows.length + ' settled')),
-      h('div', { class: 'rs-grid' }, h('div', { class: 'rs-stat' }, h('span', { class: 'k' }, 'You kept on the first one'), h('b', null, money(offerRes.saved)), h('small', null, 'after the settlement and our fee')), h('div', { class: 'rs-stat' }, h('span', { class: 'k' }, 'Estimated finish'), h('b', null, 'Month ' + months), h('small', null, 'an estimate, not a promise')))),
-    h('div', { class: 'bd-list' }, rows.map((r) => h('div', { class: 'bd ' + r.status }, h('span', { class: 'bd-ic' }, r.status === 'settled' ? ico('check', 14, 3.4) : null), h('span', { class: 'bd-t' }, h('b', null, r.debt.name), h('em', null, money(r.debt.balance) + ' · ' + r.note)), h('i', { class: 'pill ' + (r.status === 'settled' ? 'ok' : r.status === 'next' ? 'warn' : '') }, r.label)))),
-    h('p', { class: 'help' }, 'You can see every conversation about every debt in your activity feed, any time.'), go);
-  return { el, async auto(alive) { await pause(4200); if (alive()) go.click(); } };
+  function totalKept() { return Object.values(kept).reduce((t, v) => t + v, 0); }
+  function paint() {
+    const rows = S.board(selected, deposit, settled), n = rows.filter((r) => r.status === 'settled').length;
+    glance.replaceChildren(h('div', { class: 'glance-t' }, 'Home stretch', h('em', null, n + ' of ' + rows.length + ' settled')),
+      h('div', { class: 'rs-grid' }, h('div', { class: 'rs-stat' }, h('span', { class: 'k' }, 'You have kept so far'), h('b', null, money(totalKept())), h('small', null, 'after settlements and our fees')), h('div', { class: 'rs-stat' }, h('span', { class: 'k' }, 'Estimated finish'), h('b', null, 'Month ' + months), h('small', null, 'an estimate, not a promise'))));
+    list.replaceChildren(...rows.map((r) => h('div', { class: 'bd ' + r.status }, h('span', { class: 'bd-ic' }, r.status === 'settled' ? ico('check', 14, 3.4) : null), h('span', { class: 'bd-t' }, h('b', null, r.debt.name), h('em', null, money(r.debt.balance) + ' · ' + r.note)), h('i', { class: 'pill ' + (r.status === 'settled' ? 'ok' : r.status === 'next' ? 'warn' : '') }, r.label))));
+    more.hidden = n >= rows.length;
+  }
+  function settleNext() { const r = S.board(selected, deposit, settled).find((x) => x.status !== 'settled'); if (!r) return; settled.push(r.debt.id); kept[r.debt.id] = S.offerFor(r.debt).saved; hooks && hooks.burst && hooks.burst('shred'); paint(); }
+  paint();
+  const el = h('div', { class: 'card' }, glance, list, h('div', { class: 'bd-more' }, more), h('p', { class: 'help' }, 'You can see every conversation about every debt in your activity feed, any time.'), go);
+  return { el, async auto(alive) { await pause(2600); if (alive()) settleNext(); await pause(2400); if (alive()) go.click(); } };
 }

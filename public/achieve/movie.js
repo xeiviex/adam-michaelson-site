@@ -23,19 +23,36 @@ function ridge(c, camX, base, amp, par, color, seed, x0 = 0, x1 = W, fillTo = H)
 function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.lineTo(x + w - r, y); c.quadraticCurveTo(x + w, y, x + w, y + r); c.lineTo(x + w, y + h - r); c.quadraticCurveTo(x + w, y + h, x + w - r, y + h); c.lineTo(x + r, y + h); c.quadraticCurveTo(x, y + h, x, y + h - r); c.lineTo(x, y + r); c.quadraticCurveTo(x, y, x + r, y); c.closePath(); }
 function cloud(c, x, y, s, a) { c.save(); c.globalAlpha = a; c.fillStyle = '#fff'; [[0, 0, 40], [34, -10, 32], [-34, 4, 28], [66, 6, 24]].forEach(([dx, dy, r]) => { c.beginPath(); c.arc(x + dx * s, y + dy * s, r * s, 0, 7); c.fill(); }); c.restore(); }
 
-/* the hero: helmet, goggles, blue suit, red scarf. rot in radians, arms 0 (down) to 1 (spread up), legs 0..1 apart */
+/* a head with a face. expr: grin, shock, cool, yell. Facing right. */
+function head(c, x, y, r, expr, tilt) {
+  c.save(); c.translate(x, y); c.rotate(tilt || 0);
+  c.fillStyle = '#f2c09a'; c.beginPath(); c.arc(0, 0, r, 0, 7); c.fill();
+  c.fillStyle = '#fff'; c.beginPath(); c.arc(0, -1, r * 1.08, Math.PI * 1.02, Math.PI * 2.0); c.lineTo(r * 1.08, -r * 0.2); c.lineTo(-r * 1.08, -r * 0.2); c.closePath(); c.fill();
+  c.fillStyle = '#ff3b5c'; c.fillRect(-1.5, -r * 1.1, 3, r * 0.9);
+  c.fillStyle = '#1a1a2e'; c.fillRect(-r * 1.05, -r * 0.28, r * 2.1, 3);
+  const shock = expr === 'shock' || expr === 'yell';
+  c.fillStyle = '#9fe3ff'; c.strokeStyle = '#1a1a2e'; c.lineWidth = 2; c.beginPath(); c.arc(r * 0.42, r * 0.05, r * (shock ? 0.4 : 0.34), 0, 7); c.fill(); c.stroke();
+  c.fillStyle = '#1a1a2e'; c.beginPath(); c.arc(r * (shock ? 0.5 : 0.48), r * 0.06, r * 0.13, 0, 7); c.fill();
+  c.strokeStyle = '#1a1a2e'; c.lineWidth = 2; c.lineCap = 'round'; c.beginPath();
+  if (expr === 'grin') { c.arc(r * 0.2, r * 0.45, r * 0.34, 0.15, Math.PI - 0.5); c.stroke(); }
+  else if (expr === 'cool') { c.moveTo(r * 0.0, r * 0.55); c.lineTo(r * 0.5, r * 0.5); c.stroke(); }
+  else { c.fillStyle = '#7a1f2a'; c.ellipse(r * 0.28, r * 0.55, r * 0.17, r * (expr === 'yell' ? 0.3 : 0.2), 0, 0, 7); c.fill(); }
+  c.restore();
+}
+function limb(c, x, y, a1, l1, a2, l2, w, col) { const x1 = x + Math.sin(a1) * l1, y1 = y + Math.cos(a1) * l1, x2 = x1 + Math.sin(a2) * l2, y2 = y1 + Math.cos(a2) * l2; c.strokeStyle = col; c.lineWidth = w; c.lineCap = 'round'; c.lineJoin = 'round'; c.beginPath(); c.moveTo(x, y); c.lineTo(x1, y1); c.lineTo(x2, y2); c.stroke(); return [x2, y2]; }
+/* the hero: jointed arms and legs, helmet, goggles, a face, a red scarf. arms 0 (down) to 1 (up and out). */
 function hero(c, x, y, s, o) {
-  c.save(); c.translate(x, y); c.rotate(o.rot || 0); c.scale(s, s); c.lineCap = 'round';
-  const A = o.arms == null ? 0.5 : o.arms, L = o.legs == null ? 0.3 : o.legs, t = o.t || 0;
-  c.strokeStyle = '#ff3b5c'; c.lineWidth = 6; c.beginPath(); c.moveTo(-4, -34); for (let i = 1; i <= 5; i++) c.lineTo(-4 - i * 9, -34 + Math.sin(t * 9 + i) * 5 + i * 1.5); c.stroke();
-  c.strokeStyle = '#1b2bd6'; c.lineWidth = 11; c.beginPath(); c.moveTo(0, -30); c.lineTo(0, 0); c.stroke();
-  c.lineWidth = 8; c.beginPath(); c.moveTo(0, 0); c.lineTo(-L * 14, 26); c.moveTo(0, 0); c.lineTo(L * 14, 26); c.stroke();
-  c.strokeStyle = '#111'; c.lineWidth = 7; c.beginPath(); c.moveTo(-L * 14, 26); c.lineTo(-L * 14 - 4, 29); c.moveTo(L * 14, 26); c.lineTo(L * 14 + 4, 29); c.stroke();
-  c.strokeStyle = '#1b2bd6'; c.lineWidth = 7; c.beginPath(); c.moveTo(0, -26); c.lineTo(-10 - A * 14, -26 - A * 26); c.moveTo(0, -26); c.lineTo(10 + A * 14, -26 - A * 26); c.stroke();
-  c.fillStyle = '#fff'; c.beginPath(); c.arc(0, -42, 13, 0, 7); c.fill();
-  c.fillStyle = '#ff3b5c'; c.fillRect(-2, -55, 4, 13);
-  c.fillStyle = '#1a1a2e'; rr(c, -2, -48, 15, 9, 4); c.fill();
-  c.fillStyle = '#7fe7ff'; c.fillRect(2, -46, 9, 4);
+  c.save(); c.translate(x, y); c.rotate(o.rot || 0); c.scale(s, s);
+  const A = o.arms == null ? 0.5 : o.arms, L = o.legs == null ? 0.3 : o.legs, t = o.t || 0, fl = o.flail ? Math.sin(t * 12) * 0.22 : 0, suit = '#1b2bd6';
+  c.strokeStyle = '#ff3b5c'; c.lineWidth = 6; c.lineCap = 'round'; c.beginPath(); c.moveTo(-3, -33); for (let i = 1; i <= 6; i++) c.lineTo(-3 - i * 8, -33 + Math.sin(t * 9 + i) * (3 + i) + i * 1.2); c.stroke();
+  const aU = 0.35 + A * 1.85, aL = aU + (A > 0.6 ? 0.25 : -0.5) + fl;
+  const hl = limb(c, -3, -26, -aU - fl, 13, -aL, 13, 7, suit), hr = limb(c, 3, -26, aU + fl, 13, aL, 13, 7, suit);
+  const lg = 0.12 + L * 0.65;
+  const fl2 = limb(c, -3, 0, -lg - fl, 15, -lg + 0.35 - fl, 14, 8, suit), fr = limb(c, 3, 0, lg + fl, 15, lg - 0.15 + fl, 14, 8, suit);
+  c.fillStyle = '#111'; [fl2, fr].forEach(([fx, fy]) => { c.beginPath(); c.arc(fx, fy, 5, 0, 7); c.fill(); }); c.fillStyle = '#fff'; [hl, hr].forEach(([hx, hy]) => { c.beginPath(); c.arc(hx, hy, 4.5, 0, 7); c.fill(); });
+  c.strokeStyle = suit; c.lineWidth = 12; c.beginPath(); c.moveTo(0, -30); c.lineTo(0, 2); c.stroke();
+  c.strokeStyle = '#fff'; c.lineWidth = 3; c.beginPath(); c.moveTo(-3, -28); c.lineTo(-3, 0); c.stroke(); c.fillStyle = '#ffb703'; c.fillRect(-6, -2, 12, 4);
+  head(c, 1, -42, 12, o.expr || 'grin', o.tilt || 0);
   c.restore();
 }
 function wheel(c, x, y, spin) { c.fillStyle = '#16161e'; c.beginPath(); c.arc(x, y, 15, 0, 7); c.fill(); c.strokeStyle = '#c9c9d6'; c.lineWidth = 3; c.beginPath(); c.arc(x, y, 7, 0, 7); c.stroke(); c.beginPath(); c.moveTo(x + Math.cos(spin) * 7, y + Math.sin(spin) * 7); c.lineTo(x - Math.cos(spin) * 7, y - Math.sin(spin) * 7); c.stroke(); }
@@ -44,7 +61,7 @@ function car(c, x, y, rot, o) {
   const op = o || {};
   c.save(); c.translate(x, y); c.rotate(rot || 0);
   wheel(c, -40, -15, op.spin || 0); wheel(c, 40, -15, op.spin || 0);
-  if (op.peek > 0) { c.save(); c.translate(8, -60 - op.peek * 22); c.rotate((op.tilt || 0)); c.fillStyle = '#fff'; c.beginPath(); c.arc(0, 0, 13, 0, 7); c.fill(); c.fillStyle = '#ff3b5c'; c.fillRect(-2, -13, 4, 13); c.fillStyle = '#1a1a2e'; rr(c, -1, -6, 15, 9, 4); c.fill(); c.fillStyle = '#7fe7ff'; c.fillRect(3, -4, 9, 4); c.restore(); }
+  if (op.peek > 0) { head(c, 8, -60 - op.peek * 20, 13, op.expr || 'shock', op.tilt || 0); }
   c.fillStyle = '#e63946'; rr(c, -62, -46, 124, 26, 9); c.fill();
   c.beginPath(); c.moveTo(-24, -46); c.lineTo(-8, -70); c.lineTo(30, -70); c.lineTo(48, -46); c.closePath(); c.fillStyle = '#c42232'; c.fill();
   c.beginPath(); c.moveTo(-16, -48); c.lineTo(-4, -66); c.lineTo(26, -66); c.lineTo(40, -48); c.closePath(); c.fillStyle = '#9fe3ff'; c.fill();
@@ -113,7 +130,7 @@ function edge(c, t, name) {
   const nose = u > 1.2 ? 0.05 * Math.sin(Math.min(1, (u - 1.2) / 0.5) * Math.PI) : 0;
   if (u < 2.2) { c.strokeStyle = 'rgba(30,20,20,.55)'; c.lineWidth = 4; c.beginPath(); c.moveTo(Math.max(0, cx0 - 220), ground - 2); c.lineTo(cx0 - 40, ground - 2); c.stroke(); for (let i = 0; i < 7; i++) { const k = ((u * 2 + i * 0.15) % 1); c.fillStyle = 'rgba(235,205,160,' + (0.55 * (1 - k)) * (u < 1.9 ? 1 : 0) + ')'; c.beginPath(); c.arc(cx0 - 55 - k * 70, ground - 12 - k * 26, 10 + k * 18, 0, 7); c.fill(); } }
   const door = ease((u - 2.3) / 0.5), peek = ease((u - 2.9) / 0.7), gulp = u > 3.5 ? Math.sin((u - 3.5) * 14) * 0.08 : 0;
-  car(c, cx0, ground + 2, nose, { spin: u < 1.6 ? u * 30 : 0, door, peek, tilt: gulp + (u > 3.4 ? 0.28 : 0) });
+  car(c, cx0, ground + 2, nose, { spin: u < 1.6 ? u * 30 : 0, door, peek, tilt: gulp + (u > 3.4 ? 0.28 : 0), expr: u > 3.6 ? 'yell' : 'shock' });
   if (u > 2 && u < 3.1) { const k = u - 2; c.fillStyle = '#8a8a98'; c.beginPath(); c.arc(edgeX + 10 + k * 14, ground + k * k * 220, 5, 0, 7); c.fill(); }
   c.restore();
   caption(c, 'END OF THE ROAD.', t, 12.6, 15.0, 500);
@@ -147,7 +164,7 @@ function jumpScene(c, t, name) {
     for (let i = 0; i < 7; i++) { const a0 = Math.PI + (i / 7) * Math.PI, a1 = Math.PI + ((i + 1) / 7) * Math.PI; c.fillStyle = cols[i]; c.beginPath(); c.moveTo(0, 0); c.ellipse(0, 0, rad, rad * 0.62, 0, a0, a1); c.closePath(); c.fill(); }
     c.restore();
   }
-  if (v > -0.05) hero(c, hx, hy, 1.1, { rot: hrot, arms, legs, t: u }); else hero(c, hx, hy, 1.1, { rot: 0, arms, legs, t: u });
+  hero(c, hx, hy, 1.25, { rot: hrot, arms, legs, t: u, flail: v > 0 && v < v1, expr: v < 0 ? 'cool' : v < v1 ? 'yell' : 'grin' });
   c.restore();
   /* fireworks in screen space, deterministic */
   const r = rng(11);
@@ -166,14 +183,26 @@ function jumpScene(c, t, name) {
     c.lineWidth = 14; c.lineJoin = 'round'; c.strokeStyle = '#1a1050'; c.strokeText(text, 0, 0, W - 80);
     const g = c.createLinearGradient(0, -80, 0, 10); g.addColorStop(0, '#fff3a8'); g.addColorStop(1, '#ffb703'); c.fillStyle = g; c.fillText(text, 0, 0, W - 80);
     c.restore();
-    c.save(); c.globalAlpha = ease((u - 10.5) / 0.6) * 0.9; c.fillStyle = '#fff'; c.font = '600 16px system-ui'; c.textAlign = 'center'; c.fillText('Produced by Achieve. A prototype animation, starring you.', W / 2, 510); c.restore();
+    c.save(); c.globalAlpha = ease((u - 10.5) / 0.6) * 0.9; c.fillStyle = '#fff'; c.font = '600 16px system-ui'; c.textAlign = 'center'; c.fillText('Produced by Achieve. A prototype animation, starring you.', W / 2, 503); c.restore();
   }
 }
 
+function camera(c, t) {
+  const cl = (v) => clamp(v, 0, 1);
+  if (t < 6) { let k = 0; [[1.9, 1.0], [3.7, 1.5]].forEach(([t0, d]) => { if (t >= t0 && t <= t0 + d) k = Math.max(k, Math.sin(Math.PI * (t - t0) / d)); }); const z = 1 + 0.07 * k; c.translate(W * 0.35, H * 0.6); c.scale(z, z); c.translate(-W * 0.35, -H * 0.6); }
+  else if (t < 11) { const u = t - 6; c.translate(W / 2, H / 2); c.rotate(Math.sin(u * 0.9) * 0.035 - 0.015); c.scale(1.06, 1.06); c.translate(-W / 2, -H / 2); }
+  else if (t < 15.5) { const u = t - 11, k = ease(cl((u - 2.7) / 1.1)), z = 1 + 0.75 * k; c.translate(lerp(W / 2, 560, k), lerp(H / 2, 300, k)); c.scale(z, z); c.translate(-lerp(W / 2, 560, k), -lerp(H / 2, 300, k)); }
+}
+function finish(c) {
+  const g = c.createRadialGradient(W / 2, H / 2, H * 0.42, W / 2, H / 2, H * 0.95); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.42)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  c.fillStyle = '#000'; c.fillRect(0, 0, W, 26); c.fillRect(0, H - 26, W, 26);
+}
 export function drawMovie(c, t, name) {
   const n = (name || 'Friend').trim() || 'Friend', tt = clamp(t, 0, DUR - 0.001);
   c.save(); c.clearRect(0, 0, W, H);
   const s = sceneAt(tt).id;
+  c.save(); camera(c, tt);
   if (s === 'race') race(c, tt, n); else if (s === 'climb') climb(c, tt); else if (s === 'edge') edge(c, tt, n); else jumpScene(c, tt, n);
-  flash(c, tt); c.restore();
+  c.restore();
+  flash(c, tt); finish(c); c.restore();
 }

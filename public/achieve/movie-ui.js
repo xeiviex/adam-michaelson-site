@@ -2,8 +2,10 @@
 import { h, sleep, reduced, ico } from './firsttake/shared/dom.js';
 import { cont } from './qualify-ui.js';
 import * as M from './movie.js';
+import { createScore } from './movie-audio.js';
 
-export function movieCard(applicant, hooks, onDone) {
+export function movieCard(applicant, hooks, onDone, opts) {
+  const o = opts || {};
   const name = ((applicant.first || '') + ' ' + (applicant.last || '')).trim() || applicant.first || 'Friend';
   const cv = h('canvas', { class: 'mv-cv', width: M.W, height: M.H, 'aria-label': 'A short film starring ' + name });
   const cx = cv.getContext('2d');
@@ -15,23 +17,33 @@ export function movieCard(applicant, hooks, onDone) {
   const replay = h('button', { type: 'button', class: 'btn line sm', onclick: () => start() }, ico('refresh', 16), 'Watch again');
   replay.hidden = true;
   const go = cont('Continue', () => { stop(); onDone({ movie: true }); });
-  let raf = 0, t0 = 0, playing = false;
+  let raf = 0, t0 = 0, playing = false, score = null, muted = !!o.muted;
+  const soundBtn = h('button', { type: 'button', class: 'btn line sm', 'aria-pressed': String(!muted), onclick: () => { muted = !muted; paintSound(); score && score.setMuted(muted); } });
+  const paintSound = () => { soundBtn.replaceChildren(ico('speaker', 16), muted ? 'Sound off' : 'Sound on'); soundBtn.setAttribute('aria-pressed', String(!muted)); };
+  paintSound();
+  const share = h('button', { type: 'button', class: 'btn line sm', onclick: doShare }, ico('share', 16), 'Share my movie');
+  share.hidden = true;
+  async function doShare() {
+    const url = location.origin + '/achieve/', text = name + ' just got debt free in this Achieve prototype. Watch the movie.';
+    try { if (navigator.share) { await navigator.share({ title: 'My Achieve movie', text, url }); return; } await navigator.clipboard.writeText(text + ' ' + url); share.lastChild.textContent = 'Link copied'; setTimeout(() => { share.lastChild.textContent = 'Share my movie'; }, 2000); } catch { /* cancelled */ }
+  }
   const draw = (t) => M.drawMovie(cx, t, name);
   const poster = () => { draw(M.POSTER_T); bar.firstChild.style.width = '0%'; };
-  function stop() { playing = false; cancelAnimationFrame(raf); }
+  function stop() { playing = false; cancelAnimationFrame(raf); if (score) { score.stop(); score = null; } }
   function start() {
-    stop(); playing = true; playBtn.hidden = true; label.hidden = true; replay.hidden = true; t0 = performance.now();
+    stop(); playing = true; playBtn.hidden = true; label.hidden = true; replay.hidden = true; share.hidden = true; t0 = performance.now();
+    score = createScore(); if (score) { score.setMuted(muted); score.start(); }
     const step = (now) => {
       if (!playing) return;
       const t = Math.min(M.DUR - 0.01, (now - t0) / 1000); draw(t); bar.firstChild.style.width = (t / M.DUR * 100) + '%';
-      if (t >= M.DUR - 0.01) { playing = false; replay.hidden = false; return; }
+      if (t >= M.DUR - 0.01) { playing = false; replay.hidden = false; share.hidden = false; if (score) { const sc = score; score = null; setTimeout(() => sc.stop(), 1500); } return; }
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
   }
   playBtn.addEventListener('click', start); cv.addEventListener('click', () => { if (!playing && !playBtn.hidden) start(); });
   stage.append(bar);
-  ctrl.append(replay);
+  ctrl.append(soundBtn, replay, share);
   poster();
   const el = h('div', { class: 'card movie' }, stage, ctrl, h('p', { class: 'fine' }, 'Prototype: an animated short drawn in your browser. No audio plays.'), go);
   return { el, async auto(alive) {

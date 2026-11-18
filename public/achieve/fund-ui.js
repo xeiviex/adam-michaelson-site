@@ -8,6 +8,7 @@ import { pace } from './speed.js';
 const pause = (ms) => sleep(reduced() ? 0 : pace(ms));
 
 /* ---- the thermometer and timeline ---- */
+const FUND_FX = { q: 'beam', h: 'flag', t: 'bell', free: 'sunrise' };
 export function fundCard(applicant, m, hooks, onDone) {
   let month = 1, playing = false, last = 0;
   const fill = h('div', { class: 'th-fill' });
@@ -38,7 +39,7 @@ export function fundCard(applicant, m, hooks, onDone) {
   }
   function set(v) {
     const prev = month; month = Math.max(1, Math.min(m.months, v)); paint();
-    for (const x of B.milestones(m, month)) if (x.done && !B.milestones(m, prev).find((y) => y.id === x.id).done && hooks && hooks.burst && (x.id === 'h' || x.id === 'free')) hooks.burst(x.id === 'free' ? 160 : 70);
+    for (const x of B.milestones(m, month)) if (x.done && !B.milestones(m, prev).find((y) => y.id === x.id).done && hooks && hooks.burst && FUND_FX[x.id]) hooks.burst(FUND_FX[x.id]);
   }
   range.addEventListener('input', () => { playing = false; playBtn.lastChild.textContent = 'Fast-forward'; set(Number(range.value)); });
   async function toggle() {
@@ -97,14 +98,14 @@ export function messagesCard(applicant, m, depositLabel, onDone) {
 }
 
 /* ---- recurring transfers and an extra deposit ---- */
-export function boostCard(m, draft, bank, onDone) {
+export function boostCard(m, draft, bank, hooks, onDone) {
   let extra = 0;
   const lbl = ({ monthly: 'a month', biweekly: 'every two weeks', twice: 'twice a month' })[draft.freq] || 'a month';
   const next = draft.first ? new Date(draft.first).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : 'soon';
   const out = h('div', { class: 'boost-out', role: 'status' });
   const range = h('input', { type: 'range', min: 0, max: 5000, step: 100, value: 0, 'aria-label': 'Extra deposit' });
   const val = h('b', { class: 'dep-val' });
-  const send = h('button', { type: 'button', class: 'btn line', onclick: () => { sent.textContent = extra ? 'Sent ' + money(extra) + ' from ' + bank.name + ' ••' + bank.last4 + '. It will show in your account when it clears.' : ''; } }, 'Send an extra deposit');
+  const send = h('button', { type: 'button', class: 'btn line', onclick: () => { if (extra >= 500 && hooks && hooks.burst) hooks.burst('coins'); sent.textContent = extra ? 'Sent ' + money(extra) + ' from ' + bank.name + ' ••' + bank.last4 + '. It will show in your account when it clears.' : ''; } }, 'Send an extra deposit');
   const sent = h('p', { class: 'help ok' });
   function paint() {
     val.textContent = money(extra);

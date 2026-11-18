@@ -70,7 +70,7 @@ export function afterApprove(o) {
 export function board(selected, deposit, settledId) {
   const order = plan(selected, deposit).order;
   return order.map((d) => {
-    if (d.id === settledId) return { debt: d, status: 'settled', label: 'Settled', note: 'Paid from your fund.' };
+    if ([].concat(settledId || []).includes(d.id)) return { debt: d, status: 'settled', label: 'Settled', note: 'Paid from your fund.' };
     if (d.status === 'late') return { debt: d, status: 'next', label: 'Next in line', note: 'Offers usually come once an account is about 90 days behind.' };
     if (d.status === 'current') return { debt: d, status: 'wait', label: 'Waiting', note: 'Creditors usually will not settle until an account is behind. We will tell you what to expect before that happens.' };
     return { debt: d, status: 'next', label: 'Next in line', note: 'We will reach out when your fund can cover an offer.' };
