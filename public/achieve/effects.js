@@ -28,7 +28,7 @@ export function fx(kind, n) {
   } else if (kind === 'band') {
     S.bands.push({ t0: now, dur: 4200 });
   } else if (kind === 'balloons') {
-    for (let i = 0; i < 24; i++) S.balloons.push({ x: rnd(0.05, 0.95) * W, y: H + rnd(20, 260), vy: -rnd(1.6, 3.4), ph: rnd(0, 6), c: pick(COLORS), r: rnd(20, 32), t0: now });
+    for (let i = 0; i < 24; i++) S.balloons.push({ x: rnd(0.05, 0.95) * W, y: H + rnd(20, 260), vy: -rnd(2.9, 5.6), ph: rnd(0, 6), c: pick(COLORS), r: rnd(20, 32), t0: now });
   } else if (kind === 'shred') {
     for (let i = 0; i < 70; i++) S.strips.push({ x: rnd(0, W), y: -rnd(10, 260), vy: rnd(1.4, 3.4), ph: rnd(0, 6), r: rnd(0, 6), vr: rnd(-0.12, 0.12), len: rnd(24, 60), c: pick(['#ffffff', '#e8e6f5', '#cfd8ff', '#fff3c4']), t0: now });
   } else if (kind === 'coins') {
@@ -82,14 +82,33 @@ function drawScene(sc, t) {
     cx.font = '900 76px system-ui, sans-serif'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText("YOU'RE IN", 0, 4); cx.restore();
     if (age > 200) ring(cxm, cym, (age - 200) * 0.9, 1 - (age - 200) / 500, '#146c55', 6);
   } else if (sc.kind === 'ribbon') {
-    const cut = 0.38, y = cym, half = W * 0.38, k = u < cut ? 0 : (u - cut) / (1 - cut);
+    const cut = 0.46, y = cym, half = W * 0.4, k = u < cut ? 0 : (u - cut) / (1 - cut), ph = age / 260, TH = 44;
+    /* a wavy ribbon: top and bottom edges follow the same sine, so it reads as cloth. droop and sway grow once it is cut */
+    const wave = (x, anchor, side) => { const dist = Math.abs(x - anchor) / half; const flow = Math.sin((x - cxm) / 52 + ph) * 15 * (1 - 0.5 * k); const fall = k * k * side * (dist * dist * 260 + dist * 60); return flow + fall; };
+    const ribbonSeg = (x0, x1, anchor, side) => {
+      const pts = [], step = 10;
+      for (let x = x0; x <= x1 + 0.1; x += step) pts.push([x, y + wave(x, anchor, side)]);
+      const g = cx.createLinearGradient(0, y - 40, 0, y + 60); g.addColorStop(0, '#ff7a96'); g.addColorStop(0.5, '#e8325f'); g.addColorStop(1, '#b3123f');
+      cx.fillStyle = g; cx.beginPath(); pts.forEach(([x, py], i) => (i ? cx.lineTo(x, py - TH / 2) : cx.moveTo(x, py - TH / 2))); for (let i = pts.length - 1; i >= 0; i--) cx.lineTo(pts[i][0], pts[i][1] + TH / 2); cx.closePath(); cx.fill();
+      cx.strokeStyle = 'rgba(255,255,255,.55)'; cx.lineWidth = 3; cx.beginPath(); pts.forEach(([x, py], i) => (i ? cx.lineTo(x, py - TH / 2 + 7) : cx.moveTo(x, py - TH / 2 + 7))); cx.stroke();
+      cx.strokeStyle = 'rgba(120,0,30,.25)'; cx.lineWidth = 2; cx.beginPath(); pts.forEach(([x, py], i) => (i ? cx.lineTo(x, py + TH / 2 - 6) : cx.moveTo(x, py + TH / 2 - 6))); cx.stroke();
+      return pts;
+    };
     cx.save(); cx.globalAlpha = e;
-    const rib = (x0, x1, rotA, pivotX) => { cx.save(); cx.translate(pivotX, y); cx.rotate(rotA); cx.translate(-pivotX, -y); const g = cx.createLinearGradient(0, y - 20, 0, y + 20); g.addColorStop(0, '#ff6b8a'); g.addColorStop(1, '#c2184a'); cx.fillStyle = g; cx.fillRect(x0, y - 20, x1 - x0, 40); cx.fillStyle = 'rgba(255,255,255,.35)'; cx.fillRect(x0, y - 14, x1 - x0, 4); cx.restore(); };
-    if (u < cut) rib(cxm - half, cxm + half, 0, cxm);
-    else { rib(cxm - half, cxm, 0.9 * k * k, cxm - half); rib(cxm, cxm + half, -0.9 * k * k, cxm + half); }
-    cx.fillStyle = '#ffd24a'; [cxm - half - 14, cxm + half + 14].forEach((x) => { cx.beginPath(); cx.arc(x, y, 16, 0, 7); cx.fill(); });
-    if (u < cut) { const sx = cxm - half + (u / cut) * (half); cx.strokeStyle = '#e8e6f5'; cx.lineWidth = 5; cx.beginPath(); cx.moveTo(sx - 28, y - 30); cx.lineTo(sx, y); cx.moveTo(sx - 28, y + 30); cx.lineTo(sx, y); cx.stroke(); }
-    cx.restore(); if (u >= cut) sparkles(age - cut * d, 7, 26, cxm, y, 170, 1300);
+    if (u < cut) ribbonSeg(cxm - half, cxm + half, cxm, 0);
+    else { ribbonSeg(cxm - half, cxm, cxm - half, 1); ribbonSeg(cxm, cxm + half, cxm + half, 1); }
+    /* the two posts holding it, with gold finials */
+    [cxm - half - 18, cxm + half + 18].forEach((x) => { cx.fillStyle = '#6b4a2a'; cx.fillRect(x - 6, y - 40, 12, H - y + 40); cx.fillStyle = '#ffd24a'; cx.beginPath(); cx.arc(x, y - 46, 13, 0, 7); cx.fill(); });
+    /* the scissors fly in, snip snip, then cut */
+    if (u < cut + 0.08) {
+      const arrive = Math.min(1, u / (cut * 0.78)), sx = lerp(cxm + W * 0.3, cxm, ease2(arrive)), sy = lerp(y + 130, y - 4, ease2(arrive)) + Math.sin(ph * 2) * 4;
+      const snip = u < cut * 0.78 ? 0.42 + 0.3 * Math.sin(age / 85) : Math.max(0.02, 0.42 - (u - cut * 0.78) / (cut * 0.22) * 0.4), sc3 = 1.55 * S1 + 0.25;
+      cx.save(); cx.translate(sx, sy); cx.rotate(-0.28 + (1 - arrive) * 0.4); cx.scale(sc3, sc3);
+      [[-1, '#d9dee8'], [1, '#aeb6c6']].forEach(([sd, col]) => { cx.save(); cx.rotate(sd * snip / 2); cx.fillStyle = col; cx.strokeStyle = '#5b6475'; cx.lineWidth = 1.5; cx.beginPath(); cx.moveTo(0, -3 * sd); cx.lineTo(-62, -1.5 * sd); cx.lineTo(-62, 4 * sd); cx.lineTo(0, 6 * sd); cx.closePath(); cx.fill(); cx.stroke();
+        cx.strokeStyle = '#ff7a1a'; cx.lineWidth = 6; cx.beginPath(); cx.ellipse(34, sd * 9, 15, 9, 0, 0, 7); cx.stroke(); cx.strokeStyle = '#c95a00'; cx.lineWidth = 1.5; cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(20, sd * 6); cx.stroke(); cx.restore(); });
+      cx.fillStyle = '#5b6475'; cx.beginPath(); cx.arc(0, 1, 3.5, 0, 7); cx.fill(); cx.restore();
+    }
+    cx.restore(); if (u >= cut) sparkles(age - cut * d, 7, 30, cxm, y, 190, 1500);
   } else if (sc.kind === 'seal') {
     const slam = Math.min(1, age / 260), sc2 = 2 - slam;
     cx.save(); cx.globalAlpha = e; cx.translate(cxm, cym); cx.scale(sc2 * S1, sc2 * S1);
