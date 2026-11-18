@@ -612,8 +612,7 @@ $('#suggRow').append(...SUGGESTIONS.map((s) => h('button', { type: 'button', onc
 
 /* ---------- prototype controls ---------- */
 const devBtn = $('#devBtn'), devMenu = $('#devMenu');
-const SPEED_LABEL = () => 'Auto-play speed: ' + SPEEDS[getSpeed()].label;
-const paintSpeed = () => { $('#doSpeed').textContent = SPEED_LABEL(); };
+const paintSpeed = () => { const slow = getSpeed() === 'slow', sw = $('#doSpeed'); sw.setAttribute('aria-checked', String(slow)); sw.classList.toggle('on', slow); $('.sw-state', sw).textContent = slow ? 'On' : 'Off'; };
 paintSpeed();
 const paintAuto = () => { devBtn.textContent = state.auto ? 'Auto-play on' : 'Auto-play off'; const sw = $('#doAuto'); sw.setAttribute('aria-checked', String(state.auto)); sw.classList.toggle('on', state.auto); $('.sw-state', sw).textContent = state.auto ? 'On' : 'Off'; };
 /* the menu opens from the pill, closes on a tap away, on Escape, and a second after a choice (the choice pulses first) */
