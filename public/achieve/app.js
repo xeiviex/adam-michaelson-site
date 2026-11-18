@@ -615,7 +615,7 @@ const devBtn = $('#devBtn'), devMenu = $('#devMenu');
 const SPEED_LABEL = () => 'Auto-play speed: ' + SPEEDS[getSpeed()].label;
 const paintSpeed = () => { $('#doSpeed').textContent = SPEED_LABEL(); };
 paintSpeed();
-const paintAuto = () => { devBtn.textContent = state.auto ? 'Auto-play on' : 'Auto-play off'; $('#doAuto').textContent = 'Auto-play: ' + (state.auto ? 'on' : 'off'); };
+const paintAuto = () => { devBtn.textContent = state.auto ? 'Auto-play on' : 'Auto-play off'; const sw = $('#doAuto'); sw.setAttribute('aria-checked', String(state.auto)); sw.classList.toggle('on', state.auto); $('.sw-state', sw).textContent = state.auto ? 'On' : 'Off'; };
 /* the menu opens from the pill, closes on a tap away, on Escape, and a second after a choice (the choice pulses first) */
 let closeTimer = 0;
 const setMenu = (open) => { clearTimeout(closeTimer); $$('.dev-menu button', devMenu).forEach((b) => b.classList.remove('picked')); devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); };
