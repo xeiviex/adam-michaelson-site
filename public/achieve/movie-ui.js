@@ -23,8 +23,6 @@ export function movieCard(applicant, hooks, onDone, opts) {
   const toggle = h('button', { type: 'button', class: 'btn line sm', onclick: () => { if (vid.paused) { held = false; vid.play().catch(() => {}); } else { vid.pause(); } } });
   const paintToggle = () => { toggle.replaceChildren(ico(vid.paused ? 'play' : 'pause', 16), vid.paused ? 'Play' : 'Pause'); };
   toggle.hidden = true;
-  const snd = h('button', { type: 'button', class: 'btn line sm', onclick: () => { vid.muted = false; snd.hidden = true; } }, 'Turn sound on');
-  snd.hidden = true;
   const dl = h('a', { class: 'btn line sm', href: '/achieve/jordan-movie.mp4', download: name.replace(/[^A-Za-z0-9]+/g, '_') + '_Broke_Free.mp4' }, 'Download');
   const share = h('button', { type: 'button', class: 'btn line sm', onclick: doShare }, ico('share', 16), 'Share my movie');
   share.hidden = true;
@@ -42,24 +40,25 @@ export function movieCard(applicant, hooks, onDone, opts) {
   vid.addEventListener('timeupdate', paint);
   vid.addEventListener('play', () => { toggle.hidden = false; replay.hidden = true; paintToggle(); });
   vid.addEventListener('pause', () => { if (!vid.ended) paintToggle(); });
-  vid.addEventListener('ended', () => { snd.hidden = true; playing = false; toggle.hidden = true; replay.hidden = false; share.hidden = false; paint(); });
+  vid.addEventListener('ended', () => { playing = false; toggle.hidden = true; replay.hidden = false; share.hidden = false; paint(); });
   function stop() { playing = false; try { vid.pause(); } catch { /* not playing */ } }
   async function start() {
     playBtn.hidden = true; label.hidden = true; replay.hidden = true; share.hidden = true; playing = true;
     try { vid.currentTime = 0; } catch { /* not ready */ }
     vid.muted = false;
-    try { await vid.play(); } catch { vid.muted = true; try { await vid.play(); } catch { playing = false; playBtn.hidden = false; } }
-    snd.hidden = !vid.muted || vid.paused;
+    try { await vid.play(); } catch { playing = false; playBtn.hidden = false; label.hidden = false; }
   }
   playBtn.addEventListener('click', start);
   vid.addEventListener('click', () => { if (!playBtn.hidden) start(); else if (!vid.ended) { if (vid.paused) { held = false; vid.play().catch(() => {}); } else vid.pause(); } });
   stage.append(bar);
-  ctrl.append(toggle, snd, replay, share, dl);
+  ctrl.append(toggle, replay, share, dl);
   const el = h('div', { class: 'card movie' }, stage, ctrl, go);
   return { el, focus: stage, async auto(alive) {
     await sleep(reduced() ? 0 : 1800); if (!alive()) return;
-    start();
     const ended = new Promise((r) => { vid.addEventListener('ended', r, { once: true }); });
-    await Promise.race([ended, sleep(reduced() ? 0 : 60000)]); await sleep(reduced() ? 0 : 1500); if (alive()) go.click();
+    await start();
+    /* The film never plays muted. If the browser blocks sound until a tap, the poster waits for the viewer to press play. */
+    const blocked = vid.paused && !vid.ended;
+    await Promise.race([ended, sleep(reduced() ? 0 : blocked ? 600000 : 60000)]); await sleep(reduced() ? 0 : 1500); if (alive()) go.click();
   } };
 }
