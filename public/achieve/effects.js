@@ -110,8 +110,9 @@ function drawScene(sc, t) {
   } else if (sc.kind === 'seal') {
     const slam = Math.min(1, age / 260), sc2 = 2 - slam;
     cx.save(); cx.globalAlpha = e; cx.translate(cxm, cym); cx.scale(sc2 * S1, sc2 * S1);
-    const g = cx.createRadialGradient(-20, -20, 10, 0, 0, 84); g.addColorStop(0, '#ff5a5a'); g.addColorStop(1, '#8c0f1f'); cx.fillStyle = g; cx.beginPath(); for (let i = 0; i < 28; i++) { const a0 = (i / 28) * 6.283, rr = 78 + (i % 2 ? 6 : -2); cx.lineTo(Math.cos(a0) * rr, Math.sin(a0) * rr); } cx.closePath(); cx.fill();
-    cx.strokeStyle = 'rgba(255,255,255,.35)'; cx.lineWidth = 3; cx.beginPath(); cx.arc(0, 0, 52, 0, 7); cx.stroke(); cx.fillStyle = 'rgba(255,230,230,.92)'; cx.font = '900 62px system-ui'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('A', 0, 4); cx.restore();
+    const g = cx.createRadialGradient(-20, -20, 10, 0, 0, 84); g.addColorStop(0, '#ffe98a'); g.addColorStop(0.55, '#f2b92e'); g.addColorStop(1, '#a8741a'); cx.fillStyle = g; cx.beginPath(); for (let i = 0; i < 28; i++) { const a0 = (i / 28) * 6.283, rr = 78 + (i % 2 ? 6 : -2); cx.lineTo(Math.cos(a0) * rr, Math.sin(a0) * rr); } cx.closePath(); cx.fill();
+    cx.strokeStyle = 'rgba(255,248,210,.8)'; cx.lineWidth = 3; cx.beginPath(); cx.arc(0, 0, 54, 0, 7); cx.stroke(); cx.strokeStyle = 'rgba(140,90,10,.35)'; cx.lineWidth = 2; cx.beginPath(); cx.arc(0, 0, 49, 0, 7); cx.stroke();
+    cx.beginPath(); for (let i = 0; i < 10; i++) { const a1 = -Math.PI / 2 + (i / 10) * Math.PI * 2, r1 = i % 2 ? 19 : 42; cx.lineTo(Math.cos(a1) * r1, Math.sin(a1) * r1 + 3); } cx.closePath(); const sg = cx.createLinearGradient(0, -40, 0, 40); sg.addColorStop(0, '#fffbe6'); sg.addColorStop(1, '#ffe27a'); cx.fillStyle = sg; cx.fill(); cx.strokeStyle = '#a8741a'; cx.lineWidth = 2.5; cx.lineJoin = 'round'; cx.stroke(); cx.restore();
     if (age > 230) { ring(cxm, cym, (age - 230) * 0.5, 1 - (age - 230) / 600, '#ffb703', 5); sparkles(age - 230, 3, 20, cxm, cym, 140, 1200); }
   } else if (sc.kind === 'trophy') {
     dim(0.28 * e); const rise = outBack(Math.min(1, age / 900)), ty = lerp(H + 140, cym + 20, rise);
