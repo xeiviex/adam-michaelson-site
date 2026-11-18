@@ -25,7 +25,7 @@ export function song(s) {
   const first = s.first || 'friend';
   const goalLine = { calls: 'The phone can ring, I know my way', total: 'I owe a lot less than I used to say', time: 'Month by month I count the days', nobk: 'No court, no fear, I found my way' }[s.goal] || 'Month by month I count the days';
   return {
-    title: first + "'s Fresh Start",
+    title: first + " Broke Free",
     lines: [
       'Verse one: ' + first + ' took a breath and took a stand,',
       'A first small step with a steady hand.',

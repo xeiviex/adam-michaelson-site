@@ -262,11 +262,3 @@ test('movie: every frame draws without throwing', () => {
 });
 test('effects: seventeen distinct celebration kinds', () => { assert.equal(new Set(FX_KINDS).size, 17); ['confetti', 'streamers', 'fireworks', 'band', 'balloons', 'stamp', 'target', 'seal', 'trophy', 'beam', 'flag', 'bell', 'gavel', 'sunrise', 'wave', 'shred', 'coins'].forEach((k) => assert.ok(FX_KINDS.includes(k), k)); });
 
-test('song anthem: spoken lines drop the section labels and the form is eight lines', async () => {
-  const { spoken } = await import('../public/achieve/song-audio.js');
-  const D = await import('../public/achieve/deposit.js');
-  const lines = D.song({ first: 'Jordan' }).lines;
-  assert.equal(lines.length, 8);
-  assert.ok(lines.map(spoken).every((l) => !/^(Verse|Chorus)/.test(l)));
-  assert.equal(spoken('Chorus: Oh, Jordan'), 'Oh, Jordan');
-});

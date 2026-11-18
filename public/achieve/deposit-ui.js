@@ -6,7 +6,6 @@ import * as D from './deposit.js';
 import { money } from './firsttake/shared/flow.js';
 
 import { pace } from './speed.js';
-import { createAnthem } from './song-audio.js';
 const pause = (ms) => sleep(reduced() ? 0 : pace(ms));
 
 /* The logged-in account view, shared by the sign-in and deposit cards. */
@@ -65,32 +64,34 @@ export function depositCard(applicant, bank, amount, onDone) {
 /* ---- the celebration ---- */
 export function celebrateCard(applicant, st, hooks, onDone) {
   const s = D.song({ first: applicant.first, goal: st.goal });
+  const SRC = '/achieve/jordan-broke-free.mp3';
+  const IC_PLAY = '<svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path d="M4.5 2.8v10.4a.6.6 0 0 0 .9.5l8.2-5.2a.6.6 0 0 0 0-1L5.4 2.3a.6.6 0 0 0-.9.5z" fill="currentColor"/></svg>';
+  const IC_PAUSE = '<svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><rect x="3.5" y="2.5" width="3.2" height="11" rx="1" fill="currentColor"/><rect x="9.3" y="2.5" width="3.2" height="11" rx="1" fill="currentColor"/></svg>';
+  const fmt = (x) => (isFinite(x) ? Math.floor(x / 60) + ':' + String(Math.floor(x % 60)).padStart(2, '0') : '0:00');
+  const audio = h('audio', { preload: 'none', src: SRC });
   const eq = h('span', { class: 'eq', 'aria-hidden': 'true' }, h('i'), h('i'), h('i'), h('i'));
-  const lyr = h('div', { class: 'lyrics', 'aria-live': 'polite' });
-  const play = h('button', { type: 'button', class: 'btn line', onclick: () => (playing ? stopSong() : playSong(true)) }, ico('speaker', 18), 'Play my song');
-  let playing = false, anthem = null;
-  const label = (txt) => { play.replaceChildren(ico('speaker', 18), txt); };
-  const showLine = (i) => { lyr.querySelectorAll('.ly.now').forEach((n) => n.classList.remove('now')); const row = h('div', { class: 'ly now' }, s.lines[i]); lyr.append(row); row.scrollIntoView({ block: 'nearest' }); };
-  function stopSong() { if (anthem) { anthem.stop(); anthem = null; } playing = false; eq.classList.remove('on'); lyr.querySelectorAll('.ly.now').forEach((n) => n.classList.remove('now')); label('Play my song'); }
-  /* with sound: an 80s power anthem with the words read in time. Without (auto-play): the lyrics roll silently */
-  async function playSong(withSound) {
-    if (playing) return; playing = true; eq.classList.add('on'); lyr.replaceChildren();
-    anthem = withSound ? createAnthem(s.lines) : null;
-    if (anthem) { label('Stop'); anthem.start({ onLine: showLine, onEnd: stopSong }); return; }
-    play.disabled = true;
-    for (const l of s.lines) { if (!playing) break; lyr.append(h('div', { class: 'ly' }, l)); lyr.lastChild.scrollIntoView({ block: 'nearest' }); await pause(1100); }
-    play.disabled = false; stopSong();
-  }
-  window.addEventListener('achieve:attention', (ev) => { if (!anthem) return; if (ev.detail.attentive) anthem.resume(); else anthem.pause(); });
+  const pb = h('button', { type: 'button', class: 'pl-btn', 'aria-label': 'Play my song' });
+  pb.innerHTML = IC_PLAY;
+  const bar = h('input', { type: 'range', class: 'pl-bar', min: '0', max: '1000', value: '0', 'aria-label': 'Song position' });
+  const time = h('span', { class: 'pl-time' }, '0:00');
+  const dl = h('a', { class: 'btn line sm pl-dl', href: SRC, download: s.title.replace(/[^A-Za-z0-9]+/g, '_') + '.mp3' }, 'Download');
+  const paint = () => { const on = !audio.paused; pb.innerHTML = on ? IC_PAUSE : IC_PLAY; pb.setAttribute('aria-label', on ? 'Pause' : 'Play my song'); eq.classList.toggle('on', on); };
+  let wasPlaying = false;
+  pb.addEventListener('click', () => { if (audio.paused) { audio.play().catch(() => {}); } else audio.pause(); });
+  audio.addEventListener('play', paint); audio.addEventListener('pause', paint); audio.addEventListener('ended', () => { paint(); bar.value = '0'; });
+  audio.addEventListener('timeupdate', () => { if (audio.duration) { bar.value = String(Math.round((audio.currentTime / audio.duration) * 1000)); } time.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration); });
+  audio.addEventListener('loadedmetadata', () => { time.textContent = '0:00 / ' + fmt(audio.duration); });
+  bar.addEventListener('input', () => { if (audio.duration) audio.currentTime = (Number(bar.value) / 1000) * audio.duration; });
+  window.addEventListener('achieve:attention', (ev) => { if (!ev.detail.attentive) { wasPlaying = !audio.paused; if (wasPlaying) audio.pause(); } else if (wasPlaying) { wasPlaying = false; audio.play().catch(() => {}); } });
   const go = cont('Keep going', () => onDone({ celebrated: true }));
   const el = h('div', { class: 'card party' },
     h('div', { class: 'party-ring' }, h('div', { class: 'win-ic big' }, ico('star', 34, 2))),
     h('h3', null, 'The hardest part is done, ' + (applicant.first || 'friend') + '.'),
     h('p', { class: 'party-sub' }, 'You made your first deposit. Most people never take that step. You did.'),
     h('div', { class: 'gift' }, h('div', { class: 'gift-card' }, h('b', null, applicant.first + ', you did it.'), h('span', null, 'From your Achieve team')), h('div', { class: 'gift-t' }, h('b', null, 'A welcome box is on its way'), h('span', null, 'A handwritten card and a few small treats. We will confirm where to send it in your account.'))),
-    h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'We wrote you a song!'))), lyr, play, s.note ? h('p', { class: 'fine' }, s.note) : null), go);
+    h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'We wrote you a song!'))), h('div', { class: 'pl' }, pb, h('div', { class: 'pl-mid' }, bar, time), dl), audio), go);
   hooks && hooks.burst && after(250, hooks.burst);
-  return { el, async auto(alive) { await pause(2400); if (!alive()) return; playSong(false); await pause(s.lines.length * (reduced() ? 0 : 1100) + 2600); if (alive()) go.click(); } };
+  return { el, async auto(alive) { await pause(2400); if (!alive()) return; await pause(4500); while (alive() && !audio.paused && !audio.ended) await sleep(500); if (alive()) go.click(); } };
 }
 
 /* ---- creditor outreach log ---- */

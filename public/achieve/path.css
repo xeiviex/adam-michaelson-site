@@ -285,3 +285,7 @@ textarea.inp.note { height: auto; padding: 12px 14px; margin-top: 18px; resize: 
 @media (max-width: 899px) { .top > .dev { left: 132px; } .top > .dev .dev-menu { left: -122px; } }
 
 .ly.now { color: var(--ind); font-weight: 700; }
+
+.pl { display: flex; align-items: center; gap: 12px; margin-top: 12px; } .pl-btn { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--ind); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; } .pl-btn:hover { filter: brightness(1.1); }
+.pl-mid { flex: 1; min-width: 0; display: grid; gap: 2px; } .pl-time { font-size: 12px; color: var(--mut); } .pl-bar { width: 100%; accent-color: var(--ind); }
+.pl-dl { flex: none; text-decoration: none; display: inline-flex; align-items: center; }
