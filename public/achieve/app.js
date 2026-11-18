@@ -22,7 +22,7 @@ import * as S from './settle.js';
 import * as SU from './settle-ui.js';
 import * as F from './free.js';
 import * as FU from './free-ui.js';
-import { localAnswer, FALLBACK, SUGGESTIONS } from './debt-kb.js';
+import { localAnswer, FALLBACK } from './debt-kb.js';
 import * as AC from './account.js';
 import { revealAccount } from './acct-reveal.js';
 import { createAccount } from './account-ui.js';
@@ -667,7 +667,6 @@ async function handleSend(text) {
   m.classList.remove('wait'); m.classList.add('said'); scrollEnd();
 }
 askForm.addEventListener('submit', (e) => { e.preventDefault(); handleSend(askInput.value); });
-$('#suggRow').append(...SUGGESTIONS.map((s) => h('button', { type: 'button', onclick: () => handleSend(s) }, s)));
 
 /* ---------- my account: the places a returning client goes ---------- */
 const pauseJourney = (on) => { setPaused(on); window.dispatchEvent(new CustomEvent('achieve:attention', { detail: { attentive: !on } })); };
