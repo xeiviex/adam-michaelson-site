@@ -16,7 +16,7 @@ export function fundCard(applicant, m, hooks, onDone) {
   const marks = [[0.25, '25%'], [0.5, '50%'], [0.75, '75%'], [1, 'Debt free']].map(([p, l]) => h('div', { class: 'th-mark', style: { bottom: p * 100 + '%' } }, h('span', null, l)));
   const offerMark = h('div', { class: 'th-mark ofr', style: { bottom: Math.min(100, (m.deposit * m.offerMonth / m.target) * 100) + '%' } }, h('span', null, 'Offers can begin'));
   const tube = h('div', { class: 'th-tube', 'aria-hidden': 'true' }, fill, marks, offerMark);
-  const bulb = h('div', { class: 'th-bulb', 'aria-hidden': 'true' });
+  const bulb = h('div', { class: 'th-bulb', 'aria-hidden': 'true' }, pctEl);
   const big = h('div', { class: 'fd-big' });
   const saved = h('div', { class: 'fd-sub' });
   const msg = h('div', { class: 'fd-msg', role: 'status' });
@@ -55,7 +55,7 @@ export function fundCard(applicant, m, hooks, onDone) {
   }
   paint();
   const el = h('div', { class: 'card fund' },
-    h('div', { class: 'fd-grid' }, h('div', { class: 'thermo' }, tube, bulb, pctEl),
+    h('div', { class: 'fd-grid' }, h('div', { class: 'thermo' }, tube, bulb),
       h('div', { class: 'fd-side' }, big, saved, msg, list)),
     h('div', { class: 'fd-ctl' }, playBtn, range),
     h('p', { class: 'fine' }, 'Drag the slider or fast-forward to see your fund grow. Months are estimates from your plan. Creditors decide the real timing, and we will tell you if it changes.'), go);

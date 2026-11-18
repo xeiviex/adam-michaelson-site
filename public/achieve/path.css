@@ -387,3 +387,7 @@ body.acct-open { overflow: hidden; }
 /* two-card pages split evenly, so there is no empty slot beside them */
 .av-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 700px) { .av-grid.two { grid-template-columns: 1fr; } }
+
+/* the percent lives inside the bulb and is centered by the bulb itself, so it cannot drift */
+.th-bulb { display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+.th-bulb .th-pct { position: static; transform: none; width: auto; height: auto; margin: 0; padding: 0; line-height: 1; text-align: center; font-variant-numeric: tabular-nums; }
