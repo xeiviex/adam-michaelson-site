@@ -45,8 +45,6 @@
 
 @media (prefers-reduced-motion: reduce) { .win-ic { animation: none; } }
 
-/* keep the prototype pill clear of the path nav (desktop) */
-@media (min-width: 900px) { .dev { right: auto; left: 16px; } .dev-menu { right: auto; left: 0; } }
 
 /* stage 2 cards */
 .qopts { display: grid; gap: 10px; }
@@ -270,3 +268,18 @@ textarea.inp.note { height: auto; padding: 12px 14px; margin-top: 18px; resize: 
 
 /* paused while the viewer is away */
 .away { position: fixed; left: 50%; top: 14px; transform: translateX(-50%); z-index: 60; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 18px; border-radius: 12px; background: rgba(26, 16, 80, .94); color: #fff; box-shadow: 0 10px 30px rgba(0, 0, 0, .3); text-align: center; max-width: min(92vw, 380px); } .away[hidden] { display: none; } .away b { font-size: 14px; letter-spacing: .04em; text-transform: uppercase; } .away span { font-size: 13px; opacity: .9; }
+
+/* auto-play combo button in the header, right of the logo: label + play/pause on the left, caret on the right */
+.top > .dev { position: absolute; top: 50%; transform: translateY(-50%); left: 176px; right: auto; bottom: auto; z-index: 20; }
+.dev-combo { display: flex; align-items: stretch; border-radius: 8px; background: #cf2748; color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.dev-combo button { border: 0; background: transparent; color: inherit; cursor: pointer; font: inherit; }
+.dev-main { display: flex; align-items: center; gap: 7px; padding: 7px 10px 7px 14px; font-size: 13px; font-weight: 700; letter-spacing: .02em; border-radius: 8px 0 0 8px; }
+.dev-ic { display: inline-flex; width: 14px; height: 14px; }
+.dev-caret { display: flex; align-items: center; justify-content: center; padding: 0 10px; border-left: 1px solid rgba(255,255,255,.35); border-radius: 0 8px 8px 0; }
+.dev-main:hover, .dev-caret:hover { background: #de4d68; }
+.dev-caret[aria-expanded="true"] svg { transform: rotate(180deg); }
+.dev-caret svg { transition: transform .15s; }
+.dev-combo button:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+.dev-combo:has(.paused) { background: #8a869c; } .dev-combo:has(.paused) button:hover { background: #7a768c; }
+.top > .dev .dev-menu { position: absolute; top: calc(100% + 8px); bottom: auto; left: 0; right: auto; width: min(270px, 92vw); }
+@media (max-width: 899px) { .top > .dev { left: 132px; } .top > .dev .dev-menu { left: -122px; } }

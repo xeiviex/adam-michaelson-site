@@ -17,6 +17,18 @@
 <body class="ach">
 <header class="top">
   <a class="brand" href="/achieve/" aria-label="Achieve home"><img src="/achieve/firsttake/img/logo-full.png" alt="achieve" width="124" height="32"></a>
+  <div class="dev" id="dev">
+    <div class="dev-menu" id="devMenu" hidden>
+      <p>Prototype controls. Not part of the product.</p>
+      <button type="button" id="doSpeed" class="sw-row" role="switch" aria-checked="false"><span class="sw-label">Slower playback</span><span class="sw-state">Off</span><span class="sw" aria-hidden="true"><i></i></span></button>
+      <button type="button" id="doSkip">Skip to the end of this stage</button>
+      <button type="button" id="doReset">Start over</button>
+    </div>
+    <div class="dev-combo">
+      <button type="button" class="dev-main" id="devToggle" aria-pressed="true" aria-label="Auto-play is on. Pause"><span class="dev-lbl">Auto-play</span><span class="dev-ic" id="devIc"></span></button>
+      <button type="button" class="dev-caret" id="devBtn" aria-expanded="false" aria-controls="devMenu" aria-haspopup="true" aria-label="Auto-play settings"><svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+  </div>
   <div class="top-r">
     <span class="mins" aria-live="polite"></span>
     <a class="tel" href="tel:+18334352021"><span class="ico" id="telIc"></span><span class="tel-t">(833) 435-2021</span></a>
@@ -60,17 +72,6 @@
 </div>
 <div class="road-back" id="roadBack"></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
-
-<div class="dev" id="dev">
-  <div class="dev-menu" id="devMenu" hidden>
-    <p>Prototype controls. Not part of the product.</p>
-    <button type="button" id="doAuto" class="sw-row" role="switch" aria-checked="false"><span class="sw-label">Auto-play</span><span class="sw-state">Off</span><span class="sw" aria-hidden="true"><i></i></span></button>
-    <button type="button" id="doSpeed" class="sw-row" role="switch" aria-checked="false"><span class="sw-label">Slower playback</span><span class="sw-state">Off</span><span class="sw" aria-hidden="true"><i></i></span></button>
-    <button type="button" id="doSkip">Skip to the end of this stage</button>
-    <button type="button" id="doReset">Start over</button>
-  </div>
-  <button type="button" class="dev-btn" id="devBtn" aria-expanded="false" aria-controls="devMenu">Auto-play on</button>
-</div>
 
 <script type="module">
   import { icon } from '/achieve/firsttake/shared/dom.js';

@@ -614,7 +614,9 @@ $('#suggRow').append(...SUGGESTIONS.map((s) => h('button', { type: 'button', onc
 const devBtn = $('#devBtn'), devMenu = $('#devMenu');
 const paintSpeed = () => { const slow = getSpeed() === 'slow', sw = $('#doSpeed'); sw.setAttribute('aria-checked', String(slow)); sw.classList.toggle('on', slow); $('.sw-state', sw).textContent = slow ? 'On' : 'Off'; };
 paintSpeed();
-const paintAuto = () => { devBtn.textContent = state.auto ? 'Auto-play on' : 'Auto-play off'; const sw = $('#doAuto'); sw.setAttribute('aria-checked', String(state.auto)); sw.classList.toggle('on', state.auto); $('.sw-state', sw).textContent = state.auto ? 'On' : 'Off'; };
+const IC_PAUSE = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="3.5" y="2.5" width="3.2" height="11" rx="1" fill="currentColor"/><rect x="9.3" y="2.5" width="3.2" height="11" rx="1" fill="currentColor"/></svg>';
+const IC_PLAY = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 2.8v10.4a.6.6 0 0 0 .9.5l8.2-5.2a.6.6 0 0 0 0-1L5.4 2.3a.6.6 0 0 0-.9.5z" fill="currentColor"/></svg>';
+const paintAuto = () => { const t = $('#devToggle'); $('#devIc').innerHTML = state.auto ? IC_PAUSE : IC_PLAY; t.setAttribute('aria-pressed', String(state.auto)); t.setAttribute('aria-label', state.auto ? 'Auto-play is on. Pause' : 'Auto-play is paused. Play'); t.classList.toggle('paused', !state.auto); };
 /* the menu opens from the pill, closes on a tap away, on Escape, and a second after a choice (the choice pulses first) */
 let closeTimer = 0;
 const setMenu = (open) => { clearTimeout(closeTimer); $$('.dev-menu button', devMenu).forEach((b) => b.classList.remove('picked')); devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); };
@@ -623,8 +625,8 @@ devBtn.addEventListener('click', () => setMenu(devMenu.hidden));
 document.addEventListener('pointerdown', (e) => { if (!devMenu.hidden && !$('#dev').contains(e.target)) setMenu(false); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !devMenu.hidden) { setMenu(false); devBtn.focus(); } });
 $('#doSpeed').addEventListener('click', (e) => { setSpeed(getSpeed() === 'fast' ? 'slow' : 'fast'); paintSpeed(); choose(e.currentTarget); });
-$('#doAuto').addEventListener('click', (e) => {
-  state.auto = !state.auto; save(); paintAuto(); choose(e.currentTarget);
+$('#devToggle').addEventListener('click', () => {
+  state.auto = !state.auto; save(); paintAuto();
   const pending = $('.turn.pending', stream);
   if (state.auto && pending) { const step = J.stepById(pending.dataset.step); const form = pending.querySelector('form'); if (step && form) autoFill(form, step, ui.run); }
 });
