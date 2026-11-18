@@ -88,8 +88,13 @@ export function celebrateCard(applicant, st, hooks, onDone) {
     h('div', { class: 'party-ring' }, h('div', { class: 'win-ic big' }, ico('star', 34, 2))),
     h('h3', null, 'The hardest part is done, ' + (applicant.first || 'friend') + '.'),
     h('p', { class: 'party-sub' }, 'You made your first deposit. Most people never take that step. You did.'),
-    h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'We wrote you a song!'))), h('div', { class: 'pl' }, pb, h('div', { class: 'pl-mid' }, bar, time), dl), audio),
+    h('div', { class: 'song' }, h('div', { class: 'song-pt', 'aria-hidden': 'true' }, h('span', null, 'PRESS PLAY!'), h('span', { class: 'art-arr', html: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v16M5 13l7 7 7-7"/></svg>' })), h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'We wrote you a song!'))), h('div', { class: 'pl' }, pb, h('div', { class: 'pl-mid' }, bar, time), dl), audio),
     h('div', { class: 'gift' }, h('div', { class: 'gift-card' }, h('b', null, applicant.first + ', you did it.'), h('span', null, 'From your Achieve team')), h('div', { class: 'gift-t' }, h('b', null, 'A welcome box is on its way'), h('span', null, 'A handwritten card and a few small treats. We will confirm where to send it in your account.'))), go);
+  /* the callout starts wobbling only once the song is actually on screen */
+  if (typeof IntersectionObserver !== 'undefined') {
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting && e.intersectionRatio >= 0.6)) { io.disconnect(); const p = el.querySelector('.song-pt'); if (p) p.classList.add('go'); } }, { threshold: [0.6] });
+    io.observe(el.querySelector('.song'));
+  }
   hooks && hooks.burst && after(250, hooks.burst);
   return { el, focus: el.querySelector('.song'), async auto(alive) { await pause(2400); if (!alive()) return; await pause(9500); while (alive() && !audio.paused && !audio.ended) await sleep(500); if (alive()) go.click(); } };
 }

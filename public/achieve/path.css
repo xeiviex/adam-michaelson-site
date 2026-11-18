@@ -358,3 +358,10 @@ body.acct-open { overflow: hidden; }
 @keyframes youfade { from { opacity: 1; } to { opacity: 0; } }
 @keyframes youarr { from { transform: translateX(-3px); } to { transform: translateX(5px); } }
 @media (prefers-reduced-motion: reduce) { .art-you.go, .art-you.go .art-arr { animation: none; opacity: 1; } }
+.song { position: relative; }
+.song-pt { position: absolute; right: 14px; top: -17px; display: flex; align-items: center; gap: 4px; padding: 6px 8px 6px 12px; border-radius: 999px; background: #ffb703; color: #1b1340; font: 800 12px/1 var(--font); letter-spacing: .03em; box-shadow: 0 8px 20px rgba(0, 0, 0, .3); pointer-events: none; opacity: 0; z-index: 2; }
+.song-pt.go { animation: songwob .5s ease-in-out 0s 12 alternate, youfade .7s ease 6s forwards; }
+.song-pt.go .art-arr { animation: songarr .5s ease-in-out 0s 12 alternate; }
+@keyframes songwob { from { opacity: 1; transform: translateY(-4px) rotate(-2deg); } to { opacity: 1; transform: translateY(4px) rotate(2deg); } }
+@keyframes songarr { from { transform: translateY(-2px); } to { transform: translateY(3px); } }
+@media (prefers-reduced-motion: reduce) { .song-pt.go, .song-pt.go .art-arr { animation: none; opacity: 1; } }
