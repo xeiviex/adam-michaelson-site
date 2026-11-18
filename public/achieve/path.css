@@ -1,0 +1,49 @@
+/* Achieve debt relief prototype: additions on top of the first take's stylesheet (loaded first). */
+
+/* the path nav on the right */
+.stages { list-style: none; margin: 0; padding: 0; position: relative; }
+.st { position: relative; display: flex; gap: 14px; padding: 0 0 20px; }
+.st::before { content: ''; position: absolute; left: 14px; top: 30px; bottom: 0; width: 2px; background: var(--line-d); }
+.st:last-child::before { display: none; }
+.st.done::before { background: var(--ind); }
+.st .dot { flex: none; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--mut); background: #fff; border: 2px solid var(--line-d); z-index: 1; transition: background .3s, border-color .3s, color .3s, transform .3s; }
+.st.cur .dot { border-color: var(--ind); color: var(--ind); box-shadow: 0 0 0 4px rgba(51, 0, 255, .12); }
+.st.done .dot { background: var(--ind); border-color: var(--ind); color: #fff; }
+.stx { display: flex; flex-direction: column; gap: 2px; padding-top: 3px; min-width: 0; }
+.stx b { font-size: 15px; color: var(--ink); }
+.stx em { font-style: normal; font-size: 13px; color: var(--mut); line-height: 1.35; }
+.st.soon:not(.done):not(.cur) .stx b { color: #85829a; }
+.subs { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; }
+.subs li { font-size: 13px; color: var(--mut); padding-left: 16px; position: relative; }
+.subs li::before { content: ''; position: absolute; left: 2px; top: 6px; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--line-d); }
+.subs li.done { color: var(--ink); }
+.subs li.done::before { background: var(--ind); border-color: var(--ind); }
+
+/* answers in this flow are not editable yet */
+.bubble.static { cursor: default; }
+.bubble.static:hover { box-shadow: none; }
+
+/* assistant suggestions above the ask bar */
+.sugg-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.sugg-row button { border: 1px solid #c9c0ff; background: #fff; border-radius: 14px; padding: 4px 11px; font-size: 12.5px; cursor: pointer; color: var(--ind); }
+.sugg-row button:hover { background: var(--ind-t); }
+
+/* stage complete */
+.stage-card { text-align: center; }
+.stage-card h3 { margin: 12px 0 6px; font-size: 22px; letter-spacing: -.01em; }
+.stage-card p { margin: 0; color: var(--mut); line-height: 1.5; }
+.stage-card p b { color: var(--ink); }
+.win-ic { width: 56px; height: 56px; margin: 0 auto; border-radius: 50%; background: var(--ind); color: #fff; display: flex; align-items: center; justify-content: center; animation: pop .6s cubic-bezier(.2, 1.4, .3, 1); }
+@keyframes pop { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.soon-note { margin-top: 16px; display: flex; gap: 8px; align-items: flex-start; text-align: left; padding: 12px 14px; border-radius: 10px; background: var(--tint); color: var(--mut); font-size: 13px; line-height: 1.45; }
+.soon-note .ico { flex: none; margin-top: 1px; }
+.lead.win .qt { color: var(--ink); font-size: 24px; font-weight: 700; }
+
+/* confetti layer */
+#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; display: none; }
+#confetti.on { display: block; }
+
+@media (prefers-reduced-motion: reduce) { .win-ic { animation: none; } }
+
+/* keep the prototype pill clear of the path nav (desktop) */
+@media (min-width: 900px) { .dev { right: auto; left: 16px; } .dev-menu { right: auto; left: 0; } }
