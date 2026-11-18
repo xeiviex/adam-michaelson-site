@@ -384,3 +384,6 @@ body.acct-open { overflow: hidden; }
 .song .pl-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: -5px; border-radius: 50%; background: #fff; border: 2px solid #1EA1FF; box-shadow: 0 0 0 2px #fff; }
 .song .pl-bar::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 2px solid #1EA1FF; box-shadow: 0 0 0 2px #fff; }
 .song .pl-dl:focus-visible, .song .pl-btn:focus-visible { outline: 3px solid #ffb703; outline-offset: 2px; }
+/* two-card pages split evenly, so there is no empty slot beside them */
+.av-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 700px) { .av-grid.two { grid-template-columns: 1fr; } }

@@ -50,7 +50,7 @@ export function createAccount(api) {
     });
     const kindsOf = { all: () => true, deposit: (t) => t.kind === 'deposit', payment: (t) => t.kind === 'payment', fee: (t) => t.kind === 'fee' || t.kind === 'withdrawal' };
     const shown = tx.filter(kindsOf[filter.tx] || kindsOf.all);
-    return h('div', { class: 'av-grid' },
+    return h('div', { class: 'av-grid two' },
       card('Dedicated account', h('div', { class: 'av-bal' }, money(bal), h('small', null, pend ? ' + ' + money(Math.abs(pend)) + ' pending' : ' balance')), row('Account', '••3318 · FDIC-insured'), row('In the name of', ((state.applicant && state.applicant.first) || '') + ' ' + ((state.applicant && state.applicant.last) || ''))),
       card('Linked bank', row('Bank', bankLabel), row('Monthly deposit', money(c.deposit) + (dr.freq ? ', ' + dr.freq : '')), row('Draft day', dr.day ? 'The ' + dr.day + 'th' : 'The 15th'), h('p', { class: 'help' }, 'To change your bank or your draft date, call your specialist at (833) 435-2021.')),
       h('section', { class: 'av-card av-wide' }, h('h3', null, 'Make a transfer'), kinds, fromTo, h('div', { class: 'field' }, h('label', null, 'Amount'), amt), err, note, send),
@@ -106,7 +106,7 @@ export function createAccount(api) {
       btn('Save deposit', () => { if (!A.validDeposit(mAmt.value)) { mErr.textContent = 'Enter an amount of at least $' + A.MIN_DEPOSIT + '.'; mErr.hidden = false; return; } A.setDeposit(state, mAmt.value); api.save(); toast('Updated. Your new deposit starts with your next draft.'); paint(); }));
     const planActs = h('div', { class: 'av-actions' }, btn('Change monthly deposit', () => { mForm.hidden = !mForm.hidden; dForm.hidden = true; }, 'line sm'), btn('Report another debt', () => { dForm.hidden = !dForm.hidden; mForm.hidden = true; }, 'line sm'));
     if (filter.plan === 'deposit') mForm.hidden = false; else if (filter.plan === 'debt') dForm.hidden = false; filter.plan = null;
-    return h('div', { class: 'av-grid' },
+    return h('div', { class: 'av-grid two' },
       card('Contact', p.contact.map(([k, v]) => row(k, v)), editBtn, edit),
       card('Your plan', p.money.map(([k, v]) => row(k, v)), row('Agreement', p.consents), planActs, mForm, dForm),
       h('section', { class: 'av-card av-wide' }, h('h3', null, 'Debts in your program'), p.debts.length ? p.debts.map(([k, v]) => row(k, v)) : h('p', { class: 'help' }, 'None listed.')));
