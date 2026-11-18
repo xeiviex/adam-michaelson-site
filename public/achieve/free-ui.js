@@ -19,7 +19,8 @@ export function graduateCard(applicant, r, hooks, onDone) {
     h('p', { class: 'party-sub' }, r.debts + ' debts. ' + r.months + ' months. Every deposit, every call, every hard day. You finished.'),
     h('div', { class: 'rs-grid' }, stat('Debt you started with', money(r.owed), r.debts + ' accounts'), stat('You put in', money(r.total), money(r.deposit) + ' a month'), stat('Time', r.months + ' months', 'start to finish')),
     h('p', { class: 'fine' }, 'Illustrative example. Your own numbers will differ.'), go);
-  [250, 1500, 3200].forEach((t) => hooks && hooks.burst && after(t, () => hooks.burst()));
+  /* the sunrise plays alone */
+  hooks && hooks.burst && after(250, () => hooks.burst('sunrise'));
   return { el, async auto(alive) { await pause(4200); if (alive()) go.click(); } };
 }
 
@@ -28,7 +29,8 @@ export function raveCard(applicant, r, hooks, onDone) {
   const n = applicant.first || 'friend';
   const badges = h('div', { class: 'badges' });
   async function reveal() {
-    for (const b of F.BADGES) { badges.append(h('div', { class: 'badge' }, h('span', { class: 'bdg-ic' }, ico('check', 14, 3.4)), h('span', null, h('b', null, b.t), h('em', null, b.d)))); hooks && hooks.burst && hooks.burst(24); await pause(650); }
+    await pause(900);
+    for (const b of F.BADGES) { badges.append(h('div', { class: 'badge' }, h('span', { class: 'bdg-ic' }, ico('check', 14, 3.4)), h('span', null, h('b', null, b.t), h('em', null, b.d)))); hooks && hooks.burst && hooks.burst(120, 'fireworks'); await pause(650); }
   }
   const notes = F.NOTES.map((x) => h('div', { class: 'note' }, h('div', { class: 'note-av' }, x.who[0]), h('div', null, h('b', null, x.who), h('em', null, x.role), h('p', null, x.say(n)))));
   const go = cont('Next', () => onDone({ raved: true }));
