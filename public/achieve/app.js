@@ -10,11 +10,13 @@ import * as C from './consult.js';
 import * as CU from './consult-ui.js';
 import * as E from './enroll.js';
 import * as EU from './enroll-ui.js';
+import * as D from './deposit.js';
+import * as DU from './deposit-ui.js';
 import { localAnswer, FALLBACK, SUGGESTIONS } from './debt-kb.js';
 
 const KEY = 'achv1';
 const load = () => { try { return JSON.parse(sessionStorage.getItem(KEY)) || null; } catch { return null; } };
-const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], auto: true }, load());
+const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], d: {}, ddone: [], auto: true }, load());
 const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch { /* private mode */ } };
 
 const stream = $('#stream'), tail = $('#tail'), road = $('#roadInner');
@@ -35,7 +37,7 @@ function scrollEnd() {
 
 /* ---------- the path nav ---------- */
 const currentStage = () => J.STAGES.find((s) => !state.stageDone.includes(s.id)) || J.STAGES[J.STAGES.length - 1];
-const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : id === 'enroll' ? { all: E.E_STEPS, done: state.edone, label: E.eStepLabel } : null;
+const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : id === 'enroll' ? { all: E.E_STEPS, done: state.edone, label: E.eStepLabel } : id === 'deposit' ? { all: D.D_STEPS, done: state.ddone, label: D.dStepLabel } : null;
 function renderRoad() {
   const cur = currentStage();
   const ss = stageSteps(cur.id);
@@ -367,23 +369,78 @@ const completeEnroll = (quiet) => {
   const d = state.e.draft || {};
   const first = d.first ? E.fmtDate(new Date(d.first)) : 'soon';
   return stageDone('enroll', { quiet, line: "You're enrolled, " + (state.applicant.first || 'there') + '!',
-    body: 'Your agreement is signed and your dedicated account is open. Your first deposit is set for ' + first + '. We will celebrate the moment it clears.', onNext: () => {} });
+    body: 'Your agreement is signed and your dedicated account is open. Your first deposit is set for ' + first + '. Next you sign in and make it.', onNext: startDeposit });
 };
 
+/* ---------- stage 5: first deposit ---------- */
+const DMETA = {
+  login: { q: 'Welcome to your account', sub: 'This is your logged-in view. Everything about your program lives here.' },
+  deposit: { q: 'Make your first deposit', sub: 'Send it from your bank to your dedicated account.' },
+  celebrate: { q: 'Your first deposit cleared!', sub: '' },
+  outreach: { q: 'Has anyone contacted you yet?', sub: 'Creditors may call, text or write. It is normal, and we want to know.' },
+};
+const bankNow = () => E.bankById(state.e.bank) || E.BANKS[0];
+function dSummary(id) {
+  const d = state.d;
+  if (id === 'login') return 'Signed in';
+  if (id === 'deposit') return 'Deposited ' + money0(((d.deposit || {}).amount)) + ', cleared';
+  if (id === 'celebrate') return 'First deposit: celebrated';
+  if (id === 'outreach') { const n = (d.outreach || []).length; return n ? n + ' contact' + (n > 1 ? 's' : '') + ' logged' : 'No contact yet'; }
+  return '';
+}
+async function startDeposit() {
+  ui.run++;
+  await say('Now you are in your account. Time to put the first deposit in.');
+  proceedD();
+}
+const proceedD = () => { const n = D.nextDStep(state.ddone); if (n) askD(n); };
+const celebrateBurst = () => { burst(220); setTimeout(() => burst(180), 700); setTimeout(() => burst(180), 1500); };
+const askD = (id) => runTurn(id, DMETA[id], (t) => {
+  const done = (patch) => finishD(id, patch, t);
+  if (id === 'login') return DU.loginCard(state.applicant, done);
+  if (id === 'deposit') return DU.depositCard(state.applicant, bankNow(), deposit(), done);
+  if (id === 'celebrate') return DU.celebrateCard(state.applicant, { goal: (state.c.goals || [])[0] }, { burst: celebrateBurst }, done);
+  return DU.outreachCard(selectedDebts(), done);
+});
+async function finishD(id, patch, turn) {
+  Object.assign(state.d, patch);
+  if (!state.ddone.includes(id)) state.ddone.push(id);
+  save();
+  turn.classList.remove('pending'); turn.classList.add('answered');
+  const card = turn.querySelector('.card'), sub = turn.querySelector('.sub');
+  if (card) { card.style.maxHeight = card.offsetHeight + 'px'; requestAnimationFrame(() => card.classList.add('out')); setTimeout(() => card.remove(), 420); }
+  if (sub) sub.classList.add('fade');
+  const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, dSummary(id))));
+  turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
+  renderRoad();
+  await sleep(reduced() ? 0 : 650);
+  if (D.nextDStep(state.ddone)) proceedD(); else completeDeposit();
+}
+const completeDeposit = (quiet) => stageDone('deposit', { quiet, line: 'Your first deposit is in, ' + (state.applicant.first || 'there') + '.',
+  body: 'Your account is funded, your first deposit cleared, and you know how to tell us about creditor contact. Next you watch your fund grow toward your first settlement.', onNext: () => {} });
+
 /* ---------- confetti (small, dependency free) ---------- */
-function burst() {
+const parts = [];
+let bursting = false;
+function burst(n) {
   if (reduced()) return;
   const cv = $('#confetti'), cx = cv.getContext('2d');
   cv.width = innerWidth; cv.height = innerHeight; cv.classList.add('on');
   const colors = ['#3300ff', '#5a4cf0', '#146c55', '#ffb703', '#ff5d8f', '#00c2a8'];
-  const ps = Array.from({ length: 140 }, () => ({ x: innerWidth / 2 + (Math.random() - .5) * 220, y: innerHeight * .45, vx: (Math.random() - .5) * 13, vy: -Math.random() * 15 - 4, s: 5 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - .5) * .3, c: colors[(Math.random() * colors.length) | 0] }));
-  const t0 = performance.now();
-  (function frame(now) {
-    const dt = now - t0;
+  const now = performance.now();
+  for (let i = 0; i < (n || 140); i++) parts.push({ x: innerWidth / 2 + (Math.random() - .5) * 260, y: innerHeight * .45, vx: (Math.random() - .5) * 14, vy: -Math.random() * 16 - 4, s: 5 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - .5) * .3, c: colors[(Math.random() * colors.length) | 0], t0: now });
+  if (bursting) return;
+  bursting = true;
+  (function frame(t) {
     cx.clearRect(0, 0, cv.width, cv.height);
-    for (const p of ps) { p.vy += .42; p.x += p.vx; p.y += p.vy; p.r += p.vr; cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c; cx.globalAlpha = Math.max(0, 1 - dt / 2600); cx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * .6); cx.restore(); }
-    if (dt < 2600) requestAnimationFrame(frame); else { cx.clearRect(0, 0, cv.width, cv.height); cv.classList.remove('on'); }
-  })(t0);
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i], age = t - p.t0;
+      p.vy += .42; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      if (age > 2800 || p.y > cv.height + 40) { parts.splice(i, 1); continue; }
+      cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c; cx.globalAlpha = Math.max(0, 1 - age / 2800); cx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * .6); cx.restore();
+    }
+    if (parts.length) requestAnimationFrame(frame); else { cx.clearRect(0, 0, cv.width, cv.height); cv.classList.remove('on'); bursting = false; }
+  })(now);
 }
 
 /* ---------- assistant dock ---------- */
@@ -415,6 +472,7 @@ $('#doAuto').addEventListener('click', () => {
 });
 $('#doSkip').addEventListener('click', () => {
   if (!state.stageDone.includes('lead')) { Object.assign(state.applicant, J.PERSONA); state.done = J.LEAD_STEPS.map((s) => s.id); }
+  else if (state.stageDone.includes('enroll')) { state.d = { login: true, deposit: { cleared: true, amount: deposit(), date: 'Today', bank: bankNow().name + ' ••' + bankNow().last4 } }; state.ddone = ['login', 'deposit']; }
   else if (state.stageDone.includes('consult')) { Object.assign(state.e, { consents: E.CONSENTS.map((c) => c.id), signedName: E.PERSONA_E.sign, bank: E.PERSONA_E.bank, account: { last4: '3318' } }); state.edone = ['review', 'consent', 'sign', 'account']; }
   else if (state.stageDone.includes('qualify')) { Object.assign(state.c, JSON.parse(JSON.stringify(C.PERSONA_C))); state.c.custom = []; state.cdone = C.C_STEPS.filter((x) => x !== 'plan'); }
   else { state.q = JSON.parse(JSON.stringify(Q.PERSONA_Q)); state.qdone = Q.qSteps(state.q).filter((x) => x !== 'result'); state.stageDone.includes('lead') || state.stageDone.push('lead'); }
@@ -429,6 +487,7 @@ const FLOWS = [
   { id: 'qualify', prev: () => completeLead(true), done: () => state.qdone.filter((x) => x !== 'result'), meta: (id) => qMeta(id), sum: qSummary, go: proceedQ, finish: completeQualify },
   { id: 'consult', prev: () => completeQualify(true), done: () => state.cdone, meta: (id) => CMETA[id], sum: cSummary, go: proceedC, finish: completeConsult },
   { id: 'enroll', prev: () => completeConsult(true), done: () => state.edone, meta: (id) => EMETA[id], sum: eSummary, go: proceedE, finish: completeEnroll },
+  { id: 'deposit', prev: () => completeEnroll(true), done: () => state.ddone, meta: (id) => DMETA[id], sum: dSummary, go: proceedD, finish: completeDeposit },
 ];
 (async function start() {
   paintAuto();

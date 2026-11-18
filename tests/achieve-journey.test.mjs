@@ -4,9 +4,9 @@ import * as J from '../public/achieve/journey.js';
 import { validateStep } from '../public/achieve/firsttake/shared/flow.js';
 import { localAnswer } from '../public/achieve/debt-kb.js';
 
-test('eight stages, first four built', () => {
+test('eight stages, first five built', () => {
   assert.equal(J.STAGES.length, 8);
-  assert.deepEqual(J.STAGES.filter((s) => s.built).map((s) => s.id), ['lead', 'qualify', 'consult', 'enroll']);
+  assert.deepEqual(J.STAGES.filter((s) => s.built).map((s) => s.id), ['lead', 'qualify', 'consult', 'enroll', 'deposit']);
 });
 test('persona passes every lead step', () => {
   for (const s of J.LEAD_STEPS) assert.deepEqual(validateStep(s, J.PERSONA), {}, s.id);
@@ -125,4 +125,32 @@ test('enroll steps run in order and the persona signature matches the sample nam
   assert.equal(E.nextEStep(['review', 'consent', 'sign', 'account']), 'draft');
   assert.equal(E.PERSONA_E.sign, J.PERSONA.first + ' ' + J.PERSONA.last);
   assert.equal(E.CONSENTS.length, 4);
+});
+
+import * as D from '../public/achieve/deposit.js';
+test('balance and transactions only show once the deposit has cleared', () => {
+  const dep = { cleared: false, amount: 600, date: 'Today', bank: 'X' };
+  assert.equal(D.balance(dep), 0); assert.equal(D.txns(dep).length, 0);
+  dep.cleared = true;
+  assert.equal(D.balance(dep), 600); assert.equal(D.txns(dep)[0].status, 'Cleared');
+});
+test('the transfer has three steps and ends cleared', () => {
+  assert.deepEqual(D.ACH.map((s) => s.id), ['init', 'proc', 'clear']);
+});
+test('song is personalized and ends the chorus on the name', () => {
+  const s = D.song({ first: 'Jordan', goal: 'nobk' });
+  assert.match(s.title, /Jordan/); assert.ok(s.lines.some((l) => /Jordan/.test(l)));
+  assert.match(s.note, /Prototype/);
+});
+test('outreach replies are calm, and legal papers are urgent', () => {
+  assert.equal(D.outreachReply({ how: 'call' }).urgent, false);
+  assert.match(D.outreachReply({ how: 'text' }).text, /normal/);
+  assert.equal(D.outreachReply({ how: 'legal' }).urgent, true);
+  assert.equal(D.outreachReply({ how: 'email', text: 'They said I was being sued' }).urgent, true);
+  assert.match(D.outreachReply({ how: 'legal' }).text, /today/);
+});
+test('deposit steps run in order; persona logs a creditor from the sample debts', () => {
+  assert.equal(D.nextDStep([]), 'login');
+  assert.equal(D.nextDStep(['login', 'deposit', 'celebrate']), 'outreach');
+  assert.ok(C.TRADELINES.some((t) => t.id === D.PERSONA_D.outreach.who));
 });
