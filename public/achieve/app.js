@@ -209,7 +209,7 @@ const completeLead = (quiet) => stageDone('lead', { quiet, fx: 'balloons', line:
 const completeQualify = (quiet) => stageDone('qualify', { quiet, fx: 'stamp', line: "That's two steps down, " + (state.applicant.first || 'there') + '.',
   body: 'You told us about your debt, what changed, and your budget. Next you meet your plan: we confirm your debts, listen, set honest expectations, and show what you would pay.', onNext: startConsult });
 
-const completeConsult = (quiet) => stageDone('consult', { quiet, fx: 'ribbon', line: 'You have a plan, ' + (state.applicant.first || 'there') + '.',
+const completeConsult = (quiet) => stageDone('consult', { quiet, fx: 'target', line: 'You have a plan, ' + (state.applicant.first || 'there') + '.',
   body: 'You confirmed your debts, told us what matters, heard exactly what to expect, and chose a deposit. Next you review the agreement, sign, and open your account.', onNext: startEnroll });
 
 /* ---------- stage 2: qualification ---------- */

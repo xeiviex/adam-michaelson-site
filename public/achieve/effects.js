@@ -1,8 +1,8 @@
 /* Achieve debt relief prototype: celebration effects on one full-screen canvas (#confetti).
    Kinds: confetti, streamers, fireworks, band (a little band with musical notes flying). No audio, no dependencies. */
 const COLORS = ['#3300ff', '#5a4cf0', '#146c55', '#ffb703', '#ff5d8f', '#00c2a8', '#ff7a1a'];
-export const FX_KINDS = ['confetti', 'streamers', 'fireworks', 'band', 'balloons', 'stamp', 'ribbon', 'seal', 'trophy', 'beam', 'flag', 'bell', 'gavel', 'sunrise', 'wave', 'shred', 'coins'];
-const SCENE_DUR = { stamp: 2000, ribbon: 2800, seal: 2400, trophy: 3600, beam: 3200, flag: 3400, bell: 3200, gavel: 2600, sunrise: 4200, wave: 3600 };
+export const FX_KINDS = ['confetti', 'streamers', 'fireworks', 'band', 'balloons', 'stamp', 'target', 'seal', 'trophy', 'beam', 'flag', 'bell', 'gavel', 'sunrise', 'wave', 'shred', 'coins'];
+const SCENE_DUR = { stamp: 2000, target: 3200, seal: 2400, trophy: 3600, beam: 3200, flag: 3400, bell: 3200, gavel: 2600, sunrise: 4200, wave: 3600 };
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = (a) => a[(Math.random() * a.length) | 0];
 const reduced = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -81,34 +81,32 @@ function drawScene(sc, t) {
     cx.lineWidth = 3; cx.beginPath(); cx.roundRect ? cx.roundRect(-196, -56, 392, 112, 12) : cx.rect(-196, -56, 392, 112); cx.stroke();
     cx.font = '900 76px system-ui, sans-serif'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText("YOU'RE IN", 0, 4); cx.restore();
     if (age > 200) ring(cxm, cym, (age - 200) * 0.9, 1 - (age - 200) / 500, '#146c55', 6);
-  } else if (sc.kind === 'ribbon') {
-    const cut = 0.46, y = cym, half = W * 0.4, k = u < cut ? 0 : (u - cut) / (1 - cut), ph = age / 260, TH = 44;
-    /* a wavy ribbon: top and bottom edges follow the same sine, so it reads as cloth. droop and sway grow once it is cut */
-    const wave = (x, anchor, side) => { const dist = Math.abs(x - anchor) / half; const flow = Math.sin((x - cxm) / 52 + ph) * 15 * (1 - 0.5 * k); const fall = k * k * side * (dist * dist * 260 + dist * 60); return flow + fall; };
-    const ribbonSeg = (x0, x1, anchor, side) => {
-      const pts = [], step = 10;
-      for (let x = x0; x <= x1 + 0.1; x += step) pts.push([x, y + wave(x, anchor, side)]);
-      const g = cx.createLinearGradient(0, y - 40, 0, y + 60); g.addColorStop(0, '#ff7a96'); g.addColorStop(0.5, '#e8325f'); g.addColorStop(1, '#b3123f');
-      cx.fillStyle = g; cx.beginPath(); pts.forEach(([x, py], i) => (i ? cx.lineTo(x, py - TH / 2) : cx.moveTo(x, py - TH / 2))); for (let i = pts.length - 1; i >= 0; i--) cx.lineTo(pts[i][0], pts[i][1] + TH / 2); cx.closePath(); cx.fill();
-      cx.strokeStyle = 'rgba(255,255,255,.55)'; cx.lineWidth = 3; cx.beginPath(); pts.forEach(([x, py], i) => (i ? cx.lineTo(x, py - TH / 2 + 7) : cx.moveTo(x, py - TH / 2 + 7))); cx.stroke();
-      cx.strokeStyle = 'rgba(120,0,30,.25)'; cx.lineWidth = 2; cx.beginPath(); pts.forEach(([x, py], i) => (i ? cx.lineTo(x, py + TH / 2 - 6) : cx.moveTo(x, py + TH / 2 - 6))); cx.stroke();
-      return pts;
-    };
+  } else if (sc.kind === 'target') {
+    /* an archery target pops in on the right, an arrow arcs in from the left and sticks in the bullseye */
+    const tx = W * 0.72, ty = cym, R = 105 * S1 + 20, hit = 0.46, pop = outBack(Math.min(1, u / 0.16));
     cx.save(); cx.globalAlpha = e;
-    if (u < cut) ribbonSeg(cxm - half, cxm + half, cxm, 0);
-    else { ribbonSeg(cxm - half, cxm, cxm - half, 1); ribbonSeg(cxm, cxm + half, cxm + half, 1); }
-    /* the two posts holding it, with gold finials */
-    [cxm - half - 18, cxm + half + 18].forEach((x) => { cx.fillStyle = '#6b4a2a'; cx.fillRect(x - 6, y - 40, 12, H - y + 40); cx.fillStyle = '#ffd24a'; cx.beginPath(); cx.arc(x, y - 46, 13, 0, 7); cx.fill(); });
-    /* the scissors fly in, snip snip, then cut */
-    if (u < cut + 0.08) {
-      const arrive = Math.min(1, u / (cut * 0.78)), sx = lerp(cxm + W * 0.3, cxm, ease2(arrive)), sy = lerp(y + 130, y - 4, ease2(arrive)) + Math.sin(ph * 2) * 4;
-      const snip = u < cut * 0.78 ? 0.42 + 0.3 * Math.sin(age / 85) : Math.max(0.02, 0.42 - (u - cut * 0.78) / (cut * 0.22) * 0.4), sc3 = 1.55 * S1 + 0.25;
-      cx.save(); cx.translate(sx, sy); cx.rotate(-0.28 + (1 - arrive) * 0.4); cx.scale(sc3, sc3);
-      [[-1, '#d9dee8'], [1, '#aeb6c6']].forEach(([sd, col]) => { cx.save(); cx.rotate(sd * snip / 2); cx.fillStyle = col; cx.strokeStyle = '#5b6475'; cx.lineWidth = 1.5; cx.beginPath(); cx.moveTo(0, -3 * sd); cx.lineTo(-62, -1.5 * sd); cx.lineTo(-62, 4 * sd); cx.lineTo(0, 6 * sd); cx.closePath(); cx.fill(); cx.stroke();
-        cx.strokeStyle = '#ff7a1a'; cx.lineWidth = 6; cx.beginPath(); cx.ellipse(34, sd * 9, 15, 9, 0, 0, 7); cx.stroke(); cx.strokeStyle = '#c95a00'; cx.lineWidth = 1.5; cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(20, sd * 6); cx.stroke(); cx.restore(); });
-      cx.fillStyle = '#5b6475'; cx.beginPath(); cx.arc(0, 1, 3.5, 0, 7); cx.fill(); cx.restore();
+    cx.save(); cx.translate(tx, ty); cx.scale(Math.max(0.01, pop), Math.max(0.01, pop));
+    cx.strokeStyle = '#6b4a2a'; cx.lineWidth = 9; cx.lineCap = 'round'; cx.beginPath(); cx.moveTo(-R * 0.35, R * 0.8); cx.lineTo(-R * 0.75, R * 1.9); cx.moveTo(R * 0.35, R * 0.8); cx.lineTo(R * 0.75, R * 1.9); cx.stroke();
+    [['#f4f1ea', 1], ['#23233a', 0.8], ['#2a6df4', 0.6], ['#e8325f', 0.4], ['#ffd24a', 0.2]].forEach(([col, f]) => { cx.fillStyle = col; cx.beginPath(); cx.arc(0, 0, R * f, 0, 7); cx.fill(); });
+    cx.strokeStyle = 'rgba(0,0,0,.28)'; cx.lineWidth = 2; [1, 0.8, 0.6, 0.4, 0.2].forEach((f) => { cx.beginPath(); cx.arc(0, 0, R * f, 0, 7); cx.stroke(); });
+    cx.strokeStyle = '#6b4a2a'; cx.lineWidth = 7; cx.beginPath(); cx.arc(0, 0, R + 3, 0, 7); cx.stroke();
+    cx.restore();
+    /* arrow: parabolic arc from off-screen left to the center; tip leads */
+    const fly = Math.min(1, Math.max(0, (u - 0.18) / (hit - 0.18))), L = 120 * S1 + 30;
+    const pos = (k) => ({ x: lerp(-L, tx, k), y: lerp(ty + 90, ty, k) - Math.sin(Math.PI * k) * 70 });
+    if (u > 0.18) {
+      const tip = pos(fly), pre = pos(Math.max(0, fly - 0.02)); let ang = Math.atan2(tip.y - pre.y, tip.x - pre.x); if (fly >= 1) ang = 0.05;
+      const wob = fly >= 1 ? Math.sin((age - hit * d) / 38) * 0.09 * Math.exp(-(age - hit * d) / 260) : 0, len = fly >= 1 ? L * 0.62 : L;
+      if (fly < 1) { for (let i = 1; i <= 6; i++) { const q = pos(Math.max(0, fly - i * 0.035)); cx.globalAlpha = e * (0.35 - i * 0.05); cx.strokeStyle = '#fff'; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(q.x - 20, q.y); cx.lineTo(q.x - 50, q.y); cx.stroke(); } cx.globalAlpha = e; }
+      cx.save(); cx.translate(tip.x, tip.y); cx.rotate(ang + wob); cx.lineCap = 'round';
+      cx.strokeStyle = '#8a5a2b'; cx.lineWidth = 5; cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(-len, 0); cx.stroke();
+      cx.fillStyle = '#4b5263'; cx.beginPath(); cx.moveTo(8, 0); cx.lineTo(-10, -8); cx.lineTo(-10, 8); cx.closePath(); cx.fill();
+      cx.fillStyle = '#e8325f'; [-1, 1].forEach((sd) => { cx.beginPath(); cx.moveTo(-len, 0); cx.lineTo(-len - 18, sd * 12); cx.lineTo(-len + 22, sd * 12); cx.lineTo(-len + 22, 0); cx.closePath(); cx.fill(); });
+      cx.restore();
     }
-    cx.restore(); if (u >= cut) sparkles(age - cut * d, 7, 30, cxm, y, 190, 1500);
+    cx.restore();
+    if (u >= hit) { const ha = age - hit * d; ring(tx, ty, ha * 0.55, 1 - ha / 700, '#ffd24a', 6); ring(tx, ty, ha * 0.9, 1 - ha / 600, '#fff', 3); sparkles(ha, 11, 26, tx, ty, 150, 1400);
+      cx.save(); cx.globalAlpha = Math.min(1, ha / 200) * e; cx.fillStyle = '#e8325f'; cx.font = '900 ' + Math.round(46 * S1 + 6) + 'px system-ui, sans-serif'; cx.textAlign = 'center'; cx.fillText('Bullseye!', tx, ty - R - 26 - Math.min(20, ha / 20)); cx.restore(); }
   } else if (sc.kind === 'seal') {
     const slam = Math.min(1, age / 260), sc2 = 2 - slam;
     cx.save(); cx.globalAlpha = e; cx.translate(cxm, cym); cx.scale(sc2 * S1, sc2 * S1);
