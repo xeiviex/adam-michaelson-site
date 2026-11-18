@@ -31,7 +31,7 @@ const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); }
 
 const stream = $('#stream'), tail = $('#tail'), road = $('#roadInner');
 const mobile = window.matchMedia('(max-width: 899px)');
-const ui = { run: 0, lastPct: 0 };
+const ui = { run: 0, lastPct: 0, gen: 0 };
 const cancelled = (my) => () => my !== ui.run;
 
 /* ---------- scrolling ---------- */
@@ -97,10 +97,10 @@ async function say(text, cls) {
 }
 
 /* ---------- auto-play: fills a card the way a person would, then submits it ---------- */
-const typeChars = async (inp, text, my) => {
+const typeChars = async (inp, text, my, gen) => {
   inp.focus({ preventScroll: true });
   for (const ch of text) {
-    if (my !== ui.run || !state.auto) return false;
+    if (my !== ui.run || !state.auto || gen !== ui.gen) return false;
     inp.value += ch;
     inp.dispatchEvent(new Event('input', { bubbles: true }));
     await sleep(reduced() ? 0 : pace(38));
@@ -108,9 +108,10 @@ const typeChars = async (inp, text, my) => {
   return true;
 };
 async function autoFill(form, step, my) {
+  const gen = ui.gen;
   await sleep(reduced() ? 0 : pace(700));
   for (const f of step.fields) {
-    if (my !== ui.run || !state.auto) return false;
+    if (my !== ui.run || !state.auto || gen !== ui.gen) return false;
     const want = f.id in J.PERSONA ? J.PERSONA[f.id] : Q.PERSONA_Q.budget[f.id];
     const el = form.querySelector('#f_' + f.id);
     if (!el || want == null) continue;
@@ -118,7 +119,7 @@ async function autoFill(form, step, my) {
       const from = Number(el.value), to = Number(want);
       const frames = reduced() ? 1 : 24;
       for (let i = 1; i <= frames; i++) {
-        if (my !== ui.run || !state.auto) return false;
+        if (my !== ui.run || !state.auto || gen !== ui.gen) return false;
         el.value = String(Math.round((from + (to - from) * (i / frames)) / f.step) * f.step);
         el.dispatchEvent(new Event('input', { bubbles: true }));
         await sleep(reduced() ? 0 : pace(32));
@@ -129,11 +130,11 @@ async function autoFill(form, step, my) {
     } else {
       el.value = '';
       const text = f.type === 'tel' || f.type === 'zip' ? String(want).replace(/\D/g, '') : String(want);
-      if (!(await typeChars(el, text, my))) return false;
+      if (!(await typeChars(el, text, my, gen))) return false;
     }
     await sleep(reduced() ? 0 : pace(280));
   }
-  if (my !== ui.run || !state.auto) return false;
+  if (my !== ui.run || !state.auto || gen !== ui.gen) return false;
   await sleep(reduced() ? 0 : pace(500));
   form.requestSubmit();
   return true;
@@ -153,6 +154,7 @@ async function askStep(step) {
   t.append(f.el);
   requestAnimationFrame(() => f.el.classList.add('in'));
   scrollToEl(t);
+  t._resume = () => autoFill(f.el, step, my);
   if (state.auto) autoFill(f.el, step, my); else f.focus();
 }
 
@@ -196,7 +198,11 @@ async function stageDone(id, o) {
     next && !next.built ? h('div', { class: 'soon-note' }, ico('info', 16), h('span', null, 'Prototype note: "' + next.label + '" is the next piece to be built. The path on the right shows the whole journey.')) : null,
     go);
   t.append(card); scrollToEl(t);
-  if (state.auto && next && next.built) { await sleep(reduced() ? 0 : pace(o.hold || 2600)); if (my === ui.run && state.auto) o.onNext(); }
+  if (next && next.built) {
+    const wait = async () => { const g = ui.gen; await sleep(reduced() ? 0 : pace(o.hold || 2600)); if (my === ui.run && state.auto && g === ui.gen) { t._resume = null; o.onNext(); } };
+    t._resume = wait;
+    if (state.auto) wait();
+  }
 }
 const completeLead = (quiet) => stageDone('lead', { quiet, fx: 'balloons', line: 'You took the first step, ' + (state.applicant.first || 'there') + '. Nice work.',
   body: 'Telling us about your debt is done. Next, a few questions to see which program fits and what has made payments hard.', onNext: startQualify });
@@ -243,12 +249,13 @@ async function runTurn(id, meta, build) {
   t.append(qe); scrollToEl(t);
   if (!(await typeInto(qe.firstChild, meta.q, { cancelled: cancelled(my) })) || my !== ui.run) return;
   if (meta.sub) { const s = h('p', { class: 'sub' }, meta.sub); t.append(s); requestAnimationFrame(() => s.classList.add('in')); await sleep(reduced() ? 0 : pace(200)); }
-  const alive = () => my === ui.run && state.auto;
+  const mk = () => { const g = ui.gen; return () => my === ui.run && state.auto && g === ui.gen; };
   const card = build(t, my);
   card.el.classList.add('card-in'); t.append(card.el);
   requestAnimationFrame(() => card.el.classList.add('in'));
   scrollToEl(t);
-  if (state.auto) card.auto(alive);
+  t._resume = () => card.auto(mk());
+  if (state.auto) card.auto(mk());
 }
 const askQ = (id) => runTurn(id, qMeta(id), (t, my) => {
   const done = (patch) => finishQ(id, patch, t);
@@ -626,9 +633,8 @@ document.addEventListener('pointerdown', (e) => { if (!devMenu.hidden && !$('#de
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !devMenu.hidden) { setMenu(false); devBtn.focus(); } });
 $('#doSpeed').addEventListener('click', (e) => { setSpeed(getSpeed() === 'fast' ? 'slow' : 'fast'); paintSpeed(); choose(e.currentTarget); });
 $('#devToggle').addEventListener('click', () => {
-  state.auto = !state.auto; save(); paintAuto();
-  const pending = $('.turn.pending', stream);
-  if (state.auto && pending) { const step = J.stepById(pending.dataset.step); const form = pending.querySelector('form'); if (step && form) autoFill(form, step, ui.run); }
+  state.auto = !state.auto; ui.gen++; save(); paintAuto();
+  if (state.auto) { const last = [...$$('.turn', stream)].pop(); if (last && last._resume && (last.classList.contains('pending') || last.classList.contains('win') || last.querySelector('.stage-card'))) last._resume(); }
 });
 $('#doSkip').addEventListener('click', (e) => choose(e.currentTarget, () => {
   if (!state.stageDone.includes('lead')) { Object.assign(state.applicant, J.PERSONA); state.done = J.LEAD_STEPS.map((s) => s.id); }

@@ -5,10 +5,10 @@
 .st { position: relative; display: flex; gap: 14px; padding: 0 0 20px; }
 .st::before { content: ''; position: absolute; left: 14px; top: 30px; bottom: 0; width: 2px; background: var(--line-d); }
 .st:last-child::before { display: none; }
-.st.done::before { background: var(--ind); }
+.st.done::before { background: var(--mint-ink); }
 .st .dot { flex: none; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--mut); background: #fff; border: 2px solid var(--line-d); z-index: 1; transition: background .3s, border-color .3s, color .3s, transform .3s; }
 .st.cur .dot { border-color: var(--ind); color: var(--ind); box-shadow: 0 0 0 4px rgba(51, 0, 255, .12); }
-.st.done .dot { background: var(--ind); border-color: var(--ind); color: #fff; }
+.st.done .dot { background: var(--mint-ink); border-color: var(--mint-ink); color: #fff; }
 .stx { display: flex; flex-direction: column; gap: 2px; padding-top: 3px; min-width: 0; }
 .stx b { font-size: 15px; color: var(--ink); }
 .stx em { font-style: normal; font-size: 13px; color: var(--mut); line-height: 1.35; }
@@ -17,7 +17,7 @@
 .subs li { font-size: 13px; color: var(--mut); padding-left: 16px; position: relative; }
 .subs li::before { content: ''; position: absolute; left: 2px; top: 6px; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--line-d); }
 .subs li.done { color: var(--ink); }
-.subs li.done::before { background: var(--ind); border-color: var(--ind); }
+.subs li.done::before { background: var(--mint-ink); border-color: var(--mint-ink); }
 
 /* answers in this flow are not editable yet */
 .bubble.static { cursor: default; }

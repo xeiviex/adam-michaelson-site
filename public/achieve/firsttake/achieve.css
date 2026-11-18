@@ -232,7 +232,7 @@ body.human .human-cta { display: none; }
 .rs { width: 100%; display: flex; align-items: center; gap: 12px; padding: 7px 6px; border: 0; background: none; border-radius: 8px; font-size: 14px; color: var(--mut); cursor: pointer; text-align: left; transition: background .15s, color .15s; }
 .rs:hover { background: #ece9f9; color: var(--ink); }
 .rs .dot { width: 18px; height: 18px; flex: none; border-radius: 50%; border: 2px solid #cdc8e2; display: inline-flex; align-items: center; justify-content: center; color: #fff; transition: background .3s, border-color .3s; }
-.rs.done .dot { background: var(--ind); border-color: var(--ind); }
+.rs.done .dot { background: var(--mint-ink); border-color: var(--mint-ink); }
 .rs.done { color: var(--ink); }
 .rs.cur { color: var(--ink); font-weight: 700; background: #fff; box-shadow: 0 1px 0 var(--line); }
 .rs.cur .dot { border-color: var(--ind); box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 9px var(--ind); }
