@@ -283,3 +283,5 @@ textarea.inp.note { height: auto; padding: 12px 14px; margin-top: 18px; resize: 
 .dev-combo:has(.paused) { background: #8a869c; } .dev-combo:has(.paused) button:hover { background: #7a768c; }
 .top > .dev .dev-menu { position: absolute; top: calc(100% + 8px); bottom: auto; left: 0; right: auto; width: min(270px, 92vw); }
 @media (max-width: 899px) { .top > .dev { left: 132px; } .top > .dev .dev-menu { left: -122px; } }
+
+.ly.now { color: var(--ind); font-weight: 700; }

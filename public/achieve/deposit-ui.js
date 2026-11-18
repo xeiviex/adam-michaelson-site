@@ -6,6 +6,7 @@ import * as D from './deposit.js';
 import { money } from './firsttake/shared/flow.js';
 
 import { pace } from './speed.js';
+import { createAnthem } from './song-audio.js';
 const pause = (ms) => sleep(reduced() ? 0 : pace(ms));
 
 /* The logged-in account view, shared by the sign-in and deposit cards. */
@@ -66,13 +67,21 @@ export function celebrateCard(applicant, st, hooks, onDone) {
   const s = D.song({ first: applicant.first, goal: st.goal });
   const eq = h('span', { class: 'eq', 'aria-hidden': 'true' }, h('i'), h('i'), h('i'), h('i'));
   const lyr = h('div', { class: 'lyrics', 'aria-live': 'polite' });
-  const play = h('button', { type: 'button', class: 'btn line', onclick: playSong }, ico('speaker', 18), 'Play my song');
-  let playing = false;
-  async function playSong() {
-    if (playing) return; playing = true; play.disabled = true; eq.classList.add('on'); lyr.replaceChildren();
-    for (const l of s.lines) { lyr.append(h('div', { class: 'ly' }, l)); lyr.lastChild.scrollIntoView({ block: 'nearest' }); await pause(1100); }
-    eq.classList.remove('on'); play.disabled = false; playing = false;
+  const play = h('button', { type: 'button', class: 'btn line', onclick: () => (playing ? stopSong() : playSong(true)) }, ico('speaker', 18), 'Play my song');
+  let playing = false, anthem = null;
+  const label = (txt) => { play.replaceChildren(ico('speaker', 18), txt); };
+  const showLine = (i) => { lyr.querySelectorAll('.ly.now').forEach((n) => n.classList.remove('now')); const row = h('div', { class: 'ly now' }, s.lines[i]); lyr.append(row); row.scrollIntoView({ block: 'nearest' }); };
+  function stopSong() { if (anthem) { anthem.stop(); anthem = null; } playing = false; eq.classList.remove('on'); lyr.querySelectorAll('.ly.now').forEach((n) => n.classList.remove('now')); label('Play my song'); }
+  /* with sound: an 80s power anthem with the words read in time. Without (auto-play): the lyrics roll silently */
+  async function playSong(withSound) {
+    if (playing) return; playing = true; eq.classList.add('on'); lyr.replaceChildren();
+    anthem = withSound ? createAnthem(s.lines) : null;
+    if (anthem) { label('Stop'); anthem.start({ onLine: showLine, onEnd: stopSong }); return; }
+    play.disabled = true;
+    for (const l of s.lines) { if (!playing) break; lyr.append(h('div', { class: 'ly' }, l)); lyr.lastChild.scrollIntoView({ block: 'nearest' }); await pause(1100); }
+    play.disabled = false; stopSong();
   }
+  window.addEventListener('achieve:attention', (ev) => { if (!anthem) return; if (ev.detail.attentive) anthem.resume(); else anthem.pause(); });
   const go = cont('Keep going', () => onDone({ celebrated: true }));
   const el = h('div', { class: 'card party' },
     h('div', { class: 'party-ring' }, h('div', { class: 'win-ic big' }, ico('star', 34, 2))),
@@ -81,7 +90,7 @@ export function celebrateCard(applicant, st, hooks, onDone) {
     h('div', { class: 'gift' }, h('div', { class: 'gift-card' }, h('b', null, applicant.first + ', you did it.'), h('span', null, 'From your Achieve team')), h('div', { class: 'gift-t' }, h('b', null, 'A welcome box is on its way'), h('span', null, 'A handwritten card and a few small treats. We will confirm where to send it in your account.'))),
     h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'We wrote you a song!'))), lyr, play, s.note ? h('p', { class: 'fine' }, s.note) : null), go);
   hooks && hooks.burst && after(250, hooks.burst);
-  return { el, async auto(alive) { await pause(2400); if (!alive()) return; playSong(); await pause(s.lines.length * (reduced() ? 0 : 1100) + 2600); if (alive()) go.click(); } };
+  return { el, async auto(alive) { await pause(2400); if (!alive()) return; playSong(false); await pause(s.lines.length * (reduced() ? 0 : 1100) + 2600); if (alive()) go.click(); } };
 }
 
 /* ---- creditor outreach log ---- */
