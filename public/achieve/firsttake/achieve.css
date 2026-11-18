@@ -1,6 +1,7 @@
 /* Achieve prototype, context 1: the web funnel. Colors and type follow the Achieve application screenshots. */
 :root {
   --ind: #3300ff; --ind-d: #2800cc; --ind-t: #f1eeff; --ink: #1f2120; --mut: #6a6877; --line: #e4e1f0; --line-d: #d6d3e4;
+  --space-min: 12px; --space-section: 20px;
   --mint: #e6f5f0; --mint-ink: #146c55; --tint: #f8f7fc; --bad: #c8321a; --r: 8px;
   --font: 'Figtree', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }

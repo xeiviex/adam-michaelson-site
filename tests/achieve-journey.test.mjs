@@ -262,3 +262,13 @@ test('movie: every frame draws without throwing', () => {
 });
 test('effects: seventeen distinct celebration kinds', () => { assert.equal(new Set(FX_KINDS).size, 17); ['confetti', 'streamers', 'fireworks', 'band', 'balloons', 'stamp', 'target', 'seal', 'trophy', 'beam', 'flag', 'bell', 'gavel', 'sunrise', 'wave', 'shred', 'coins'].forEach((k) => assert.ok(FX_KINDS.includes(k), k)); });
 
+
+test('design system: spacing tokens exist and no bare :first-child margin reset on a component', async () => {
+  const fs = await import('node:fs');
+  const base = fs.readFileSync(new URL('../public/achieve/firsttake/achieve.css', import.meta.url), 'utf8');
+  assert.match(base, /--space-min:\s*12px/); assert.match(base, /--space-section:\s*20px/);
+  const css = base + fs.readFileSync(new URL('../public/achieve/path.css', import.meta.url), 'utf8');
+  const legacy = ['.field:first-child', '.turn:first-child']; /* older rules, grandfathered */
+  const bad = [...css.matchAll(/([^{}]+):first-child\s*\{[^}]*margin-top:\s*0/g)].map((m) => (m[1] + ':first-child').trim().split(/[,\n]/).pop().trim()).filter((sel) => !sel.includes('>') && !legacy.includes(sel));
+  assert.deepEqual(bad, []);
+});
