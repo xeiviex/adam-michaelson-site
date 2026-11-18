@@ -6,6 +6,8 @@ const SPEC = {
   trophy: { file: 'trophy.lottie', css: 'left:50%;top:50%;width:min(420px,80vw);height:min(420px,80vw);transform:translate(-50%,-50%)', fit: 'contain', ms: 3600 },
   balloons: { file: 'balloons.lottie', css: 'inset:0;width:100%;height:100%', fit: 'cover', ms: 5200 },
   streamers: { file: 'party-popper.lottie', css: 'left:50%;bottom:6%;width:min(380px,70vw);height:min(380px,70vw);transform:translateX(-50%)', fit: 'contain', ms: 3000 },
+  rocket: { file: 'rocket.lottie', css: 'left:50%;top:0;height:100%;width:min(560px,100vw);transform:translateX(-50%)', fit: 'cover', ms: 4200 },
+  medal: { file: 'medal.lottie', css: 'left:50%;top:50%;width:min(420px,80vw);height:min(420px,80vw);transform:translate(-50%,-50%)', fit: 'contain', ms: 3600 },
   coins: { file: 'coins.lottie', css: 'left:50%;bottom:4%;width:min(420px,80vw);height:min(420px,80vw);transform:translateX(-50%)', fit: 'contain', ms: 4200 },
 };
 let off = false;
