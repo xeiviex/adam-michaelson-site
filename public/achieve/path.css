@@ -377,3 +377,10 @@ body.acct-open { overflow: hidden; }
 .gift-card { transform-origin: 50% 0; animation: giftswing 2s ease-out .5s both; }
 @keyframes giftswing { 0% { transform: rotate(-9deg); } 20% { transform: rotate(7deg); } 40% { transform: rotate(-5deg); } 60% { transform: rotate(3.5deg); } 80% { transform: rotate(-2.2deg); } 100% { transform: rotate(-1.5deg); } }
 @media (prefers-reduced-motion: reduce) { .gift-card { animation: none; } }
+.song .pl-bar { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: linear-gradient(to right, #fff var(--p, 0%), rgba(255, 255, 255, .32) var(--p, 0%)); outline-offset: 4px; }
+.song .pl-bar::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: transparent; }
+.song .pl-bar::-moz-range-track { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .32); }
+.song .pl-bar::-moz-range-progress { height: 6px; border-radius: 3px; background: #fff; }
+.song .pl-bar::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: -5px; border-radius: 50%; background: #fff; border: 2px solid #860101; box-shadow: 0 0 0 2px #fff; }
+.song .pl-bar::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 2px solid #860101; box-shadow: 0 0 0 2px #fff; }
+.song .pl-dl:focus-visible, .song .pl-btn:focus-visible { outline: 3px solid #ffb703; outline-offset: 2px; }
