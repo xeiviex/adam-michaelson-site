@@ -11,7 +11,7 @@ export const STAGES = [
   { id: 'consult', n: 3, label: 'Your plan', goal: 'Build your plan with a specialist', built: true },
   { id: 'enroll', n: 4, label: 'Enroll', goal: 'Review, sign and open your account', built: true },
   { id: 'deposit', n: 5, label: 'First deposit', goal: 'Make your first deposit', built: true },
-  { id: 'build', n: 6, label: 'Build your fund', goal: 'Save toward your first settlement', built: false },
+  { id: 'build', n: 6, label: 'Build your fund', goal: 'Save toward your first settlement', built: true },
   { id: 'negotiate', n: 7, label: 'Settle', goal: 'We negotiate, you approve', built: false },
   { id: 'free', n: 8, label: 'Debt free', goal: 'Graduate and celebrate', built: false },
 ];

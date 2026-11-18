@@ -4,9 +4,9 @@ import * as J from '../public/achieve/journey.js';
 import { validateStep } from '../public/achieve/firsttake/shared/flow.js';
 import { localAnswer } from '../public/achieve/debt-kb.js';
 
-test('eight stages, first five built', () => {
+test('eight stages, first six built', () => {
   assert.equal(J.STAGES.length, 8);
-  assert.deepEqual(J.STAGES.filter((s) => s.built).map((s) => s.id), ['lead', 'qualify', 'consult', 'enroll', 'deposit']);
+  assert.deepEqual(J.STAGES.filter((s) => s.built).map((s) => s.id), ['lead', 'qualify', 'consult', 'enroll', 'deposit', 'build']);
 });
 test('persona passes every lead step', () => {
   for (const s of J.LEAD_STEPS) assert.deepEqual(validateStep(s, J.PERSONA), {}, s.id);
@@ -153,4 +153,42 @@ test('deposit steps run in order; persona logs a creditor from the sample debts'
   assert.equal(D.nextDStep([]), 'login');
   assert.equal(D.nextDStep(['login', 'deposit', 'celebrate']), 'outreach');
   assert.ok(C.TRADELINES.some((t) => t.id === D.PERSONA_D.outreach.who));
+});
+
+import * as B from '../public/achieve/fund.js';
+const bm = () => B.model(C.TRADELINES, 600);
+test('fund model matches the plan and stops at the target', () => {
+  const m = bm();
+  assert.equal(m.target, 22400); assert.equal(m.months, 38); assert.equal(m.offerMonth, 3);
+  assert.equal(B.at(m, 1).fund, 600);
+  assert.equal(B.at(m, 38).fund, 22400); assert.equal(B.at(m, 99).month, 38);
+  assert.ok(B.at(m, 38).done && !B.at(m, 37).done);
+});
+test('thermometer messages follow the journey', () => {
+  const m = bm();
+  assert.match(B.message(m, 1, 'Jordan'), /first deposit is in/);
+  assert.equal(B.message(m, 3, 'Jordan'), 'Your fund is ready. Negotiators can start asking creditors for offers.');
+  assert.match(B.message(m, 10, 'Jordan'), /25% there/);
+  assert.match(B.message(m, 19, 'Jordan'), /Halfway/);
+  assert.match(B.message(m, 28, 'Jordan'), /75% there/);
+  assert.match(B.message(m, 37, 'Jordan'), /one month away/);
+  assert.match(B.message(m, 38, 'Jordan'), /You did it/);
+});
+test('milestones are ordered and flip to done as months pass', () => {
+  const m = bm();
+  const a = B.milestones(m, 1), z = B.milestones(m, 38);
+  assert.ok(a.filter((x) => x.done).length < z.filter((x) => x.done).length);
+  assert.ok(z.every((x) => x.done));
+  assert.deepEqual(a.map((x) => x.m), a.map((x) => x.m).slice().sort((p, q) => p - q));
+});
+test('an extra deposit shortens the program but never below twelve months', () => {
+  const m = bm();
+  assert.equal(B.withExtra(m, 0).saved, 0);
+  assert.ok(B.withExtra(m, 1000).saved >= 1);
+  assert.equal(B.withExtra(m, 999999).months, 12);
+});
+test('feed covers text, email and app and personalizes', () => {
+  const f = B.feed(bm(), 'Jordan', '$600');
+  for (const c of ['text', 'email', 'app']) assert.ok(f.some((x) => x.ch === c), c);
+  assert.ok(f.every((x) => /Jordan|achieve|Achieve|specialist|path|fund|finish|halfway|Halfway|25%|one month/i.test(x.title + x.body)));
 });

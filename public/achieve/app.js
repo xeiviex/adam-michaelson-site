@@ -12,11 +12,13 @@ import * as E from './enroll.js';
 import * as EU from './enroll-ui.js';
 import * as D from './deposit.js';
 import * as DU from './deposit-ui.js';
+import * as B from './fund.js';
+import * as BU from './fund-ui.js';
 import { localAnswer, FALLBACK, SUGGESTIONS } from './debt-kb.js';
 
 const KEY = 'achv1';
 const load = () => { try { return JSON.parse(sessionStorage.getItem(KEY)) || null; } catch { return null; } };
-const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], d: {}, ddone: [], auto: true }, load());
+const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], d: {}, ddone: [], b: {}, bdone: [], auto: true }, load());
 const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch { /* private mode */ } };
 
 const stream = $('#stream'), tail = $('#tail'), road = $('#roadInner');
@@ -37,7 +39,7 @@ function scrollEnd() {
 
 /* ---------- the path nav ---------- */
 const currentStage = () => J.STAGES.find((s) => !state.stageDone.includes(s.id)) || J.STAGES[J.STAGES.length - 1];
-const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : id === 'enroll' ? { all: E.E_STEPS, done: state.edone, label: E.eStepLabel } : id === 'deposit' ? { all: D.D_STEPS, done: state.ddone, label: D.dStepLabel } : null;
+const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : id === 'enroll' ? { all: E.E_STEPS, done: state.edone, label: E.eStepLabel } : id === 'deposit' ? { all: D.D_STEPS, done: state.ddone, label: D.dStepLabel } : id === 'build' ? { all: B.B_STEPS, done: state.bdone, label: B.bStepLabel } : null;
 function renderRoad() {
   const cur = currentStage();
   const ss = stageSteps(cur.id);
@@ -417,7 +419,50 @@ async function finishD(id, patch, turn) {
   if (D.nextDStep(state.ddone)) proceedD(); else completeDeposit();
 }
 const completeDeposit = (quiet) => stageDone('deposit', { quiet, line: 'Your first deposit is in, ' + (state.applicant.first || 'there') + '.',
-  body: 'Your account is funded, your first deposit cleared, and you know how to tell us about creditor contact. Next you watch your fund grow toward your first settlement.', onNext: () => {} });
+  body: 'Your account is funded, your first deposit cleared, and you know how to tell us about creditor contact. Next you watch your fund grow toward your first settlement.', onNext: startBuild });
+
+/* ---------- stage 6: build your fund ---------- */
+const BMETA = {
+  fund: { q: 'Watch your fund grow', sub: 'Every deposit moves you closer. Drag the slider to see ahead.' },
+  messages: { q: 'How we stay in touch', sub: 'You will hear from us at the moments that matter.' },
+  boost: { q: 'Keep it going, or speed it up', sub: 'Your automatic deposit does the work. Add more any time you like.' },
+};
+const fundModel = () => B.model(selectedDebts(), deposit());
+function bSummary(id) {
+  if (id === 'fund') return 'Fund on track: about ' + fundModel().months + ' months';
+  if (id === 'messages') return 'Texts, emails and in-app updates';
+  if (id === 'boost') return state.b.extra ? 'Extra deposit: ' + money0(state.b.extra) : 'Automatic deposits on';
+  return '';
+}
+async function startBuild() {
+  ui.run++;
+  await say('Now the build phase. Your deposits grow a fund, and the fund is what lets us settle your debts.');
+  proceedB();
+}
+const proceedB = () => { const n = B.nextBStep(state.bdone); if (n) askB(n); };
+const askB = (id) => runTurn(id, BMETA[id], (t) => {
+  const done = (patch) => finishB(id, patch, t);
+  const m = fundModel();
+  if (id === 'fund') return BU.fundCard(state.applicant, m, { burst: (n) => burst(n) }, done);
+  if (id === 'messages') return BU.messagesCard(state.applicant, m, money0((state.e.draft || {}).amount || deposit()), done);
+  return BU.boostCard(m, state.e.draft || { freq: 'monthly', amount: deposit(), auto: true }, bankNow(), done);
+});
+async function finishB(id, patch, turn) {
+  Object.assign(state.b, patch);
+  if (!state.bdone.includes(id)) state.bdone.push(id);
+  save();
+  turn.classList.remove('pending'); turn.classList.add('answered');
+  const card = turn.querySelector('.card'), sub = turn.querySelector('.sub');
+  if (card) { card.style.maxHeight = card.offsetHeight + 'px'; requestAnimationFrame(() => card.classList.add('out')); setTimeout(() => card.remove(), 420); }
+  if (sub) sub.classList.add('fade');
+  const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, bSummary(id))));
+  turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
+  renderRoad();
+  await sleep(reduced() ? 0 : 650);
+  if (B.nextBStep(state.bdone)) proceedB(); else completeBuild();
+}
+const completeBuild = (quiet) => stageDone('build', { quiet, line: 'Your fund is growing, ' + (state.applicant.first || 'there') + '.',
+  body: 'You can see your progress, you know how we will stay in touch, and you can speed things up whenever you like. Next the negotiators go to work, and you approve every settlement.', onNext: () => {} });
 
 /* ---------- confetti (small, dependency free) ---------- */
 const parts = [];
@@ -472,6 +517,7 @@ $('#doAuto').addEventListener('click', () => {
 });
 $('#doSkip').addEventListener('click', () => {
   if (!state.stageDone.includes('lead')) { Object.assign(state.applicant, J.PERSONA); state.done = J.LEAD_STEPS.map((s) => s.id); }
+  else if (state.stageDone.includes('deposit')) { state.b = {}; state.bdone = ['fund', 'messages']; }
   else if (state.stageDone.includes('enroll')) { state.d = { login: true, deposit: { cleared: true, amount: deposit(), date: 'Today', bank: bankNow().name + ' ••' + bankNow().last4 } }; state.ddone = ['login', 'deposit']; }
   else if (state.stageDone.includes('consult')) { Object.assign(state.e, { consents: E.CONSENTS.map((c) => c.id), signedName: E.PERSONA_E.sign, bank: E.PERSONA_E.bank, account: { last4: '3318' } }); state.edone = ['review', 'consent', 'sign', 'account']; }
   else if (state.stageDone.includes('qualify')) { Object.assign(state.c, JSON.parse(JSON.stringify(C.PERSONA_C))); state.c.custom = []; state.cdone = C.C_STEPS.filter((x) => x !== 'plan'); }
@@ -488,6 +534,7 @@ const FLOWS = [
   { id: 'consult', prev: () => completeQualify(true), done: () => state.cdone, meta: (id) => CMETA[id], sum: cSummary, go: proceedC, finish: completeConsult },
   { id: 'enroll', prev: () => completeConsult(true), done: () => state.edone, meta: (id) => EMETA[id], sum: eSummary, go: proceedE, finish: completeEnroll },
   { id: 'deposit', prev: () => completeEnroll(true), done: () => state.ddone, meta: (id) => DMETA[id], sum: dSummary, go: proceedD, finish: completeDeposit },
+  { id: 'build', prev: () => completeDeposit(true), done: () => state.bdone, meta: (id) => BMETA[id], sum: bSummary, go: proceedB, finish: completeBuild },
 ];
 (async function start() {
   paintAuto();
