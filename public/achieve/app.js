@@ -24,6 +24,7 @@ import * as F from './free.js';
 import * as FU from './free-ui.js';
 import { localAnswer, FALLBACK, SUGGESTIONS } from './debt-kb.js';
 import * as AC from './account.js';
+import { revealAccount } from './acct-reveal.js';
 import { createAccount } from './account-ui.js';
 
 const KEY = 'achv1';
@@ -630,7 +631,7 @@ const acct = createAccount({
   pct: () => Math.round(J.pathPct(state.stageDone, state.done, 0)),
   onOpen: () => pauseJourney(true), onClose: () => pauseJourney(false),
 });
-function paintAcctBtn() { const on = AC.hasAccount(state), a = $('#acctBtn'), m = $('#menuBtn'); if (!a || !m) return; a.hidden = !on; m.hidden = !on; $('.acct-ini', a).textContent = ((state.applicant && state.applicant.first) || 'Me')[0].toUpperCase(); }
+function paintAcctBtn() { const on = AC.hasAccount(state), a = $('#acctBtn'), m = $('#menuBtn'); if (!a || !m) return; a.hidden = !on; m.hidden = !on; if (on && !state.acctSeen) { state.acctSeen = true; save(); revealAccount(a, m); } $('.acct-ini', a).textContent = ((state.applicant && state.applicant.first) || 'Me')[0].toUpperCase(); }
 $('#acctBtn').addEventListener('click', () => acct.open('overview'));
 $('#menuBtn').addEventListener('click', () => acct.openSheet());
 window.addEventListener('hashchange', () => { const m = /^#account\/?(\w*)/.exec(location.hash); if (m && AC.hasAccount(state)) acct.open(m[1] || 'overview'); });
