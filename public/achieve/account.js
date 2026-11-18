@@ -109,6 +109,11 @@ export function profile(state, ctx) {
     consents: (state.e && state.e.consents && state.e.consents.length) ? state.e.consents.length + ' consents signed' : 'Not signed yet',
   };
 }
+export const MIN_DEPOSIT = 250, MIN_DEBT = 100;
+export function addDebt(state, name, balance) { const c = state.c = state.c || {}; c.custom = c.custom || []; c.debts = c.debts || []; const t = { id: 'c' + (c.custom.length + 1), name: String(name).trim().slice(0, 60), kind: 'Added by you', balance: Math.round(Number(balance)), status: 'current', note: 'Added by you' }; c.custom.push(t); c.debts.push(t.id); recordEvent(state, 'you', 'Reported another debt: ' + t.name, money(t.balance) + ' · your specialist will review it'); return t; }
+export function setDeposit(state, amount) { const c = state.c = state.c || {}; const v = Math.round(Number(amount)); const old = c.deposit; c.deposit = v; recordEvent(state, 'you', 'Changed your monthly deposit to ' + money(v), 'Takes effect with your next draft'); return old; }
+export const validDeposit = (v) => Number(v) >= MIN_DEPOSIT && Number(v) <= 20000;
+export const validDebt = (name, bal) => String(name).trim().length >= 2 && Number(bal) >= MIN_DEBT && Number(bal) <= 500000;
 export function saveProfile(state, patch) { const ap = state.applicant = state.applicant || {}; const ch = []; Object.keys(patch).forEach((k) => { if (patch[k] !== ap[k]) { ch.push(k); ap[k] = patch[k]; } }); if (ch.length) recordEvent(state, 'you', 'Updated your ' + ch.map((k) => (EDITABLE.find((x) => x.id === k) || { label: k }).label.toLowerCase()).join(' and '), ''); return ch; }
 export const validField = (id, v) => (id === 'email' ? /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v) : id === 'phone' ? String(v).replace(/\D/g, '').length === 10 : id === 'zip' ? /^\d{5}$/.test(v) : true);
 

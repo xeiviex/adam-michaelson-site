@@ -26,7 +26,7 @@ export function createAccount(api) {
     el.append(
       card('Dedicated account', h('div', { class: 'av-bal' }, money(bal), h('small', null, pend ? ' + ' + money(Math.abs(pend)) + ' pending' : ' balance')), row('Account', '••3318 · FDIC-insured'), h('div', { class: 'av-actions' }, btn('Add money', () => { filter.xfer = 'in'; go('bank'); }), btn('See transactions', () => go('bank'), 'line'))),
       card('Your program', h('div', { class: 'av-pct' }, h('b', null, api.pct() + '%'), ' of the way'), h('div', { class: 'rbar' }, h('i', { style: 'width:' + api.pct() + '%' })), row('Monthly deposit', money(c.deposit)), row('Next draft', nd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' from ' + c.bankName + ' ••' + c.last4)),
-      card('Do something', h('div', { class: 'av-actions col' }, btn('Report a contact from a creditor', () => { filter.report = true; go('contacts'); }, 'line'), btn('Upload a document', () => go('documents'), 'line'), btn('Update my details', () => go('profile'), 'line'))),
+      card('Do something', h('div', { class: 'av-actions col' }, btn('Report a contact from a creditor', () => { filter.report = true; go('contacts'); }, 'line'), btn('Upload a document', () => go('documents'), 'line'), btn('Report another debt', () => { filter.plan = 'debt'; go('profile'); }, 'line'), btn('Change monthly deposit', () => { filter.plan = 'deposit'; go('profile'); }, 'line'), btn('Update my details', () => go('profile'), 'line'))),
       h('section', { class: 'av-card av-wide' }, h('h3', null, 'Recent activity'), acts.length ? acts.map(actRow) : h('p', { class: 'help' }, 'Nothing yet.'), btn('See all activity', () => go('activity'), 'line sm')));
     return el;
   }
@@ -94,9 +94,21 @@ export function createAccount(api) {
       const patch = {}; for (const f of A.EDITABLE) { const v = inputs[f.id].value.trim(); if (!A.validField(f.id, v)) { errs.textContent = 'Check your ' + f.label.toLowerCase() + '.'; errs.hidden = false; return; } patch[f.id] = v; }
       const ch = A.saveProfile(state, patch); api.save(); toast(ch.length ? 'Saved' : 'Nothing changed'); paint();
     }));
+    /* changes to the plan: report another debt, change the monthly deposit */
+    const dForm = h('div', { class: 'av-edit', hidden: true }), dErr = h('p', { class: 'help av-err', hidden: true });
+    const dName = h('input', { class: 'inp', type: 'text', placeholder: 'Who is it with? (for example, Harbor Card)', 'aria-label': 'Creditor name' });
+    const dBal = h('input', { class: 'inp', type: 'number', inputmode: 'numeric', min: String(A.MIN_DEBT), placeholder: 'Balance in dollars', 'aria-label': 'Balance' });
+    dForm.append(h('div', { class: 'field' }, h('label', null, 'Creditor'), dName), h('div', { class: 'field' }, h('label', null, 'Balance'), dBal), dErr,
+      btn('Add this debt', () => { if (!A.validDebt(dName.value, dBal.value)) { dErr.textContent = 'Enter who it is with and the balance.'; dErr.hidden = false; return; } A.addDebt(state, dName.value, dBal.value); api.save(); toast('Added. Your specialist will review it and tell you if your plan changes.'); paint(); }));
+    const mForm = h('div', { class: 'av-edit', hidden: true }), mErr = h('p', { class: 'help av-err', hidden: true });
+    const mAmt = h('input', { class: 'inp', type: 'number', inputmode: 'numeric', min: String(A.MIN_DEPOSIT), value: String(c.deposit || ''), 'aria-label': 'New monthly deposit' });
+    mForm.append(h('div', { class: 'field' }, h('label', null, 'New monthly deposit'), mAmt), h('p', { class: 'help' }, 'The minimum is ' + '$' + A.MIN_DEPOSIT + '. A bigger deposit builds your fund faster. The change starts with your next draft.'), mErr,
+      btn('Save deposit', () => { if (!A.validDeposit(mAmt.value)) { mErr.textContent = 'Enter an amount of at least $' + A.MIN_DEPOSIT + '.'; mErr.hidden = false; return; } A.setDeposit(state, mAmt.value); api.save(); toast('Updated. Your new deposit starts with your next draft.'); paint(); }));
+    const planActs = h('div', { class: 'av-actions' }, btn('Change monthly deposit', () => { mForm.hidden = !mForm.hidden; dForm.hidden = true; }, 'line sm'), btn('Report another debt', () => { dForm.hidden = !dForm.hidden; mForm.hidden = true; }, 'line sm'));
+    if (filter.plan === 'deposit') mForm.hidden = false; else if (filter.plan === 'debt') dForm.hidden = false; filter.plan = null;
     return h('div', { class: 'av-grid' },
       card('Contact', p.contact.map(([k, v]) => row(k, v)), editBtn, edit),
-      card('Your plan', p.money.map(([k, v]) => row(k, v)), row('Agreement', p.consents)),
+      card('Your plan', p.money.map(([k, v]) => row(k, v)), row('Agreement', p.consents), planActs, mForm, dForm),
       h('section', { class: 'av-card av-wide' }, h('h3', null, 'Debts in your program'), p.debts.length ? p.debts.map(([k, v]) => row(k, v)) : h('p', { class: 'help' }, 'None listed.')));
   }
 
