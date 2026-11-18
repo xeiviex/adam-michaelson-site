@@ -441,7 +441,8 @@ async function finishD(id, patch, turn) {
   save();
   turn.classList.remove('pending'); turn.classList.add('answered');
   const card = turn.querySelector('.card'), sub = turn.querySelector('.sub');
-  if (card) { card.style.maxHeight = card.offsetHeight + 'px'; requestAnimationFrame(() => card.classList.add('out')); setTimeout(() => card.remove(), 420); }
+  if (card && id === 'celebrate') { card.querySelectorAll('.btn:not(.line):not(.sm)').forEach((b) => b.remove()); card.classList.add('kept'); }
+  else if (card) { card.style.maxHeight = card.offsetHeight + 'px'; requestAnimationFrame(() => card.classList.add('out')); setTimeout(() => card.remove(), 420); }
   if (sub) sub.classList.add('fade');
   const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, dSummary(id))));
   turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
@@ -580,7 +581,8 @@ async function finishF(id, patch, turn) {
   save();
   turn.classList.remove('pending'); turn.classList.add('answered');
   const card = turn.querySelector('.card'), sub = turn.querySelector('.sub');
-  if (card) { card.style.maxHeight = card.offsetHeight + 'px'; requestAnimationFrame(() => card.classList.add('out')); setTimeout(() => card.remove(), 420); }
+  if (card && id === 'movie') { card.querySelectorAll('.btn:not(.line):not(.sm)').forEach((b) => b.remove()); card.classList.add('kept'); }
+  else if (card) { card.style.maxHeight = card.offsetHeight + 'px'; requestAnimationFrame(() => card.classList.add('out')); setTimeout(() => card.remove(), 420); }
   if (sub) sub.classList.add('fade');
   const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, fSummary(id))));
   turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
