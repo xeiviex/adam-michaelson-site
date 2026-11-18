@@ -24,7 +24,7 @@ export function movieCard(applicant, hooks, onDone, opts) {
   const share = h('button', { type: 'button', class: 'btn line sm', onclick: doShare }, ico('share', 16), 'Share my movie');
   share.hidden = true;
   async function doShare() {
-    const url = location.origin + '/achieve/', text = name + ' just got debt free in this Achieve prototype. Watch the movie.';
+    const url = location.origin + '/achieve/', text = name + ' just got debt free with Achieve. Watch the movie.';
     try { if (navigator.share) { await navigator.share({ title: 'My Achieve movie', text, url }); return; } await navigator.clipboard.writeText(text + ' ' + url); share.lastChild.textContent = 'Link copied'; setTimeout(() => { share.lastChild.textContent = 'Share my movie'; }, 2000); } catch { /* cancelled */ }
   }
   const draw = (t) => M.drawMovie(cx, t, name);
@@ -51,7 +51,7 @@ export function movieCard(applicant, hooks, onDone, opts) {
   stage.append(bar);
   ctrl.append(soundBtn, replay, share);
   poster();
-  const el = h('div', { class: 'card movie' }, stage, ctrl, h('p', { class: 'fine' }, 'Prototype: an animated short drawn in your browser. No audio plays.'), go);
+  const el = h('div', { class: 'card movie' }, stage, ctrl, go);
   return { el, async auto(alive) {
     await sleep(reduced() ? 0 : 1800); if (!alive()) return;
     start(); await sleep(reduced() ? 0 : M.DUR * 1000 + 1500); if (alive()) go.click();

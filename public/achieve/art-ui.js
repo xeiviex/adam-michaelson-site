@@ -110,5 +110,5 @@ export function paintingBlock(applicant) {
   show(false);
   return h('div', { class: 'art' }, h('div', { class: 'tabs' }, chips), frameEl, plaque,
     h('button', { type: 'button', class: 'btn line art-print', onclick: () => printPainting(n, titleFor(), style) }, ico('file', 18), 'Print my painting'),
-    h('p', { class: 'fine' }, 'Prototype: original illustrations made for this demo, with your family and home waving from the ridge. A real commission would be hand-painted.'));
+    h('p', { class: 'fine' }, 'An original illustration made for you, with your family and home waving from the ridge.'));
 }

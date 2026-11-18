@@ -42,7 +42,7 @@ export function depositCard(applicant, bank, amount, onDone) {
   amt.addEventListener('input', () => { const d = Number(amt.value.replace(/\D/g, '')); amt.value = d ? '$' + d.toLocaleString('en-US') : ''; cleared.amount = d; send.disabled = !d; send.textContent = 'Send ' + (d ? money(d) : ''); });
   const send = h('button', { type: 'button', class: 'btn', onclick: run }, 'Send ' + money(amount));
   const steps = h('ol', { class: 'ach-steps', hidden: true }, D.ACH.map((s) => h('li', { 'data-id': s.id }, h('span', { class: 'dot' }), h('span', null, h('b', null, s.t), h('em', null, s.d)))));
-  const note = h('p', { class: 'help', hidden: true }, 'Demo: real bank transfers take one to three business days. This one runs in seconds. We will celebrate the moment yours clears.');
+  const note = h('p', { class: 'help', hidden: true }, 'Bank transfers usually take one to three business days. We will celebrate the moment yours clears.');
   const go = cont('Continue', () => onDone({ deposit: Object.assign({}, cleared) }));
   go.hidden = true;
   const form = h('div', { class: 'xfer' },
@@ -79,7 +79,7 @@ export function celebrateCard(applicant, st, hooks, onDone) {
     h('h3', null, 'The hardest part is done, ' + (applicant.first || 'friend') + '.'),
     h('p', { class: 'party-sub' }, 'You made your first deposit. Most people never take that step. You did.'),
     h('div', { class: 'gift' }, h('div', { class: 'gift-card' }, h('b', null, applicant.first + ', you did it.'), h('span', null, 'From your Achieve team')), h('div', { class: 'gift-t' }, h('b', null, 'A welcome box is on its way'), h('span', null, 'A handwritten card and a few small treats. We will confirm where to send it in your account.'))),
-    h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'We wrote you a song!'))), lyr, play, h('p', { class: 'fine' }, s.note)), go);
+    h('div', { class: 'song' }, h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'We wrote you a song!'))), lyr, play, s.note ? h('p', { class: 'fine' }, s.note) : null), go);
   hooks && hooks.burst && after(250, hooks.burst);
   return { el, async auto(alive) { await pause(2400); if (!alive()) return; playSong(); await pause(s.lines.length * (reduced() ? 0 : 1100) + 2600); if (alive()) go.click(); } };
 }

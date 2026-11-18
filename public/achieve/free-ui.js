@@ -55,7 +55,7 @@ export function boxCard(applicant, onDone) {
     h('ul', { class: 'boxlist' }, F.BOX.map((x) => h('li', null, ico('check', 14, 3), x))),
     h('div', { class: 'qlab' }, 'Where should we send it?'),
     h('div', { class: 'addr' }, inputs.map(({ f, i }) => h('label', { class: 'addr-' + f.id }, h('span', null, f.label), i))),
-    h('p', { class: 'fine' }, 'Prototype: nothing is shipped and the address is not stored on a server.'), go);
+    go);
   return { el, async auto(alive) {
     await pause(1600);
     for (const { f, i } of inputs) { if (!alive()) return; i.value = F.PERSONA_ADDR[f.id]; a[f.id] = i.value; await pause(450); }
@@ -79,7 +79,7 @@ export function nextCard(applicant, onDone) {
     go.textContent = sel.size ? 'Finish' : 'Skip for now';
   }
   paint();
-  const el = h('div', { class: 'card' }, h('div', { class: 'nx-grid' }, cards.map((c) => c.b)), detail, h('p', { class: 'fine' }, 'General information only. Fictional placeholders, no accounts are opened. Credit and loan outcomes depend on you and the lender.'), go);
+  const el = h('div', { class: 'card' }, h('div', { class: 'nx-grid' }, cards.map((c) => c.b)), detail, h('p', { class: 'fine' }, 'General information only. Credit and loan outcomes depend on you and the lender.'), go);
   return { el, async auto(alive) {
     await pause(1500);
     for (const id of F.PERSONA_F.next) { if (!alive()) return; cards.find((c) => c.x.id === id).b.click(); await pause(1100); }

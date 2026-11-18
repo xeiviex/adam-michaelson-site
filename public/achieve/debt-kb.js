@@ -9,7 +9,7 @@ const QA = [
   [/qualif|eligible|minimum|7,?500/, 'Programs generally need about $7,500 or more in unsecured debt, a hardship that makes the payments hard, and the ability to make a monthly deposit. Secured debts like a mortgage or car loan are not included.'],
   [/cancel|quit|leave|stop/, 'You can cancel at any time. The money in your account is yours, and it is returned to you minus any fees already earned.'],
   [/guarantee|promise|sure/, 'Nobody can guarantee a result. Creditors decide whether to settle. What we can promise is to explain each step, show you every offer, and let you approve or decline each settlement.'],
-  [/human|person|talk|call me|specialist/, 'A specialist can walk through this with you. In this demo, the plan stage is where that conversation happens.'],
+  [/human|person|talk|call me|specialist/, 'A specialist can walk through this with you. The plan stage is where that conversation happens.'],
 ];
 export const FALLBACK = "Good question. I don't have a confident answer here. A specialist can answer it on your plan call, or you can reach us at (833) 435-2021.";
 export function localAnswer(text) {

@@ -183,7 +183,7 @@ function jumpScene(c, t, name) {
     c.lineWidth = 14; c.lineJoin = 'round'; c.strokeStyle = '#1a1050'; c.strokeText(text, 0, 0, W - 80);
     const g = c.createLinearGradient(0, -80, 0, 10); g.addColorStop(0, '#fff3a8'); g.addColorStop(1, '#ffb703'); c.fillStyle = g; c.fillText(text, 0, 0, W - 80);
     c.restore();
-    c.save(); c.globalAlpha = ease((u - 10.5) / 0.6) * 0.9; c.fillStyle = '#fff'; c.font = '600 16px system-ui'; c.textAlign = 'center'; c.fillText('Produced by Achieve. A prototype animation, starring you.', W / 2, 503); c.restore();
+    c.save(); c.globalAlpha = ease((u - 10.5) / 0.6) * 0.9; c.fillStyle = '#fff'; c.font = '600 16px system-ui'; c.textAlign = 'center'; c.fillText('Produced by Achieve. Starring you.', W / 2, 503); c.restore();
   }
 }
 

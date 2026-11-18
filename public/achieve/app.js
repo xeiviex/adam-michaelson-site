@@ -195,7 +195,6 @@ async function stageDone(id, o) {
     h('h3', null, 'Step ' + stage.n + ' of ' + J.STAGES.length + ' complete'),
     h('p', null, o.body),
     o.extra ? o.extra() : null,
-    next && !next.built ? h('div', { class: 'soon-note' }, ico('info', 16), h('span', null, 'Prototype note: "' + next.label + '" is the next piece to be built. The path on the right shows the whole journey.')) : null,
     go);
   t.append(card); scrollToEl(t);
   if (next && next.built) {

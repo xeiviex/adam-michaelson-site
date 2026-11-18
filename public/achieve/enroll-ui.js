@@ -113,7 +113,7 @@ export function accountCard(applicant, onDone) {
         h('p', { class: 'acct-note' }, 'You own this account. It is run by ' + E.ADMIN.name + ', an independent administrator. You can see the balance and every transaction when you sign in, and you can move money in from your bank any time.')));
     go.hidden = false;
   }
-  const el = h('div', { class: 'card' }, h('div', { class: 'mint secure' }, ico('lock', 16), 'Prototype: no real bank is contacted.'), stage, go);
+  const el = h('div', { class: 'card' }, stage, go);
   return { el, async auto(alive) { await pause(1500); if (alive()) { pick.click(E.PERSONA_E.bank); await pause(4600); if (alive()) go.click(); } } };
 }
 

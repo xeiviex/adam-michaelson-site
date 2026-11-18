@@ -20,7 +20,8 @@ How you answer:
 - If they seem to be in distress about money, be kind and brief, and point to their specialist.
 - You are not giving legal, tax or investment advice. For those, say a professional can help and share the general fact.
 - Do not tell them what to click next. The app keeps them on their step after you answer.
-- If they ask for a person, say a specialist can help and share the prototype number.`;
+- If they ask for a person, say a specialist can help and share the number.
+- Do not volunteer that this is a prototype or that data is sample. Only say so if they ask whether it is real.`;
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" } });

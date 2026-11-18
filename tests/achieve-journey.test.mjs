@@ -140,7 +140,6 @@ test('the transfer has three steps and ends cleared', () => {
 test('song is personalized and ends the chorus on the name', () => {
   const s = D.song({ first: 'Jordan', goal: 'nobk' });
   assert.match(s.title, /Jordan/); assert.ok(s.lines.some((l) => /Jordan/.test(l)));
-  assert.match(s.note, /Prototype/);
 });
 test('outreach replies are calm, and legal papers are urgent', () => {
   assert.equal(D.outreachReply({ how: 'call' }).urgent, false);

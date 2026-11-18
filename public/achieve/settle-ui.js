@@ -39,7 +39,7 @@ export function activityCard(applicant, debt, onDone) {
       const box = h('div', { class: 'act' + (isOpen ? ' open' : '') },
         h('button', { type: 'button', class: 'act-h', onclick: () => { open = isOpen ? null : it.id; paint(); } }, h('span', { class: 'act-ic' }, ico(IC[it.kind], 18)), h('span', { class: 'act-t' }, h('b', null, it.who), h('em', null, it.when + (it.dur ? ' · ' + it.dur : ''))), ico('chevD', 16)),
         isOpen ? h('div', { class: 'act-b' }, h('p', null, it.summary),
-          it.transcript ? h('div', { class: 'rec' }, h('button', { type: 'button', class: 'btn line sm rec-play', onclick: () => play(it, box) }, ico('speaker', 16), 'Play recording'), h('span', { class: 'fine' }, 'Prototype: no audio. The transcript plays line by line.'), h('div', { class: 'tr' })) : null) : null);
+          it.transcript ? h('div', { class: 'rec' }, h('button', { type: 'button', class: 'btn line sm rec-play', onclick: () => play(it, box) }, ico('speaker', 16), 'Play recording'), h('span', { class: 'fine' }, 'The transcript plays line by line.'), h('div', { class: 'tr' })) : null) : null);
       return box;
     }));
   }
@@ -102,7 +102,7 @@ export function offerCard(applicant, debt, fund, hooks, onDone) {
 export function boardCard(selected, deposit, hooks, offerRes, months, onDone) {
   const settled = offerRes.debtId ? [offerRes.debtId] : [], kept = { [offerRes.debtId]: offerRes.saved };
   const list = h('div', { class: 'bd-list' }), glance = h('div', { class: 'glance' });
-  const more = h('button', { type: 'button', class: 'btn line sm', onclick: settleNext }, ico('refresh', 16), 'Demo: fast-forward and settle the next debt');
+  const more = h('button', { type: 'button', class: 'btn line sm', onclick: settleNext }, ico('refresh', 16), 'Fast-forward and settle the next debt');
   const go = cont('Continue', () => onDone({ board: true }));
   function totalKept() { return Object.values(kept).reduce((t, v) => t + v, 0); }
   function paint() {

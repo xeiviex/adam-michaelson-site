@@ -44,7 +44,7 @@ export const addressOk = (a) => !!(a && a.line1 && a.line1.trim().length > 3 && 
 /* The song, a graduation version. Own words, no real lyrics. */
 export function song({ first, months }) {
   const n = first || 'friend';
-  return { title: n + ', Debt Free', note: 'A prototype song written for you. No audio plays here.', lines: [
+  return { title: n + ', Debt Free', note: 'A song written for you.', lines: [
     'Month by month, ' + n + ', you showed up,',
     'ninety days or more, and you did not stop.',
     'Every deposit was a brick in the wall,',

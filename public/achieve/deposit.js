@@ -36,7 +36,7 @@ export function song(s) {
       'The weight gets lighter, the road gets clear,',
       'Freedom is near, freedom is near.',
     ],
-    note: 'Prototype: this is the lyric sheet. A real version would be sung from your story.',
+    note: '',
   };
 }
 
