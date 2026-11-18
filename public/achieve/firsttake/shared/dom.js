@@ -72,6 +72,8 @@ const P = {
   sidebar: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/>',
   chat: '<path d="M4 5h16v11H9l-5 4z"/>',
   speaker: '<path d="M4 10v4h4l5 4V6l-5 4zM16 9a4 4 0 0 1 0 6"/>',
+  play: '<path d="M8 5v14l11-7z"/>',
+  pause: '<path d="M8 5v14M16 5v14"/>',
   menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
   compose: '<path d="M4 20h4L19 9l-4-4L4 16z"/>',
   list: '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
