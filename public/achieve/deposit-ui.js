@@ -119,7 +119,7 @@ export function celebrateCard(applicant, st, hooks, onDone) {
     io.observe(el.querySelector('.song'));
   }
   hooks && hooks.burst && after(250, hooks.burst);
-  return { el, focus: el.querySelector('.song'), async auto(alive) { await pause(2400); if (!alive()) return; await pause(9500); while (alive() && !audio.paused && !audio.ended) await sleep(500); if (alive()) go.click(); } };
+  return { el, focus: el.querySelector('.song'), async auto(alive) { await pause(2400); if (!alive()) return; await pause(9500); if (!audio.paused && !audio.ended) await pause(8000); if (alive()) go.click(); } };
 }
 
 /* ---- creditor outreach log ---- */
