@@ -88,7 +88,7 @@ export function celebrateCard(applicant, st, hooks, onDone) {
     h('div', { class: 'party-ring' }, h('div', { class: 'win-ic big' }, ico('star', 34, 2))),
     h('h3', null, 'The hardest part is done, ' + (applicant.first || 'friend') + '.'),
     h('p', { class: 'party-sub' }, 'You made your first deposit. Most people never take that step. You did. In recognition of your awesomeness, we produced a song about you.'),
-    h('div', { class: 'song' }, h('div', { class: 'song-pt', 'aria-hidden': 'true' }, h('span', null, 'A song about YOU!'), h('span', { class: 'art-arr', html: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h16M13 5l7 7-7 7"/></svg>' })), h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'Achieve Debt Relief Band'))), h('div', { class: 'pl' }, pb, h('div', { class: 'pl-mid' }, bar, time), dl), audio),
+    h('div', { class: 'song' }, h('div', { class: 'song-pt', 'aria-hidden': 'true' }, 'A song about YOU!'), h('div', { class: 'song-h' }, eq, h('span', null, h('b', null, s.title), h('em', null, 'Achieve Debt Relief Band'))), h('div', { class: 'pl' }, pb, h('div', { class: 'pl-mid' }, bar, time), dl), audio),
     h('div', { class: 'gift' }, h('div', { class: 'gift-card' }, h('b', null, applicant.first + ', you did it.'), h('span', null, 'From your Achieve team')), h('div', { class: 'gift-t' }, h('b', null, 'A welcome box is on its way'), h('span', null, 'A handwritten card and a few small treats. We will confirm where to send it in your account.'))), go);
   /* the callout starts wobbling only once the song is actually on screen */
   if (typeof IntersectionObserver !== 'undefined') {
