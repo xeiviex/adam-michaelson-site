@@ -567,7 +567,7 @@ async function startFree() {
 const proceedF = () => { const n = F.nextFStep(state.fdone); if (n) askF(n); };
 const askF = (id) => runTurn(id, FMETA[id], (t) => {
   const done = (patch) => finishF(id, patch, t);
-  const seq = ['sunrise', 'fireworks', 'wave']; let si = 0;
+  const seq = ['sunrise', 'fireworks']; let si = 0;
   const hooks = { burst: (n) => burst(n === undefined ? seq[si++ % seq.length] : n) };
   if (id === 'graduate') return FU.graduateCard(state.applicant, recapNow(), hooks, done);
   if (id === 'movie') return MU.movieCard(state.applicant, hooks, done, { muted: state.auto });
