@@ -55,3 +55,6 @@ Updated 2026-10-08.
 - **Minimum spacing.** Spacing tokens live in `:root` in `public/achieve/firsttake/achieve.css`: `--space-min: 12px` (the least gap allowed between any two stacked components, such as a selector and the label of the next group) and `--space-section: 20px` (between question groups).
 - Give a component its own `margin-top` (use the tokens) so it keeps its gap wherever it is placed. Do not zero a margin with `:first-child` unless the selector says what it is first inside (for example `.card > .qgroup:first-child`). A bare `.thing:first-child { margin-top: 0 }` removes the gap when the component is wrapped after another one.
 - `tests/achieve-journey.test.mjs` fails the build if a bare `:first-child` margin reset is added to a component class.
+
+## Lottie celebrations (Achieve prototype)
+Trophy, balloons, streamers (party popper) and coins play as Lottie animations from LottieFiles (free to use), self-hosted in public/achieve/lottie/ with the dotlottie-web player and wasm. lottie-fx.js plays them; effects.js falls back to the canvas versions if the player cannot load. Other kinds (sunrise, target, seal, fireworks, and so on) stay hand-drawn canvas.

@@ -17,7 +17,15 @@ function ensure() {
   W = cv.width; H = cv.height; cv.classList.add('on'); return true;
 }
 
+import { LOTTIE_KINDS, playLottie, warmLottie } from './lottie-fx.js';
+if (typeof window !== 'undefined') warmLottie();
+/* trophy, balloons, streamers and coins play as Lottie animations; the canvas versions below are the fallback */
 export function fx(kind, n) {
+  if (reduced()) return;
+  if (LOTTIE_KINDS.includes(kind)) { playLottie(kind).then((ok) => { if (!ok) fxCanvas(kind, n); }); return; }
+  fxCanvas(kind, n);
+}
+function fxCanvas(kind, n) {
   if (reduced() || !ensure()) return;
   const now = performance.now();
   if (kind === 'streamers') {
