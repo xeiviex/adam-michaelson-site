@@ -8,11 +8,13 @@ import * as Q from './qualify.js';
 import * as QU from './qualify-ui.js';
 import * as C from './consult.js';
 import * as CU from './consult-ui.js';
+import * as E from './enroll.js';
+import * as EU from './enroll-ui.js';
 import { localAnswer, FALLBACK, SUGGESTIONS } from './debt-kb.js';
 
 const KEY = 'achv1';
 const load = () => { try { return JSON.parse(sessionStorage.getItem(KEY)) || null; } catch { return null; } };
-const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], auto: true }, load());
+const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], auto: true }, load());
 const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch { /* private mode */ } };
 
 const stream = $('#stream'), tail = $('#tail'), road = $('#roadInner');
@@ -33,7 +35,7 @@ function scrollEnd() {
 
 /* ---------- the path nav ---------- */
 const currentStage = () => J.STAGES.find((s) => !state.stageDone.includes(s.id)) || J.STAGES[J.STAGES.length - 1];
-const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : null;
+const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : id === 'enroll' ? { all: E.E_STEPS, done: state.edone, label: E.eStepLabel } : null;
 function renderRoad() {
   const cur = currentStage();
   const ss = stageSteps(cur.id);
@@ -189,7 +191,7 @@ const completeQualify = (quiet) => stageDone('qualify', { quiet, line: "That's t
   body: 'You told us about your debt, what changed, and your budget. Next you meet your plan: we confirm your debts, listen, set honest expectations, and show what you would pay.', onNext: startConsult });
 
 const completeConsult = (quiet) => stageDone('consult', { quiet, line: 'You have a plan, ' + (state.applicant.first || 'there') + '.',
-  body: 'You confirmed your debts, told us what matters, heard exactly what to expect, and chose a deposit. Next you review the agreement, sign, and open your account.', onNext: () => {} });
+  body: 'You confirmed your debts, told us what matters, heard exactly what to expect, and chose a deposit. Next you review the agreement, sign, and open your account.', onNext: startEnroll });
 
 /* ---------- stage 2: qualification ---------- */
 const QMETA = {
@@ -315,6 +317,59 @@ async function finishC(id, patch, turn) {
   if (C.nextCStep(state.cdone)) proceedC(); else completeConsult();
 }
 
+/* ---------- stage 4: enroll ---------- */
+const EMETA = {
+  review: { q: 'Your agreement, in plain language', sub: 'Open any section to read the details.' },
+  consent: { q: 'A few things we need you to agree to', sub: 'Each one is its own choice.' },
+  sign: { q: 'Sign your agreement', sub: 'Type your name and adopt it as your signature.' },
+  account: { q: 'Open your dedicated account', sub: 'Your deposits go to an account in your name. You own it and you can see it any time.' },
+  draft: { q: 'Set up your automatic deposits', sub: 'The surest way to stay on track is to never have to remember.' },
+};
+const planNow = () => C.plan(selectedDebts(), deposit());
+function eSummary(id) {
+  const e = state.e;
+  if (id === 'review') return 'I reviewed my agreement';
+  if (id === 'consent') return 'I agreed to all ' + E.CONSENTS.length;
+  if (id === 'sign') return 'Signed: ' + (e.signedName || '');
+  if (id === 'account') return 'Dedicated account ••' + ((e.account || {}).last4 || '');
+  if (id === 'draft') { const d = e.draft || {}; return money0(d.amount) + ' ' + ({ monthly: 'a month', biweekly: 'every 2 weeks', twice: 'twice a month' }[d.freq] || '') + (d.auto ? ', automatic' : ', manual'); }
+  return '';
+}
+async function startEnroll() {
+  ui.run++;
+  await say("Now the part that makes it official: review, sign, open your account, and set up your deposits.");
+  proceedE();
+}
+const proceedE = () => { const n = E.nextEStep(state.edone); if (n) askE(n); };
+const askE = (id) => runTurn(id, EMETA[id], (t) => {
+  const done = (patch) => finishE(id, patch, t);
+  if (id === 'review') return EU.reviewCard(Object.assign(planNow(), { debt: planNow().total_debt }), done);
+  if (id === 'consent') return EU.consentCard(state.e, done);
+  if (id === 'sign') return EU.signCard(state.applicant, done);
+  if (id === 'account') return EU.accountCard(state.applicant, done);
+  return EU.draftCard(state.applicant, deposit(), state.e.bank, done);
+});
+async function finishE(id, patch, turn) {
+  Object.assign(state.e, patch);
+  if (!state.edone.includes(id)) state.edone.push(id);
+  save();
+  turn.classList.remove('pending'); turn.classList.add('answered');
+  const card = turn.querySelector('.card'), sub = turn.querySelector('.sub');
+  if (card) { card.style.maxHeight = card.offsetHeight + 'px'; requestAnimationFrame(() => card.classList.add('out')); setTimeout(() => card.remove(), 420); }
+  if (sub) sub.classList.add('fade');
+  const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, eSummary(id))));
+  turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
+  renderRoad();
+  await sleep(reduced() ? 0 : 650);
+  if (E.nextEStep(state.edone)) proceedE(); else completeEnroll();
+}
+const completeEnroll = (quiet) => {
+  const d = state.e.draft || {};
+  const first = d.first ? E.fmtDate(new Date(d.first)) : 'soon';
+  return stageDone('enroll', { quiet, line: "You're enrolled, " + (state.applicant.first || 'there') + '!',
+    body: 'Your agreement is signed and your dedicated account is open. Your first deposit is set for ' + first + '. We will celebrate the moment it clears.', onNext: () => {} });
+};
+
 /* ---------- confetti (small, dependency free) ---------- */
 function burst() {
   if (reduced()) return;
@@ -360,6 +415,7 @@ $('#doAuto').addEventListener('click', () => {
 });
 $('#doSkip').addEventListener('click', () => {
   if (!state.stageDone.includes('lead')) { Object.assign(state.applicant, J.PERSONA); state.done = J.LEAD_STEPS.map((s) => s.id); }
+  else if (state.stageDone.includes('consult')) { Object.assign(state.e, { consents: E.CONSENTS.map((c) => c.id), signedName: E.PERSONA_E.sign, bank: E.PERSONA_E.bank, account: { last4: '3318' } }); state.edone = ['review', 'consent', 'sign', 'account']; }
   else if (state.stageDone.includes('qualify')) { Object.assign(state.c, JSON.parse(JSON.stringify(C.PERSONA_C))); state.c.custom = []; state.cdone = C.C_STEPS.filter((x) => x !== 'plan'); }
   else { state.q = JSON.parse(JSON.stringify(Q.PERSONA_Q)); state.qdone = Q.qSteps(state.q).filter((x) => x !== 'result'); state.stageDone.includes('lead') || state.stageDone.push('lead'); }
   save(); devMenu.hidden = true; location.reload();
@@ -369,25 +425,29 @@ $('#doReset').addEventListener('click', () => { state.auto = true; try { session
 
 /* ---------- start ---------- */
 const answeredTurn = (id, q, text) => { const t = addTurn(id, 'answered'); t.append(h('div', { class: 'q' }, h('span', { class: 'qt' }, q)), h('div', { class: 'ans in' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, text)))); };
+const FLOWS = [
+  { id: 'qualify', prev: () => completeLead(true), done: () => state.qdone.filter((x) => x !== 'result'), meta: (id) => qMeta(id), sum: qSummary, go: proceedQ, finish: completeQualify },
+  { id: 'consult', prev: () => completeQualify(true), done: () => state.cdone, meta: (id) => CMETA[id], sum: cSummary, go: proceedC, finish: completeConsult },
+  { id: 'enroll', prev: () => completeConsult(true), done: () => state.edone, meta: (id) => EMETA[id], sum: eSummary, go: proceedE, finish: completeEnroll },
+];
 (async function start() {
   paintAuto();
   renderRoad();
   if (J.leadComplete(state.done)) {
     state.stageDone.includes('lead') || state.stageDone.push('lead');
-    J.LEAD_STEPS.forEach((s) => answeredTurn(s.id, s.q, s.summary(state.applicant)));
-    const qdone = state.qdone.filter((x) => x !== 'result');
-    qdone.forEach((id) => answeredTurn(id, qMeta(id).q, qSummary(id)));
-    if (state.qdone.includes('result')) { state.stageDone.includes('qualify') || state.stageDone.push('qualify'); state.cdone.forEach((id) => answeredTurn(id, CMETA[id].q, cSummary(id))); }
-    renderRoad();
-    if (state.stageDone.includes('qualify') || (state.qdone.includes('result'))) {
-      if (!C.nextCStep(state.cdone)) { completeConsult(true); return; }
-      if (state.cdone.length) { await say('Welcome back. Let\'s keep going.'); proceedC(); return; }
-      completeQualify(true); return;
+    J.LEAD_STEPS.forEach((st) => answeredTurn(st.id, st.q, st.summary(state.applicant)));
+    for (const fl of FLOWS) {
+      const prevDone = fl.id === 'qualify' || state.stageDone.includes(FLOWS[FLOWS.indexOf(fl) - 1].id);
+      if (!prevDone) break;
+      fl.done().forEach((id) => answeredTurn(id, fl.meta(id).q, fl.sum(id)));
+      renderRoad();
+      if (state.stageDone.includes(fl.id)) { if (fl === FLOWS[FLOWS.length - 1]) { fl.finish(true); return; } continue; }
+      if (fl.done().length) { await say("Welcome back. Let's keep going."); fl.go(); return; }
+      fl.prev(); return;
     }
-    if (Q.nextQStep(state.qdone, state.q) === null && state.qdone.includes('result')) { completeQualify(true); return; }
-    if (qdone.length) { await say('Welcome back. Let\'s keep going.'); proceedQ(); return; }
-    completeLead(true); return;
   }
-  await say('Welcome to Achieve. Dealing with debt is hard, and you took a step by being here. Let\'s see how we can help.');
-  proceed();
+  if (!J.leadComplete(state.done)) {
+    await say('Welcome to Achieve. Dealing with debt is hard, and you took a step by being here. Let\'s see how we can help.');
+    proceed();
+  }
 })();

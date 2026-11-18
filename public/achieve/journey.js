@@ -9,7 +9,7 @@ export const STAGES = [
   { id: 'lead', n: 1, label: 'Get started', goal: 'Tell us about your debt', built: true },
   { id: 'qualify', n: 2, label: 'Qualify', goal: 'See if a program fits', built: true },
   { id: 'consult', n: 3, label: 'Your plan', goal: 'Build your plan with a specialist', built: true },
-  { id: 'enroll', n: 4, label: 'Enroll', goal: 'Review, sign and open your account', built: false },
+  { id: 'enroll', n: 4, label: 'Enroll', goal: 'Review, sign and open your account', built: true },
   { id: 'deposit', n: 5, label: 'First deposit', goal: 'Make your first deposit', built: false },
   { id: 'build', n: 6, label: 'Build your fund', goal: 'Save toward your first settlement', built: false },
   { id: 'negotiate', n: 7, label: 'Settle', goal: 'We negotiate, you approve', built: false },

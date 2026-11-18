@@ -4,9 +4,9 @@ import * as J from '../public/achieve/journey.js';
 import { validateStep } from '../public/achieve/firsttake/shared/flow.js';
 import { localAnswer } from '../public/achieve/debt-kb.js';
 
-test('eight stages, first three built', () => {
+test('eight stages, first four built', () => {
   assert.equal(J.STAGES.length, 8);
-  assert.deepEqual(J.STAGES.filter((s) => s.built).map((s) => s.id), ['lead', 'qualify', 'consult']);
+  assert.deepEqual(J.STAGES.filter((s) => s.built).map((s) => s.id), ['lead', 'qualify', 'consult', 'enroll']);
 });
 test('persona passes every lead step', () => {
   for (const s of J.LEAD_STEPS) assert.deepEqual(validateStep(s, J.PERSONA), {}, s.id);
@@ -97,4 +97,32 @@ test('consult steps run in order', () => {
   assert.equal(C.nextCStep([]), 'debts');
   assert.equal(C.nextCStep(['debts', 'goals', 'talk', 'expect']), 'plan');
   assert.equal(C.nextCStep(C.C_STEPS), null);
+});
+
+import * as E from '../public/achieve/enroll.js';
+test('agreement sections come from the plan and keep the honest terms', () => {
+  const p = Object.assign(C.plan(C.TRADELINES, 600), { debt: 32000 });
+  const s = E.agreement(p);
+  assert.equal(s.length, 10);
+  assert.match(s.find((x) => x.id === 'deposit').plain, /\$600 a month/);
+  assert.match(s.find((x) => x.id === 'fee').d, /only after|no fee until/i);
+  assert.match(s.find((x) => x.id === 'cancel').d, /7 business days/);
+  assert.match(s.find((x) => x.id === 'expect').plain, /credit score will drop/);
+});
+test('draft amounts add up to the monthly deposit over a year', () => {
+  assert.equal(E.perDraft(600, 'monthly'), 600);
+  assert.equal(E.perDraft(600, 'twice'), 300);
+  assert.equal(E.perDraft(600, 'biweekly'), 277);
+});
+test('first draft is at least five days out and lands on the chosen day', () => {
+  const from = new Date(2026, 10, 17);
+  const d = E.firstDraft(from, 15, 5);
+  assert.equal(d.getDate(), 15); assert.equal(d.getMonth(), 11);
+  assert.equal(E.firstDraft(new Date(2026, 10, 12), 15, 5).getMonth(), 11);
+});
+test('enroll steps run in order and the persona signature matches the sample name', () => {
+  assert.equal(E.nextEStep([]), 'review');
+  assert.equal(E.nextEStep(['review', 'consent', 'sign', 'account']), 'draft');
+  assert.equal(E.PERSONA_E.sign, J.PERSONA.first + ' ' + J.PERSONA.last);
+  assert.equal(E.CONSENTS.length, 4);
 });
