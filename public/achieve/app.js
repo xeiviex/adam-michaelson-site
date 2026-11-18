@@ -22,7 +22,7 @@ import { localAnswer, FALLBACK, SUGGESTIONS } from './debt-kb.js';
 
 const KEY = 'achv1';
 const load = () => { try { return JSON.parse(sessionStorage.getItem(KEY)) || null; } catch { return null; } };
-const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], d: {}, ddone: [], b: {}, bdone: [], s: {}, sdone: [], f: {}, fdone: [], auto: true }, load());
+const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], d: {}, ddone: [], b: {}, bdone: [], s: {}, sdone: [], f: {}, fdone: [], auto: false }, load());
 const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch { /* private mode */ } };
 
 const stream = $('#stream'), tail = $('#tail'), road = $('#roadInner');
@@ -183,7 +183,7 @@ async function stageDone(id, o) {
   const my = ui.run;
   const go = next && next.built
     ? h('button', { class: 'btn', type: 'button', onclick: o.onNext }, 'Continue to ' + next.label.toLowerCase(), ico('chevR', 16, 2.4))
-    : h('button', { class: 'btn line', type: 'button', onclick: () => { state.auto = true; resetAll(); } }, 'Replay from the start');
+    : h('button', { class: 'btn line', type: 'button', onclick: () => { state.auto = false; resetAll(); } }, 'Replay from the start');
   const card = h('div', { class: 'card stage-card in' },
     h('div', { class: 'win-ic' }, ico('check', 26, 3)),
     h('h3', null, 'Step ' + stage.n + ' of ' + J.STAGES.length + ' complete'),
@@ -643,7 +643,7 @@ $('#doSkip').addEventListener('click', () => {
   save(); devMenu.hidden = true; location.reload();
 });
 function resetAll() { ui.run++; try { sessionStorage.removeItem(KEY); } catch { /* ignore */ } location.reload(); }
-$('#doReset').addEventListener('click', () => { state.auto = true; try { sessionStorage.setItem(KEY, JSON.stringify({ auto: true })); } catch { /* ignore */ } location.reload(); });
+$('#doReset').addEventListener('click', () => { state.auto = false; try { sessionStorage.setItem(KEY, JSON.stringify({ auto: false })); } catch { /* ignore */ } location.reload(); });
 
 /* ---------- start ---------- */
 const answeredTurn = (id, q, text) => { const t = addTurn(id, 'answered'); t.append(h('div', { class: 'q' }, h('span', { class: 'qt' }, q)), h('div', { class: 'ans in' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, text)))); };
