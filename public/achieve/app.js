@@ -23,10 +23,12 @@ import * as SU from './settle-ui.js';
 import * as F from './free.js';
 import * as FU from './free-ui.js';
 import { localAnswer, FALLBACK, SUGGESTIONS } from './debt-kb.js';
+import * as AC from './account.js';
+import { createAccount } from './account-ui.js';
 
 const KEY = 'achv1';
 const load = () => { try { return JSON.parse(sessionStorage.getItem(KEY)) || null; } catch { return null; } };
-const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], d: {}, ddone: [], b: {}, bdone: [], s: {}, sdone: [], f: {}, fdone: [], auto: true }, load());
+const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], d: {}, ddone: [], b: {}, bdone: [], s: {}, sdone: [], f: {}, fdone: [], acct: {}, auto: true }, load());
 const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch { /* private mode */ } };
 
 const stream = $('#stream'), tail = $('#tail'), road = $('#roadInner');
@@ -49,6 +51,7 @@ function scrollEnd() {
 const currentStage = () => J.STAGES.find((s) => !state.stageDone.includes(s.id)) || J.STAGES[J.STAGES.length - 1];
 const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : id === 'enroll' ? { all: E.E_STEPS, done: state.edone, label: E.eStepLabel } : id === 'deposit' ? { all: D.D_STEPS, done: state.ddone, label: D.dStepLabel } : id === 'build' ? { all: B.B_STEPS, done: state.bdone, label: B.bStepLabel } : id === 'negotiate' ? { all: S.S_STEPS, done: state.sdone, label: S.sStepLabel } : id === 'free' ? { all: F.F_STEPS, done: state.fdone, label: F.fStepLabel } : null;
 function renderRoad() {
+  paintAcctBtn();
   const cur = currentStage();
   const ss = stageSteps(cur.id);
   const frac = ss ? ss.done.filter((x) => ss.all.includes(x)).length / ss.all.length : 0;
@@ -616,6 +619,19 @@ async function handleSend(text) {
 askForm.addEventListener('submit', (e) => { e.preventDefault(); handleSend(askInput.value); });
 $('#suggRow').append(...SUGGESTIONS.map((s) => h('button', { type: 'button', onclick: () => handleSend(s) }, s)));
 
+/* ---------- my account: the places a returning client goes ---------- */
+const pauseJourney = (on) => { setPaused(on); window.dispatchEvent(new CustomEvent('achieve:attention', { detail: { attentive: !on } })); };
+const acct = createAccount({
+  state, save,
+  ctx: () => ({ debts: selectedDebts(), deposit: deposit(), months: fundModel().months, offerMonth: fundModel().offerMonth, bankName: bankNow().name, last4: bankNow().last4 }),
+  pct: () => Math.round(J.pathPct(state.stageDone, state.done, 0)),
+  onOpen: () => pauseJourney(true), onClose: () => pauseJourney(false),
+});
+function paintAcctBtn() { const on = AC.hasAccount(state), a = $('#acctBtn'), m = $('#menuBtn'); if (!a || !m) return; a.hidden = !on; m.hidden = !on; $('.acct-ini', a).textContent = ((state.applicant && state.applicant.first) || 'Me')[0].toUpperCase(); }
+$('#acctBtn').addEventListener('click', () => acct.open('overview'));
+$('#menuBtn').addEventListener('click', () => acct.openSheet());
+window.addEventListener('hashchange', () => { const m = /^#account\/?(\w*)/.exec(location.hash); if (m && AC.hasAccount(state)) acct.open(m[1] || 'overview'); });
+
 /* ---------- prototype controls ---------- */
 const devBtn = $('#devBtn'), devMenu = $('#devMenu');
 const paintSpeed = () => { const slow = getSpeed() === 'slow', sw = $('#doSpeed'); sw.setAttribute('aria-checked', String(slow)); sw.classList.toggle('on', slow); $('.sw-state', sw).textContent = slow ? 'On' : 'Off'; };
@@ -697,3 +713,4 @@ const FLOWS = [
     proceed();
   }
 })();
+{ const m = /^#account\/?(\w*)/.exec(location.hash); if (m) setTimeout(() => { if (AC.hasAccount(state)) acct.open(m[1] || 'overview'); }, 0); }

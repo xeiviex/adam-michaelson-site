@@ -31,6 +31,8 @@
   </div>
   <div class="top-r">
     <span class="mins" aria-live="polite"></span>
+    <button type="button" class="acct-btn" id="acctBtn" hidden><span class="acct-ini" aria-hidden="true">J</span>My account</button>
+    <button type="button" class="menu-btn" id="menuBtn" hidden aria-label="Menu"><span class="ico" id="menuIc"></span></button>
     <a class="tel" href="tel:+18334352021"><span class="ico" id="telIc"></span><span class="tel-t">(833) 435-2021</span></a>
   </div>
   <div class="bar" role="progressbar" aria-label="Your path"><i id="barFill"></i></div>
@@ -76,7 +78,7 @@
 <script type="module">
   import { icon } from '/achieve/firsttake/shared/dom.js';
   const put = (id, name, size, sw) => { const e = document.getElementById(id); if (e) e.innerHTML = icon(name, size, sw); };
-  put('telIc', 'phone', 18); put('stripIc', 'menu', 20, 2); put('xIc', 'x', 20); put('sendBtn', 'send', 18, 2);
+  put('telIc', 'phone', 18); put('menuIc', 'menu', 22, 2); put('stripIc', 'menu', 20, 2); put('xIc', 'x', 20); put('sendBtn', 'send', 18, 2);
 </script>
 <script type="module" src="/achieve/app.js?v=1"></script>
 </body>
