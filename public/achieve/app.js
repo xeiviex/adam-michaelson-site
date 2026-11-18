@@ -640,7 +640,7 @@ const acct = createAccount({
   state, save,
   ctx: () => ({ debts: selectedDebts(), deposit: deposit(), months: fundModel().months, offerMonth: fundModel().offerMonth, bankName: bankNow().name, last4: bankNow().last4 }),
   pct: () => Math.round(J.pathPct(state.stageDone, state.done, 0)),
-  onOpen: () => { pauseJourney(true); setFxPaused(true); }, onClose: () => { setFxPaused(false); pauseJourney(false); },
+  onOpen: () => { ui.held = true; paintAuto(); pauseJourney(true); setFxPaused(true); }, onClose: () => { ui.held = false; paintAuto(); setFxPaused(false); pauseJourney(false); },
 });
 function paintAcctBtn() { const on = AC.hasAccount(state), a = $('#acctBtn'), m = $('#menuBtn'); if (!a || !m) return; a.hidden = !on; m.hidden = !on; if (on && !state.acctSeen) { state.acctSeen = true; save(); revealAccount(a, m); } $('.acct-ini', a).textContent = ((state.applicant && state.applicant.first) || 'Me')[0].toUpperCase(); }
 $('#acctBtn').addEventListener('click', () => acct.open('overview'));
@@ -653,7 +653,7 @@ const paintSpeed = () => { const slow = getSpeed() === 'slow', sw = $('#doSpeed'
 paintSpeed();
 const IC_PAUSE = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="3.5" y="2.5" width="3.2" height="11" rx="1" fill="currentColor"/><rect x="9.3" y="2.5" width="3.2" height="11" rx="1" fill="currentColor"/></svg>';
 const IC_PLAY = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 2.8v10.4a.6.6 0 0 0 .9.5l8.2-5.2a.6.6 0 0 0 0-1L5.4 2.3a.6.6 0 0 0-.9.5z" fill="currentColor"/></svg>';
-const paintAuto = () => { const t = $('#devToggle'); $('#devIc').innerHTML = state.auto ? IC_PAUSE : IC_PLAY; t.setAttribute('aria-pressed', String(state.auto)); t.setAttribute('aria-label', state.auto ? 'Auto-play is on. Pause' : 'Auto-play is paused. Play'); t.classList.toggle('paused', !state.auto); };
+const paintAuto = () => { const t = $('#devToggle'); const live = state.auto && !ui.held; $('#devIc').innerHTML = live ? IC_PAUSE : IC_PLAY; t.setAttribute('aria-pressed', String(state.auto)); t.setAttribute('aria-label', state.auto ? 'Auto-play is on. Pause' : 'Auto-play is paused. Play'); t.classList.toggle('paused', !live); };
 /* the menu opens from the pill, closes on a tap away, on Escape, and a second after a choice (the choice pulses first) */
 let closeTimer = 0;
 const setMenu = (open) => { clearTimeout(closeTimer); $$('.dev-menu button', devMenu).forEach((b) => b.classList.remove('picked')); devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); };

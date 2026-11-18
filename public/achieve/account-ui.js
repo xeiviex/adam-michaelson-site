@@ -63,7 +63,7 @@ export function createAccount(api) {
   const getFile = (href, name) => { const a = h('a', { href, download: name }); document.body.append(a); a.click(); a.remove(); };
   function keepsakes() {
     const items = A.keepsakes(state);
-    return h('div', { class: 'av-stack' }, card('Keepsakes', h('p', { class: 'help' }, 'The fun things we made along the way. Each one unlocks at its moment, and you can keep them.')),
+    return h('div', { class: 'av-stack' }, card('', h('p', { class: 'help' }, 'The fun things we made along the way. Each one unlocks at its moment, and you can keep them.')),
       ...items.map((k) => {
         if (!k.on) return card(k.title, h('p', { class: 'help' }, k.blurb), h('p', { class: 'av-lock' }, k.lock));
         const media = k.kind === 'audio' ? h('audio', { controls: '', preload: 'none', src: k.src, class: 'av-aud' })
