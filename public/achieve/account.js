@@ -15,7 +15,9 @@ export const SECTIONS = [
 export const sectionById = (id) => SECTIONS.find((s) => s.id === id) || SECTIONS[0];
 
 const MIN = 60000, DAY = 86400000;
-export const hasAccount = (state) => (state.stageDone || []).includes('enroll');
+export const hasAccount = (state) => !!(state.acctMade || (state.cdone || []).length || (state.stageDone || []).some((id) => id === 'consult' || id === 'enroll'));
+/* The dedicated account (and its bank details) only exists once the agreement is signed. Before that, the account area shows placeholders. */
+export const hasDedicated = (state) => (state.stageDone || []).includes('enroll');
 export const acct = (state) => { if (!state.acct) state.acct = {}; const a = state.acct; a.txns = a.txns || []; a.docs = a.docs || []; a.log = a.log || []; if (!a.startedAt) a.startedAt = Date.now() - 45 * MIN; return a; };
 const at = (state, k) => acct(state).startedAt + k * 2 * MIN;
 export const uid = (p) => p + Math.random().toString(36).slice(2, 8);
@@ -104,7 +106,7 @@ export function profile(state, ctx) {
   const ap = state.applicant || {}, q = state.q || {}, hs = (q.hardships || []).length;
   return {
     contact: [['Name', [ap.first, ap.last].filter(Boolean).join(' ') || 'Not given'], ['Email', ap.email || 'Not given'], ['Phone', ap.phone || 'Not given'], ['State and ZIP', [ap.state, ap.zip].filter(Boolean).join(' ') || 'Not given']],
-    money: [['Unsecured debt', ctx.debts && ctx.debts.length ? money(ctx.debts.reduce((s, d) => s + d.balance, 0)) + ' across ' + ctx.debts.length + ' accounts' : 'Not given'], ['Monthly deposit', ctx.deposit ? money(ctx.deposit) : 'Not set'], ['Linked bank', ctx.bankName + ' ••' + ctx.last4], ['What changed', hs ? hs + ' reason' + (hs > 1 ? 's' : '') + ' you shared' : 'Not shared']],
+    money: [['Unsecured debt', ctx.debts && ctx.debts.length ? money(ctx.debts.reduce((s, d) => s + d.balance, 0)) + ' across ' + ctx.debts.length + ' accounts' : 'Not given'], ['Monthly deposit', (state.stageDone || []).includes('consult') && ctx.deposit ? money(ctx.deposit) : 'Set in your plan'], ['Linked bank', hasDedicated(state) ? ctx.bankName + ' ••' + ctx.last4 : 'Linked when you enroll'], ['What changed', hs ? hs + ' reason' + (hs > 1 ? 's' : '') + ' you shared' : 'Not shared']],
     debts: (ctx.debts || []).map((d) => [d.name, money(d.balance)]),
     consents: (state.e && state.e.consents && state.e.consents.length) ? state.e.consents.length + ' consents signed' : 'Not signed yet',
   };

@@ -82,7 +82,7 @@ export function celebrateCard(applicant, st, hooks, onDone) {
   audio.addEventListener('timeupdate', () => { if (audio.duration) { bar.value = String(Math.round((audio.currentTime / audio.duration) * 1000)); bar.style.setProperty('--p', (audio.currentTime / audio.duration) * 100 + '%'); } time.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration); });
   audio.addEventListener('loadedmetadata', () => { time.textContent = '0:00 / ' + fmt(audio.duration); });
   bar.addEventListener('input', () => { bar.style.setProperty('--p', Number(bar.value) / 10 + '%'); if (audio.duration) audio.currentTime = (Number(bar.value) / 1000) * audio.duration; });
-  window.addEventListener('achieve:attention', (ev) => { if (!ev.detail.attentive) { wasPlaying = !audio.paused; if (wasPlaying) audio.pause(); } else if (wasPlaying) { wasPlaying = false; audio.play().catch(() => {}); } });
+  /* the song keeps playing when the tab loses focus; only auto-play pauses */
   const go = cont('Keep going', () => onDone({ celebrated: true }));
   const el = h('div', { class: 'card party' },
     h('div', { class: 'party-ring' }, h('div', { class: 'win-ic big' }, ico('star', 34, 2))),

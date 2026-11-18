@@ -17,15 +17,18 @@ export function createAccount(api) {
   const dl = (name, text) => { const a = h('a', { href: URL.createObjectURL(new Blob([text], { type: 'text/plain' })), download: name.replace(/[^A-Za-z0-9]+/g, '_') + '.txt' }); document.body.append(a); a.click(); a.remove(); };
   const go = (id) => { current = id; if (history.replaceState) history.replaceState(null, '', '#account/' + id); paint(); main.scrollTop = 0; closeSheet(); };
 
+  const ghostCard = (title, text, labels) => h('section', { class: 'av-card ghost' }, h('h3', null, title), h('p', { class: 'help' }, text), ...(labels || []).map((l) => h('div', { class: 'av-row' }, h('span', null, l), h('i', { class: 'ghost-bar', 'aria-hidden': 'true' }))));
+
   /* ---- overview ---- */
   function overview() {
     const c = ctx(), tx = A.transactions(state, c), bal = A.balance(tx), pend = A.pending(tx), acts = A.activity(state, c).slice(0, 4), urgent = A.reports(state, c).filter((r) => r.urgent);
     const dr = (state.e && state.e.draft) || {}, nextDay = dr.day || 15, nd = new Date(); if (nd.getDate() >= nextDay) nd.setMonth(nd.getMonth() + 1); nd.setDate(nextDay);
+    const ded = A.hasDedicated(state), planned = (state.stageDone || []).includes('consult');
     const el = h('div', { class: 'av-grid' });
     if (urgent.length) el.append(h('div', { class: 'reassure urgent av-wide' }, A.URGENT_TEXT));
     el.append(
-      card('Dedicated account', h('div', { class: 'av-bal' }, money(bal), h('small', null, pend ? ' + ' + money(Math.abs(pend)) + ' pending' : ' balance')), row('Account', '••3318 · FDIC-insured'), h('div', { class: 'av-actions' }, btn('Add money', () => { filter.xfer = 'in'; go('bank'); }), btn('See transactions', () => go('bank'), 'line'))),
-      card('Your program', h('div', { class: 'av-pct' }, h('b', null, api.pct() + '%'), ' of the way'), h('div', { class: 'rbar' }, h('i', { style: 'width:' + api.pct() + '%' })), row('Monthly deposit', money(c.deposit)), row('Next draft', nd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' from ' + c.bankName + ' ••' + c.last4)),
+      !ded ? ghostCard('Dedicated account', 'Opens when you sign your agreement. Your balance and every transaction will show here.', ['Account', 'Balance']) : card('Dedicated account', h('div', { class: 'av-bal' }, money(bal), h('small', null, pend ? ' + ' + money(Math.abs(pend)) + ' pending' : ' balance')), row('Account', '••3318 · FDIC-insured'), h('div', { class: 'av-actions' }, btn('Add money', () => { filter.xfer = 'in'; go('bank'); }), btn('See transactions', () => go('bank'), 'line'))),
+      card('Your program', h('div', { class: 'av-pct' }, h('b', null, api.pct() + '%'), ' of the way'), h('div', { class: 'rbar' }, h('i', { style: 'width:' + api.pct() + '%' })), row('Monthly deposit', planned ? money(c.deposit) : 'Set in your plan'), row('Next draft', ded ? nd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' from ' + c.bankName + ' ••' + c.last4 : 'After you enroll')),
       card('Do something', h('div', { class: 'av-actions col' }, btn('Report a contact from a creditor', () => { filter.report = true; go('contacts'); }, 'line'), btn('Upload a document', () => go('documents'), 'line'), btn('Report another debt', () => { filter.plan = 'debt'; go('profile'); }, 'line'), btn('Change monthly deposit', () => { filter.plan = 'deposit'; go('profile'); }, 'line'), btn('Update my details', () => go('profile'), 'line'))),
       h('section', { class: 'av-card av-wide' }, h('h3', null, 'Recent activity'), acts.length ? acts.map(actRow) : h('p', { class: 'help' }, 'Nothing yet.'), btn('See all activity', () => go('activity'), 'line sm')));
     return el;
@@ -33,6 +36,7 @@ export function createAccount(api) {
 
   /* ---- bank and transfers ---- */
   function bank() {
+    if (!A.hasDedicated(state)) return h('div', { class: 'av-grid two' }, ghostCard('Dedicated account', 'Opens when you sign your agreement. It is an FDIC-insured account in your name, run by an independent administrator.', ['Account', 'In the name of', 'Balance']), ghostCard('Linked bank', 'You link the bank your deposits come from when you enroll.', ['Bank', 'Monthly deposit', 'Draft day']), ghostCard('Transactions', 'Deposits, settlement payments and fees will be listed here, with a statement you can download.', []));
     const c = ctx(), tx = A.transactions(state, c), bal = A.balance(tx), pend = A.pending(tx), bankLabel = c.bankName + ' ••' + c.last4;
     const dr = (state.e && state.e.draft) || {};
     let kind = filter.xfer || 'in'; filter.xfer = null;
@@ -104,7 +108,7 @@ export function createAccount(api) {
     const mAmt = h('input', { class: 'inp', type: 'number', inputmode: 'numeric', min: String(A.MIN_DEPOSIT), value: String(c.deposit || ''), 'aria-label': 'New monthly deposit' });
     mForm.append(h('div', { class: 'field' }, h('label', null, 'New monthly deposit'), mAmt), h('p', { class: 'help' }, 'The minimum is ' + '$' + A.MIN_DEPOSIT + '. A bigger deposit builds your fund faster. The change starts with your next draft.'), mErr,
       btn('Save deposit', () => { if (!A.validDeposit(mAmt.value)) { mErr.textContent = 'Enter an amount of at least $' + A.MIN_DEPOSIT + '.'; mErr.hidden = false; return; } A.setDeposit(state, mAmt.value); api.save(); toast('Updated. Your new deposit starts with your next draft.'); paint(); }));
-    const planActs = h('div', { class: 'av-actions' }, btn('Change monthly deposit', () => { mForm.hidden = !mForm.hidden; dForm.hidden = true; }, 'line sm'), btn('Report another debt', () => { dForm.hidden = !dForm.hidden; mForm.hidden = true; }, 'line sm'));
+    const planActs = h('div', { class: 'av-actions' }, ...((state.stageDone || []).includes('consult') ? [btn('Change monthly deposit', () => { mForm.hidden = !mForm.hidden; dForm.hidden = true; }, 'line sm')] : []), btn('Report another debt', () => { dForm.hidden = !dForm.hidden; mForm.hidden = true; }, 'line sm'));
     if (filter.plan === 'deposit') mForm.hidden = false; else if (filter.plan === 'debt') dForm.hidden = false; filter.plan = null;
     return h('div', { class: 'av-grid two' },
       card('Contact', p.contact.map(([k, v]) => row(k, v)), editBtn, edit),

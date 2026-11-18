@@ -26,6 +26,7 @@ import { localAnswer, FALLBACK, SUGGESTIONS } from './debt-kb.js';
 import * as AC from './account.js';
 import { revealAccount } from './acct-reveal.js';
 import { createAccount } from './account-ui.js';
+import * as ACU from './acct-create-ui.js';
 
 const KEY = 'achv1';
 const load = () => { try { return JSON.parse(sessionStorage.getItem(KEY)) || null; } catch { return null; } };
@@ -231,7 +232,7 @@ async function stageDone(id, o) {
 const completeLead = (quiet) => stageDone('lead', { quiet, fx: 'balloons', line: 'You took the first step, ' + (state.applicant.first || 'there') + '. Nice work.',
   body: 'Telling us about your debt is done. Next, a few questions to see which program fits and what has made payments hard.', onNext: startQualify });
 const completeQualify = (quiet) => stageDone('qualify', { quiet, fx: 'stamp', line: "That's two steps down, " + (state.applicant.first || 'there') + '.',
-  body: 'You told us about your debt, what changed, and your budget. Next you meet your plan: we confirm your debts, listen, set honest expectations, and show what you would pay.', onNext: startConsult });
+  body: 'You told us about your debt, what changed, and your budget. Next you create your account, then meet your plan: we confirm your debts, listen, set honest expectations, and show what you would pay.', onNext: startAccount });
 
 const completeConsult = (quiet) => stageDone('consult', { quiet, fx: 'target', line: 'You have a plan, ' + (state.applicant.first || 'there') + '.',
   body: 'You confirmed your debts, told us what matters, heard exactly what to expect, and chose a deposit. Next you review the agreement, sign, and open your account.', onNext: startEnroll });
@@ -314,6 +315,29 @@ async function finishQ(id, patch, turn) {
   if (Q.nextQStep(state.qdone, state.q)) proceedQ(); else completeQualify();
 }
 
+/* ---------- account creation, right after qualifying ---------- */
+async function startAccount() {
+  if (state.acctMade) return startConsult();
+  runTurn('account', { q: 'Create your account', sub: "We filled in what you've told us. Add a password and agree to the terms, and you can sign in any time to see your progress." }, (t) => { const my = ui.run; return ACU.createCard(state.applicant, async (v) => {
+    Object.assign(state.applicant, { first: v.first, last: v.last, email: v.email, phone: v.phone });
+    state.acctMade = { at: Date.now(), textOk: v.textOk }; AC.recordEvent(state, 'you', 'Created your account', 'Email sign-in and electronic documents agreed'); save();
+    t.classList.remove('pending'); t.classList.add('answered');
+    const card = t.querySelector('.card'), sub = t.querySelector('.sub');
+    if (card) { card.style.maxHeight = card.offsetHeight + 'px'; requestAnimationFrame(() => card.classList.add('out')); setTimeout(() => card.remove(), 420); }
+    if (sub) sub.classList.add('fade');
+    const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, 'Account created for ' + v.email)));
+    t.append(b); requestAnimationFrame(() => b.classList.add('in'));
+    await sleep(reduced() ? 0 : pace(600));
+    if (my !== ui.run) return;
+    renderRoad(); /* shows My Account in the top right and plays the reveal */
+    await say('Your account is ready. Look at the top right: that is My Account. It is mostly empty for now, and it fills in as you go.');
+    const my2 = ui.run;
+    const go = h('button', { type: 'button', class: 'btn', onclick: () => { go.disabled = true; go.closest('.turn') && go.closest('.turn').remove(); startConsult(); } }, 'Continue');
+    const t2 = addTurn('acct-next', 'pending'); const c2 = h('div', { class: 'card card-in' }, go); t2.append(c2); requestAnimationFrame(() => c2.classList.add('in')); scrollToEl(t2);
+    if (state.auto) { const g = ui.gen; await sleep(reduced() ? 0 : pace(4200)); if (my2 === ui.run && state.auto && g === ui.gen && !go.disabled) go.click(); }
+  }); });
+}
+
 /* ---------- stage 3: your plan ---------- */
 const CMETA = {
   debts: { q: 'Here is what we found on your credit report', sub: 'Check that these are right. Add anything we missed.' },
@@ -333,6 +357,7 @@ function cSummary(id) {
   if (id === 'plan') return money0(deposit()) + ' a month';
   return '';
 }
+/* ---------- stage 3: your plan ---------- */
 async function startConsult() {
   ui.run++;
   await say('Now your plan. This is the conversation a specialist would have with you, step by step.');

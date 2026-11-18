@@ -48,11 +48,6 @@ export function movieCard(applicant, hooks, onDone, opts) {
     vid.muted = false;
     try { await vid.play(); } catch { vid.muted = true; try { await vid.play(); } catch { playing = false; playBtn.hidden = false; } }
   }
-  /* the viewer looked away: freeze the film, then continue from the same frame */
-  window.addEventListener('achieve:attention', (ev) => {
-    if (!playing) return;
-    if (!ev.detail.attentive) { held = true; vid.pause(); } else if (held) { held = false; vid.play().catch(() => {}); }
-  });
   playBtn.addEventListener('click', start);
   vid.addEventListener('click', () => { if (!playBtn.hidden) start(); else if (!vid.ended) { if (vid.paused) { held = false; vid.play().catch(() => {}); } else vid.pause(); } });
   stage.append(bar);

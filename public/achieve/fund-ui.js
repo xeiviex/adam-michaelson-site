@@ -8,7 +8,7 @@ import { pace } from './speed.js';
 const pause = (ms) => sleep(reduced() ? 0 : pace(ms));
 
 /* ---- the thermometer and timeline ---- */
-const FUND_FX = { q: 'rocket', h: 'flag', t: 'bell', free: 'medal' };
+const FUND_FX = { q: 'rocket', h: 'medal', t: 'bell', free: 'flag' };
 export function fundCard(applicant, m, hooks, onDone) {
   let month = 1, playing = false, last = 0;
   const fill = h('div', { class: 'th-fill' });
