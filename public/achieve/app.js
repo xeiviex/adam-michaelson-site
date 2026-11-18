@@ -54,16 +54,19 @@ function renderRoad() {
   paintAcctBtn();
   const cur = currentStage();
   const ss = stageSteps(cur.id);
-  const frac = ss ? ss.done.filter((x) => ss.all.includes(x)).length / ss.all.length : 0;
-  const pct = J.pathPct(state.stageDone, state.done, frac);
-  const left = ss ? ss.all.filter((x) => !ss.done.includes(x)).length : 0;
-  const label = !state.stageDone.includes('lead') ? J.minsLabel(J.secsLeft(state.done))
-    : ss && !state.stageDone.includes(cur.id) ? (left <= 1 ? 'Almost there' : left + ' steps left in this stage') : 'Stage ' + (cur.n - 1) + ' complete';
+  const total = cur.id === 'lead' ? J.LEAD_STEPS.length : ss ? ss.all.length : 0;
+  const doneN = cur.id === 'lead' ? state.done.length : ss ? ss.done.filter((x) => ss.all.includes(x)).length : 0;
+  const allDone = state.stageDone.length >= J.STAGES.length;
+  const frac = allDone ? 1 : total ? Math.min(1, doneN / total) : 0;
+  const pct = J.pathPct(state.stageDone, state.done, cur.id === 'lead' ? 0 : frac);
+  const spct = Math.round(frac * 100);
+  const label = allDone ? 'All 8 stages complete' : cur.label + ': ' + spct + '% done' + (total ? ' (' + doneN + ' of ' + total + ' steps)' : '');
   tween(ui.lastPct, pct, 700, (v) => { $('#pct').textContent = v + '%'; });
   ui.lastPct = pct;
   $$('.mins').forEach((e) => { e.textContent = label; });
   $('#barFill').style.width = Math.max(4, pct) + '%';
   $('#roadFill').style.width = pct + '%';
+  $('#stageFill').style.width = spct + '%';
   $('#stripStep').textContent = 'Stage ' + cur.n + ' of ' + J.STAGES.length;
   const subList = (items) => '<ul class="subs">' + items.map(([lbl, d]) => `<li class="${d ? 'done' : ''}">${lbl}</li>`).join('') + '</ul>';
   road.innerHTML = '<ol class="stages">' + J.STAGES.map((s) => {

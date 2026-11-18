@@ -220,7 +220,9 @@ body.human .human-cta { display: none; }
 .road-pct b { font-size: 34px; color: var(--ink); letter-spacing: -.02em; }
 .rbar { height: 6px; background: #e4e1f0; border-radius: 3px; margin: 8px 0 8px; overflow: hidden; }
 .rbar i { display: block; height: 100%; width: 0; background: var(--ind); border-radius: 3px; transition: width .8s cubic-bezier(.2, .8, .2, 1); }
-.road-head .mins { margin-bottom: 14px; }
+.road-head .mins { margin-top: 12px; }
+.rbar.sbar { height: 4px; margin: 6px 0 14px; }
+.rbar.sbar i { background: var(--grn, #1f9d55); }
 .rg { border-top: 1px solid var(--line); }
 .rg-h { width: 100%; display: flex; align-items: center; gap: 10px; padding: 13px 0; border: 0; background: none; font-size: 15px; font-weight: 700; color: var(--ink); cursor: pointer; text-align: left; }
 .rg-ic { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--mut); transition: transform .25s; }
