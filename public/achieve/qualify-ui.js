@@ -5,7 +5,8 @@ import { h, sleep, reduced, ico } from './firsttake/shared/dom.js';
 import { money } from './firsttake/shared/flow.js';
 import * as Q from './qualify.js';
 
-const pause = (ms) => sleep(reduced() ? 0 : ms);
+import { pace } from './speed.js';
+const pause = (ms) => sleep(reduced() ? 0 : pace(ms));
 export const cont = (label, onclick) => h('button', { type: 'button', class: 'btn', onclick }, label, ico('chevR', 16, 2.4));
 
 /* A group of options: one choice or several. items: [{ id, label, ic }]. */

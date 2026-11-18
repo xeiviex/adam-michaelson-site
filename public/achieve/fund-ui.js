@@ -4,7 +4,8 @@ import { cont } from './qualify-ui.js';
 import * as B from './fund.js';
 import { money } from './firsttake/shared/flow.js';
 
-const pause = (ms) => sleep(reduced() ? 0 : ms);
+import { pace } from './speed.js';
+const pause = (ms) => sleep(reduced() ? 0 : pace(ms));
 
 /* ---- the thermometer and timeline ---- */
 export function fundCard(applicant, m, hooks, onDone) {

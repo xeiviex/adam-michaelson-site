@@ -4,6 +4,7 @@ import { h, $, $$, sleep, reduced, typeInto, tween, ico, icon } from './firsttak
 import { money } from './firsttake/shared/flow.js';
 import { buildForm } from './firsttake/forms.js';
 import * as J from './journey.js';
+import { pace, getSpeed, setSpeed, SPEEDS } from './speed.js';
 import * as Q from './qualify.js';
 import * as QU from './qualify-ui.js';
 import * as C from './consult.js';
@@ -99,12 +100,12 @@ const typeChars = async (inp, text, my) => {
     if (my !== ui.run || !state.auto) return false;
     inp.value += ch;
     inp.dispatchEvent(new Event('input', { bubbles: true }));
-    await sleep(reduced() ? 0 : 38);
+    await sleep(reduced() ? 0 : pace(38));
   }
   return true;
 };
 async function autoFill(form, step, my) {
-  await sleep(reduced() ? 0 : 700);
+  await sleep(reduced() ? 0 : pace(700));
   for (const f of step.fields) {
     if (my !== ui.run || !state.auto) return false;
     const want = f.id in J.PERSONA ? J.PERSONA[f.id] : Q.PERSONA_Q.budget[f.id];
@@ -117,20 +118,20 @@ async function autoFill(form, step, my) {
         if (my !== ui.run || !state.auto) return false;
         el.value = String(Math.round((from + (to - from) * (i / frames)) / f.step) * f.step);
         el.dispatchEvent(new Event('input', { bubbles: true }));
-        await sleep(reduced() ? 0 : 32);
+        await sleep(reduced() ? 0 : pace(32));
       }
     } else if (el.tagName === 'SELECT') {
       el.value = String(want); el.dispatchEvent(new Event('change', { bubbles: true }));
-      await sleep(reduced() ? 0 : 450);
+      await sleep(reduced() ? 0 : pace(450));
     } else {
       el.value = '';
       const text = f.type === 'tel' || f.type === 'zip' ? String(want).replace(/\D/g, '') : String(want);
       if (!(await typeChars(el, text, my))) return false;
     }
-    await sleep(reduced() ? 0 : 280);
+    await sleep(reduced() ? 0 : pace(280));
   }
   if (my !== ui.run || !state.auto) return false;
-  await sleep(reduced() ? 0 : 500);
+  await sleep(reduced() ? 0 : pace(500));
   form.requestSubmit();
   return true;
 }
@@ -143,7 +144,7 @@ async function askStep(step) {
   t.append(q);
   scrollToEl(t);
   if (!(await typeInto(q.firstChild, step.q, { cancelled: cancelled(my) })) || my !== ui.run) return;
-  if (step.sub) { const s = h('p', { class: 'sub' }, step.sub); t.append(s); requestAnimationFrame(() => s.classList.add('in')); await sleep(reduced() ? 0 : 200); }
+  if (step.sub) { const s = h('p', { class: 'sub' }, step.sub); t.append(s); requestAnimationFrame(() => s.classList.add('in')); await sleep(reduced() ? 0 : pace(200)); }
   const f = buildForm(step, state.applicant, { mode: 'ask', onSubmit: (v) => finishStep(step, v, t) });
   f.el.classList.add('card-in');
   t.append(f.el);
@@ -164,7 +165,7 @@ async function finishStep(step, values, turn) {
   turn.append(b);
   requestAnimationFrame(() => b.classList.add('in'));
   renderRoad();
-  await sleep(reduced() ? 0 : 650);
+  await sleep(reduced() ? 0 : pace(650));
   proceed();
 }
 
@@ -191,7 +192,7 @@ async function stageDone(id, o) {
     next && !next.built ? h('div', { class: 'soon-note' }, ico('info', 16), h('span', null, 'Prototype note: "' + next.label + '" is the next piece to be built. The path on the right shows the whole journey.')) : null,
     go);
   t.append(card); scrollToEl(t);
-  if (state.auto && next && next.built) { await sleep(reduced() ? 0 : 2600); if (my === ui.run && state.auto) o.onNext(); }
+  if (state.auto && next && next.built) { await sleep(reduced() ? 0 : pace(2600)); if (my === ui.run && state.auto) o.onNext(); }
 }
 const completeLead = (quiet) => stageDone('lead', { quiet, line: 'You took the first step, ' + (state.applicant.first || 'there') + '. Nice work.',
   body: 'Telling us about your debt is done. Next, a few questions to see which program fits and what has made payments hard.', onNext: startQualify });
@@ -237,7 +238,7 @@ async function runTurn(id, meta, build) {
   const qe = h('div', { class: 'q' }, h('span', { class: 'qt' }));
   t.append(qe); scrollToEl(t);
   if (!(await typeInto(qe.firstChild, meta.q, { cancelled: cancelled(my) })) || my !== ui.run) return;
-  if (meta.sub) { const s = h('p', { class: 'sub' }, meta.sub); t.append(s); requestAnimationFrame(() => s.classList.add('in')); await sleep(reduced() ? 0 : 200); }
+  if (meta.sub) { const s = h('p', { class: 'sub' }, meta.sub); t.append(s); requestAnimationFrame(() => s.classList.add('in')); await sleep(reduced() ? 0 : pace(200)); }
   const alive = () => my === ui.run && state.auto;
   const card = build(t, my);
   card.el.classList.add('card-in'); t.append(card.el);
@@ -273,7 +274,7 @@ async function finishQ(id, patch, turn) {
     turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
   }
   renderRoad();
-  await sleep(reduced() ? 0 : 650);
+  await sleep(reduced() ? 0 : pace(650));
   if (Q.nextQStep(state.qdone, state.q)) proceedQ(); else completeQualify();
 }
 
@@ -321,7 +322,7 @@ async function finishC(id, patch, turn) {
   const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, cSummary(id))));
   turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
   renderRoad();
-  await sleep(reduced() ? 0 : 650);
+  await sleep(reduced() ? 0 : pace(650));
   if (C.nextCStep(state.cdone)) proceedC(); else completeConsult();
 }
 
@@ -368,7 +369,7 @@ async function finishE(id, patch, turn) {
   const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, eSummary(id))));
   turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
   renderRoad();
-  await sleep(reduced() ? 0 : 650);
+  await sleep(reduced() ? 0 : pace(650));
   if (E.nextEStep(state.edone)) proceedE(); else completeEnroll();
 }
 const completeEnroll = (quiet) => {
@@ -419,7 +420,7 @@ async function finishD(id, patch, turn) {
   const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, dSummary(id))));
   turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
   renderRoad();
-  await sleep(reduced() ? 0 : 650);
+  await sleep(reduced() ? 0 : pace(650));
   if (D.nextDStep(state.ddone)) proceedD(); else completeDeposit();
 }
 const completeDeposit = (quiet) => stageDone('deposit', { quiet, line: 'Your first deposit is in, ' + (state.applicant.first || 'there') + '.',
@@ -462,7 +463,7 @@ async function finishB(id, patch, turn) {
   const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, bSummary(id))));
   turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
   renderRoad();
-  await sleep(reduced() ? 0 : 650);
+  await sleep(reduced() ? 0 : pace(650));
   if (B.nextBStep(state.bdone)) proceedB(); else completeBuild();
 }
 const completeBuild = (quiet) => stageDone('build', { quiet, line: 'Your fund is growing, ' + (state.applicant.first || 'there') + '.',
@@ -508,7 +509,7 @@ async function finishS(id, patch, turn) {
   const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, sSummary(id))));
   turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
   renderRoad();
-  await sleep(reduced() ? 0 : 650);
+  await sleep(reduced() ? 0 : pace(650));
   if (S.nextSStep(state.sdone)) proceedS(); else completeSettle();
 }
 const completeSettle = (quiet) => stageDone('negotiate', { quiet, line: 'Your first debt is handled, ' + (state.applicant.first || 'there') + '.',
@@ -554,7 +555,7 @@ async function finishF(id, patch, turn) {
   const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, fSummary(id))));
   turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
   renderRoad();
-  await sleep(reduced() ? 0 : 650);
+  await sleep(reduced() ? 0 : pace(650));
   if (F.nextFStep(state.fdone)) proceedF(); else completeFree();
 }
 const completeFree = (quiet) => stageDone('free', { quiet, line: 'You are debt free, ' + (state.applicant.first || 'there') + '.',
@@ -603,7 +604,7 @@ async function askAssistant(q) {
     clearTimeout(to);
     if (res.ok) { const j = await res.json(); if (j && j.text) text = j.text; }
   } catch { /* offline answers below */ }
-  if (!text) { await sleep(reduced() ? 0 : 700); text = localAnswer(q) || FALLBACK; }
+  if (!text) { await sleep(reduced() ? 0 : pace(700)); text = localAnswer(q) || FALLBACK; }
   chat.push({ role: 'assistant', content: text });
   return text;
 }
@@ -624,6 +625,9 @@ $('#suggRow').append(...SUGGESTIONS.map((s) => h('button', { type: 'button', onc
 
 /* ---------- prototype controls ---------- */
 const devBtn = $('#devBtn'), devMenu = $('#devMenu');
+const paintSpeed = () => { $('#doSpeed').textContent = 'Auto-play speed: ' + SPEEDS[getSpeed()].label + ' (tap to switch)'; };
+$('#doSpeed').addEventListener('click', () => { setSpeed(getSpeed() === 'fast' ? 'slow' : 'fast'); paintSpeed(); });
+paintSpeed();
 const paintAuto = () => { devBtn.textContent = state.auto ? 'Auto-play on' : 'Auto-play off'; $('#doAuto').textContent = 'Auto-play: ' + (state.auto ? 'on (tap to take over)' : 'off (tap to turn on)'); };
 devBtn.addEventListener('click', () => { const open = devMenu.hidden; devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); });
 $('#doAuto').addEventListener('click', () => {

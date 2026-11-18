@@ -6,7 +6,8 @@ import * as S from './settle.js';
 import { RULES } from './qualify.js';
 import { money } from './firsttake/shared/flow.js';
 
-const pause = (ms) => sleep(reduced() ? 0 : ms);
+import { pace } from './speed.js';
+const pause = (ms) => sleep(reduced() ? 0 : pace(ms));
 
 /* ---- meet your negotiator ---- */
 export function advocateCard(applicant, onDone) {

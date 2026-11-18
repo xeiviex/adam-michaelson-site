@@ -235,3 +235,11 @@ test('free: address validation', () => {
 test('free: next steps are hedged, no guarantees', () => {
   F8.NEXT.forEach((x) => assert.doesNotMatch(x.step + x.d, /guaranteed|will raise your score/i));
 });
+
+/* ---- auto-play speed ---- */
+import * as SP from '../public/achieve/speed.js';
+test('speed: defaults to fast, slow is slower, unknown values fall back', () => {
+  assert.equal(SP.getSpeed(), 'fast');
+  assert.equal(SP.pace(1000), 1000);
+  assert.ok(SP.SPEEDS.slow.k > SP.SPEEDS.fast.k);
+});

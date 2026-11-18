@@ -5,7 +5,8 @@ import { chooser, cont } from './qualify-ui.js';
 import * as D from './deposit.js';
 import { money } from './firsttake/shared/flow.js';
 
-const pause = (ms) => sleep(reduced() ? 0 : ms);
+import { pace } from './speed.js';
+const pause = (ms) => sleep(reduced() ? 0 : pace(ms));
 
 /* The logged-in account view, shared by the sign-in and deposit cards. */
 function acctView(applicant, dep) {

@@ -5,7 +5,8 @@ import { cont } from './qualify-ui.js';
 import * as F from './free.js';
 import { money } from './firsttake/shared/flow.js';
 
-const pause = (ms) => sleep(reduced() ? 0 : ms);
+import { pace } from './speed.js';
+const pause = (ms) => sleep(reduced() ? 0 : pace(ms));
 
 /* ---- graduation ---- */
 export function graduateCard(applicant, r, hooks, onDone) {

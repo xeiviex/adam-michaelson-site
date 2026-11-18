@@ -3,7 +3,8 @@ import { h, sleep, reduced, ico } from './firsttake/shared/dom.js';
 import { chooser, cont } from './qualify-ui.js';
 import * as C from './consult.js';
 
-const pause = (ms) => sleep(reduced() ? 0 : ms);
+import { pace } from './speed.js';
+const pause = (ms) => sleep(reduced() ? 0 : pace(ms));
 const money = C.money;
 const STATUS_CHIP = { current: ['Current', 'ok'], late: ['Behind', 'warn'], collections: ['Collections', 'bad'] };
 

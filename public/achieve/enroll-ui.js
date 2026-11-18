@@ -5,7 +5,8 @@ import { chooser, cont } from './qualify-ui.js';
 import * as E from './enroll.js';
 import { money } from './firsttake/shared/flow.js';
 
-const pause = (ms) => sleep(reduced() ? 0 : ms);
+import { pace } from './speed.js';
+const pause = (ms) => sleep(reduced() ? 0 : pace(ms));
 
 /* ---- review the agreement ---- */
 export function reviewCard(p, onDone) {
