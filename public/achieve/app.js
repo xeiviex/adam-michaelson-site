@@ -4,7 +4,7 @@ import { h, $, $$, sleep, after, setPaused, reduced, typeInto, tween, ico, icon 
 import { money } from './firsttake/shared/flow.js';
 import { buildForm } from './firsttake/forms.js';
 import * as J from './journey.js';
-import { fx, shiftTime } from './effects.js';
+import { fx, shiftTime, setFxPaused } from './effects.js';
 import { paintingBlock } from './art-ui.js';
 import * as MU from './movie-ui.js';
 import { pace, getSpeed, setSpeed, SPEEDS } from './speed.js';
@@ -629,7 +629,7 @@ const acct = createAccount({
   state, save,
   ctx: () => ({ debts: selectedDebts(), deposit: deposit(), months: fundModel().months, offerMonth: fundModel().offerMonth, bankName: bankNow().name, last4: bankNow().last4 }),
   pct: () => Math.round(J.pathPct(state.stageDone, state.done, 0)),
-  onOpen: () => pauseJourney(true), onClose: () => pauseJourney(false),
+  onOpen: () => { pauseJourney(true); setFxPaused(true); }, onClose: () => { setFxPaused(false); pauseJourney(false); },
 });
 function paintAcctBtn() { const on = AC.hasAccount(state), a = $('#acctBtn'), m = $('#menuBtn'); if (!a || !m) return; a.hidden = !on; m.hidden = !on; if (on && !state.acctSeen) { state.acctSeen = true; save(); revealAccount(a, m); } $('.acct-ini', a).textContent = ((state.applicant && state.applicant.first) || 'Me')[0].toUpperCase(); }
 $('#acctBtn').addEventListener('click', () => acct.open('overview'));

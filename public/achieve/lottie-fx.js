@@ -8,6 +8,8 @@ const SPEC = {
   streamers: { file: 'party-popper.lottie', css: 'left:50%;bottom:6%;width:min(380px,70vw);height:min(380px,70vw);transform:translateX(-50%)', fit: 'contain', ms: 3000 },
   coins: { file: 'coins.lottie', css: 'left:50%;bottom:4%;width:min(420px,80vw);height:min(420px,80vw);transform:translateX(-50%)', fit: 'contain', ms: 4200 },
 };
+let off = false;
+export const lottieOff = (v) => { off = !!v; };
 export const LOTTIE_KINDS = Object.keys(SPEC);
 let lib = null;
 const load = () => lib || (lib = import(BASE + 'dotlottie-web.js').then((m) => { m.DotLottie.setWasmUrl(BASE + 'dotlottie-player.wasm'); return m.DotLottie; }).catch(() => null));
@@ -15,7 +17,7 @@ export const warmLottie = () => { const run = () => { load(); LOTTIE_KINDS.forEa
 
 export async function playLottie(kind) {
   const sp = SPEC[kind]; if (!sp) return false;
-  const DotLottie = await load(); if (!DotLottie) return false;
+  const DotLottie = await load(); if (!DotLottie) return false; if (off) return true;
   const cv = document.createElement('canvas');
   cv.className = 'lottie-fx'; cv.setAttribute('aria-hidden', 'true'); cv.style.cssText = 'position:fixed;pointer-events:none;z-index:60;' + sp.css;
   cv.width = Math.round(innerWidth * (devicePixelRatio || 1)); cv.height = Math.round(innerHeight * (devicePixelRatio || 1));

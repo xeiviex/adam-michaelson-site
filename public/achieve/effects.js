@@ -17,16 +17,25 @@ function ensure() {
   W = cv.width; H = cv.height; cv.classList.add('on'); return true;
 }
 
-import { LOTTIE_KINDS, playLottie, warmLottie } from './lottie-fx.js';
+import { LOTTIE_KINDS, playLottie, warmLottie, lottieOff } from './lottie-fx.js';
 if (typeof window !== 'undefined') warmLottie();
 /* trophy, balloons, streamers and coins play as Lottie animations; the canvas versions below are the fallback */
+/* while the account area is open, celebrations are cleared and blocked */
+let blocked = false;
+export function setFxPaused(on) {
+  blocked = !!on; lottieOff(blocked); if (!on) return;
+  ['confetti', 'streamers', 'rockets', 'sparks', 'notes', 'bands', 'balloons', 'strips', 'coins', 'scenes'].forEach((k) => { S[k].length = 0; });
+  if (cx && cv) cx.clearRect(0, 0, cv.width, cv.height);
+  if (cv) cv.classList.remove('on');
+  document.querySelectorAll('.lottie-fx').forEach((e) => e.remove());
+}
 export function fx(kind, n) {
-  if (reduced()) return;
+  if (reduced() || blocked) return;
   if (LOTTIE_KINDS.includes(kind)) { playLottie(kind).then((ok) => { if (!ok) fxCanvas(kind, n); }); return; }
   fxCanvas(kind, n);
 }
 function fxCanvas(kind, n) {
-  if (reduced() || !ensure()) return;
+  if (reduced() || blocked || !ensure()) return;
   const now = performance.now();
   if (kind === 'streamers') {
     [0.04, 0.96].forEach((fx0, side) => { for (let i = 0; i < (n ? Math.min(14, n / 10) : 9); i++) S.streamers.push({ x: W * fx0, y: H * 0.92, vx: (side ? -1 : 1) * rnd(2, 9), vy: -rnd(14, 24), c: pick(COLORS), w: rnd(5, 9), trail: [], t0: now + i * 40, ph: rnd(0, 6), life: 3600 }); });
