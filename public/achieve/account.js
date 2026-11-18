@@ -7,6 +7,7 @@ export const SECTIONS = [
   { id: 'overview', label: 'Overview', ic: 'home' },
   { id: 'bank', label: 'Bank and transfers', ic: 'card' },
   { id: 'documents', label: 'Documents', ic: 'file' },
+  { id: 'keepsakes', label: 'Keepsakes', ic: 'star' },
   { id: 'profile', label: 'Profile', ic: 'edit' },
   { id: 'contacts', label: 'Contact reports', ic: 'phone' },
   { id: 'activity', label: 'Activity', ic: 'list' },
@@ -122,3 +123,14 @@ export const when = (ts, now) => {
   return same ? 'Today, ' + time : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + time;
 };
 export const day = (ts, now) => { const d = new Date(ts), t = new Date(now || Date.now()); return d.toDateString() === t.toDateString() ? 'Today' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+
+/* ---- keepsakes: the fun things made along the way, each available once its moment has happened ---- */
+export const keepsakes = (state) => {
+  const first = (state.applicant && state.applicant.first) || 'Jordan', slug = ((state.applicant && ((state.applicant.first || '') + '_' + (state.applicant.last || ''))) || 'Jordan').replace(/[^A-Za-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  const sd = state.stageDone || [];
+  return [
+    { id: 'song', title: first + ' Broke Free', blurb: 'Your anthem, from the day your first deposit cleared.', on: (state.ddone || []).includes('celebrate'), lock: 'Unlocks when your first deposit clears.', kind: 'audio', src: '/achieve/jordan-broke-free.mp3', file: slug + '_Broke_Free.mp3', label: 'Download song' },
+    { id: 'portrait', title: 'The Summit', blurb: 'Your portrait, in four looks.', on: sd.includes('build'), lock: 'Unlocks when your fund is growing.', kind: 'images', files: [['Sunrise', '/achieve/img/summit-sunrise.jpg'], ['Moonlight', '/achieve/img/summit-moon.jpg'], ['Neon dusk', '/achieve/img/summit-neon.jpg'], ['Black and white', '/achieve/img/summit-bw.jpg']], slug },
+    { id: 'movie', title: first + ' Broke Free: the movie', blurb: 'The short film we made about you.', on: (state.fdone || []).includes('movie') || sd.includes('free'), lock: 'Unlocks on graduation day.', kind: 'video', src: '/achieve/jordan-movie.mp4', poster: '/achieve/jordan-movie-poster.jpg', file: slug + '_Broke_Free.mp4', label: 'Download movie' },
+  ];
+};

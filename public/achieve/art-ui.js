@@ -7,7 +7,7 @@ export const STYLES = [
   { id: 'sunrise', label: 'Sunrise', src: '/achieve/img/summit-sunrise.jpg', filter: 'none', medium: 'golden hour' },
   { id: 'moon', label: 'Moonlight', src: '/achieve/img/summit-moon.jpg', filter: 'none', medium: 'moonlight' },
   { id: 'neon', label: 'Neon dusk', src: '/achieve/img/summit-neon.jpg', filter: 'none', medium: 'neon dusk' },
-  { id: 'bw', label: 'Black and white', src: '/achieve/img/summit-sunrise.jpg', filter: 'grayscale(1) contrast(1.18) brightness(.97)', medium: 'black and white' },
+  { id: 'bw', label: 'Black and white', src: '/achieve/img/summit-bw.jpg', filter: 'none', medium: 'black and white' },
 ];
 export const styleById = (id) => STYLES.find((x) => x.id === id) || STYLES[0];
 const TITLE = 'The Summit';

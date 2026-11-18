@@ -59,6 +59,20 @@ export function createAccount(api) {
         h('div', { class: 'av-actions' }, btn('Download statement', () => dl('Statement', 'Dedicated account ••3318\n\n' + tx.map((t) => A.when(t.ts) + '  ' + t.desc + '  ' + (t.amt > 0 ? '+' : '-') + money(Math.abs(t.amt)) + '  ' + t.status).join('\n') + '\n\nBalance: ' + money(bal)), 'line sm'))));
   }
 
+  /* ---- keepsakes ---- */
+  const getFile = (href, name) => { const a = h('a', { href, download: name }); document.body.append(a); a.click(); a.remove(); };
+  function keepsakes() {
+    const items = A.keepsakes(state);
+    return h('div', { class: 'av-stack' }, card('Keepsakes', h('p', { class: 'help' }, 'The fun things we made along the way. Each one unlocks at its moment, and you can keep them.')),
+      ...items.map((k) => {
+        if (!k.on) return card(k.title, h('p', { class: 'help' }, k.blurb), h('p', { class: 'av-lock' }, k.lock));
+        const media = k.kind === 'audio' ? h('audio', { controls: '', preload: 'none', src: k.src, class: 'av-aud' })
+          : k.kind === 'video' ? h('video', { controls: '', preload: 'none', playsinline: '', poster: k.poster, src: k.src, class: 'av-vid' })
+          : h('div', { class: 'av-thumbs' }, k.files.map(([lbl, src]) => h('figure', null, h('img', { src, alt: lbl, loading: 'lazy' }), h('figcaption', null, lbl), btn('Download', () => getFile(src, k.slug + '_Summit_' + lbl.replace(/[^A-Za-z0-9]+/g, '') + '.jpg'), 'line sm'))));
+        return card(k.title, h('p', { class: 'help' }, k.blurb), media, k.kind === 'images' ? null : h('div', { class: 'av-actions' }, btn(k.label, () => getFile(k.src, k.file), 'line')));
+      }));
+  }
+
   /* ---- documents ---- */
   function documents() {
     const c = ctx(), docs = A.documents(state, c);
@@ -115,8 +129,8 @@ export function createAccount(api) {
       groups.length ? groups.map((g) => h('div', { class: 'av-day' }, h('h4', null, g.d), g.items.map(actRow))) : h('p', { class: 'help' }, 'Nothing here yet.')));
   }
 
-  const RENDER = { overview, bank, documents, profile, contacts, activity };
-  const TITLES = { overview: 'Overview', bank: 'Bank and transfers', documents: 'Documents', profile: 'Profile', contacts: 'Contact reports', activity: 'Activity' };
+  const RENDER = { overview, bank, documents, keepsakes, profile, contacts, activity };
+  const TITLES = { overview: 'Overview', bank: 'Bank and transfers', documents: 'Documents', keepsakes: 'Keepsakes', profile: 'Profile', contacts: 'Contact reports', activity: 'Activity' };
   function paint() {
     if (!view) return;
     stamp();

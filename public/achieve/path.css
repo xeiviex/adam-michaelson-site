@@ -343,3 +343,6 @@ body.acct-open { overflow: hidden; }
 @keyframes arsl { from { transform: translateX(-12px); } to { transform: translateX(4px); } }
 @keyframes arslv { from { transform: translateY(8px); } to { transform: translateY(-4px); } }
 @media (prefers-reduced-motion: reduce) { .acct-btn.pop, .menu-btn.pop, .acct-spk, .acct-arrow { animation: none; } .acct-spk { display: none; } }
+
+.av-stack { display: grid; gap: 14px; } .av-lock { margin: 0; font-size: 13px; color: var(--mut); } .av-aud { width: 100%; margin: 8px 0 4px; } .av-vid { width: 100%; border-radius: 10px; background: #000; margin: 8px 0 4px; aspect-ratio: 16 / 9; }
+.av-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 8px; } .av-thumbs figure { margin: 0; display: grid; gap: 6px; text-align: center; } .av-thumbs img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; background: var(--tint); } .av-thumbs figcaption { font-size: 13px; color: var(--mut); } .av-thumbs .btn { width: auto; justify-self: center; }
