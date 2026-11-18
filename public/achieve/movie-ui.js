@@ -1,9 +1,9 @@
-/* Achieve debt relief prototype: "we produced a movie about you". A poster with a play button, then the 27 second film (video clips with a music track). */
+/* Achieve debt relief prototype: "we produced a movie about you". A poster with a play button, then the 26 second film (video clips with a music track). */
 import { h, sleep, reduced, ico } from './firsttake/shared/dom.js';
 import { cont } from './qualify-ui.js';
 
-const CAPS = [[5.2, 8.6, 'THE ROAD GETS HARDER.'], [10, 13.2, 'END OF THE ROAD.']];
-const LEN = 27;
+const CAPS = [[0.6, 3.7, 'THE ROAD GETS HARDER.'], [8.4, 11.6, 'END OF THE ROAD.']];
+const LEN = 26;
 
 export function movieCard(applicant, hooks, onDone, opts) {
   const o = opts || {};
@@ -13,7 +13,7 @@ export function movieCard(applicant, hooks, onDone, opts) {
   const cap = h('div', { class: 'mv-cap' });
   const endCard = h('div', { class: 'mv-end' }, h('b', null, name.toUpperCase() + ' BROKE FREE.'), h('span', null, 'Debt free with Achieve'));
   const playBtn = h('button', { type: 'button', class: 'mv-play', 'aria-label': 'Play the movie' }, h('span', { html: '<svg viewBox="0 0 24 24" width="44" height="44" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>' }));
-  const label = h('div', { class: 'mv-title' }, h('b', null, name.toUpperCase()), h('span', null, 'The Movie'), h('em', null, '0:27'));
+  const label = h('div', { class: 'mv-title' }, h('b', null, name.toUpperCase()), h('span', null, 'The Movie'), h('em', null, '0:26'));
   const stage = h('div', { class: 'mv' }, vid, cap, endCard, label, playBtn);
   const ctrl = h('div', { class: 'mv-ctl' });
   const replay = h('button', { type: 'button', class: 'btn line sm', onclick: () => start() }, ico('refresh', 16), 'Watch again');
