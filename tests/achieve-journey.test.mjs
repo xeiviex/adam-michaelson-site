@@ -4,9 +4,9 @@ import * as J from '../public/achieve/journey.js';
 import { validateStep } from '../public/achieve/firsttake/shared/flow.js';
 import { localAnswer } from '../public/achieve/debt-kb.js';
 
-test('eight stages, first six built', () => {
+test('eight stages, first seven built', () => {
   assert.equal(J.STAGES.length, 8);
-  assert.deepEqual(J.STAGES.filter((s) => s.built).map((s) => s.id), ['lead', 'qualify', 'consult', 'enroll', 'deposit', 'build']);
+  assert.deepEqual(J.STAGES.filter((s) => s.built).map((s) => s.id), ['lead', 'qualify', 'consult', 'enroll', 'deposit', 'build', 'negotiate']);
 });
 test('persona passes every lead step', () => {
   for (const s of J.LEAD_STEPS) assert.deepEqual(validateStep(s, J.PERSONA), {}, s.id);
@@ -191,4 +191,26 @@ test('feed covers text, email and app and personalizes', () => {
   const f = B.feed(bm(), 'Jordan', '$600');
   for (const c of ['text', 'email', 'app']) assert.ok(f.some((x) => x.ch === c), c);
   assert.ok(f.every((x) => /Jordan|achieve|Achieve|specialist|path|fund|finish|halfway|Halfway|25%|one month/i.test(x.title + x.body)));
+});
+
+/* ---- stage 7: settle ---- */
+import * as S7 from '../public/achieve/settle.js';
+const D7 = { id: 'd4', name: 'Regional Medical Group', kind: 'Medical bill', balance: 4500, status: 'late' };
+test('settle: first offer numbers', () => {
+  const o = S7.offerFor(D7);
+  assert.equal(o.amount, 1800); assert.equal(o.fee, 900); assert.equal(o.saved, 1800);
+});
+test('settle: counter offer is lower and saves more', () => {
+  const o = S7.offerFor(D7), c = S7.counterOffer(D7, o);
+  assert.equal(c.amount, 1575); assert.equal(c.saved, 2025);
+});
+test('settle: fee is last after approval', () => {
+  const steps = S7.afterApprove(S7.offerFor(D7));
+  assert.match(steps[steps.length - 1].t, /fee/i);
+  assert.match(steps[steps.length - 2].t, /pay/i);
+});
+test('settle: step order', () => {
+  assert.equal(S7.nextSStep([]), 'advocate');
+  assert.equal(S7.nextSStep(['advocate', 'activity', 'offer']), 'board');
+  assert.equal(S7.nextSStep(S7.S_STEPS), null);
 });

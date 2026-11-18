@@ -14,11 +14,13 @@ import * as D from './deposit.js';
 import * as DU from './deposit-ui.js';
 import * as B from './fund.js';
 import * as BU from './fund-ui.js';
+import * as S from './settle.js';
+import * as SU from './settle-ui.js';
 import { localAnswer, FALLBACK, SUGGESTIONS } from './debt-kb.js';
 
 const KEY = 'achv1';
 const load = () => { try { return JSON.parse(sessionStorage.getItem(KEY)) || null; } catch { return null; } };
-const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], d: {}, ddone: [], b: {}, bdone: [], auto: true }, load());
+const state = Object.assign({ done: [], stageDone: [], applicant: {}, q: {}, qdone: [], c: {}, cdone: [], e: {}, edone: [], d: {}, ddone: [], b: {}, bdone: [], s: {}, sdone: [], auto: true }, load());
 const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch { /* private mode */ } };
 
 const stream = $('#stream'), tail = $('#tail'), road = $('#roadInner');
@@ -39,7 +41,7 @@ function scrollEnd() {
 
 /* ---------- the path nav ---------- */
 const currentStage = () => J.STAGES.find((s) => !state.stageDone.includes(s.id)) || J.STAGES[J.STAGES.length - 1];
-const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : id === 'enroll' ? { all: E.E_STEPS, done: state.edone, label: E.eStepLabel } : id === 'deposit' ? { all: D.D_STEPS, done: state.ddone, label: D.dStepLabel } : id === 'build' ? { all: B.B_STEPS, done: state.bdone, label: B.bStepLabel } : null;
+const stageSteps = (id) => id === 'qualify' ? { all: Q.qSteps(state.q), done: state.qdone, label: Q.qStepLabel } : id === 'consult' ? { all: C.C_STEPS, done: state.cdone, label: C.cStepLabel } : id === 'enroll' ? { all: E.E_STEPS, done: state.edone, label: E.eStepLabel } : id === 'deposit' ? { all: D.D_STEPS, done: state.ddone, label: D.dStepLabel } : id === 'build' ? { all: B.B_STEPS, done: state.bdone, label: B.bStepLabel } : id === 'negotiate' ? { all: S.S_STEPS, done: state.sdone, label: S.sStepLabel } : null;
 function renderRoad() {
   const cur = currentStage();
   const ss = stageSteps(cur.id);
@@ -462,7 +464,53 @@ async function finishB(id, patch, turn) {
   if (B.nextBStep(state.bdone)) proceedB(); else completeBuild();
 }
 const completeBuild = (quiet) => stageDone('build', { quiet, line: 'Your fund is growing, ' + (state.applicant.first || 'there') + '.',
-  body: 'You can see your progress, you know how we will stay in touch, and you can speed things up whenever you like. Next the negotiators go to work, and you approve every settlement.', onNext: () => {} });
+  body: 'You can see your progress, you know how we will stay in touch, and you can speed things up whenever you like. Next the negotiators go to work, and you approve every settlement.', onNext: startSettle });
+
+/* ---------- stage 7: settle ---------- */
+const SMETA = {
+  advocate: { q: 'Meet your negotiator', sub: 'One person on your side, start to finish.' },
+  activity: { q: 'Everything we do for you', sub: 'Every call, text and email, in one place.' },
+  offer: { q: 'Your first offer', sub: 'Nothing is paid unless you say yes.' },
+  board: { q: 'Where you stand', sub: 'Every debt, with an honest status.' },
+};
+const firstDebtNow = () => S.firstDebt(selectedDebts(), deposit());
+function sSummary(id) {
+  if (id === 'advocate') return S.NEGOTIATOR.name + ' is your negotiator';
+  if (id === 'activity') return 'Calls recorded, texts and emails in your account';
+  if (id === 'offer') { const o = state.s.offer; return !o ? '' : o.status === 'approved' ? 'Approved: ' + money0(o.amount) + ', you keep about ' + money0(o.saved) : 'Declined, we keep negotiating'; }
+  if (id === 'board') return 'Status of every debt';
+  return '';
+}
+async function startSettle() {
+  ui.run++;
+  await say('Now the negotiators go to work. You see everything, and you approve every settlement.');
+  proceedS();
+}
+const proceedS = () => { const n = S.nextSStep(state.sdone); if (n) askS(n); };
+const askS = (id) => runTurn(id, SMETA[id], (t) => {
+  const done = (patch) => finishS(id, patch, t);
+  const debt = firstDebtNow();
+  if (id === 'advocate') return SU.advocateCard(state.applicant, done);
+  if (id === 'activity') return SU.activityCard(state.applicant, debt, done);
+  if (id === 'offer') return SU.offerCard(state.applicant, debt, S.fundAt(deposit(), fundModel().offerMonth), done);
+  return SU.boardCard(selectedDebts(), deposit(), state.s.offer && state.s.offer.status === 'approved' ? { debtId: state.s.offer.debtId, saved: state.s.offer.saved } : { debtId: null, saved: 0 }, fundModel().months, done);
+});
+async function finishS(id, patch, turn) {
+  Object.assign(state.s, patch);
+  if (!state.sdone.includes(id)) state.sdone.push(id);
+  save();
+  turn.classList.remove('pending'); turn.classList.add('answered');
+  const card = turn.querySelector('.card'), sub = turn.querySelector('.sub');
+  if (card) { card.style.maxHeight = card.offsetHeight + 'px'; requestAnimationFrame(() => card.classList.add('out')); setTimeout(() => card.remove(), 420); }
+  if (sub) sub.classList.add('fade');
+  const b = h('div', { class: 'ans' }, h('span', { class: 'bubble static' }, h('span', { class: 'bt' }, sSummary(id))));
+  turn.append(b); requestAnimationFrame(() => b.classList.add('in'));
+  renderRoad();
+  await sleep(reduced() ? 0 : 650);
+  if (S.nextSStep(state.sdone)) proceedS(); else completeSettle();
+}
+const completeSettle = (quiet) => stageDone('negotiate', { quiet, line: 'Your first debt is handled, ' + (state.applicant.first || 'there') + '.',
+  body: 'You met your negotiator, saw every conversation, and approved your first offer. Next comes the finish line.', onNext: () => {} });
 
 /* ---------- confetti (small, dependency free) ---------- */
 const parts = [];
@@ -517,6 +565,7 @@ $('#doAuto').addEventListener('click', () => {
 });
 $('#doSkip').addEventListener('click', () => {
   if (!state.stageDone.includes('lead')) { Object.assign(state.applicant, J.PERSONA); state.done = J.LEAD_STEPS.map((s) => s.id); }
+  else if (state.stageDone.includes('build')) { state.s = { offer: { debtId: firstDebtNow().id, amount: S.offerFor(firstDebtNow()).amount, fee: S.offerFor(firstDebtNow()).fee, saved: S.offerFor(firstDebtNow()).saved, status: 'approved', pct: S.offerFor(firstDebtNow()).pct } }; state.sdone = ['advocate', 'activity', 'offer']; }
   else if (state.stageDone.includes('deposit')) { state.b = {}; state.bdone = ['fund', 'messages']; }
   else if (state.stageDone.includes('enroll')) { state.d = { login: true, deposit: { cleared: true, amount: deposit(), date: 'Today', bank: bankNow().name + ' ••' + bankNow().last4 } }; state.ddone = ['login', 'deposit']; }
   else if (state.stageDone.includes('consult')) { Object.assign(state.e, { consents: E.CONSENTS.map((c) => c.id), signedName: E.PERSONA_E.sign, bank: E.PERSONA_E.bank, account: { last4: '3318' } }); state.edone = ['review', 'consent', 'sign', 'account']; }
@@ -535,6 +584,7 @@ const FLOWS = [
   { id: 'enroll', prev: () => completeConsult(true), done: () => state.edone, meta: (id) => EMETA[id], sum: eSummary, go: proceedE, finish: completeEnroll },
   { id: 'deposit', prev: () => completeEnroll(true), done: () => state.ddone, meta: (id) => DMETA[id], sum: dSummary, go: proceedD, finish: completeDeposit },
   { id: 'build', prev: () => completeDeposit(true), done: () => state.bdone, meta: (id) => BMETA[id], sum: bSummary, go: proceedB, finish: completeBuild },
+  { id: 'negotiate', prev: () => completeBuild(true), done: () => state.sdone, meta: (id) => SMETA[id], sum: sSummary, go: proceedS, finish: completeSettle },
 ];
 (async function start() {
   paintAuto();
