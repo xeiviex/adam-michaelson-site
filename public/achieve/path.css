@@ -407,3 +407,13 @@ body.acct-open { overflow: hidden; }
 /* lists and rows inside centered cards read left to right, so every row lines up */
 .after, .after li, .how, .how li, .notes, .note, .badges, .badge, .tl, .tl li { text-align: left; }
 .after li > span, .after li > div, .note > div:last-child { text-align: left; }
+
+/* phone milestone banner */
+.mile-banner { display: none; }
+@media (max-width: 899px) {
+  .mile-banner { position: fixed; z-index: 58; top: 104px; left: 50%; transform: translateX(-50%); width: min(92vw, 380px); box-sizing: border-box; display: grid; grid-template-columns: 1fr auto; grid-template-areas: "a c" "b c"; align-items: center; column-gap: 12px; padding: 10px 14px; border: 0; border-radius: 14px; background: #3300ff; color: #fff; text-align: left; font: inherit; box-shadow: 0 10px 26px rgba(51, 0, 255, .35); animation: mbin .35s ease-out; cursor: pointer; transition: opacity .4s; }
+  .mile-banner b { grid-area: a; font-size: 14px; } .mile-banner span { grid-area: b; font-size: 12.5px; opacity: .9; } .mile-banner em { grid-area: c; font-style: normal; font-size: 12px; font-weight: 800; padding: 6px 10px; border-radius: 999px; background: rgba(255, 255, 255, .2); }
+  .mile-banner.out { opacity: 0; }
+}
+@keyframes mbin { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@media (prefers-reduced-motion: reduce) { .mile-banner { animation: none; } }

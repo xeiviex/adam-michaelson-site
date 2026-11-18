@@ -75,6 +75,7 @@ function renderRoad() {
   $('#roadFill').style.width = pct + '%';
   $('#stageFill').style.width = spct + '%';
   $('#stripStep').textContent = 'Stage ' + cur.n + ' of ' + J.STAGES.length;
+  $('#stripPct').textContent = pct + '%';
   const subList = (items) => '<ul class="subs">' + items.map(([lbl, d]) => `<li class="${d ? 'done' : ''}">${lbl}</li>`).join('') + '</ul>';
   road.innerHTML = '<ol class="stages">' + J.STAGES.map((s) => {
     const done = state.stageDone.includes(s.id), on = s.id === cur.id && !done;
@@ -90,6 +91,15 @@ const sheet = $('#road');
 const openSheet = () => { sheet.classList.add('open'); $('#roadBack').classList.add('on'); };
 const closeSheet = () => { sheet.classList.remove('open'); $('#roadBack').classList.remove('on'); };
 $('#strip').addEventListener('click', openSheet);
+/* on phones, each finished stage gets a short banner that opens the journey map */
+function milestoneBanner(stage) {
+  if (!mobile.matches) return;
+  document.querySelectorAll('.mile-banner').forEach((e) => e.remove());
+  const pct = J.pathPct(state.stageDone, state.done, 0);
+  const b = h('button', { type: 'button', class: 'mile-banner', onclick: () => { b.remove(); openSheet(); } }, h('b', null, 'Stage ' + stage.n + ' of ' + J.STAGES.length + ' complete'), h('span', null, pct + '% of your journey'), h('em', null, 'See map'));
+  document.body.append(b);
+  setTimeout(() => b.classList.add('out'), 5200); setTimeout(() => b.remove(), 5700);
+}
 $('#roadBack').addEventListener('click', closeSheet);
 $('#roadClose').addEventListener('click', closeSheet);
 
@@ -196,7 +206,7 @@ function proceed() {
 async function stageDone(id, o) {
   if (!state.stageDone.includes(id)) state.stageDone.push(id);
   save(); renderRoad();
-  if (!o.quiet) burst(o.fx || 'confetti');
+  if (!o.quiet) { burst(o.fx || 'confetti'); milestoneBanner(J.stageById(id)); }
   const t = await say(o.line, 'win');
   const stage = J.stageById(id), next = J.STAGES[J.STAGES.indexOf(stage) + 1];
   const my = ui.run;

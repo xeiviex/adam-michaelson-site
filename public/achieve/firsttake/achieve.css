@@ -365,6 +365,9 @@ body.human .human-cta { display: none; }
   .l-short { display: inline; }
   .strip { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 40px; padding: 0 16px; border: 0; border-bottom: 1px solid var(--line); background: var(--tint); font-size: 13px; color: var(--mut); cursor: pointer; flex: none; }
   .strip b { color: var(--ink); }
+  .strip-l { display: inline-flex; align-items: center; gap: 0; } .strip-l .sep { padding: 0 6px; }
+  .strip-l {  min-width: 0; white-space: nowrap; overflow: hidden; } #stripPct { color: var(--brand, #3300ff); font-size: 14px; }
+  .strip-r { display: inline-flex; align-items: center; gap: 6px; flex: none; color: var(--brand, #3300ff); font-weight: 700; }
   .shell { grid-template-columns: 1fr; }
   .stream { padding: 0 16px; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 60px); mask-image: linear-gradient(to bottom, transparent 0, #000 60px); }
   .q .qt { font-size: 21px; }
