@@ -32,12 +32,12 @@ export function paintingBlock(applicant) {
   STYLES.forEach((x) => { const i = new Image(); i.src = x.src; });
   function show(anim) {
     const st = styleById(style);
-    frameEl.replaceChildren(h('img', { class: 'art-img', src: st.src, alt: TITLE + ': ' + n + ' at the summit', style: 'filter:' + st.filter }));
+    frameEl.replaceChildren(h('img', { class: 'art-img', src: st.src, alt: TITLE + ': ' + n + ' at the summit', style: 'filter:' + st.filter }), h('div', { class: 'art-you', 'aria-hidden': 'true' }, h('span', null, 'THAT\'S YOU, ' + ((applicant.first || 'friend') + '').toUpperCase() + '!'), h('span', { class: 'art-arr', html: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h16M13 5l7 7-7 7"/></svg>' })));
     if (anim) { frameEl.style.animation = 'none'; void frameEl.offsetWidth; frameEl.style.animation = ''; }
     plaque.replaceChildren(h('b', null, '"' + TITLE + '"'), h('span', null, 'Portrait of ' + n + ', ' + st.medium + ', 2026'));
     chips.forEach((c, k) => { const on = STYLES[k].id === style; c.classList.toggle('on', on); c.setAttribute('aria-pressed', String(on)); });
   }
   show(false);
-  return h('div', { class: 'art' }, h('div', { class: 'tabs' }, chips), frameEl, plaque,
+  return h('div', { class: 'art' }, h('p', { class: 'art-lead' }, 'Look who is standing on the summit. That is ', h('b', null, 'you'), ', ' + (applicant.first || 'friend') + '.'), h('div', { class: 'tabs' }, chips), frameEl, plaque,
     h('button', { type: 'button', class: 'btn line art-print', onclick: () => printPainting(n, titleFor(), style) }, ico('file', 18), 'Print my portrait'));
 }

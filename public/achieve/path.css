@@ -346,3 +346,12 @@ body.acct-open { overflow: hidden; }
 
 .av-stack { display: grid; gap: 14px; } .av-lock { margin: 0; font-size: 13px; color: var(--mut); } .av-aud { width: 100%; margin: 8px 0 4px; } .av-vid { width: 100%; border-radius: 10px; background: #000; margin: 8px 0 4px; aspect-ratio: 16 / 9; }
 .av-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 8px; } .av-thumbs figure { margin: 0; display: grid; gap: 6px; text-align: center; } .av-thumbs img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; background: var(--tint); } .av-thumbs figcaption { font-size: 13px; color: var(--mut); } .av-thumbs .btn { width: auto; justify-self: center; }
+
+.art-frame { position: relative; }
+.art-lead { margin: 0 0 10px; font-size: 15px; text-align: center; color: var(--ink); } .art-lead b { color: var(--ind); font-weight: 800; }
+.art-you { position: absolute; left: 6%; top: 24%; display: flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; background: #ffb703; color: #1b1340; font: 800 12.5px var(--font); letter-spacing: .03em; box-shadow: 0 8px 20px rgba(0, 0, 0, .4); pointer-events: none; animation: youpulse 1s ease-in-out 1s 8 alternate; }
+.art-you .art-arr { display: inline-flex; animation: youarr .7s ease-in-out 1s 12 alternate; }
+@keyframes youpulse { from { transform: translateX(0); } to { transform: translateX(10px); } }
+@keyframes youarr { from { transform: translateX(-2px); } to { transform: translateX(6px); } }
+@media (prefers-reduced-motion: reduce) { .art-you, .art-you .art-arr { animation: none; } }
+@media (max-width: 480px) { .art-you { left: 3%; top: 18%; font-size: 11px; padding: 6px 10px; } }
