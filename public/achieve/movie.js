@@ -1,6 +1,6 @@
 /* Achieve debt relief prototype: "the movie about you". A 30 second animated short drawn on a canvas, a pure function of time,
    so any frame can be drawn for the poster and the same code plays the film. No video file, no audio, no network.
-   Scenes: race car jumps, a windy mountain road, the edge of a cliff, the leap and parachute, the zoom out with fireworks and the title. */
+   Scenes: race car jumps, a windy mountain road, the edge of a cliff, the truck turns into a cannon that fires him up and away, the parachute, the zoom out with fireworks and the title. */
 export const W = 960, H = 540, DUR = 30, POSTER_T = 4.4;
 export const SCENES = [
   { id: 'race', t0: 0, t1: 6 }, { id: 'climb', t0: 6, t1: 11 }, { id: 'edge', t0: 11, t1: 15.5 }, { id: 'jump', t0: 15.5, t1: 30 },
@@ -63,13 +63,14 @@ function car(c, x, y, rot, o) {
   wheel(c, -40, -15, op.spin || 0); wheel(c, 40, -15, op.spin || 0);
   if (op.peek > 0) { head(c, 8, -60 - op.peek * 20, 13, op.expr || 'shock', op.tilt || 0); }
   c.fillStyle = '#e63946'; rr(c, -62, -46, 124, 26, 9); c.fill();
+  const ca = op.cabin == null ? 1 : op.cabin; c.globalAlpha = ca;
   c.beginPath(); c.moveTo(-24, -46); c.lineTo(-8, -70); c.lineTo(30, -70); c.lineTo(48, -46); c.closePath(); c.fillStyle = '#c42232'; c.fill();
-  c.beginPath(); c.moveTo(-16, -48); c.lineTo(-4, -66); c.lineTo(26, -66); c.lineTo(40, -48); c.closePath(); c.fillStyle = '#9fe3ff'; c.fill();
+  c.beginPath(); c.moveTo(-16, -48); c.lineTo(-4, -66); c.lineTo(26, -66); c.lineTo(40, -48); c.closePath(); c.fillStyle = '#9fe3ff'; c.fill(); c.globalAlpha = 1;
   c.fillStyle = '#fff'; c.fillRect(-62, -36, 124, 4);
-  c.fillStyle = '#1a1a2e'; c.fillRect(-70, -64, 30, 5); c.fillRect(-64, -60, 5, 18);
+  c.globalAlpha = ca; c.fillStyle = '#1a1a2e'; c.fillRect(-70, -64, 30, 5); c.fillRect(-64, -60, 5, 18); c.globalAlpha = 1;
   c.fillStyle = '#fff'; c.beginPath(); c.arc(-4, -30, 9, 0, 7); c.fill(); c.fillStyle = '#e63946'; c.font = '700 13px system-ui'; c.textAlign = 'center'; c.fillText('7', -4, -25);
   c.fillStyle = '#ffe66d'; c.beginPath(); c.arc(60, -35, 4, 0, 7); c.fill();
-  if (op.door > 0) { c.save(); c.translate(-14, -46); c.rotate(-op.door * 1.25); c.fillStyle = '#b81d2d'; c.fillRect(0, 0, 40, 24); c.fillStyle = '#9fe3ff'; c.fillRect(4, 4, 28, 10); c.restore(); }
+  if (op.door > 0 && ca > 0.02) { c.globalAlpha = ca; c.save(); c.translate(-14, -46); c.rotate(-op.door * 1.25); c.fillStyle = '#b81d2d'; c.fillRect(0, 0, 40, 24); c.fillStyle = '#9fe3ff'; c.fillRect(4, 4, 28, 10); c.restore(); c.globalAlpha = 1; }
   c.restore();
 }
 function flash(c, t) { const edges = SCENES.slice(1).map((s) => s.t0); const a = Math.max(0, ...edges.map((e) => 1 - Math.abs(t - e) / 0.16)); if (a > 0) { c.fillStyle = 'rgba(255,255,255,' + (a * 0.9) + ')'; c.fillRect(0, 0, W, H); } }
@@ -138,15 +139,17 @@ function edge(c, t, name) {
 
 /* ---- scene 4 and 5: the leap, the parachute, the zoom out, the fireworks, the title ---- */
 function jumpScene(c, t, name) {
-  const u = t - 15.5, v = u - 0.5, g = 520, v1 = 1.7;
-  const day = mix('#7ac8ff', '#2a1a5e', clamp(u / 7, 0, 1)), low = mix('#ffe6b0', '#ff7a6b', clamp(u / 7, 0, 1));
-  sky(c, mix('#7ac8ff', '#0e0a2e', clamp(u / 9, 0, 1)), mix('#ffe6b0', '#6b2f7a', clamp(u / 9, 0, 1)));
-  let hx, hy, hrot = 0, open = 0, arms = 0.4, legs = 0.4;
-  if (v <= 0) { const e = ease(u / 0.5); hx = lerp(-58, -6, e); hy = lerp(-58, -30, e) - Math.sin(Math.PI * e) * 18; arms = 0.1; legs = 0.15; }
-  else if (v <= v1) { hx = 120 * v - 6; hy = -30 + 0.5 * g * v * v - 120 * v; hrot = 7 * v * (1 - v / (v1 * 1.05)); arms = 1; legs = 0.9; }
-  else { const w = v - v1, x1 = 120 * v1 - 6, y1 = -30 + 0.5 * g * v1 * v1 - 120 * v1; hx = x1 + 70 * w + Math.sin(w * 1.5) * 18; hy = y1 + 80 * w + (g * v1 - 80) / 3 * (1 - Math.exp(-3 * w)); open = ease(w / 0.5); arms = 0.9; legs = 0.15; hrot = Math.sin(w * 1.6) * 0.06; }
-  const z = v < 3.5 ? 1 : lerp(1, 0.26, ease((v - 3.5) / 7));
-  const camX = hx + (v < 0 ? 60 : 40 * z + 40), camY = hy - (v < 0 ? 40 : 40);
+  const u = t - 15.5, LT = 2.0, v = u - LT, g = 520, VX = 330, VY = -400, VO = 0.9;
+  /* the truck becomes a cannon: barrel pivot sits on the truck's roof line, aimed up and to the right */
+  const AN = 0.85, BL = 105, PX = -70, PY = -50, MX = PX + Math.cos(AN) * BL, MY = PY - Math.sin(AN) * BL;
+  let hx, hy, hrot = 0, open = 0, arms = 0.4, legs = 0.4, hs = 1.25, expr = 'cool';
+  if (u < 0.5) { const e = ease(u / 0.5); hx = lerp(-58, -6, e); hy = lerp(-58, -30, e) - Math.sin(Math.PI * e) * 18; arms = 0.1; legs = 0.15; }
+  else if (u < 1.0) { hx = -6; hy = -30; arms = 0.1; legs = 0.15; expr = 'shock'; }
+  else if (v < 0) { const e = ease(clamp((u - 1.0) / 0.6, 0, 1)); hx = lerp(-6, MX, e); hy = lerp(-30, MY, e) - Math.sin(Math.PI * e) * 46; hs = 1.25 * (1 - 0.8 * ease((e - 0.55) / 0.45)); arms = 0.9; legs = 0.6; hrot = e * 1.1; expr = 'yell'; }
+  else if (v <= VO) { hx = MX + VX * v; hy = MY + VY * v + 0.5 * g * v * v; hrot = 0.9 - 1.2 * (v / VO); arms = 1; legs = 0.9; expr = 'yell'; }
+  else { const w = v - VO, x1 = MX + VX * VO, y1 = MY + VY * VO + 0.5 * g * VO * VO, vy1 = VY + g * VO; hx = x1 + 70 * w + (VX - 70) / 3 * (1 - Math.exp(-3 * w)) + Math.sin(w * 1.5) * 18; hy = y1 + 80 * w + (vy1 - 80) / 3 * (1 - Math.exp(-3 * w)); open = ease(w / 0.5); arms = 0.9; legs = 0.15; hrot = -0.3 * Math.exp(-4 * w) + Math.sin(w * 1.6) * 0.06; expr = 'grin'; }
+  const z = v < 2 ? 1 : lerp(1, 0.26, ease((v - 2) / 6.5));
+  const camX = hx + 60 + (v < 0 ? 0 : 20 * ease(v / 0.5)) * z, camY = hy - 40;
   c.save(); c.translate(W / 2, H / 2); c.scale(z, z); c.translate(-camX, -camY);
   const farY = 1750; c.fillStyle = mix('#7a8ac0', '#2a1f55', clamp(u / 9, 0, 1)); c.beginPath(); c.moveTo(-6000, farY + 400); for (let x = -6000; x <= 6000; x += 40) c.lineTo(x, farY - 260 - 140 * Math.sin(x / 520) - 90 * Math.sin(x / 190)); c.lineTo(6000, farY + 400); c.closePath(); c.fill();
   c.fillStyle = mix('#5fa86a', '#14301f', clamp(u / 9, 0, 1)); c.fillRect(-6000, farY + 20, 12000, 600);
@@ -154,8 +157,24 @@ function jumpScene(c, t, name) {
   c.fillStyle = mix('#c47a4a', '#4a2a2e', clamp(u / 9, 0, 1)); c.beginPath(); c.moveTo(-6000, 0); c.lineTo(0, 0); c.lineTo(-24, 400); c.lineTo(30, 800); c.lineTo(-14, 1300); c.lineTo(-30, farY + 30); c.lineTo(-6000, farY + 30); c.closePath(); c.fill();
   c.strokeStyle = 'rgba(60,30,20,.3)'; c.lineWidth = 6; [300, 600, 900, 1250, 1500].forEach((y) => { c.beginPath(); c.moveTo(-3000, y); c.lineTo(-20, y + 8); c.stroke(); });
   c.fillStyle = '#d9a066'; c.fillRect(-6000, -8, 6000, 12);
-  const w1 = Math.max(0, u - 1.3), carX = -70 + 55 * w1, fall = Math.max(0, w1 - 0.7);
-  car(c, carX, 2 + 0.5 * 420 * fall * fall, 0.8 * fall, { door: 1 });
+  const km = ease((u - 0.3) / 0.8), rec = v > 0 ? 16 * Math.exp(-v * 7) * Math.cos(v * 20) : 0, shake = u > 1.65 && v < 0 ? Math.sin(u * 90) * 2.2 : 0;
+  const drawHero = () => { if (hs > 0.3 || v >= 0) hero(c, hx, hy, hs, { rot: hrot, arms, legs, t: u, flail: v > 0 && v < VO, expr }); };
+  if (v < 0 && u >= 1.0) drawHero();
+  car(c, PX + shake, 2, 0, { door: 1 - km, cabin: 1 - km });
+  if (km > 0) {
+    c.save(); c.translate(PX + shake, PY); c.rotate(-AN); const len = BL * km - rec, hw = 17;
+    const gr = c.createLinearGradient(0, -hw, 0, hw); gr.addColorStop(0, '#6b7288'); gr.addColorStop(0.45, '#c5cbdc'); gr.addColorStop(1, '#3d4356');
+    c.fillStyle = gr; c.beginPath(); c.moveTo(-16, -hw + 2); c.lineTo(len, -hw + 4); c.lineTo(len, hw - 4); c.lineTo(-16, hw - 2); c.closePath(); c.fill();
+    c.fillStyle = '#e63946'; c.fillRect(len * 0.32, -hw + 3, 10, 2 * hw - 6); c.fillStyle = '#ffd24a'; c.fillRect(Math.max(0, len - 12), -hw + 1, 12, 2 * hw - 2);
+    c.fillStyle = '#23263a'; c.beginPath(); c.ellipse(len, 0, 5, hw - 5, 0, 0, 7); c.fill();
+    c.fillStyle = '#3d4356'; c.beginPath(); c.arc(-16, 0, hw - 1, 0, 7); c.fill(); c.fillStyle = '#fff'; c.font = '800 15px system-ui'; c.textAlign = 'center'; c.fillText('7', len * 0.5, 5);
+    c.restore();
+    if (u > 1.5 && v < 0) { const fx = PX - Math.cos(AN) * 20, fy = PY + Math.sin(AN) * 20 - 6, fl = 0.6 + 0.4 * Math.sin(u * 60); c.fillStyle = '#ffd24a'; c.beginPath(); for (let i = 0; i < 10; i++) { const an = i / 10 * 6.283, rr = (i % 2 ? 4 : 11) * fl; c.lineTo(fx + Math.cos(an) * rr, fy + Math.sin(an) * rr); } c.closePath(); c.fill(); }
+  }
+  if (v >= 0) {
+    if (v < 0.35) { const k = v / 0.35; c.fillStyle = 'rgba(255,236,160,' + (1 - k) + ')'; c.beginPath(); c.arc(MX, MY, 30 + 90 * k, 0, 7); c.fill(); c.fillStyle = 'rgba(255,255,255,' + (1 - k) + ')'; c.beginPath(); c.arc(MX, MY, 16 + 40 * k, 0, 7); c.fill(); }
+    for (let i = 0; i < 9; i++) { const k = clamp((v - 0.04 * i) / 1.6, 0, 1); if (k <= 0 || k >= 1) continue; c.fillStyle = 'rgba(230,225,235,' + (0.7 * (1 - k)) + ')'; c.beginPath(); c.arc(MX + Math.cos(i * 1.9) * 30 * k + 12 * k * i * 0.3, MY - 20 * k - 36 * k * (i % 3) * 0.4 + Math.sin(i) * 8, 14 + 34 * k, 0, 7); c.fill(); }
+  }
   if (open > 0) {
     const cxp = hx, cyp = hy - 120 * open - 6, rad = 78 * open, sway = hrot * 0.8;
     c.save(); c.translate(cxp, cyp); c.rotate(sway);
@@ -164,7 +183,7 @@ function jumpScene(c, t, name) {
     for (let i = 0; i < 7; i++) { const a0 = Math.PI + (i / 7) * Math.PI, a1 = Math.PI + ((i + 1) / 7) * Math.PI; c.fillStyle = cols[i]; c.beginPath(); c.moveTo(0, 0); c.ellipse(0, 0, rad, rad * 0.62, 0, a0, a1); c.closePath(); c.fill(); }
     c.restore();
   }
-  hero(c, hx, hy, 1.25, { rot: hrot, arms, legs, t: u, flail: v > 0 && v < v1, expr: v < 0 ? 'cool' : v < v1 ? 'yell' : 'grin' });
+  if (!(v < 0 && u >= 1.0)) drawHero();
   c.restore();
   /* fireworks in screen space, deterministic */
   const r = rng(11);
