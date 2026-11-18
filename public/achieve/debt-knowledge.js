@@ -21,7 +21,7 @@ The honest downsides, say these when relevant
 
 The journey
 - Eight stages: get started, qualify, your plan, enroll, first deposit, build your fund, settle, debt free.
-- Enrollment includes a plain-language agreement, separate consents, a typed signature, linking a bank and opening a dedicated account (sample trust company: Harbor Trust Services, sample bank: Granite Harbor Bank). The client controls the account.
+- Enrollment includes a plain-English agreement, separate consents, a typed signature, linking a bank and opening a dedicated account (sample trust company: Harbor Trust Services, sample bank: Granite Harbor Bank). The client controls the account.
 - The first-deposit celebration happens only after the debit clears.
 - Every call with a creditor is recorded, and calls, texts, emails and letters appear in the client's activity feed.
 - Graduation: a celebration, a gift box, and optional next steps in savings, credit rebuilding, investing and home readiness. Nothing is promised.

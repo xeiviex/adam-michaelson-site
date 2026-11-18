@@ -354,7 +354,7 @@ async function finishC(id, patch, turn) {
 
 /* ---------- stage 4: enroll ---------- */
 const EMETA = {
-  review: { q: 'Your agreement, in plain language', sub: 'Open any section to read the details.' },
+  review: { q: 'Your agreement, in plain English', sub: 'Open any section to read the details.' },
   consent: { q: 'A few things we need you to agree to', sub: 'Each one is its own choice.' },
   sign: { q: 'Sign your agreement', sub: 'Type your name and adopt it as your signature.' },
   account: { q: 'Open your dedicated account', sub: 'Your deposits go to an account in your name. You own it and you can see it any time.' },

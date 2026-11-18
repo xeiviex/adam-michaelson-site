@@ -26,7 +26,7 @@ export function reviewCard(p, onDone) {
   }
   const go = cont('Continue to sign', () => onDone({ review: true, viewed: seen.size }));
   const el = h('div', { class: 'card' },
-    h('div', { class: 'glance' }, h('div', { class: 'glance-t' }, 'Your agreement in plain language', h('em', null, 'Sample document')),
+    h('div', { class: 'glance' }, h('div', { class: 'glance-t' }, 'Your agreement in plain English', h('em', null, 'Sample document')),
       h('div', { class: 'rs-grid' }, stat('Debts enrolled', p.count + ' · ' + money(p.total_debt)), stat('Monthly deposit', money(p.deposit)), stat('Our fee', 'After each settlement'), stat('Cancel', 'Any time'))),
     h('div', { class: 'ag-list' }, acc.map((a) => a.row)),
     h('p', { class: 'help' }, 'Open any section to read the details. The full document is yours to download after you sign.'), go);

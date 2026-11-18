@@ -1,5 +1,5 @@
 /* Achieve debt relief prototype, stage 4: enrollment. Pure data and rules, no DOM.
-   The agreement is a plain-language sample built from the program-agreement doc: it is not legal text and every
+   The agreement is a plain-English sample built from the program-agreement doc: it is not legal text and every
    name, fee and bank below is fictional. The first deposit is celebrated in stage 5, after the debit clears. */
 import { money } from './firsttake/shared/flow.js';
 
