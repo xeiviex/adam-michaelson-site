@@ -35,7 +35,7 @@ export function raveCard(applicant, r, hooks, onDone) {
   const notes = F.NOTES.map((x) => h('div', { class: 'note' }, h('div', { class: 'note-av' }, x.who[0]), h('div', null, h('b', null, x.who), h('em', null, x.role), h('p', null, x.say(n)))));
   const go = cont('Next', () => onDone({ raved: true }));
   const el = h('div', { class: 'card party rave' },
-    h('div', { class: 'rave-h' }, h('span', { class: 'rave-dot' }), 'Your account, tonight'),
+    h('div', { class: 'rave-h' }, h('span', { class: 'rave-dot' }), 'Your account is celebrating'),
     h('div', { class: 'rave-zero' }, '$0', h('small', null, 'owed on every enrolled debt')),
     h('div', { class: 'qlab' }, 'Your milestones'), badges,
     h('div', { class: 'qlab' }, 'From your team'), h('div', { class: 'notes' }, notes),

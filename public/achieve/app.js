@@ -580,7 +580,7 @@ const completeSettle = (quiet) => stageDone('negotiate', { quiet, fx: 'shred', l
 /* ---------- stage 8: debt free ---------- */
 const FMETA = {
   graduate: { q: 'You made it', sub: 'Take a second. This is a big one.' },
-  rave: { q: 'Celebrate', sub: 'Your account, tonight.' },
+  rave: { q: 'Celebrate', sub: 'Your account is celebrating.' },
   movie: { q: 'We made you a movie', sub: 'Starring you. Press play.' },
   box: { q: 'Your graduation box', sub: 'A small thank you, shipped to your door.' },
   next: { q: 'What comes next', sub: 'Pick what interests you. Skip anything you like.' },
