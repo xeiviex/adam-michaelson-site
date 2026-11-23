@@ -48,8 +48,7 @@ const draw = {
     const row = (r, i, lane) => `<div class="gr" role="row"><div class="gl" role="rowheader"><i${lane.numbered ? '' : ' class="dot"'} aria-hidden="true">${lane.numbered ? i + 1 : ''}</i><b>${txt(r.t)}</b>${!lane.numbered && r.d ? `<small>${txt(r.d)}</small>` : ''}</div>`
       + `<div class="gt" role="cell" aria-label="${r.to - r.from > 1 ? `Months ${r.from} to ${r.to - 1}` : `Month ${r.from}`}"><span class="gb${lane.numbered ? ' fill' : ''}${r.ms ? ' ms' : ''}${r.gate ? ' gate' : ''}" style="grid-column:${r.from} / ${r.to}">${r.ms ? `<em>${esc(r.ms)}</em>` : ''}</span></div></div>`;
     return `<div class="ganttw">${b.title ? `<div class="tblh"><h3>${txt(b.title)}</h3>${b.details ? `<button type="button" class="btn sm" data-open="${esc(b.details)}" aria-haspopup="dialog">Details</button>` : ''}</div>` : ''}<div class="gantt" style="--m:${n}" role="table" aria-label="${esc(b.title || 'Plan')}, by month">`
-      + `<div class="gr hd" aria-hidden="true"><div class="gl"></div><div class="gt">${axis}</div></div>`
-      + b.lanes.map((lane) => `<div class="gr lane" role="row"><div class="gh" role="rowheader"><span>${txt(lane.name)}</span>${lane.note ? `<p>${txt(lane.note)}</p>` : ''}</div><div class="gt" aria-hidden="true"></div></div>` + lane.rows.map((r, i) => row(r, i, lane)).join('')).join('')
+      + b.lanes.map((lane) => `<div class="gr lane" role="row"><div class="gh" role="rowheader"><span>${txt(lane.name)}</span>${lane.note ? `<p>${txt(lane.note)}</p>` : ''}</div><div class="gt ax" aria-hidden="true">${axis}</div></div>` + lane.rows.map((r, i) => row(r, i, lane)).join('')).join('')
       + '</div></div>';
   },
   timeline: (b) => {

@@ -139,18 +139,18 @@ ul.lnk a { font-weight: 600; }
 .ganttw { display: flex; flex-direction: column; gap: .3em; font-size: .85em; }
 .gantt { display: flex; flex-direction: column; border-top: 3px solid var(--ink); }
 .gr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.2em; align-items: center; border-bottom: 1px solid var(--line); padding: .08em 0; }
-.gr.hd .gt { background: none; }
-.gr.hd .gt span { font: 700 .68em var(--head); letter-spacing: .1em; color: var(--muted); text-align: center; }
+.gt.ax { align-items: start; }
+.gt.ax span { font: 700 .68em var(--head); letter-spacing: .1em; color: var(--muted); text-align: center; padding-top: .25em; }
 .gr.lane { padding: .4em 0 .2em; border-bottom: 0; align-items: start; }
 .gr.lane .gh { display: flex; flex-direction: column; gap: .15em; min-width: 0; }
 .gr.lane p { font-size: .86em; line-height: 1.35; color: var(--body); }
-.gr.lane span { font: 700 .74em var(--head); letter-spacing: .16em; text-transform: uppercase; color: var(--acc-hi); }
+.gr.lane .gh span { font: 700 .74em var(--head); letter-spacing: .16em; text-transform: uppercase; color: var(--acc-hi); }
 .gl { display: flex; align-items: baseline; gap: .6em; min-width: 0; }
 .gl i { flex: none; width: 1.4em; font: 700 .85em var(--head); font-style: normal; color: var(--acc-hi); }
 .gl i.dot::before { content: ''; display: block; width: .5em; height: .5em; background: var(--acc-hi); transform: rotate(45deg) translateY(-.15em); }
 .gl b { flex: none; color: var(--ink); font-weight: 600; }
 .gl small { color: var(--body); font-size: .84em; min-width: 0; }
-.gt { display: grid; grid-template-columns: repeat(var(--m), minmax(0, 1fr)); align-self: stretch; min-height: 1.35em; align-items: center; background: repeating-linear-gradient(90deg, transparent 0, transparent calc(100% / var(--m) - 1px), var(--line) calc(100% / var(--m) - 1px), var(--line) calc(100% / var(--m))); }
+.gt { display: grid; grid-template-columns: repeat(var(--m), minmax(0, 1fr)); align-self: stretch; min-height: 1.35em; align-items: center; border-left: 1px solid var(--line); background: repeating-linear-gradient(90deg, transparent 0, transparent calc(100% / var(--m) - 1px), var(--line) calc(100% / var(--m) - 1px), var(--line) calc(100% / var(--m))); }
 .gt .gb { height: .75em; border: 2px solid var(--acc); position: relative; margin: 0 2px; grid-row: 1; }
 .gt .gb.fill { background: var(--good); border-color: var(--good); }
 .gt .gb.ms::after { content: ''; position: absolute; right: -.45em; top: 50%; width: .8em; height: .8em; background: var(--ink); transform: translateY(-50%) rotate(45deg); }
@@ -224,7 +224,7 @@ dialog.dlg::backdrop { background: rgba(2,4,6,.72); }
   .qa > div { grid-template-columns: 2.6em minmax(0, 1fr); gap: .2em .6em; }
   .qa dd { grid-column: 2; }
   .gr { grid-template-columns: 1fr; gap: .3em; padding: .6em 0; }
-  .gr.hd .gl, .gr.lane .gt { display: none; }
+  .gr.lane .gt { min-height: 1.4em; }
   .gl { flex-wrap: wrap; }
   .gt { min-height: 1.6em; }
   .trk { grid-template-columns: 1fr; gap: .4em; }
