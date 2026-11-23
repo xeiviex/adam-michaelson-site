@@ -214,7 +214,7 @@ export const slides = [
     blocks: [
       { type: 'row', blocks: [
         { type: 'group', title: 'Solution fit', plain: true, items: [
-          'When people come to us, we have a highly tuned process for identifying the exact problem(s) and the best possible solution(s), which may be debt relief, a consolidation loan, credit counseling, bankruptcy, or something else.',
+          'When people come to us, we have a highly tuned process for identifying the exact problem(s) and the best possible solution(s), which may include debt relief, a consolidation loan, credit counseling, bankruptcy, or something else.',
           'We leverage partnerships where they need something we don’t natively provide.',
           'But where they advance with us, we have high certainty and can demonstrate through any audit that we gathered the right information and made a sound recommendation.',
           'Furthermore, we actively block people from going down the path of our products (or any product) if they don’t match.',
