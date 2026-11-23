@@ -64,6 +64,7 @@ export const slides = [
 
   {
     id: 'dex-vision', name: 'DEX product vision', q: [7], title: 'DEX product vision',
+    sub: 'This is a brainstormed first take. Each additional executive stakeholder interview will help to calibrate this. Research post-start will then be the next calibration.',
     blocks: [
       { type: 'row', blocks: [
         { type: 'group', title: 'Ideal outcome', items: ['The vast majority (90%+) of customers require no human touch.'] },
@@ -109,6 +110,7 @@ export const slides = [
 
   {
     id: 'dex-strategy', name: 'DEX product strategy', q: [8], title: 'DEX product strategy',
+    sub: 'This is a brainstormed first take. Each additional executive stakeholder interview will help to calibrate this. Research post-start will then be the next calibration.',
     blocks: [
       { type: 'matrix', cols: [
         { name: 'Solution',

@@ -46,13 +46,13 @@ strong { color: var(--ink); font-weight: 600; }
 
 /* slide frame: type scales with the height of the screen so a slide fits a laptop or a projector */
 .slide { flex: 0 0 100%; min-width: 0; height: 100%; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding-inline: max(var(--pad), env(safe-area-inset-left)) max(var(--pad), env(safe-area-inset-right)); }
-.sb { min-height: 100%; max-width: 1360px; margin-inline: auto; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: clamp(12px, 2.6vh, 32px); padding-block: clamp(14px, 3vh, 36px) clamp(8px, 1.6vh, 18px); font-size: clamp(.8rem, calc(.28rem + 1.25vh), 1.1rem); }
+.sb { min-height: 100%; max-width: 1360px; margin-inline: auto; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: clamp(10px, 2vh, 28px); padding-block: clamp(12px, 2.4vh, 32px) clamp(8px, 1.6vh, 18px); font-size: clamp(.8rem, calc(.28rem + 1.25vh), 1.1rem); }
 .kicker { font: 700 .82em var(--head); letter-spacing: .12em; text-transform: uppercase; color: var(--acc-hi); }
 h2 { font: 700 3em/1.04 var(--head); color: var(--ink); letter-spacing: -.022em; text-wrap: balance; margin-block: .15em .2em; }
 h2:focus { outline: none; }
-.msg { max-width: 86ch; font-size: 1.2em; line-height: 1.4; text-wrap: pretty; }
+.msg { max-width: 92ch; font-size: 1.12em; line-height: 1.38; text-wrap: pretty; }
 h3 { font: 700 .78em var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--acc-hi); }
-.vis { min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; gap: 1.2em; }
+.vis { min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; gap: .95em; }
 .fine { font-size: .82em; color: var(--muted); max-width: 100ch; }
 .rail { display: flex; justify-content: flex-end; min-height: 40px; }
 .rail:empty { display: none; }
@@ -91,7 +91,7 @@ ul.lnk a { font-weight: 600; }
 .tblh { display: flex; align-items: center; gap: 1em; }
 .btn.sm { min-height: 0; padding: .3em .8em; font-size: .8em; }
 .tbl { width: 100%; border-collapse: collapse; font-size: .95em; }
-.tbl th, .tbl td { text-align: left; vertical-align: top; padding: .55em 1em .55em 0; border-top: 1px solid var(--line); }
+.tbl th, .tbl td { text-align: left; vertical-align: top; padding: .36em 1em .36em 0; border-top: 1px solid var(--line); }
 .tbl thead th { font: 700 .78em var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-top: 0; }
 .tbl tbody th { color: var(--ink); font-weight: 600; min-width: 7.5em; max-width: 26em; }
 
@@ -100,7 +100,7 @@ ul.lnk a { font-weight: 600; }
 .mx-col { display: grid; grid-template-rows: subgrid; grid-row: 1 / span calc(var(--r, 4) + 1); border-left: 1px solid var(--line); min-width: 0; }
 .mx-col:first-child { border-left: 0; }
 .mx-h { padding: .55em .9em; font: 700 .9em var(--head); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); border-bottom: 2px solid var(--acc); }
-.mx-rl, .mx-c { padding: .5em .9em; line-height: 1.4; border-top: 1px solid var(--line); font-size: .92em; }
+.mx-rl, .mx-c { padding: .5em .9em; line-height: 1.4; border-top: 1px solid var(--line); font-size: .88em; }
 .mx-rl { font: 700 .74em var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .mx-col > :nth-child(2) { border-top: 0; }
 .mx-l { display: none; }
@@ -112,7 +112,7 @@ ul.lnk a { font-weight: 600; }
 /* DEX flow */
 .flow { display: flex; flex-direction: column; gap: .6em; }
 .flow ol { list-style: none; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding-top: 1.5em; counter-reset: f; }
-.flow li { position: relative; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--muted); border-radius: 6px; padding: .65em .7em; display: flex; flex-direction: column; gap: .2em; font-size: .86em; min-width: 0; }
+.flow li { position: relative; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--muted); border-radius: 6px; padding: .5em .7em; display: flex; flex-direction: column; gap: .2em; font-size: .86em; min-width: 0; }
 .flow li b { color: var(--ink); font-weight: 600; }
 .flow li span { color: var(--muted); }
 .flow .fz-onboard { border-top-color: var(--acc); }
