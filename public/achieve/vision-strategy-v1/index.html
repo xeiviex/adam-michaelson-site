@@ -3,35 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Achieve: vision and strategy (v1 draft) | Adam Michaelson</title>
-<meta name="description" content="A draft vision, strategy and first-year plan for debt relief and DEX at Achieve. Prepared by Adam Michaelson for discussion.">
+<title>Achieve DEX: direction and 2027 plan (v1 draft) | Adam Michaelson</title>
+<meta name="description" content="A rough draft of the DEX product direction and a plan for 2027 at Achieve. Prepared by Adam Michaelson for discussion.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#000000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:wght@400;500;600&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/site-bar.css?v=2">
-<link rel="stylesheet" href="/achieve/vision-strategy-v1/deck.css?v=1">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/achieve/vision-strategy-v1/deck.css?v=2">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
-<a class="skip" href="#main">Skip to the presentation</a>
-<header class="sbar"><div class="in">
+<a class="skip" href="#viewport">Skip to the slides</a>
+<header class="top">
   <a class="nm" href="/">Adam Michaelson</a>
-  <div class="sb-r">
-    <span class="count" id="count" aria-hidden="true"></span>
-    <nav class="trail" aria-label="Breadcrumb"><a href="/achieve/">Achieve</a><a href="/achieve/vision-strategy-v1/" aria-current="page">Vision and strategy</a></nav>
-  </div>
-</div></header>
-<main id="main" class="wrap">
-  <noscript><p class="nojs">This presentation needs JavaScript to draw its content.</p></noscript>
+  <h1 class="ctx" id="ctx"></h1>
+</header>
+<main id="viewport" class="viewport" aria-label="Achieve DEX slides">
+  <div class="track" id="track"></div>
+  <noscript><div class="nojs"><p>This presentation needs JavaScript.</p></div></noscript>
 </main>
-<nav class="pager" aria-label="Section navigation">
-  <button type="button" id="prev" aria-label="Previous section"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 12.5 10 7l5 5.5"/></svg></button>
-  <button type="button" id="next" aria-label="Next section"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 7.5 10 13l5-5.5"/></svg></button>
+<nav class="nav" aria-label="Slide navigation">
+  <p class="pos"><b id="status" aria-label="Current slide"></b><span id="where"></span></p>
+  <ol class="dots" id="dots"></ol>
+  <div class="pn">
+    <button type="button" id="prev" class="nb" aria-label="Previous slide"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
+    <button type="button" id="next" class="nb" aria-label="Next slide"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
+  </div>
 </nav>
-<script type="module" src="/achieve/vision-strategy-v1/app.js?v=1"></script>
+<dialog class="dlg" id="sheet" aria-labelledby="sheetTitle">
+  <div class="dh"><h2 id="sheetTitle"></h2><button type="button" class="btn" id="sheetClose">Close</button></div>
+  <div class="db" id="sheetBody"></div>
+</dialog>
+<div id="live" class="sr" role="status" aria-live="polite"></div>
+<script type="module" src="/achieve/vision-strategy-v1/app.js?v=2"></script>
 </body>
 </html>

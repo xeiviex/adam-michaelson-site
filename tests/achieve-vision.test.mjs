@@ -1,28 +1,35 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { sources, sections, milestones } from '../public/achieve/vision-strategy-v1/content.js';
+import { meta, questions, slides, milestones } from '../public/achieve/vision-strategy-v1/content.js';
 
-const walk = (blocks, out = []) => { for (const b of blocks) { out.push(b); if (b.blocks) walk(b.blocks, out); } return out; };
-const all = sections.flatMap((s) => walk(s.blocks));
+const walk = (blocks, out = []) => { for (const b of blocks || []) { out.push(b); if (b.blocks) walk(b.blocks, out); } return out; };
+const all = slides.flatMap((s) => [...walk(s.blocks), ...walk(s.details)]);
 
-test('the presentation answers all 11 stakeholder questions', () => {
-  const covered = new Set(sections.flatMap((s) => s.q));
-  for (let q = 1; q <= 11; q++) assert.ok(covered.has(q), `question ${q} has no section`);
-  for (const s of sections) if (s.q.length && s.id !== 'better-off') assert.ok(s.ask, `${s.id} does not show the question it answers`);
-  assert.equal(new Set(sections.map((s) => s.id)).size, sections.length, 'section ids are unique');
+test('there are 15 interview questions, with the four SWOT questions after question 2', () => {
+  assert.equal(Object.keys(questions).length, 15);
+  assert.match(questions[3], /strengths/); assert.match(questions[4], /weaknesses/);
+  assert.match(questions[5], /opportunities/); assert.match(questions[6], /threats/);
 });
 
-test('every content block says whose statement it is', () => {
-  const needs = new Set(['group', 'matrix', 'table', 'flow', 'timeline', 'asks']);
-  for (const b of all) if (needs.has(b.type)) assert.ok(sources[b.src], `${b.type} "${b.title || ''}" has no valid source`);
+test('the deck skips the company questions (1 to 6) and answers 7 to 15', () => {
+  const covered = new Set(slides.flatMap((s) => s.q));
+  for (let q = 1; q <= 6; q++) assert.ok(!covered.has(q), `question ${q} should be skipped`);
+  for (let q = 7; q <= 15; q++) assert.ok(covered.has(q), `question ${q} has no slide`);
+  assert.equal(new Set(slides.map((s) => s.id)).size, slides.length, 'slide ids are unique');
+  assert.match(meta.intro, /1 to 6/);
 });
 
-test('published statements carry source links and nothing else claims to be published', () => {
-  const pub = all.filter((b) => b.src === 'published');
-  assert.equal(pub.length, 1);
-  assert.ok(pub[0].links.length >= 4);
-  for (const l of pub[0].links) assert.match(l.url, /^https:\/\/www\.achieve\.com\/about/);
+test('research comes straight after the DEX strategy, and the plan says research will calibrate it', () => {
+  const ids = slides.map((s) => s.id);
+  assert.ok(ids.indexOf('research') > ids.indexOf('dex-strategy') && ids.indexOf('research') < ids.indexOf('better-off'));
+  const plan = slides.find((s) => s.id === 'milestones');
+  assert.match(plan.sub, /hypothesis-based/); assert.match(plan.sub, /contextual research/);
+});
+
+test('no source labels are left on the slides', () => {
+  assert.ok(!all.some((b) => b.src));
+  assert.doesNotMatch(readFileSync(new URL('../public/achieve/vision-strategy-v1/content.js', import.meta.url), 'utf8'), /My proposal|My reading|Achieve published/);
 });
 
 test('the original milestone targets are preserved', () => {
@@ -30,13 +37,11 @@ test('the original milestone targets are preserved', () => {
     [[30, null, null], [60, null, null], [90, 1, null], [180, 10, 10], [270, 50, 25], [365, 100, 50]]);
 });
 
-test('both strategy matrices have the four pillars and four rows', () => {
+test('the DEX strategy matrix has the four pillars and four rows', () => {
   const mx = all.filter((b) => b.type === 'matrix');
-  assert.equal(mx.length, 2);
-  for (const m of mx) {
-    assert.deepEqual(m.cols.map((c) => c.name), ['Solution', 'Quality', 'Adoption', 'Economics']);
-    for (const c of m.cols) for (const k of ['problem', 'policy', 'action', 'kpis']) assert.ok(c[k] && c[k].length, `${c.name} is missing ${k}`);
-  }
+  assert.equal(mx.length, 1);
+  assert.deepEqual(mx[0].cols.map((c) => c.name), ['Solution', 'Quality', 'Adoption', 'Economics']);
+  for (const c of mx[0].cols) for (const k of ['problem', 'policy', 'action', 'kpis']) assert.ok(c[k] && c[k].length, `${c.name} is missing ${k}`);
 });
 
 test('the page stays out of search results', () => {
