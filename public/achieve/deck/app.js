@@ -6,7 +6,8 @@ export function mount({ meta, questions, slides: SLIDES, milestones = [] }) {
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const txt = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 const $ = (s) => document.querySelector(s);
-const qLabel = (q) => (q.length === 0 ? '' : q.length === 1 ? `Question ${q[0]}` : `Questions ${q[0]} to ${q[q.length - 1]}`);
+const run = (q) => q.every((n, i) => i === 0 || n === q[i - 1] + 1);
+const qLabel = (q) => (q.length === 0 ? '' : q.length === 1 ? `Question ${q[0]}` : run(q) ? `Questions ${q[0]} to ${q[q.length - 1]}` : `Questions ${q.slice(0, -1).join(', ')} and ${q[q.length - 1]}`);
 
 function items(list) {
   return '<ul class="pts">' + list.map((it) => (typeof it === 'string'
@@ -41,6 +42,16 @@ const draw = {
     + b.tracks.map((t, i) => `<div class="trk trk-${i}"><div class="trk-n"><b>${txt(t.name)}</b><span>${txt(t.note)}</span></div><ol>${t.steps.map((s) => `<li>${txt(s)}</li>`).join('')}</ol></div>`
       + (i === 0 ? `<p class="trk-link"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4M5.5 8.5 10 4l4.5 4.5"/></svg>${txt(b.link)}</p>` : '')).join('')
     + '</figure>',
+  gantt: (b) => {
+    const n = b.months;
+    const axis = Array.from({ length: n }, (_, i) => `<span>M${i + 1}</span>`).join('');
+    const row = (r, i, lane) => `<div class="gr" role="row"><div class="gl" role="rowheader"><i${lane.numbered ? '' : ' class="dot"'} aria-hidden="true">${lane.numbered ? i + 1 : ''}</i><b>${txt(r.t)}</b>${!lane.numbered && r.d ? `<small>${txt(r.d)}</small>` : ''}</div>`
+      + `<div class="gt" role="cell" aria-label="${r.to - r.from > 1 ? `Months ${r.from} to ${r.to - 1}` : `Month ${r.from}`}"><span class="gb${lane.numbered ? ' fill' : ''}${r.ms ? ' ms' : ''}${r.gate ? ' gate' : ''}" style="grid-column:${r.from} / ${r.to}">${r.ms ? `<em>${esc(r.ms)}</em>` : ''}</span></div></div>`;
+    return `<div class="ganttw">${b.title ? `<div class="tblh"><h3>${txt(b.title)}</h3>${b.details ? `<button type="button" class="btn sm" data-open="${esc(b.details)}" aria-haspopup="dialog">Details</button>` : ''}</div>` : ''}<div class="gantt" style="--m:${n}" role="table" aria-label="${esc(b.title || 'Plan')}, by month">`
+      + `<div class="gr hd" aria-hidden="true"><div class="gl"></div><div class="gt">${axis}</div></div>`
+      + b.lanes.map((lane) => `<div class="gr lane" role="row"><span role="rowheader">${txt(lane.name)}</span></div>` + lane.rows.map((r, i) => row(r, i, lane)).join('')).join('')
+      + '</div></div>';
+  },
   timeline: (b) => {
     const bar = (v, cls, label) => (v == null
       ? `<div class="tm none"><span>${label}</span><i></i><em>Not yet</em></div>`
@@ -50,6 +61,7 @@ const draw = {
       + '</ol></div>';
   },
   links: (b) => `<div class="tblw">${b.title ? `<h3>${txt(b.title)}</h3>` : ''}<ul class="lnk">${b.items.map((l) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a></li>`).join('')}</ul></div>`,
+  qa: (b) => `<dl class="qa">${b.items.map((it, i) => `<div${i && b.items[i - 1].q === it.q ? ' class="same"' : ''}><span class="qn">${i && b.items[i - 1].q === it.q ? '' : `Q${it.q}`}</span><dt>${txt(it.t)}</dt><dd>${txt(it.d)}</dd></div>`).join('')}</dl>`,
   asks: (b) => `<ol class="asks">${b.items.map((it) => `<li><b>${txt(it.t)}</b><span>${txt(it.d)}</span></li>`).join('')}</ol>`,
 };
 function block(b) { return draw[b.type] ? draw[b.type](b) : ''; }

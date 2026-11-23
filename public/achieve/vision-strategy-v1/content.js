@@ -1,6 +1,6 @@
 /* Content for /achieve/vision-strategy-v1/. Edit this file to revise the deck; app.js only draws it.
    Each slide has a title, one main drawing (blocks) and optional details that open in a sheet.
-   Text supports **bold** only. Block types: row, group, matrix, flow, tracks, timeline, table, callout, asks.
+   Text supports **bold** only. Block types: row, group, matrix, flow, gantt, qa, table, callout.
    The company vision and strategy answers (questions 1 to 6) are skipped for now; the earlier draft of
    the first two is in git history (commit 0b35f69). */
 
@@ -40,6 +40,23 @@ export const milestones = [
   { day: 180, text: '10% traffic; showing at least 10% completion rates without humans.', routed: 10, unassisted: 10 },
   { day: 270, text: '50% traffic; showing at least 25% completion rates without humans.', routed: 50, unassisted: 25 },
   { day: 365, text: '100% traffic; showing at least 50% completion rates without humans.', routed: 100, unassisted: 50 },
+];
+
+/* Which months each milestone's bar covers on the 12-month plan (from, to), 1-based and end-exclusive. */
+const SPAN = { 30: [1, 2], 60: [2, 3], 90: [3, 4], 180: [4, 7], 270: [7, 10], 365: [10, 13] };
+
+/* The research track: the same steps and timing as the plan on /lendingtree1/, with the people named for Achieve. */
+const RESEARCH = [
+  { t: 'Stakeholder interviews', d: 'C-level, VP and director leaders, one on one. Synthesized into a leadership vision weighted by role, CEO heaviest.', when: 'Month 1', from: 1, to: 2 },
+  { t: 'Market research', d: 'Primary and secondary: opportunities, threats, trends and analogs.', when: 'Months 1–2', from: 1, to: 3 },
+  { t: 'Internal reflection', d: 'Sales, support, transactions, partnerships, revenue, costs, architecture, processes and people, read for strengths and weaknesses.', when: 'Months 1–2', from: 1, to: 3 },
+  { t: 'Provisional vision and strategy', d: 'An interim direction, roadmap and commitments to carry us to month 12.', when: 'Month 3', from: 3, to: 4, ms: 'Day 90' },
+  { t: 'Contextual inquiry', d: 'On-site with customers and the staff who serve them. Paid sessions, surveys and usability studies, with Achieve leaders in the room.', when: 'Months 2–4', from: 2, to: 5 },
+  { t: 'Synthesis', d: 'Leaders and I triangulate the findings into a formal analysis and an updated product direction.', when: 'Month 5', from: 5, to: 6 },
+  { t: 'Concept design', d: 'A cross-functional team designs solutions to the findings: prototypes, decks and an updated vision and strategy.', when: 'Month 6', from: 6, to: 7 },
+  { t: 'Validation', d: 'One-on-one reactions from internal stakeholders and target personas. Calibrate and refine.', when: 'Month 7', from: 7, to: 8 },
+  { t: 'Go-to-market plan', d: 'With marketing leadership: how we release, drive and measure the new direction, by milestone.', when: 'Month 8', from: 8, to: 9 },
+  { t: 'Phase gate', d: 'The C-team formally commits. No surprises: each member has shaped the plan along the way.', when: 'Month 9', from: 9, to: 10, ms: 'Commit', gate: true },
 ];
 
 export const slides = [
@@ -123,31 +140,6 @@ export const slides = [
   },
 
   {
-    id: 'research', name: 'Research in parallel', q: [], title: 'Research in parallel',
-    sub: 'In addition to the immediate start of automating DEX, we will engage in contextual research.',
-    blocks: [
-      { type: 'tracks', tracks: [
-        { name: 'Build', note: 'Starts on day one, from hypotheses and the executive interviews', steps: ['Define the MVP', 'Test and build', 'Live at 1%', 'Expand on evidence'] },
-        { name: 'Learn', note: 'Contextual research with customers and staff, in parallel', steps: ['Go to the field', 'Watch, then ask', 'Test assumptions', 'Synthesize'] },
-      ], link: 'What the research finds recalibrates the plan' },
-      { type: 'row', blocks: [
-        { type: 'group', title: 'Go to the field', items: ['Sit with customers and with the staff who serve them, where the work actually happens.'] },
-        { type: 'group', title: 'Watch, then ask', items: ['See how people really make decisions about debt before asking them to explain it.'] },
-        { type: 'group', title: 'Test assumptions', items: ['Bring the DEX hypotheses and try to prove them wrong.'] },
-        { type: 'group', title: 'Invest where evidence points', items: ['Turn what we saw into patterns, then change the roadmap to match.'] },
-      ] },
-    ],
-    details: [
-      { type: 'group', title: 'To be filled in', items: [
-        { t: 'Who we visit', d: 'Placeholder. For example: people considering debt relief, new enrollees, people who left early, graduates, and the staff who serve each of them.' },
-        { t: 'How many and how often', d: 'Placeholder. Number of sessions per round and the cadence of rounds.' },
-        { t: 'How sessions run', d: 'Placeholder. Where we observe, what we record, and who from the team attends.' },
-        { t: 'How findings are shared', d: 'Placeholder. The synthesis format, and when each round feeds the roadmap.' },
-      ] },
-    ],
-  },
-
-  {
     id: 'better-off', name: 'Are people better off?', q: [], title: 'Are people better off?',
     sub: 'After fees and setbacks, including people who leave early.',
     blocks: [
@@ -172,12 +164,31 @@ export const slides = [
   },
 
   {
-    id: 'year', name: 'A great year', q: [9], title: 'What makes 2027 a great year?',
+    id: 'milestones', name: 'Milestones and research', q: [12, 13, 14], title: 'What do I expect by each milestone?',
+    sub: 'The action in this plan is hypothesis-based and influenced by the executive stakeholder interviews. It will eventually be calibrated by the contextual research going on in parallel.',
     blocks: [
-      { type: 'row', blocks: [
-        { type: 'group', title: 'By end of 2027', items: ['50% of completions required no human intervention.', 'Profitable DEX P&L.'] },
-        { type: 'group', title: 'Biggest opportunity', items: ['Get V1 into place.'] },
-        { type: 'group', title: 'Biggest constraint', items: ['Time required for iterations (since completion can take months).'] },
+      { type: 'gantt', title: 'Two tracks, one plan', details: 'milestones', months: 12, lanes: [
+        { name: 'Automating DEX', rows: milestones.map((m) => ({ t: `Day ${m.day}`, d: m.text, from: SPAN[m.day][0], to: SPAN[m.day][1], ms: `Day ${m.day}` })) },
+        { name: 'Contextual research', numbered: true, rows: RESEARCH },
+      ] },
+    ],
+    inlineDetails: true,
+    details: [
+      { type: 'table', title: 'Contextual research, step by step', head: ['Step', 'What happens', 'When'], rows: RESEARCH.map((r) => [r.t, r.d, r.when]) },
+    ],
+  },
+
+  {
+    id: 'other', name: 'Other questions', q: [9, 10, 11, 15], title: 'Other questions',
+    blocks: [
+      { type: 'qa', items: [
+        { q: 9, t: 'By end of 2027', d: '50% of completions required no human intervention; profitable DEX P&L.' },
+        { q: 9, t: 'Biggest opportunity', d: 'Get V1 into place.' },
+        { q: 9, t: 'Biggest constraint', d: 'Time required for iterations (since completion can take months).' },
+        { q: 10, t: 'Where Product leads', d: 'Product owns all of the 2027 outcomes, but will need to coordinate with other teams.' },
+        { q: 11, t: 'What comes first', d: 'Get MVP (full funnel) online with 1% traffic.' },
+        { q: 15, t: 'Dependencies', d: 'Budget; allowance for turning on fully-automated (stakeholder alignment).' },
+        { q: 15, t: 'Independence', d: 'I’ll be independent on everything, but I must get alignment/approval from all C-level, execs, and department heads.' },
       ] },
     ],
     details: [
@@ -188,15 +199,6 @@ export const slides = [
       ] },
       { type: 'callout', tag: 'Needs definition', text: '**A year from now and the end of 2027.** The end of 2027 matches day 365 only with a start on January 1. Each month later moves day 365 a month into 2028. I would commit to day counts.' },
       { type: 'callout', tag: 'Needs definition', text: '**Profitable.** Revenue arrives when debts settle, so cohorts enrolled in 2027 will not have paid back in cash by December. I propose: projected contribution per DEX enrollment is positive and better than the staff-led path, using Achieve’s own cohort curves, with realized cash reported beside it.' },
-    ],
-  },
-
-  {
-    id: 'product-leads', name: 'Where Product leads', q: [10], title: 'Where should Product lead?',
-    blocks: [
-      { type: 'group', items: ['Product owns all of the 2027 outcomes, but will need to coordinate with other teams.'] },
-    ],
-    details: [
       { type: 'row', blocks: [
         { type: 'group', title: 'Product leads', items: ['The outcome definitions and targets.', 'The roadmap and what comes first.', 'Experiment design and the reading of results.', 'The recommendation to expand, hold or pause.'] },
         { type: 'group', title: 'Another team leads, Product supports', wide: true, items: [
@@ -210,40 +212,11 @@ export const slides = [
         ] },
       ] },
       { type: 'callout', tag: 'Needs definition', text: '**Owning the DEX P&L.** Product can be accountable for the result, but it directly controls only the roadmap and the experiments. Engineering capacity, marketing spend, staffing and vendor contracts sit elsewhere. I propose Product is accountable for DEX contribution margin, with a named budget and agreed capacity from each team.' },
-    ],
-  },
-
-  {
-    id: 'first', name: 'What comes first', q: [11], title: 'What comes first?',
-    blocks: [
-      { type: 'group', items: ['Get MVP (full funnel) online with 1% traffic.'] },
-    ],
-    details: [
       { type: 'row', blocks: [
         { type: 'group', title: 'In the MVP', items: ['Assessment and qualification.', 'Plan and honest expectations.', 'Agreement and consents.', 'Bank link and first deposit.', 'A handoff to staff at every step.', 'Measurement with a control group.', 'One segment and one channel.'] },
         { type: 'group', title: 'Can wait', items: ['Retention features beyond the first deposit.', 'Messaging, partner and embedded channels.', 'Edge cases in eligibility.', 'Rewards and gamification.', 'Replacing bought components with in-house builds.'] },
         { type: 'group', title: 'Could slow down to free capacity', items: ['Incremental tuning of the staff-led funnel.', 'New channel launches.', 'New post-graduation product work.', 'These are guesses. Which work would you actually slow down?'] },
       ] },
-    ],
-  },
-
-  {
-    id: 'milestones', name: 'Milestones', q: [12, 13, 14], title: 'What do I expect by each milestone?',
-    sub: 'The action in this plan is hypothesis-based and influenced by the executive stakeholder interviews. It will eventually be calibrated by the contextual research going on in parallel.',
-    blocks: [
-      { type: 'timeline', routedLabel: 'Traffic', unassistedLabel: 'Completion rate without humans' },
-    ],
-  },
-
-  {
-    id: 'decisions', name: 'Decisions and dependencies', q: [15], title: 'Decisions and dependencies',
-    blocks: [
-      { type: 'row', blocks: [
-        { type: 'group', title: 'Dependencies', items: ['Budget.', 'Allowance for turning on fully-automated (stakeholder alignment).'] },
-        { type: 'group', title: 'Independence', items: ['I’ll be independent on everything, but I must get alignment/approval from all C-level, execs, and department heads.'] },
-      ] },
-    ],
-    details: [
       { type: 'row', blocks: [
         { type: 'group', title: 'I decide', items: ['The roadmap and priorities within the mandate.', 'Experiments within the approved traffic share.', 'Experience and wording within approved disclosures.', 'Vendor choices within budget.', 'Pausing or rolling back DEX, at any time.'] },
         { type: 'group', title: 'I consult', items: ['Engineering on architecture and capacity.', 'Operations on handoffs and staffing.', 'Marketing on traffic and promises.', 'Data and Finance on measurement and the model.', 'Risk and Compliance on eligibility, disclosures and consent.'] },
@@ -253,25 +226,6 @@ export const slides = [
           { t: 'Each traffic expansion', d: 'A named leadership group, against gates agreed in advance.' },
           { t: 'Eligibility changes', d: 'Risk and Compliance.' },
         ] },
-      ] },
-    ],
-  },
-
-  {
-    id: 'react', name: 'What to react to', q: [], title: 'What I want you to react to',
-    sub: 'Assumptions and decisions.',
-    blocks: [
-      { type: 'asks', items: [
-        { t: 'Completion', d: 'Is a funded enrollment (signed, first deposit cleared) the right place to count a DEX completion?' },
-        { t: 'Intervention', d: 'Should help the customer asked for count as intervention? Is any human step legally required?' },
-        { t: 'Better off', d: 'Is “better off than the day they enrolled” the right comparison, or should it be against the alternatives?' },
-        { t: 'The targets', d: 'Are 10%, 25% and 50% in year one, and 90% long term, ambitious, realistic, or neither?' },
-        { t: 'Profitable', d: 'How does Achieve define a profitable product line when revenue arrives at settlement?' },
-        { t: 'The calendar', d: 'Is the year-one commitment a date, such as the end of 2027, or a day count from my start?' },
-        { t: 'P&L ownership', d: 'What budget and capacity would come with accountability for the DEX P&L?' },
-        { t: 'Approval', d: 'Who approves the launch and each traffic expansion?' },
-        { t: 'Capacity', d: 'What would you slow down to make room for the MVP?' },
-        { t: 'Where DEX ends', d: 'How far into retention should DEX reach: day 90, first settlement, or graduation?' },
       ] },
     ],
   },

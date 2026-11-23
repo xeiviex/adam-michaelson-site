@@ -21,11 +21,14 @@ test('the deck skips the company questions (1 to 6) and answers 7 to 15', () => 
   assert.match(meta.intro, /1 to 6/);
 });
 
-test('research comes straight after the DEX strategy, and the plan says research will calibrate it', () => {
-  const ids = slides.map((s) => s.id);
-  assert.ok(ids.indexOf('research') > ids.indexOf('dex-strategy') && ids.indexOf('research') < ids.indexOf('better-off'));
+test('the milestones and the research run as two tracks on one plan, and research calibrates it', () => {
+  assert.ok(!slides.some((s) => s.id === 'research'), 'research is combined into the milestones slide');
   const plan = slides.find((s) => s.id === 'milestones');
   assert.match(plan.sub, /hypothesis-based/); assert.match(plan.sub, /contextual research/);
+  const g = plan.blocks.find((b) => b.type === 'gantt');
+  assert.deepEqual(g.lanes.map((l) => l.name), ['Automating DEX', 'Contextual research']);
+  assert.deepEqual(g.lanes[0].rows.map((r) => r.t), ['Day 30', 'Day 60', 'Day 90', 'Day 180', 'Day 270', 'Day 365']);
+  for (const l of g.lanes) for (const r of l.rows) assert.ok(r.from >= 1 && r.to <= g.months + 1 && r.to > r.from, `${r.t} is on the axis`);
 });
 
 test('no source labels are left on the slides', () => {
