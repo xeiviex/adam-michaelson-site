@@ -66,7 +66,7 @@ function cover() {
 
 const main = document.getElementById('main');
 main.innerHTML = cover() + sections.map((s) => `<section class="sec" id="${s.id}" data-name="${esc(s.title)}">
-  <header class="sh"><p class="eyebrow">${esc(qLabel(s.q))}</p><h2>${txt(s.title)}</h2><p class="lead">${txt(s.lead)}</p></header>
+  <header class="sh"><p class="eyebrow">${esc(qLabel(s.q))}</p><h2>${txt(s.title)}</h2>${s.ask ? `<p class="ask"><span>I asked</span>${txt(s.ask)}</p>` : ''}<p class="lead">${txt(s.lead)}</p></header>
   ${s.blocks.map(block).join('')}
 </section>`).join('');
 

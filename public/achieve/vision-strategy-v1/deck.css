@@ -36,6 +36,8 @@ h2 { font-size: clamp(1.9rem, 4vw, 3rem); }
 h3 { font-family: var(--sans); font-size: 1rem; font-weight: 600; color: var(--ink); }
 .sh { display: flex; flex-direction: column; gap: 10px; }
 .lead { font-size: 1.12rem; max-width: 70ch; }
+.ask { font-family: var(--serif); font-style: italic; font-size: 1.08rem; color: var(--muted); max-width: 82ch; }
+.ask span { font-family: var(--label); font-style: normal; font-size: .66rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-right: 10px; }
 strong { color: var(--ink); font-weight: 600; }
 
 /* source labels */

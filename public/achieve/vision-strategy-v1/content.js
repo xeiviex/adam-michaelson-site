@@ -8,8 +8,8 @@ export const meta = {
   version: 'v1',
   status: 'Draft for discussion',
   author: 'Adam Michaelson',
-  audience: 'Prepared for Sean Fox',
-  note: 'Written before our interview, from public information only. Everything marked as my proposal is a starting position for you to correct.',
+  audience: 'Prepared for the Achieve executive stakeholder interviews',
+  note: 'Written before the interviews, from public information only. Each section answers a question I asked you first. Everything marked as my proposal is a starting position for you to correct.',
 };
 
 export const sources = {
@@ -23,6 +23,19 @@ const LINKS = {
   meet: { label: 'Press release: Meet Achieve', url: 'https://www.achieve.com/about/press/meet-achieve-the-leader-in-digital-personal-finance-built-for-everyday-people' },
   stroh: { label: 'Brad Stroh bio', url: 'https://www.achieve.com/about/brad-stroh' },
   pagaya: { label: 'Press release: Achieve and Pagaya', url: 'https://www.achieve.com/about/press/achieve-and-pagaya-launch-partnership-to-expand-access-to-personal-loans' },
+};
+
+/* The interview questions, word for word from the stakeholder interview sheet. */
+const ASK = {
+  1: 'What is the vision for the company? This should be in terms of why you exist, what the ideal \u201CUtopia\u201D is that the company creates AND the ideal outcome that the company achieves.',
+  2: 'What is the strategy of the company? That is, how do we go about achieving the vision? What are the key elements? Are there any elements missing? Is there something we\u2019re doing today that we need to stop doing? Are there things we\u2019re not doing today that we need to be doing?',
+  3: 'What is the vision for the DEX product? Tell me what the ideal state looks like? This should be first in terms of outcomes, and second in terms of scope.',
+  4: 'What is the strategy for the DEX product? That is, what are the things we should do (in terms of principles, practices, and scope) that will deliver the outcomes? What needs to change about what we\u2019re doing today in order to employ this strategy?',
+  5: 'A year from now, what needs to be materially different for you and the rest of the exec team to call it a great year? Where do you see the biggest opportunity or constraint?',
+  6: 'Of the outcomes you just named, where should Product lead, and where should it help another team succeed?',
+  7: 'Where would you want me to concentrate first? What would you be comfortable slowing down to make room for that?',
+  8: 'What do you expect by day 30? By day 60? By day 90?',
+  11: 'Which people, dependencies, or decisions will most affect whether I can deliver? Where would you expect me to act independently, and where would you want to be involved?',
 };
 
 /* The six milestones, exactly as first proposed. routed = share of eligible traffic routed to DEX.
@@ -44,7 +57,7 @@ export const milestones = [
 
 export const sections = [
   {
-    id: 'mission', q: [1], title: 'Achieve’s mission, and my reading for debt relief',
+    id: 'mission', ask: ASK[1], q: [1], title: 'Achieve’s mission, and my reading for debt relief',
     lead: 'I start from what Achieve says about itself, then say how I read it for debt relief.',
     blocks: [
       { type: 'row', blocks: [
@@ -83,7 +96,7 @@ export const sections = [
   },
 
   {
-    id: 'company-strategy', q: [2], title: 'Company strategy for debt relief',
+    id: 'company-strategy', ask: ASK[2], q: [2], title: 'Company strategy for debt relief',
     lead: 'My working view of how to advance the mission in debt relief. Each problem is a hypothesis from outside the company.',
     blocks: [
       { type: 'matrix', src: 'proposal', cols: [
@@ -110,7 +123,7 @@ export const sections = [
       ] },
       { type: 'row', blocks: [
         { type: 'group', src: 'proposal', title: 'Start', items: ['Measuring net benefit for everyone who enrolls, including early exits.', 'Reporting channels by fit yield as well as lead volume.'] },
-        { type: 'group', src: 'proposal', title: 'Stop', items: ['Treating a signed agreement as the success event.', 'Paying for lead volume that does not turn into people helped, if that is happening.'] },
+        { type: 'group', src: 'proposal', title: 'Stop', items: ['Treating a signed agreement as the success event.', 'Judging channels on lead volume alone.'] },
         { type: 'group', src: 'proposal', title: 'Change', items: ['Report graduation and next-product adoption as separate outcomes.', 'Classify exits as avoidable or appropriate before trying to reduce them.'] },
       ] },
       { type: 'callout', tag: 'Method', text: 'Both matrices use the same frame: a diagnosed problem, a guiding policy, coherent action, and the KPIs that show whether it worked.', link: { label: 'How I build a strategy', url: '/product/strategy-framework/' } },
@@ -118,9 +131,14 @@ export const sections = [
   },
 
   {
-    id: 'dex-vision', q: [3], title: 'DEX product vision',
-    lead: 'DEX is the digital path through debt-relief onboarding and retention. A person can reach staff at every step.',
+    id: 'dex-vision', ask: ASK[3], q: [3], title: 'DEX product vision',
+    lead: 'Outcome first, then scope. DEX is the digital path through debt-relief onboarding and retention, and a person can reach staff at every step.',
     blocks: [
+      { type: 'row', blocks: [
+        { type: 'group', src: 'proposal', title: 'Ideal outcome', items: ['Long-term ambition: 90% or more of DEX completions without staff intervention.', 'A clear path to human support whenever a customer needs or asks for it.'] },
+        { type: 'group', src: 'proposal', title: 'Problem hypothesis', items: ['Human intervention is currently required at points that could be handled digitally.', 'The first job is to establish where people genuinely need help, and where better design, data or automation could remove friction.'] },
+        { type: 'group', src: 'proposal', title: 'Scope', items: ['Conversational AI', 'Third-party data and services', 'Workflow automation', 'Handoffs to staff'] },
+      ] },
       { type: 'flow', src: 'proposal', caption: 'Where DEX starts, where a completion is counted, and what retention covers', steps: [
         { name: 'Eligible traffic', note: 'Everyone who could be offered DEX', zone: 'before' },
         { name: 'Routed to DEX', note: 'DEX starts here', zone: 'onboard', mark: 'Start' },
@@ -130,11 +148,6 @@ export const sections = [
         { name: 'Active at day 90', note: 'Retention milestone', zone: 'retain' },
         { name: 'First settlement', note: 'Retention milestone', zone: 'retain' },
         { name: 'Graduation', note: 'Program outcome, beyond DEX', zone: 'after' },
-      ] },
-      { type: 'row', blocks: [
-        { type: 'group', src: 'proposal', title: 'Problem hypothesis', items: ['Human intervention is currently required at points that could be handled digitally.', 'The first job is to establish where people genuinely need help, and where better design, data or automation could remove friction.'] },
-        { type: 'group', src: 'proposal', title: 'Ideal outcome', items: ['Long-term ambition: 90% or more of DEX completions without staff intervention.', 'A clear path to human support whenever a customer needs or asks for it.'] },
-        { type: 'group', src: 'proposal', title: 'Scope', items: ['Conversational AI', 'Third-party data and services', 'Workflow automation', 'Handoffs to staff'] },
       ] },
       { type: 'table', src: 'proposal', head: ['Pillar', 'KPI'], rows: [
         ['Solution', 'Volume of completions without staff intervention.'],
@@ -164,7 +177,7 @@ export const sections = [
   },
 
   {
-    id: 'dex-strategy', q: [4], title: 'DEX product strategy',
+    id: 'dex-strategy', ask: ASK[4], q: [4], title: 'DEX product strategy',
     lead: 'The same frame applied to the product. Each problem is what I expect to find, to be confirmed in the first 30 days.',
     blocks: [
       { type: 'matrix', src: 'proposal', cols: [
@@ -188,6 +201,11 @@ export const sections = [
           policy: 'Pay for a service only where it changes the outcome.',
           action: ['Compare building in-house with buying, component by component.', 'Negotiate volume discounts.', 'Trigger paid services only at the point they add value.'],
           kpis: ['Profit per completion without staff intervention', 'Cost of exceptions and staff support, shown beside it'] },
+      ] },
+      { type: 'row', blocks: [
+        { type: 'group', src: 'proposal', title: 'Start', items: ['Running a control group on the staff-led path from the first day.', 'Recording every staff contact as requested, recovery or required.'] },
+        { type: 'group', src: 'proposal', title: 'Stop', items: ['Requiring a staff step where the customer has not asked for one and no rule requires it, if any exist.', 'Counting a completion at the signature.'] },
+        { type: 'group', src: 'proposal', title: 'Change', items: ['Move staff time from routine steps to the moments people need a person.', 'Judge every nudge by outcomes as well as by completion.'] },
       ] },
     ],
   },
@@ -215,26 +233,26 @@ export const sections = [
   },
 
   {
-    id: 'year', q: [5], title: 'What makes 2027 a great year',
-    lead: 'Two targets, one opportunity and one constraint.',
+    id: 'year', ask: ASK[5], q: [5], title: 'What makes it a great year',
+    lead: 'Two targets, one opportunity and one constraint. I read \u201Ca year from now\u201D as day 365.',
     blocks: [
       { type: 'row', blocks: [
-        { type: 'group', src: 'proposal', title: 'Working targets', items: ['50% of DEX completions without staff intervention.', 'A profitable DEX P&L by the end of 2027.'] },
+        { type: 'group', src: 'proposal', title: 'Working targets', items: ['50% of DEX completions without staff intervention.', 'A profitable DEX P&L by the end of 2027, as first drafted.'] },
         { type: 'group', src: 'proposal', title: 'Biggest opportunity', items: ['Getting V1 live. Everything else is learned from real customers on a real funnel.'] },
         { type: 'group', src: 'proposal', title: 'Biggest constraint', items: ['The time it takes to learn when outcomes take months to mature.'] },
       ] },
-      { type: 'table', src: 'proposal', head: ['Readable in 2027', 'Needs mature cohorts'], rows: [
+      { type: 'table', src: 'proposal', head: ['Readable within the year', 'Needs mature cohorts'], rows: [
         ['Completion, no-intervention share, overall completion', 'Share of enrolled debt resolved'],
         ['Deposit consistency and 90-day cancellations', 'Net benefit after fees'],
         ['Complaints, NPS, cost per completion', 'Graduation rate and what happens afterward'],
       ] },
-      { type: 'callout', tag: 'Needs definition', text: '**Calendar year and day 365.** Day 365 lands at the end of 2027 only with a start on January 1. Each month later moves it a month into 2028. I would commit to day counts, and name the 2027 target as whichever milestone falls in December 2027.' },
+      { type: 'callout', tag: 'Needs definition', text: '**A year from now and the end of 2027.** I first wrote these targets for the end of 2027. That matches day 365 only with a start on January 1, and each month later moves day 365 a month into 2028. I would commit to day counts.' },
       { type: 'callout', tag: 'Needs definition', text: '**Profitable.** Revenue arrives when debts settle, so cohorts enrolled in 2027 will not have paid back in cash by December. I propose: projected contribution per DEX enrollment is positive and better than the staff-led path, using Achieve’s own cohort curves, with realized cash reported beside it.' },
     ],
   },
 
   {
-    id: 'product-leads', q: [6], title: 'Where Product should lead',
+    id: 'product-leads', ask: ASK[6], q: [6], title: 'Where Product should lead',
     lead: 'Product owns delivery of the DEX outcomes. Other teams lead their own domains, with Product supporting.',
     blocks: [
       { type: 'row', blocks: [
@@ -254,7 +272,7 @@ export const sections = [
   },
 
   {
-    id: 'first', q: [7], title: 'What comes first',
+    id: 'first', ask: ASK[7], q: [7], title: 'What comes first',
     lead: 'A full-funnel MVP, live with 1% of eligible traffic. Narrow in audience, complete from end to end.',
     blocks: [
       { type: 'row', blocks: [
@@ -267,8 +285,8 @@ export const sections = [
   },
 
   {
-    id: 'milestones', q: [8, 9, 10], title: 'Day 30 to day 365',
-    lead: 'Dates are targets. Each expansion depends on evidence about customer outcomes, operating readiness and economics.',
+    id: 'milestones', ask: ASK[8], q: [8, 9, 10], title: 'Day 30 to day 365',
+    lead: 'Days 30, 60 and 90 answer the three questions. Days 180 to 365 show where they lead. Dates are targets that depend on evidence.',
     blocks: [
       { type: 'timeline', src: 'proposal' },
       { type: 'callout', tag: 'Read this with the chart', text: 'Routing traffic to DEX never removes the human handoff. And at day 365 the oldest DEX cohort is about nine months old, so every expansion decision in year one rests on early signals.' },
@@ -279,20 +297,20 @@ export const sections = [
   },
 
   {
-    id: 'decisions', q: [11], title: 'Decisions and dependencies',
+    id: 'decisions', ask: ASK[11], q: [11], title: 'Decisions and dependencies',
     lead: 'Three dependencies: budget, cross-functional capacity, and leadership approval to launch and expand an automated path.',
     blocks: [
       { type: 'row', blocks: [
         { type: 'group', src: 'proposal', title: 'I decide', items: ['The roadmap and priorities within the mandate.', 'Experiments within the approved traffic share.', 'Experience and wording within approved disclosures.', 'Vendor choices within budget.', 'Pausing or rolling back DEX, at any time.'] },
         { type: 'group', src: 'proposal', title: 'I consult', items: ['Engineering on architecture and capacity.', 'Operations on handoffs and staffing.', 'Marketing on traffic and promises.', 'Data and Finance on measurement and the model.', 'Risk and Compliance on eligibility, disclosures and consent.'] },
         { type: 'group', src: 'proposal', title: 'Explicit approval', items: [
-          { t: 'Budget', d: 'You and Finance.' },
-          { t: 'Launch at 1%', d: 'You, with Risk and Compliance sign-off.' },
+          { t: 'Budget', d: 'The President of Debt Relief, with Finance.' },
+          { t: 'Launch at 1%', d: 'The President of Debt Relief, with Risk and Compliance sign-off.' },
           { t: 'Each traffic expansion', d: 'A named leadership group, against gates agreed in advance.' },
           { t: 'Eligibility changes', d: 'Risk and Compliance.' },
         ] },
       ] },
-      { type: 'callout', tag: 'Your call', text: 'The approvers are my guess. My starting position is broad independence in execution, with alignment from C-level leaders, executives and department heads on the mandate and the rollout.' },
+      { type: 'callout', tag: 'Your call', text: 'The approvers are my guess, and I would like to know where you want to be involved. My starting position is broad independence in execution, with alignment from C-level leaders, executives and department heads on the mandate and the rollout.' },
     ],
   },
 
@@ -306,7 +324,7 @@ export const sections = [
         { t: 'Better off', d: 'Is “better off than the day they enrolled” the right comparison, or should it be against the alternatives?' },
         { t: 'The targets', d: 'Are 10%, 25% and 50% in year one, and 90% long term, ambitious, realistic, or neither?' },
         { t: 'Profitable', d: 'How does Achieve define a profitable product line when revenue arrives at settlement?' },
-        { t: 'The calendar', d: 'When would I start, and is the 2027 commitment a date or a day count?' },
+        { t: 'The calendar', d: 'Is the year-one commitment a date, such as the end of 2027, or a day count from my start?' },
         { t: 'P&L ownership', d: 'What budget and capacity would come with accountability for the DEX P&L?' },
         { t: 'Approval', d: 'Who approves the launch and each traffic expansion?' },
         { t: 'Scale and economics', d: 'Is tens of thousands of people per month the right order of magnitude? How do you define strong economics?' },

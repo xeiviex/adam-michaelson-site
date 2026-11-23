@@ -9,6 +9,7 @@ const all = sections.flatMap((s) => walk(s.blocks));
 test('the presentation answers all 11 stakeholder questions', () => {
   const covered = new Set(sections.flatMap((s) => s.q));
   for (let q = 1; q <= 11; q++) assert.ok(covered.has(q), `question ${q} has no section`);
+  for (const s of sections) if (s.q.length && s.id !== 'better-off') assert.ok(s.ask, `${s.id} does not show the question it answers`);
   assert.equal(new Set(sections.map((s) => s.id)).size, sections.length, 'section ids are unique');
 });
 
