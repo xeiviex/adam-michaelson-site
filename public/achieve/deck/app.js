@@ -26,8 +26,9 @@ const draw = {
   },
   matrix: (b) => {
     const rows = [['problem', 'Problem'], ['policy', 'Policy'], ['action', 'Action'], ['kpis', 'KPIs']];
+    if (b.cols.some((c) => c.targets)) rows.push(['targets', 'Targets']);
     const cell = (v) => (!v ? '' : Array.isArray(v) ? '<ul>' + v.map((x) => `<li>${txt(x)}</li>`).join('') + '</ul>' : `<p>${txt(v)}</p>`);
-    return '<div class="mx" role="group" aria-label="Strategy matrix">'
+    return `<div class="mx" style="--r:${rows.length}" role="group" aria-label="Strategy matrix">`
       + `<div class="mx-col mx-rows" aria-hidden="true"><div class="mx-h"></div>${rows.map((r) => `<div class="mx-rl">${r[1]}</div>`).join('')}</div>`
       + b.cols.map((c) => `<div class="mx-col"><h3 class="mx-h">${esc(c.name)}</h3>`
         + rows.map((r) => `<div class="mx-c mx-${r[0]}"><span class="mx-l">${r[1]}</span>${cell(c[r[0]])}</div>`).join('') + '</div>').join('')

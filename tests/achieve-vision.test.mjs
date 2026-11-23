@@ -46,6 +46,9 @@ test('the DEX strategy matrix has the four pillars and four rows', () => {
   for (const c of mx[0].cols) assert.ok(c.policy, `${c.name} is missing its policy`);
   assert.equal(mx[0].cols[1].policy, 'The best UI is no UI; delight.');
   assert.equal(mx[0].cols[3].kpis, 'Profit per completion without humans.');
+  assert.equal(mx[0].cols[3].problem, 'Non-human costs are excessive.');
+  assert.deepEqual(mx[0].cols.map((c) => c.targets.length), [3, 2, 3, 3]);
+  assert.deepEqual(mx[0].cols[0].targets, ['50% by end of 2027', '80% by end of 2028', '90% by end of 2029']);
 });
 
 test('the page stays out of search results', () => {
