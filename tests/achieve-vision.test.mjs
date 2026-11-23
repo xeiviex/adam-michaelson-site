@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { meta, questions, slides, milestones } from '../public/achieve/vision-strategy-v1/content.js';
+import * as company from '../public/achieve/company-vision-strategy/content.js';
 
 const walk = (blocks, out = []) => { for (const b of blocks || []) { out.push(b); if (b.blocks) walk(b.blocks, out); } return out; };
 const all = slides.flatMap((s) => [...walk(s.blocks), ...walk(s.details)]);
@@ -47,4 +48,21 @@ test('the DEX strategy matrix has the four pillars and four rows', () => {
 test('the page stays out of search results', () => {
   const html = readFileSync(new URL('../public/achieve/vision-strategy-v1/index.html', import.meta.url), 'utf8');
   assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
+});
+
+test('the company deck answers questions 1 to 6 and nothing else', () => {
+  const covered = [...new Set(company.slides.flatMap((s) => s.q))].sort((a, b) => a - b);
+  assert.deepEqual(covered, [1, 2, 3, 4, 5, 6]);
+  const swot = company.slides.find((s) => s.id === 'swot').blocks[0].blocks.map((b) => b.title);
+  assert.deepEqual(swot, ['Strengths', 'Weaknesses', 'Opportunities', 'Threats']);
+  const html = readFileSync(new URL('../public/achieve/company-vision-strategy/index.html', import.meta.url), 'utf8');
+  assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
+});
+
+test('neither deck links to the other, so each can be shown on its own', () => {
+  for (const f of ['vision-strategy-v1', 'company-vision-strategy']) {
+    const other = f === 'vision-strategy-v1' ? 'company-vision-strategy' : 'vision-strategy-v1';
+    const html = readFileSync(new URL(`../public/achieve/${f}/index.html`, import.meta.url), 'utf8');
+    assert.ok(!html.includes(`href="/achieve/${other}`));
+  }
 });

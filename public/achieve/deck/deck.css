@@ -1,4 +1,4 @@
-/* /achieve/vision-strategy-v1/: a slide deck in the same style as /lendingtree/. */
+/* Shared by the Achieve decks (/achieve/vision-strategy-v1/ and /achieve/company-vision-strategy/): slides in the same style as /lendingtree/. */
 :root {
   --bg: #06080b; --surface: #0e1318; --surface2: #18202a; --ink: #f5f7fa; --body: #bcc5d1; --muted: #8d98a8;
   --rule: rgba(255,255,255,.2); --line: rgba(255,255,255,.12);
@@ -72,6 +72,9 @@ h3 { font: 700 .78em var(--sans); letter-spacing: .08em; text-transform: upperca
 .pts li::before { content: ''; position: absolute; left: 0; top: .6em; width: .32em; height: .32em; border-radius: 50%; background: var(--muted); }
 .pts b { display: block; color: var(--ink); font-weight: 600; }
 .grp.wide .pts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6em 1.6em; }
+
+ul.lnk { list-style: none; display: grid; gap: .4em; }
+ul.lnk a { font-weight: 600; }
 
 /* callouts */
 .call { border-left: 2px solid var(--warn); padding: .2em 0 .2em 1em; display: flex; flex-direction: column; gap: .25em; max-width: 92ch; }

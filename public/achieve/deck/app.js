@@ -1,6 +1,7 @@
-/* Draws the /achieve/vision-strategy-v1/ deck from content.js. No content lives here.
-   Same model as /lendingtree/: one slide on screen, a Details sheet for the depth. */
-import { meta, questions, slides as SLIDES, milestones } from './content.js';
+/* Draws an Achieve deck from a content module (see /achieve/vision-strategy-v1/content.js). No content lives here.
+   Same model as /lendingtree/: one slide on screen, a Details sheet for the depth.
+   A page calls mount(content) with its own content module. */
+export function mount({ meta, questions, slides: SLIDES, milestones = [] }) {
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const txt = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
@@ -47,6 +48,7 @@ const draw = {
       + milestones.map((m) => `<li><h3>Day ${m.day}</h3><p>${txt(m.text)}</p>${bar(m.routed, 'ro', 'Eligible traffic routed to DEX')}${bar(m.unassisted, 'un', 'DEX completions without staff')}</li>`).join('')
       + '</ol><p class="fine">Two different denominators: the first bar is a share of all eligible traffic, the second a share of DEX completions. Overall completion among eligible customers is tracked beside both.</p></div>';
   },
+  links: (b) => `<div class="tblw">${b.title ? `<h3>${txt(b.title)}</h3>` : ''}<ul class="lnk">${b.items.map((l) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a></li>`).join('')}</ul></div>`,
   asks: (b) => `<ol class="asks">${b.items.map((it) => `<li><b>${txt(it.t)}</b><span>${txt(it.d)}</span></li>`).join('')}</ol>`,
 };
 function block(b) { return draw[b.type] ? draw[b.type](b) : ''; }
@@ -139,3 +141,4 @@ sheet.addEventListener('close', () => { if (opener && document.contains(opener))
 const start = ids.indexOf(decodeURIComponent(location.hash.slice(1)));
 trackEl.classList.add('nomo'); show(start < 0 ? 0 : start, false);
 requestAnimationFrame(() => { trackEl.classList.remove('nomo'); ready = true; });
+}
