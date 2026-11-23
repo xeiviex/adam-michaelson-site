@@ -16,7 +16,7 @@ function items(list) {
 }
 
 const draw = {
-  group: (b) => `<section class="grp${b.wide ? ' wide' : ''}">${b.title ? `<h3>${txt(b.title)}</h3>` : ''}${items(b.items)}</section>`,
+  group: (b) => `<section class="grp${b.wide ? ' wide' : ''}${b.plain ? ' plain' : ''}">${b.title ? `<h3>${txt(b.title)}</h3>` : ''}${items(b.items)}${b.note ? `<p class="fine">${txt(b.note)}</p>` : ''}</section>`,
   row: (b) => `<div class="row row-${b.blocks.length}${b.blocks.some((x) => x.wide) ? ' has-wide' : ''}">${b.blocks.map(block).join('')}</div>`,
   callout: (b) => `<aside class="call"><span class="ctag">${esc(b.tag)}</span><p>${txt(b.text)}${b.link ? ` <a href="${esc(b.link.url)}">${esc(b.link.label)}</a>` : ''}</p></aside>`,
   table: (b) => {

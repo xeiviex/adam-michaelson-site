@@ -140,30 +140,6 @@ export const slides = [
   },
 
   {
-    id: 'better-off', name: 'Are people better off?', q: [], title: 'Are people better off?',
-    sub: 'After fees and setbacks, including people who leave early.',
-    blocks: [
-      { type: 'row', blocks: [
-        { type: 'group', title: 'The test', items: [
-          { t: 'Net benefit per enrolled customer', d: 'Enrolled debt resolved, minus settlements paid, fees, and growth in unsettled balances.' },
-          { t: 'Who is counted', d: 'Everyone who enrolled, including early exits.' },
-          { t: 'Compared with', d: 'Their position at enrollment, and a control group on the staff-led path.' },
-        ] },
-        { type: 'group', title: 'Early signals, in weeks to months', items: ['Deposit consistency across the first three deposits.', 'Cancellations in the first 90 days, with reasons.', 'Complaints and refund requests.', 'Time to first settlement.', 'Creditor legal action.'] },
-        { type: 'group', title: 'Mature outcomes, in years', items: ['Share of enrolled debt resolved.', 'Net benefit after fees.', 'Share of exits who leave worse off.', 'Graduation rate.', 'Financial position after graduation.'] },
-      ] },
-    ],
-    details: [
-      { type: 'table', title: 'What would make us change course', head: ['If the evidence shows', 'Then'], rows: [
-        ['A segment whose early signals predict a net loss for the customer', 'Change eligibility for that segment, or route it to another path.'],
-        ['DEX cohorts trailing the control group on early signals by more than an agreed margin', 'Revise the experience before adding traffic.'],
-        ['More DEX customers leaving worse off, complaints above an agreed level, or overall completion below the control', 'Pause expansion.'],
-      ] },
-      { type: 'callout', tag: 'Needs definition', text: 'The margins and levels are set with Risk, Compliance and Finance before the 1% launch, so the decision rule exists before the results do.' },
-    ],
-  },
-
-  {
     id: 'milestones', name: 'Milestones and research', q: [12, 13, 14], title: 'What do I expect by each milestone?',
     sub: 'The action in this plan is hypothesis-based and influenced by the executive stakeholder interviews. It will eventually be calibrated by the contextual research going on in parallel.',
     blocks: [
@@ -226,6 +202,25 @@ export const slides = [
           { t: 'Each traffic expansion', d: 'A named leadership group, against gates agreed in advance.' },
           { t: 'Eligibility changes', d: 'Risk and Compliance.' },
         ] },
+      ] },
+    ],
+  },
+
+  {
+    id: 'right-thing', name: 'Doing the right thing', q: [], title: 'Doing the right thing',
+    sub: 'For those who come to us, are we ensuring that what we offer is the right thing and when we do help them, are they better off?',
+    blocks: [
+      { type: 'row', blocks: [
+        { type: 'group', title: 'Solution fit', plain: true, items: [
+          'When people come to us, we have a highly tuned process for identifying the best possible solution, which may be debt relief, a consolidation loan, credit counseling, bankruptcy, or something else.',
+          'We leverage partnerships where they need something we don’t natively provide.',
+          'But where they advance with us, we have high certainty and can demonstrate through any audit that we gathered the right information and made a sound recommendation.',
+          'Furthermore, we actively block people from going down the path of our products (or any product) if they don’t match.',
+        ] },
+        { type: 'group', title: 'Are they better off?', plain: true, items: [
+          'We proactively survey and gather data to determine the welfare of our customers at every stage of the process.',
+          'Our objective is to ensure that everyone we touch is better off for having worked with us.',
+        ], note: 'Still to define: the exact data, measures, and targets.' },
       ] },
     ],
   },

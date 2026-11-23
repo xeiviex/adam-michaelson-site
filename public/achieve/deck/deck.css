@@ -73,6 +73,9 @@ h3 { font: 700 .78em var(--sans); letter-spacing: .08em; text-transform: upperca
 .pts li::before { content: ''; position: absolute; left: 0; top: .6em; width: .32em; height: .32em; border-radius: 50%; background: var(--muted); }
 .pts li:only-child { padding-left: 0; }
 .pts li:only-child::before { content: none; }
+.grp.plain .pts { gap: .8em; font-size: 1.08em; }
+.grp.plain .pts li { padding-left: 0; color: var(--ink); }
+.grp.plain .pts li::before { content: none; }
 .pts b { display: block; color: var(--ink); font-weight: 600; }
 .grp.wide .pts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6em 1.6em; }
 
