@@ -31,15 +31,15 @@ export const questions = {
   15: 'Which people, dependencies, or decisions will most affect whether I can deliver? Where would you expect me to act independently, and where would you want to be involved?',
 };
 
-/* The six milestones, exactly as first proposed. routed = share of eligible traffic routed to DEX.
-   unassisted = target share of DEX completions with no staff intervention. null = no target at that point. */
+/* The six milestones in Adam's original words. routed = share of traffic on DEX.
+   unassisted = target completion rate without humans. null = no target at that point. */
 export const milestones = [
-  { day: 30, text: 'MVP defined, with specifications, initial designs, and a working prototype.', routed: null, unassisted: null },
-  { day: 60, text: 'MVP usability and perception tested, integrations secured, and build underway.', routed: null, unassisted: null },
-  { day: 90, text: 'MVP refined from testing and live with 1% of eligible traffic.', routed: 1, unassisted: null },
-  { day: 180, text: '10% of eligible traffic routed to DEX, with a target of at least 10% completion without staff intervention.', routed: 10, unassisted: 10 },
-  { day: 270, text: '50% of eligible traffic routed to DEX, with a target of at least 25% completion without staff intervention.', routed: 50, unassisted: 25 },
-  { day: 365, text: 'Up to 100% of eligible traffic routed to DEX, with a target of at least 50% completion without staff intervention.', routed: 100, unassisted: 50 },
+  { day: 30, text: 'MVP defined with specifications, initial designs, and working prototype.', routed: null, unassisted: null },
+  { day: 60, text: 'MVP usability / perception tested, integrations acquired and build underway.', routed: null, unassisted: null },
+  { day: 90, text: 'MVP calibrated and online with 1% of traffic.', routed: 1, unassisted: null },
+  { day: 180, text: '10% traffic; showing at least 10% completion rates without humans.', routed: 10, unassisted: 10 },
+  { day: 270, text: '50% traffic; showing at least 25% completion rates without humans.', routed: 50, unassisted: 25 },
+  { day: 365, text: '100% traffic; showing at least 50% completion rates without humans.', routed: 100, unassisted: 50 },
 ];
 
 export const slides = [
@@ -47,12 +47,11 @@ export const slides = [
 
   {
     id: 'dex-vision', name: 'DEX product vision', q: [7], title: 'DEX product vision',
-    sub: 'Scoped to debt-relief onboarding and retention.',
     blocks: [
       { type: 'row', blocks: [
-        { type: 'group', title: 'Ideal outcome', items: ['90%+ of defined completions without staff intervention.'] },
-        { type: 'group', title: 'Problem', items: ['Human intervention is currently required at points that could be handled digitally.'] },
-        { type: 'group', title: 'Scope', items: ['Conversational AI', 'Third-party data and services', 'Workflow automation', 'Handoffs to staff'] },
+        { type: 'group', title: 'Ideal outcome', items: ['The vast majority (90%+) of customers require no human touch.'] },
+        { type: 'group', title: 'Problem', items: ['Humans are required for engagement / conversion.'] },
+        { type: 'group', title: 'Scope', items: ['Conversational AI', 'Third-party data / services', 'Automation'] },
       ] },
       { type: 'flow', caption: 'Where DEX starts, where a completion is counted, and what retention covers', steps: [
         { name: 'Eligible traffic', note: 'Could be offered DEX', zone: 'before' },
@@ -68,10 +67,10 @@ export const slides = [
     ],
     details: [
       { type: 'table', title: 'KPIs', head: ['Pillar', 'KPI'], rows: [
-        ['Solution', 'Volume of completions without staff intervention.'],
-        ['Quality', 'NPS, plus a small set of measures for customer fit and outcomes.'],
-        ['Adoption', 'Share of completions without staff intervention, with overall conversion and completion visible alongside it.'],
-        ['Economics', 'Profit per customer and completion volume.'],
+        ['Solution', 'Volume completion with 0 human touch'],
+        ['Quality', 'NPS'],
+        ['Adoption', '% completions with 0 human touch'],
+        ['Economics', 'Profit per customer; completion volume'],
       ] },
       { type: 'group', title: 'DEX completion', items: [
         { t: 'Definition', d: 'A funded enrollment: the agreement is signed and the first program deposit has cleared.' },
@@ -97,22 +96,25 @@ export const slides = [
     blocks: [
       { type: 'matrix', cols: [
         { name: 'Solution',
-          problem: 'People don\u2019t engage with DEX.',
-          action: 'Use internal learning, external evidence, and iterative experiments.',
-          kpis: 'Track completion volume without staff intervention.' },
+          problem: 'People don’t engage with the DEX.',
+          policy: 'Employ best practices for engagement (internally learned, industry trends, innovation).',
+          action: 'Research-backed tactics, iterative experimentation.',
+          kpis: 'Volume completion with 0 human touch.' },
         { name: 'Quality',
-          problem: 'People dislike or struggle with the experience.',
-          policy: 'Minimize unnecessary UI and make required steps clear and reassuring.',
-          action: 'Use integrations, consolidation, progressive disclosure, and usability and perception testing.',
-          kpis: 'Track NPS alongside measures of fit, outcomes, and harm.' },
+          problem: 'People don’t like the experience.',
+          policy: 'The best UI is no UI; delight.',
+          action: 'Integrations, reduction/consolidation, progressive disclosure, usability / perception testing calibrations.',
+          kpis: 'NPS.' },
         { name: 'Adoption',
-          problem: 'People abandon the flow or require staff outreach to return.',
-          action: 'Test helpful reminders, visible progress, and appropriate rewards or gamification where they support an informed decision.',
-          kpis: 'Track milestone and overall conversion without staff intervention, and check whether overall outcomes improve.' },
+          problem: 'People bail out OR require humans to bring them back in.',
+          policy: 'Make it rewarding.',
+          action: 'Gamification, rewards.',
+          kpis: 'Conversion by milestone (without humans), overall conversion (without humans).' },
         { name: 'Economics',
-          problem: 'Automated delivery can still be expensive.',
-          action: 'Compare building in-house with buying, negotiate volume discounts, and trigger paid services where they add value.',
-          kpis: 'Track profit per completion without staff intervention, with the cost of exceptions and staff support visible.' },
+          problem: '[Assuming adoption is in-hand], non-human costs are excessive.',
+          policy: 'Maximize what we can do in-house / without a service provider, get volume discounts, optimize service location in funnel.',
+          action: 'Integrations, in-house solutions.',
+          kpis: 'Profit per completion without humans.' },
       ] },
     ],
   },
@@ -170,17 +172,17 @@ export const slides = [
     id: 'year', name: 'A great year', q: [9], title: 'What makes 2027 a great year?',
     blocks: [
       { type: 'row', blocks: [
-        { type: 'group', title: 'Working target', items: ['50% of defined completions without staff intervention and a profitable DEX P&L by end of 2027.'] },
-        { type: 'group', title: 'Biggest opportunity', items: ['Getting V1 live.'] },
-        { type: 'group', title: 'Biggest constraint', items: ['The time it takes to learn when outcomes take months to mature.'] },
+        { type: 'group', title: 'By end of 2027', items: ['50% of completions required no human intervention.', 'Profitable DEX P&L.'] },
+        { type: 'group', title: 'Biggest opportunity', items: ['Get V1 into place.'] },
+        { type: 'group', title: 'Biggest constraint', items: ['Time required for iterations (since completion can take months).'] },
       ] },
+    ],
+    details: [
       { type: 'table', head: ['Early signals', 'Outcomes that require mature cohorts'], rows: [
         ['Completion, no-intervention share, overall completion', 'Share of enrolled debt resolved'],
         ['Deposit consistency and 90-day cancellations', 'Net benefit after fees'],
         ['Complaints, NPS, cost per completion', 'Graduation rate and what happens afterward'],
       ] },
-    ],
-    details: [
       { type: 'callout', tag: 'Needs definition', text: '**A year from now and the end of 2027.** The end of 2027 matches day 365 only with a start on January 1. Each month later moves day 365 a month into 2028. I would commit to day counts.' },
       { type: 'callout', tag: 'Needs definition', text: '**Profitable.** Revenue arrives when debts settle, so cohorts enrolled in 2027 will not have paid back in cash by December. I propose: projected contribution per DEX enrollment is positive and better than the staff-led path, using Achieve’s own cohort curves, with realized cash reported beside it.' },
     ],
@@ -188,8 +190,10 @@ export const slides = [
 
   {
     id: 'product-leads', name: 'Where Product leads', q: [10], title: 'Where should Product lead?',
-    sub: 'My starting proposal is that Product owns delivery of the DEX outcomes and coordinates with Engineering, Design, Operations, Marketing, Data, Finance, and Risk/Compliance.',
     blocks: [
+      { type: 'group', items: ['Product owns all of the 2027 outcomes, but will need to coordinate with other teams.'] },
+    ],
+    details: [
       { type: 'row', blocks: [
         { type: 'group', title: 'Product leads', items: ['The outcome definitions and targets.', 'The roadmap and what comes first.', 'Experiment design and the reading of results.', 'The recommendation to expand, hold or pause.'] },
         { type: 'group', title: 'Another team leads, Product supports', wide: true, items: [
@@ -202,16 +206,16 @@ export const slides = [
           { t: 'Risk and Compliance', d: 'Eligibility, disclosures and consent, with authority to stop.' },
         ] },
       ] },
-    ],
-    details: [
       { type: 'callout', tag: 'Needs definition', text: '**Owning the DEX P&L.** Product can be accountable for the result, but it directly controls only the roadmap and the experiments. Engineering capacity, marketing spend, staffing and vendor contracts sit elsewhere. I propose Product is accountable for DEX contribution margin, with a named budget and agreed capacity from each team.' },
     ],
   },
 
   {
     id: 'first', name: 'What comes first', q: [11], title: 'What comes first?',
-    sub: 'Get a full-funnel MVP live with 1% of eligible traffic.',
     blocks: [
+      { type: 'group', items: ['Get MVP (full funnel) online with 1% traffic.'] },
+    ],
+    details: [
       { type: 'row', blocks: [
         { type: 'group', title: 'In the MVP', items: ['Assessment and qualification.', 'Plan and honest expectations.', 'Agreement and consents.', 'Bank link and first deposit.', 'A handoff to staff at every step.', 'Measurement with a control group.', 'One segment and one channel.'] },
         { type: 'group', title: 'Can wait', items: ['Retention features beyond the first deposit.', 'Messaging, partner and embedded channels.', 'Edge cases in eligibility.', 'Rewards and gamification.', 'Replacing bought components with in-house builds.'] },
@@ -224,22 +228,19 @@ export const slides = [
     id: 'milestones', name: 'Milestones', q: [12, 13, 14], title: 'What do I expect by each milestone?',
     sub: 'The action in this plan is hypothesis-based and influenced by the executive stakeholder interviews. It will eventually be calibrated by the contextual research going on in parallel.',
     blocks: [
-      { type: 'timeline', routedLabel: 'Eligible traffic routed to DEX', unassistedLabel: 'Completions without staff intervention' },
-    ],
-    details: [
-      { type: 'group', title: 'How to read the targets', items: [
-        'Two separate denominators: the share of eligible traffic routed to DEX, and the share of defined completions achieved without staff intervention.',
-        'Overall completion among eligible customers is tracked as well, so the no-intervention share can\u2019t rise simply because fewer people finish.',
-        'Rollout dates are targets that depend on evidence about customer outcomes, operating readiness, and economics.',
-        'Routing traffic to DEX still allows a human handoff.',
-      ] },
+      { type: 'timeline', routedLabel: 'Traffic', unassistedLabel: 'Completion rate without humans' },
     ],
   },
 
   {
     id: 'decisions', name: 'Decisions and dependencies', q: [15], title: 'Decisions and dependencies',
-    sub: 'The major dependencies are budget, cross-functional capacity, and leadership approval to launch and expand a fully automated path for eligible customers.',
     blocks: [
+      { type: 'row', blocks: [
+        { type: 'group', title: 'Dependencies', items: ['Budget.', 'Allowance for turning on fully-automated (stakeholder alignment).'] },
+        { type: 'group', title: 'Independence', items: ['I’ll be independent on everything, but I must get alignment/approval from all C-level, execs, and department heads.'] },
+      ] },
+    ],
+    details: [
       { type: 'row', blocks: [
         { type: 'group', title: 'I decide', items: ['The roadmap and priorities within the mandate.', 'Experiments within the approved traffic share.', 'Experience and wording within approved disclosures.', 'Vendor choices within budget.', 'Pausing or rolling back DEX, at any time.'] },
         { type: 'group', title: 'I consult', items: ['Engineering on architecture and capacity.', 'Operations on handoffs and staffing.', 'Marketing on traffic and promises.', 'Data and Finance on measurement and the model.', 'Risk and Compliance on eligibility, disclosures and consent.'] },
@@ -250,9 +251,6 @@ export const slides = [
           { t: 'Eligibility changes', d: 'Risk and Compliance.' },
         ] },
       ] },
-    ],
-    details: [
-      { type: 'callout', tag: 'Starting position', text: 'Broad independence in execution, with alignment from C-level leaders, executives, and department heads on the mandate and rollout.' },
     ],
   },
 
