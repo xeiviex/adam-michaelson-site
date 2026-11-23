@@ -55,6 +55,7 @@ h3 { font: 700 .78em var(--sans); letter-spacing: .08em; text-transform: upperca
 .vis { min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; gap: 1.2em; }
 .fine { font-size: .82em; color: var(--muted); max-width: 100ch; }
 .rail { display: flex; justify-content: flex-end; min-height: 40px; }
+.rail:empty { display: none; }
 .cover h2 { font-size: 4em; max-width: 18ch; }
 .cover .vis { justify-content: flex-start; gap: 1em; }
 .cover .by { color: var(--ink); font-weight: 600; font-size: 1.15em; }
@@ -70,6 +71,8 @@ h3 { font: 700 .78em var(--sans); letter-spacing: .08em; text-transform: upperca
 .pts { list-style: none; display: flex; flex-direction: column; gap: .55em; }
 .pts li { padding-left: 1em; position: relative; }
 .pts li::before { content: ''; position: absolute; left: 0; top: .6em; width: .32em; height: .32em; border-radius: 50%; background: var(--muted); }
+.pts li:only-child { padding-left: 0; }
+.pts li:only-child::before { content: none; }
 .pts b { display: block; color: var(--ink); font-weight: 600; }
 .grp.wide .pts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6em 1.6em; }
 
@@ -82,6 +85,8 @@ ul.lnk a { font-weight: 600; }
 
 /* tables */
 .tblw { display: flex; flex-direction: column; gap: .5em; min-width: 0; }
+.tblh { display: flex; align-items: center; gap: 1em; }
+.btn.sm { min-height: 0; padding: .3em .8em; font-size: .8em; }
 .tbl { width: 100%; border-collapse: collapse; font-size: .95em; }
 .tbl th, .tbl td { text-align: left; vertical-align: top; padding: .55em 1em .55em 0; border-top: 1px solid var(--line); }
 .tbl thead th { font: 700 .78em var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-top: 0; }

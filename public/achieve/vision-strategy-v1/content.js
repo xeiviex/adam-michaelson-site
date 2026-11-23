@@ -64,14 +64,15 @@ export const slides = [
         { name: 'Remaining settlements', note: 'Each enrolled debt', zone: 'retain' },
         { name: 'Graduation', note: 'All enrolled debt resolved', zone: 'after' },
       ] },
-    ],
-    details: [
-      { type: 'table', title: 'KPIs', head: ['Pillar', 'KPI'], rows: [
+      { type: 'table', title: 'KPIs', details: 'dex-vision', head: ['Pillar', 'KPI'], rows: [
         ['Solution', 'Volume completion with 0 human touch'],
         ['Quality', 'NPS'],
         ['Adoption', '% completions with 0 human touch'],
         ['Economics', 'Profit per customer; completion volume'],
       ] },
+    ],
+    inlineDetails: true,
+    details: [
       { type: 'group', title: 'DEX completion', items: [
         { t: 'Definition', d: 'A funded enrollment: the agreement is signed and the first program deposit has cleared.' },
         { t: 'Why not the signature', d: 'A signature alone rewards a click. A cleared deposit shows real commitment and is visible within weeks.' },
@@ -80,14 +81,12 @@ export const slides = [
       { type: 'group', title: 'Staff intervention', items: [
         { t: 'Definition', d: 'Any staff interaction with the customer between the start of DEX and completion, including help the customer asked for.' },
         { t: 'Reported in three groups', d: 'Requested by the customer. Staff outreach to bring someone back. Required by process.' },
-        { t: 'Not counted', d: 'Back-office review the customer never waits on. That is tracked as cost.' },
       ] },
       { type: 'table', title: 'The three rates', head: ['Rate', 'Numerator', 'Denominator', 'Why it is there'], rows: [
         ['Routing share', 'Eligible customers routed to DEX', 'All eligible customers', 'How much traffic DEX is trusted with.'],
         ['No-intervention share', 'DEX completions with no staff interaction', 'All DEX completions', 'The headline target: 10%, 25%, 50%, then 90%.'],
         ['Overall completion', 'Completions on any path, assisted or not', 'All eligible customers', 'Guardrail. The no-intervention share must not rise because fewer people finish.'],
       ] },
-      { type: 'callout', tag: 'Needs a decision', text: 'My targets could be read two ways: as a share of completions that needed no staff, or as a share of routed customers who complete with no staff. I use the first. The second is a much harder target.' },
     ],
   },
 

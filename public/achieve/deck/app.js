@@ -20,7 +20,7 @@ const draw = {
   callout: (b) => `<aside class="call"><span class="ctag">${esc(b.tag)}</span><p>${txt(b.text)}${b.link ? ` <a href="${esc(b.link.url)}">${esc(b.link.label)}</a>` : ''}</p></aside>`,
   table: (b) => {
     const rows = b.rows;
-    return `<div class="tblw">${b.title ? `<h3>${txt(b.title)}</h3>` : ''}<table class="tbl"><thead><tr>${b.head.map((h) => `<th scope="col">${txt(h)}</th>`).join('')}</tr></thead><tbody>`
+    return `<div class="tblw">${b.title ? `<div class="tblh"><h3>${txt(b.title)}</h3>${b.details ? `<button type="button" class="btn sm" data-open="${esc(b.details)}" aria-haspopup="dialog">Details</button>` : ''}</div>` : ''}<table class="tbl"><thead><tr>${b.head.map((h) => `<th scope="col">${txt(h)}</th>`).join('')}</tr></thead><tbody>`
       + rows.map((r) => '<tr>' + r.map((c, i) => (i === 0 ? `<th scope="row">${txt(c)}</th>` : `<td data-h="${esc(b.head[i])}">${txt(c)}</td>`)).join('') + '</tr>').join('')
       + '</tbody></table></div>';
   },
@@ -62,7 +62,7 @@ function slideHTML(s) {
   return `<section class="slide" id="${s.id}" aria-label="${esc(s.name)}"><div class="sb">
     <header>${s.q.length ? `<p class="kicker">${esc(qLabel(s.q))}</p>` : ''}<h2 tabindex="-1">${txt(s.title)}</h2>${s.sub ? `<p class="msg">${txt(s.sub)}</p>` : ''}</header>
     <div class="vis">${s.blocks.map(block).join('')}</div>
-    <footer class="rail">${s.details || s.q.length ? `<button type="button" class="btn" data-open="${s.id}" aria-haspopup="dialog">Details</button>` : ''}</footer></div></section>`;
+    <footer class="rail">${!s.inlineDetails && (s.details || s.q.length) ? `<button type="button" class="btn" data-open="${s.id}" aria-haspopup="dialog">Details</button>` : ''}</footer></div></section>`;
 }
 
 const ids = SLIDES.map((s) => s.id);
