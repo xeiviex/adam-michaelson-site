@@ -146,8 +146,8 @@ export const slides = [
     sub: 'The action in this plan is hypothesis-based and influenced by the executive stakeholder interviews. It will eventually be calibrated by the contextual research going on in parallel.',
     blocks: [
       { type: 'gantt', title: 'Two tracks, one plan', details: 'milestones', months: 12, lanes: [
-        { name: 'Automating DEX', rows: milestones.map((m) => ({ t: `Day ${m.day}`, d: m.text, from: SPAN[m.day][0], to: SPAN[m.day][1], ms: `Day ${m.day}` })) },
-        { name: 'Contextual research', numbered: true, rows: RESEARCH },
+        { name: 'Immediate impact', note: 'While we will do deep research to get empathy, context, and insights toward the best possible solution, we will start immediately with some strong hypotheses and drive for fast ROI in the form of learnings and KPIs.', rows: milestones.map((m) => ({ t: `Day ${m.day}`, d: m.text, from: SPAN[m.day][0], to: SPAN[m.day][1], ms: `Day ${m.day}` })) },
+        { name: 'Version 1', note: 'In parallel with the immediate impact through MVP and iterative learnings, we’ll conduct deep research (market, contextual, introspection, etc.) toward empathy, context, and insights that will become our foundation for a full version 1 and beyond.', numbered: true, rows: RESEARCH },
       ] },
     ],
     inlineDetails: true,

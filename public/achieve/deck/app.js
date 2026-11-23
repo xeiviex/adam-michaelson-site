@@ -49,7 +49,7 @@ const draw = {
       + `<div class="gt" role="cell" aria-label="${r.to - r.from > 1 ? `Months ${r.from} to ${r.to - 1}` : `Month ${r.from}`}"><span class="gb${lane.numbered ? ' fill' : ''}${r.ms ? ' ms' : ''}${r.gate ? ' gate' : ''}" style="grid-column:${r.from} / ${r.to}">${r.ms ? `<em>${esc(r.ms)}</em>` : ''}</span></div></div>`;
     return `<div class="ganttw">${b.title ? `<div class="tblh"><h3>${txt(b.title)}</h3>${b.details ? `<button type="button" class="btn sm" data-open="${esc(b.details)}" aria-haspopup="dialog">Details</button>` : ''}</div>` : ''}<div class="gantt" style="--m:${n}" role="table" aria-label="${esc(b.title || 'Plan')}, by month">`
       + `<div class="gr hd" aria-hidden="true"><div class="gl"></div><div class="gt">${axis}</div></div>`
-      + b.lanes.map((lane) => `<div class="gr lane" role="row"><span role="rowheader">${txt(lane.name)}</span></div>` + lane.rows.map((r, i) => row(r, i, lane)).join('')).join('')
+      + b.lanes.map((lane) => `<div class="gr lane" role="row"><span role="rowheader">${txt(lane.name)}</span>${lane.note ? `<p>${txt(lane.note)}</p>` : ''}</div>` + lane.rows.map((r, i) => row(r, i, lane)).join('')).join('')
       + '</div></div>';
   },
   timeline: (b) => {

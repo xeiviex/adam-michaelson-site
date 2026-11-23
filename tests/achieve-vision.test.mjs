@@ -26,7 +26,7 @@ test('the milestones and the research run as two tracks on one plan, and researc
   const plan = slides.find((s) => s.id === 'milestones');
   assert.match(plan.sub, /hypothesis-based/); assert.match(plan.sub, /contextual research/);
   const g = plan.blocks.find((b) => b.type === 'gantt');
-  assert.deepEqual(g.lanes.map((l) => l.name), ['Automating DEX', 'Contextual research']);
+  assert.deepEqual(g.lanes.map((l) => l.name), ['Immediate impact', 'Version 1']);
   assert.deepEqual(g.lanes[0].rows.map((r) => r.t), ['Day 30', 'Day 60', 'Day 90', 'Day 180', 'Day 270', 'Day 365']);
   for (const l of g.lanes) for (const r of l.rows) assert.ok(r.from >= 1 && r.to <= g.months + 1 && r.to > r.from, `${r.t} is on the axis`);
 });

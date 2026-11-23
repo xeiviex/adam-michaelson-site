@@ -136,12 +136,14 @@ ul.lnk a { font-weight: 600; }
 .trk-link svg { width: 1.3em; height: 1.3em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 /* gantt: two lanes on one month axis, after the plan on /lendingtree1/ */
-.ganttw { display: flex; flex-direction: column; gap: .4em; font-size: .89em; }
+.ganttw { display: flex; flex-direction: column; gap: .4em; font-size: .87em; }
 .gantt { display: flex; flex-direction: column; border-top: 3px solid var(--ink); }
 .gr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.2em; align-items: center; border-bottom: 1px solid var(--line); padding: .08em 0; }
 .gr.hd .gt { background: none; }
 .gr.hd .gt span { font: 700 .68em var(--head); letter-spacing: .1em; color: var(--muted); text-align: center; }
 .gr.lane { grid-template-columns: 1fr; padding: .55em 0 .1em; border-bottom: 0; }
+.gr.lane { gap: .15em; }
+.gr.lane p { font-size: .92em; color: var(--body); }
 .gr.lane span { font: 700 .74em var(--head); letter-spacing: .16em; text-transform: uppercase; color: var(--acc-hi); }
 .gl { display: flex; align-items: baseline; gap: .6em; min-width: 0; }
 .gl i { flex: none; width: 1.4em; font: 700 .85em var(--head); font-style: normal; color: var(--acc-hi); }
