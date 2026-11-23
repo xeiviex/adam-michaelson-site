@@ -209,7 +209,7 @@ export const slides = [
   },
 
   {
-    id: 'right-thing', name: 'Doing the right thing', q: [], title: 'Doing the right thing',
+    id: 'right-thing', name: 'Do the right thing', q: [], title: 'Do the right thing',
     sub: 'For those who come to us, are we ensuring that what we offer is the right thing and when we do help them, are they better off?',
     blocks: [
       { type: 'row', blocks: [
