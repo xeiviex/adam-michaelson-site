@@ -56,8 +56,8 @@ export const slides = [
     sub: 'Outcome first, then scope. A person can reach staff at every step.',
     blocks: [
       { type: 'row', blocks: [
-        { type: 'group', title: 'Ideal outcome', items: ['Long-term ambition: 90% or more of DEX completions without staff intervention.', 'A clear path to human support whenever a customer needs or asks for it.'] },
-        { type: 'group', title: 'Problem hypothesis', items: ['Human intervention is currently required at points that could be handled digitally.', 'First, establish where people genuinely need help and where design, data or automation could remove friction.'] },
+        { type: 'group', title: 'Ideal outcome', items: ['90% or more of DEX completions without staff intervention.'] },
+        { type: 'group', title: 'Problem', items: ['Human intervention is currently required at points that could be handled digitally.'] },
         { type: 'group', title: 'Scope', items: ['Conversational AI', 'Third-party data and services', 'Workflow automation', 'Handoffs to staff'] },
       ] },
       { type: 'flow', caption: 'Where DEX starts, where a completion is counted, and what retention covers', steps: [
@@ -65,10 +65,11 @@ export const slides = [
         { name: 'Routed to DEX', note: 'DEX starts here', zone: 'onboard', mark: 'Start' },
         { name: 'Assessment and plan', note: 'Qualification, debts, expectations', zone: 'onboard' },
         { name: 'Agreement', note: 'Consents and signature', zone: 'onboard' },
-        { name: 'First deposit clears', note: 'A DEX completion', zone: 'onboard', mark: 'Completion' },
-        { name: 'Active at day 90', note: 'Retention milestone', zone: 'retain' },
-        { name: 'First settlement', note: 'Retention milestone', zone: 'retain' },
-        { name: 'Graduation', note: 'Beyond DEX', zone: 'after' },
+        { name: 'First deposit clears', note: 'A DEX completion', zone: 'done', mark: 'Completion' },
+        { name: 'Active at day 90', note: 'Still depositing', zone: 'retain', mark: 'Retention' },
+        { name: 'First settlement', note: 'First debt resolved', zone: 'retain' },
+        { name: 'Remaining settlements', note: 'Each enrolled debt', zone: 'retain' },
+        { name: 'Graduation', note: 'All enrolled debt resolved', zone: 'after' },
       ] },
     ],
     details: [
@@ -81,7 +82,7 @@ export const slides = [
       { type: 'group', title: 'DEX completion', items: [
         { t: 'Definition', d: 'A funded enrollment: the agreement is signed and the first program deposit has cleared.' },
         { t: 'Why not the signature', d: 'A signature alone rewards a click. A cleared deposit shows real commitment and is visible within weeks.' },
-        { t: 'Retention', d: 'Tracked as separate milestones (active at day 90, first settlement) and never folded into completion.' },
+        { t: 'Retention', d: 'Tracked as separate milestones (active at day 90, first settlement, remaining settlements) and never folded into completion.' },
       ] },
       { type: 'group', title: 'Staff intervention', items: [
         { t: 'Definition', d: 'Any staff interaction with the customer between the start of DEX and completion, including help the customer asked for.' },

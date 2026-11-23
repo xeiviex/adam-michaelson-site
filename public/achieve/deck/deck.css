@@ -2,7 +2,7 @@
 :root {
   --bg: #06080b; --surface: #0e1318; --surface2: #18202a; --ink: #f5f7fa; --body: #bcc5d1; --muted: #8d98a8;
   --rule: rgba(255,255,255,.2); --line: rgba(255,255,255,.12);
-  --acc: #2ea3e6; --acc-hi: #6cc3f5; --on-acc: #03121c; --warn: #f2b457;
+  --acc: #2ea3e6; --acc-hi: #6cc3f5; --on-acc: #03121c; --good: #6fd08c; --warn: #f2b457;
   --head: 'Montserrat', 'Inter', system-ui, sans-serif; --sans: 'Inter', system-ui, sans-serif;
   --pad: clamp(18px, 4.5vw, 72px);
   color-scheme: dark;
@@ -52,7 +52,7 @@ h2 { font: 700 3em/1.04 var(--head); color: var(--ink); letter-spacing: -.022em;
 h2:focus { outline: none; }
 .msg { max-width: 62ch; font-size: 1.2em; line-height: 1.4; text-wrap: pretty; }
 h3 { font: 700 .78em var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--acc-hi); }
-.vis { min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 1.2em; }
+.vis { min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; gap: 1.2em; }
 .fine { font-size: .82em; color: var(--muted); max-width: 100ch; }
 .rail { display: flex; justify-content: flex-end; min-height: 40px; }
 .cover h2 { font-size: 4em; max-width: 18ch; }
@@ -103,14 +103,17 @@ ul.lnk a { font-weight: 600; }
 
 /* DEX flow */
 .flow { display: flex; flex-direction: column; gap: .6em; }
-.flow ol { list-style: none; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; padding-top: 1.5em; }
+.flow ol { list-style: none; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding-top: 1.5em; counter-reset: f; }
 .flow li { position: relative; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--muted); border-radius: 6px; padding: .65em .7em; display: flex; flex-direction: column; gap: .2em; font-size: .86em; min-width: 0; }
 .flow li b { color: var(--ink); font-weight: 600; }
 .flow li span { color: var(--muted); }
 .flow .fz-onboard { border-top-color: var(--acc); }
+.flow .fz-done { border-top-color: var(--good); }
 .flow .fz-retain { border-top-color: var(--warn); }
 .flow .fz-before, .flow .fz-after { border-style: dashed; border-top-style: solid; }
 .flow .fmark { position: absolute; top: -1.7em; left: 0; font: 700 .8em var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--acc-hi); }
+.flow .fz-done .fmark { color: var(--good); }
+.flow .fz-retain .fmark { color: var(--warn); }
 .flow figcaption { font-size: .82em; color: var(--muted); }
 
 /* research: two tracks running side by side */
@@ -159,7 +162,6 @@ dialog.dlg::backdrop { background: rgba(2,4,6,.72); }
 
 @media (max-width: 1000px) {
   .tl { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .flow ol { grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 1.9em; }
   .row-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .vis { justify-content: flex-start; }
 }
@@ -170,6 +172,14 @@ dialog.dlg::backdrop { background: rgba(2,4,6,.72); }
   .mx .mx-rows { display: none; }
   .mx-l { display: block; font: 700 .74em var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .25em; }
   .row-3, .row-2, .row-2.has-wide { grid-template-columns: 1fr; }
+  /* the flow becomes a numbered list read top to bottom, with one rail coloured by phase */
+  .flow ol { grid-auto-flow: row; grid-template-columns: 1fr; gap: 0; padding-top: 0; }
+  .flow li { counter-increment: f; background: none; border: 0; border-left: 3px solid var(--muted); border-radius: 0; padding: .45em 0 .7em 2.6em; font-size: 1em; }
+  .flow li::before { content: counter(f); position: absolute; left: .7em; top: .45em; font: 700 1em var(--head); color: var(--muted); }
+  .flow li:has(.fmark)::before { top: 1.75em; }
+  .flow .fz-onboard { border-left-color: var(--acc); } .flow .fz-done { border-left-color: var(--good); } .flow .fz-retain { border-left-color: var(--warn); }
+  .flow .fz-before, .flow .fz-after { border-left-style: dashed; }
+  .flow .fmark { position: static; }
   .trk { grid-template-columns: 1fr; gap: .4em; }
   .trk-link { margin-left: 0; }
 }
@@ -179,7 +189,7 @@ dialog.dlg::backdrop { background: rgba(2,4,6,.72); }
   .ctx { display: none; }
   .dots { display: none; } .nav { grid-template-columns: 1fr auto; }
   .row-4, .asks, .grp.wide .pts { grid-template-columns: 1fr; }
-  .tl, .flow ol, .trk ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tl, .trk ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .tbl thead { display: none; }
   .tbl, .tbl tbody, .tbl tr, .tbl th, .tbl td { display: block; }
   .tbl tr { padding: .6em 0; border-top: 1px solid var(--line); }
