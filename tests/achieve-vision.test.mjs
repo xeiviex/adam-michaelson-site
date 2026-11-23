@@ -42,7 +42,9 @@ test('the DEX strategy matrix has the four pillars and four rows', () => {
   const mx = all.filter((b) => b.type === 'matrix');
   assert.equal(mx.length, 1);
   assert.deepEqual(mx[0].cols.map((c) => c.name), ['Solution', 'Quality', 'Adoption', 'Economics']);
-  for (const c of mx[0].cols) for (const k of ['problem', 'policy', 'action', 'kpis']) assert.ok(c[k] && c[k].length, `${c.name} is missing ${k}`);
+  for (const c of mx[0].cols) for (const k of ['problem', 'action', 'kpis']) assert.ok(c[k] && c[k].length, `${c.name} is missing ${k}`);
+  assert.equal(mx[0].cols[0].problem, 'People don\u2019t engage with DEX.');
+  assert.equal(mx[0].cols[3].kpis, 'Track profit per completion without staff intervention, with the cost of exceptions and staff support visible.');
 });
 
 test('the page stays out of search results', () => {

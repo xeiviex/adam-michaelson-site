@@ -19,14 +19,14 @@ const draw = {
   row: (b) => `<div class="row row-${b.blocks.length}${b.blocks.some((x) => x.wide) ? ' has-wide' : ''}">${b.blocks.map(block).join('')}</div>`,
   callout: (b) => `<aside class="call"><span class="ctag">${esc(b.tag)}</span><p>${txt(b.text)}${b.link ? ` <a href="${esc(b.link.url)}">${esc(b.link.label)}</a>` : ''}</p></aside>`,
   table: (b) => {
-    const rows = b.rows === 'milestones' ? milestones.map((m) => [`Day ${m.day}`, m.text, m.gate]) : b.rows;
+    const rows = b.rows;
     return `<div class="tblw">${b.title ? `<h3>${txt(b.title)}</h3>` : ''}<table class="tbl"><thead><tr>${b.head.map((h) => `<th scope="col">${txt(h)}</th>`).join('')}</tr></thead><tbody>`
       + rows.map((r) => '<tr>' + r.map((c, i) => (i === 0 ? `<th scope="row">${txt(c)}</th>` : `<td data-h="${esc(b.head[i])}">${txt(c)}</td>`)).join('') + '</tr>').join('')
       + '</tbody></table></div>';
   },
   matrix: (b) => {
     const rows = [['problem', 'Problem'], ['policy', 'Policy'], ['action', 'Action'], ['kpis', 'KPIs']];
-    const cell = (v) => (Array.isArray(v) ? '<ul>' + v.map((x) => `<li>${txt(x)}</li>`).join('') + '</ul>' : `<p>${txt(v)}</p>`);
+    const cell = (v) => (!v ? '' : Array.isArray(v) ? '<ul>' + v.map((x) => `<li>${txt(x)}</li>`).join('') + '</ul>' : `<p>${txt(v)}</p>`);
     return '<div class="mx" role="group" aria-label="Strategy matrix">'
       + `<div class="mx-col mx-rows" aria-hidden="true"><div class="mx-h"></div>${rows.map((r) => `<div class="mx-rl">${r[1]}</div>`).join('')}</div>`
       + b.cols.map((c) => `<div class="mx-col"><h3 class="mx-h">${esc(c.name)}</h3>`
@@ -40,13 +40,13 @@ const draw = {
     + b.tracks.map((t, i) => `<div class="trk trk-${i}"><div class="trk-n"><b>${txt(t.name)}</b><span>${txt(t.note)}</span></div><ol>${t.steps.map((s) => `<li>${txt(s)}</li>`).join('')}</ol></div>`
       + (i === 0 ? `<p class="trk-link"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4M5.5 8.5 10 4l4.5 4.5"/></svg>${txt(b.link)}</p>` : '')).join('')
     + '</figure>',
-  timeline: () => {
+  timeline: (b) => {
     const bar = (v, cls, label) => (v == null
       ? `<div class="tm none"><span>${label}</span><i></i><em>Not yet</em></div>`
       : `<div class="tm ${cls}"><span>${label}</span><i><u style="width:${Math.max(v, 2)}%"></u></i><em>${cls === 'un' ? 'At least ' : ''}${v}%</em></div>`);
     return '<div class="tlw"><ol class="tl">'
-      + milestones.map((m) => `<li><h3>Day ${m.day}</h3><p>${txt(m.text)}</p>${bar(m.routed, 'ro', 'Eligible traffic routed to DEX')}${bar(m.unassisted, 'un', 'DEX completions without staff')}</li>`).join('')
-      + '</ol><p class="fine">Two different denominators: the first bar is a share of all eligible traffic, the second a share of DEX completions. Overall completion among eligible customers is tracked beside both.</p></div>';
+      + milestones.map((m) => `<li><h3>Day ${m.day}</h3><p>${txt(m.text)}</p>${bar(m.routed, 'ro', esc(b.routedLabel))}${bar(m.unassisted, 'un', esc(b.unassistedLabel))}</li>`).join('')
+      + '</ol></div>';
   },
   links: (b) => `<div class="tblw">${b.title ? `<h3>${txt(b.title)}</h3>` : ''}<ul class="lnk">${b.items.map((l) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a></li>`).join('')}</ul></div>`,
   asks: (b) => `<ol class="asks">${b.items.map((it) => `<li><b>${txt(it.t)}</b><span>${txt(it.d)}</span></li>`).join('')}</ol>`,
@@ -60,7 +60,7 @@ function slideHTML(s) {
       <div class="vis"><p class="by">${esc(meta.author)}</p><p class="msg">${txt(meta.intro)}</p></div><footer class="rail"></footer></div></section>`;
   }
   return `<section class="slide" id="${s.id}" aria-label="${esc(s.name)}"><div class="sb">
-    <header>${s.q.length ? `<p class="kicker">${esc(qLabel(s.q))}</p>` : ''}<h2 tabindex="-1">${txt(s.title)}</h2><p class="msg">${txt(s.sub)}</p></header>
+    <header>${s.q.length ? `<p class="kicker">${esc(qLabel(s.q))}</p>` : ''}<h2 tabindex="-1">${txt(s.title)}</h2>${s.sub ? `<p class="msg">${txt(s.sub)}</p>` : ''}</header>
     <div class="vis">${s.blocks.map(block).join('')}</div>
     <footer class="rail">${s.details || s.q.length ? `<button type="button" class="btn" data-open="${s.id}" aria-haspopup="dialog">Details</button>` : ''}</footer></div></section>`;
 }
