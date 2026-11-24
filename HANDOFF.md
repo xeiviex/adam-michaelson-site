@@ -58,3 +58,6 @@ Updated 2026-10-08.
 
 ## Lottie celebrations (Achieve prototype)
 Trophy, balloons, streamers (party popper) and coins play as Lottie animations from LottieFiles (free to use), self-hosted in public/achieve/lottie/ with the dotlottie-web player and wasm. lottie-fx.js plays them; effects.js falls back to the canvas versions if the player cannot load. Other kinds (sunrise, target, seal, fireworks, and so on) stay hand-drawn canvas.
+
+## LendingTree year one (2026-11-24)
+- `/lendingtree/year-one/` is a draft page: outcome cards, a 48-week Gantt, a time-allocation table and a milestone list. All four read from `public/lendingtree/year-one/data.js` (`TRACKS`, `ALLOC`); edit numbers there. Every target is a draft until baselines are confirmed. Not linked from the deck yet.
