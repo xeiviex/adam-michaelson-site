@@ -48,7 +48,7 @@ const box = (x, y, w, h, t, cls, d, sub) => `<g ${A(d)}><rect class="bx ${cls}" 
 const LEADS = [300, 600, 900];
 const teams = LEADS.map((cx, k) => [-74, 0, 74].map((dx, j) => `<rect ${A((2.0 + k * 0.15 + j * 0.05).toFixed(2))} class="tm${k === 2 ? ' hire' : ''}" x="${cx + dx - 31}" y="318" width="62" height="38" rx="7"/>`).join('')).join('');
 const team = `
-<svg class="org" viewBox="0 0 1200 410" role="img" aria-label="Chain of command: the CPO, three leads and their teams, with the head of technology as a partner">
+<svg class="org" viewBox="0 0 1200 410" role="img" aria-label="Chain of command: the CPO, three leads and their teams, with the head of technology, Sarah and the head of marketing as partners">
   <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#6cc3f5" stroke-width="1.6"/></marker></defs>
   <path class="ln rule" ${A(0.9)} pathLength="1" d="M600 78V124M300 124H900M300 124V170M600 124V170M900 124V170"/>
   <path class="ln rule" ${A(1.8)} pathLength="1" d="M300 234V276M226 276H374M226 276V318M300 276V318M374 276V318M600 234V276M526 276H674M526 276V318M600 276V318M674 276V318"/>
@@ -56,6 +56,10 @@ const team = `
   <path class="ln acc" ${A(0.6)} pathLength="1" d="M320 44H500"/>
   <text class="lb acc" ${A(0.7)} x="410" y="34">Partner</text>
   ${box(100, 12, 220, 64, 'Head of technology', 'dk', 0.5)}
+  <path class="ln acc" ${A(0.75)} pathLength="1" d="M700 44H800M800 27V61M800 27H836M800 61H836"/>
+  <text class="lb acc" ${A(0.85)} x="750" y="34">Partners</text>
+  ${box(836, 10, 304, 32, 'Sarah · Analytics and strategy', 'dk sm', 0.9)}
+  ${box(836, 46, 304, 32, 'Head of marketing', 'dk sm', 1.0)}
   ${box(500, 12, 200, 66, 'CPO', 'wh', 0.2)}
   ${box(185, 170, 230, 64, 'Senior director', 'dk', 1.2, 'Product')}
   ${box(485, 170, 230, 64, 'Senior director', 'dk', 1.35, 'Product')}
@@ -310,7 +314,7 @@ const D = {
     ${lnk([['/product/internal-stakeholder-interviews/', 'How I run internal stakeholder interviews'], ['/product/30-60-90/', 'How I approach the first 30, 60 and 90 days']])}`,
   team: `
     <h4>Structure</h4>
-    ${ul(['The senior directors of product are my leads. A head of design joins them.', 'The head of technology and my other peers represent the product direction to their own teams wherever possible.', 'One clear line of communication, through the leads. They run the day-to-day and bring me decisions.', 'I step in directly when a team is in real trouble, and I make time to coach rising leaders.'])}
+    ${ul(['The senior directors of product are my leads. A head of design joins them.', 'The head of technology, Sarah and the head of marketing are my partners. They and my other peers represent the product direction to their own teams wherever possible.', 'One clear line of communication, through the leads. They run the day-to-day and bring me decisions.', 'I step in directly when a team is in real trouble, and I make time to coach rising leaders.'])}
     <h4>What I expect from a lead</h4>
     ${ul(['Works well with me, without friction.', 'Shows clear alignment and support.', 'Gets results on what I ask.'])}
     <h4>Earning trust in the first 30 days</h4>

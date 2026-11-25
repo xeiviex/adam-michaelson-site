@@ -92,6 +92,7 @@ svg .a.gy { transform-origin: center bottom; }
 .bx { stroke-width: 1.5; } .bx.wh { fill: var(--ink); } .bx.dk { fill: var(--surface2); } .bx.hire { fill: none; stroke: var(--muted); stroke-dasharray: 5 5; }
 .vis svg .bt { font: 700 17px var(--head); fill: var(--ink); } .vis svg .bt.wh { fill: var(--dark); font-size: 20px; } .vis svg .bt.hire { fill: var(--body); }
 .vis svg .bs { font-size: 13px; fill: var(--muted); }
+.vis svg .bt.sm { font-size: 14px; font-weight: 600; }
 .tm { fill: var(--surface2); } .tm.hire { fill: none; stroke: var(--rule); stroke-dasharray: 4 4; }
 .ln.dsh { stroke-dasharray: 4 5; stroke-dashoffset: 0; } .on .ln.dsh.a { animation-name: gs-fade; animation-fill-mode: forwards; }
 .pulse { opacity: 0; } .pulse.dn { fill: var(--acc-hi); } .pulse.up { fill: var(--ink); }
