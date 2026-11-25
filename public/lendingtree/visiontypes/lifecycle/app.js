@@ -33,7 +33,7 @@ const ic = (n, s = 20, w = 1.8) => `<svg class="i" viewBox="0 0 24 24" width="${
 const LOAN_ICON = { Mortgage: 'home', 'Auto loan': 'car', 'Home equity line': 'line' };
 const POL_ICON = { Auto: 'car', Homeowners: 'home', Life: 'heart', Medical: 'cross', 'Vision and dental': 'smile', Pet: 'paw', Motorcycle: 'bike' };
 const CARRIER_COLOR = { Allstate: '#0033a0', 'State Farm': '#e31937', Travelers: '#d71e28', Progressive: '#1e5aa8', GEICO: '#1f55a0', Nationwide: '#0a5bb5', Trupanion: '#2e4a8b' };
-const mono = (name, cls = '') => `<span class="mono ${cls}" aria-hidden="true">${esc(name.replace(/^Employer plan \(|\)$/g, '').split(' ').map((w) => w[0]).slice(0, 2).join(''))}</span>`;
+const mono = (name, cls = '') => `<span class="mono ${cls}" aria-hidden="true">${esc(name.replace(/^Employer plan \(|\)$/g, '').split(' ').filter((w) => /^[A-Z0-9]/.test(w)).map((w) => w[0]).slice(0, 2).join(''))}</span>`;
 const cmark = (p) => (p.icon ? `<span class="cm"><img src="/lendingtree/img/carriers/${p.icon}-icon.png" alt=""></span>` : mono(p.carrier || p.lender || p.bank));
 const policyNo = (p) => { let h = 7; for (const c of p.carrier + p.type) h = (h * 31 + c.charCodeAt(0)) % 1e9; const s = String(1e9 + h).slice(1); return `${s.slice(0, 3)} ${s.slice(3, 6)} ${s.slice(6, 9)}`; };
 const monthYear = (m) => { const d = new Date(); d.setMonth(d.getMonth() + m); return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); };
@@ -47,7 +47,7 @@ const S = { path: Q.get('path') === 'insurance' ? 'insurance' : 'loan', auto: Q.
 const START_STAGE = ['home', 'servicing'].includes(Q.get('stage')) ? Q.get('stage') : 'shop';
 function resetState() {
   Object.assign(S, {
-    view: 'guide', station: 0, done: new Set(), open: { loans: null, insurance: null, acct: null }, nudge: null, nudgeCb: null,
+    view: 'guide', station: 0, lock: false, done: new Set(), open: { loans: null, insurance: null, acct: null }, nudge: null, nudgeCb: null,
     loans: LOANS.filter((l) => !l.isNew).map((l) => ({ ...l })), banks: BANKS.map((b) => ({ ...b })),
     policies: POLICIES.map((p) => ({ ...p, ...(p.id === 'auto' ? { deductible: AUTO_CURRENT.deductible, liability: AUTO_CURRENT.liability } : {}) })),
     watch: Object.fromEntries(POLICIES.map((p) => [p.id, !/Employer/.test(p.carrier)])), extra: {}, claims: {},
@@ -130,7 +130,7 @@ function go(view) {
   if (view === 'loans') renderLoans(); if (view === 'insurance') renderInsurance();
   paintTabs(); main.scrollTop = view === 'guide' ? main.scrollHeight : 0;
 }
-function setStation(i) { if (i !== S.station) S.done.add(S.station); S.station = i; S.done.delete(i); paintLife(); }
+function setStation(i, force) { if (S.lock && !force) return; if (i !== S.station) S.done.add(S.station); S.station = i; S.done.delete(i); paintLife(); }
 function paintLife() {
   $('#life').innerHTML = `<div class="life-in"><ol>${LIFECYCLE.map((n, i) => `<li class="${i === S.station ? 'cur' : S.done.has(i) ? 'done' : ''}"><i></i><span>${n}</span></li>`).join('')}</ol>
     <p class="life-m"><b>${S.station + 1} of ${LIFECYCLE.length}</b><span>${LIFECYCLE[S.station]}</span></p></div>`;
@@ -138,7 +138,7 @@ function paintLife() {
 function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2600); }
 let skipTimer = 0;
 async function timeSkip(text) {
-  const s = $('#skip'); s.textContent = text; s.hidden = false; requestAnimationFrame(() => s.classList.add('on'));
+  const s = $('#skip'); s.innerHTML = `<span>${esc(text)}</span>`; s.hidden = false; requestAnimationFrame(() => s.classList.add('on'));
   await sleep(2200);
   s.classList.remove('on'); clearTimeout(skipTimer); skipTimer = setTimeout(() => { s.hidden = true; }, 400);
   await sleep(400);
@@ -243,10 +243,10 @@ function offerCard(o, kind, D, rec, current) {
     ? `<div class="big"><b>${o.apr.toFixed(2)}%</b><span>APR</span></div><ul><li>${money(o.limit)} line</li><li>${esc(o.fund)}</li><li>${esc(o.fee)}</li></ul>`
     : `<div class="big"><b>${money(o.premium)}</b><span>a year</span></div><ul><li>${money(o.deductible)} deductible${current && o.deductible < current.deductible ? `, down from ${money(current.deductible)}` : ''}</li><li>${esc(o.liability)} liability</li><li>${money(Math.round(o.premium / 12))} a month</li></ul>`;
   return `<article class="offer${o.id === rec ? ' rec' : ''}" data-offer="${o.id}">
-    <header>${o.icon ? cmark(o) : mono(name, 'lg')}<div><b>${esc(name)}</b><span class="tag">${esc(o.tag)}</span></div></header>
+    <header>${o.icon ? cmark(o) : mono(name, 'lg')}<b>${esc(name)}</b></header><span class="tag">${esc(o.tag)}</span>
     ${facts}
     <div class="offer-more" hidden><dl>${D.offerDetails(o).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></div>
-    <footer><button type="button" class="btn${o.id === rec ? '' : ' ghost'}" data-a="pick" data-id="${o.id}">${esc(D.choose)} ${esc(name)}</button><button type="button" class="link" data-a="more" aria-expanded="false">${esc(D.details)}</button></footer>
+    <footer><button type="button" class="btn${o.id === rec ? '' : ' ghost'}" data-a="pick" data-id="${o.id}" aria-label="${esc(D.choose)} ${esc(name)}">${esc(D.choose)}</button><button type="button" class="link" data-a="more" aria-expanded="false">${esc(D.details)}</button></footer>
   </article>`;
 }
 /* Returns the chosen offer. "Think about it" ends gracefully and can come back. */
@@ -257,7 +257,9 @@ async function offersScene(P, D) {
     setStation(3);
     add(el(kind === 'loan' ? loanChart(list, D.chart, rec) : premiumChart(list, D.current, D.chart)), true);
     await sleep(1500);
+    const chartEl = stream.lastElementChild;
     const grid = add(el(`<div class="offers">${list.map((o) => offerCard(o, kind, { ...P, ...D, offerDetails: D.offerDetails || P.offerDetails }, rec, D.current)).join('')}</div>`));
+    reveal(chartEl, true);
     grid.addEventListener('click', (e) => { const b = e.target.closest('[data-a=more]'); if (!b) return; const more = $('.offer-more', b.closest('.offer')); more.hidden = !more.hidden; b.setAttribute('aria-expanded', String(!more.hidden)); });
     const hi = (id, on) => $$(`[data-offer="${id}"]`, stream).forEach((n) => n.classList.toggle('hi', on));
     $$('.pt, .bar-row[data-offer]:not(.now)', stream).forEach((n) => { n.addEventListener('pointerenter', () => hi(n.dataset.offer, true)); n.addEventListener('pointerleave', () => hi(n.dataset.offer, false)); n.addEventListener('click', () => { const c = $(`.offer[data-offer="${n.dataset.offer}"]`, grid); if (c) c.scrollIntoView({ block: 'center', behavior: smooth() }); }); });
@@ -329,7 +331,7 @@ async function signing(G, terms, o) {
   $('[data-a=full]', card).addEventListener('click', (e) => { const f = $('.full', card); f.hidden = !f.hidden; e.currentTarget.setAttribute('aria-expanded', String(!f.hidden)); });
   input.addEventListener('input', () => { btn.disabled = input.value.trim().length < 3; });
   await wait((fin) => btn.addEventListener('click', () => fin()), [{ type: () => input, text: name, read: 4200 }, { tap: () => btn, read: 800 }]);
-  btn.disabled = true; btn.innerHTML = '<span class="spin light" aria-hidden="true"></span>'; await sleep(1100);
+  btn.disabled = true; btn.classList.add('busy'); btn.innerHTML = '<span class="spin" aria-hidden="true"></span>'; await sleep(1100);
 }
 function confetti() {
   if (reduced()) return '';
@@ -340,7 +342,7 @@ function confetti() {
 }
 async function celebrate(Dn, o) {
   const facts = Dn.facts ? fn(Dn.facts, o) : null;
-  const card = add(el(`<div class="card done"><span class="seal">${confetti()}<svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M15 27l8 8 14-16"/></svg></span>
+  const card = add(el(`<div class="card party"><span class="seal">${confetti()}<svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M15 27l8 8 14-16"/></svg></span>
     <h2>${esc(Dn.title)}</h2><p>${esc(Dn.body(o))}</p>
     ${facts ? `<dl>${facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : ''}
     <button type="button" class="btn">${esc(Dn.cta)}</button></div>`), true);
@@ -354,7 +356,7 @@ function closeDeal(path, o) {
     S.loans = S.loans.filter((l) => l.id !== base.id).concat({ ...base, lender: o.lender, rate: o.apr, limit: o.limit, payment: Math.round(base.payment * o.apr / 7.9), isNew: true });
     S.open.loans = null;
   } else {
-    const fresh = { ...POLICIES.find((p) => p.id === 'auto'), carrier: o.carrier, icon: o.icon, premium: o.premium, deductible: o.deductible, liability: o.liability, renews: new Date(Date.now() + 6 * 864e5).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), isNew: true };
+    const fresh = { ...POLICIES.find((p) => p.id === 'auto'), carrier: o.carrier, icon: o.icon, premium: o.premium, deductible: o.deductible, liability: o.liability, renews: new Date(Date.now() + 371 * 864e5).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), isNew: true };
     S.policies = S.policies.map((p) => (p.id === 'auto' ? fresh : p)); S.watch.auto = true; S.open.insurance = null;
   }
 }
@@ -409,7 +411,7 @@ function renderLoans() {
     return `<div class="row${open ? ' open' : ''}${l.isNew ? ' is-new' : ''}" data-row="${l.id}">
       <button type="button" class="row-main" data-act="loan" data-id="${l.id}" aria-expanded="${open}">
         <span class="ib">${ic(LOAN_ICON[l.type] || 'file', 21)}</span>
-        <span class="mid"><b>${esc(l.type)}${l.isNew ? `<i class="tag new">${H.newTag}</i>` : ''}</b><span>${esc(l.lender)}</span></span>
+        <span class="mid"><b>${esc(l.type)}</b><span>${esc(l.lender)}${l.isNew ? `<i class="tag new">${H.newTag}</i>` : ''}</span></span>
         <span class="end"><b>${money(l.balance)}</b><span>${l.payment ? `${money(l.payment + (extra || 0))} due ${esc(l.due)}` : `Nothing due yet`}</span></span>${chev}
       </button>
       ${open ? `<div class="row-more">
@@ -430,7 +432,7 @@ function renderLoans() {
     <div class="cols"><div class="col-a"><div class="list">${S.loans.map(row).join('')}</div></div>
       <div class="col-b"><div class="sec-hd"><h3>${H.accountsTitle}</h3><span>${H.accountsSub(S.banks.reduce((a, b) => a + b.balance, 0))}</span></div>
         <div class="list">${S.banks.map(acct).join('')}<button type="button" class="row-add" data-act="connect">${ic('plus', 18, 2.2)}${H.connect}</button></div>
-        <button type="button" class="btn wide move" data-act="move">${ic('swap', 18, 2)}${H.move}</button></div></div></div>`;
+        <button type="button" class="btn ghost wide move" data-act="move">${ic('swap', 18, 2)}${H.move}</button></div></div></div>`;
   main.scrollTop = keep;
 }
 function renderInsurance() {
@@ -441,17 +443,17 @@ function renderInsurance() {
     return `<div class="row${open ? ' open' : ''}${p.isNew ? ' is-new' : ''}" data-row="${p.id}">
       <button type="button" class="row-main" data-act="policy" data-id="${p.id}" aria-expanded="${open}">
         ${p.icon ? cmark(p) : `<span class="ib">${ic(POL_ICON[p.type] || 'shield', 21)}</span>`}
-        <span class="mid"><b>${esc(p.type)}${p.isNew ? `<i class="tag new">${H.newTag}</i>` : ''}</b><span>${esc(p.carrier.replace(/^Employer plan \((.*)\)$/, '$1, through work'))}</span></span>
+        <span class="mid"><b>${esc(p.type)}</b><span>${esc(p.carrier.replace(/^Employer plan \((.*)\)$/, '$1, through work'))}${p.isNew ? `<i class="tag new">${H.newTag}</i>` : ''}</span></span>
         <span class="end"><b>${money(p.premium)}<small> / ${p.per === 'year' ? 'yr' : 'mo'}</small></b><span>${/^[A-Z][a-z]{2} \d/.test(p.renews) ? `Renews ${esc(p.renews)}` : esc(p.renews)}</span></span>${chev}
       </button>
       ${open ? `<div class="row-more">
         ${claim ? `<p class="claim-line">${ic('file', 16, 2)}Claim ${esc(claim)} is open. An adjuster will call you.</p>` : ''}
-        <dl class="facts"><div><dt>Covers</dt><dd>${esc(p.covers)}</dd></div><div><dt>Policy number</dt><dd>${policyNo(p)}</dd></div><div><dt>Premium</dt><dd>${perLabel(p)}</dd></div></dl>
+        <dl class="facts"><div><dt>Covers</dt><dd>${esc(p.covers)}</dd></div><div><dt>Policy number</dt><dd>${policyNo(p)}</dd></div></dl>
         <div class="acts"><button type="button" class="btn sm" data-act="idcard" data-id="${p.id}">${H.actions.card}</button><button type="button" class="btn sm ghost" data-act="coverage" data-id="${p.id}">${H.actions.coverage}</button>${employer ? '' : `<button type="button" class="btn sm ghost" data-act="claim" data-id="${p.id}">${H.actions.claim}</button><button type="button" class="btn sm ghost" data-act="reshop" data-id="${p.id}">${H.actions.reshop}</button>`}</div>
         ${employer ? `<p class="fine">${H.employer}</p>` : `<label class="sw-row"><span><b>${H.watch}</b><small>${H.watchOn}</small></span><span class="sw"><input type="checkbox" data-act="watch" data-id="${p.id}"${S.watch[p.id] ? ' checked' : ''}><i></i></span></label>`}
       </div>` : ''}</div>`;
   };
-  const dated = S.policies.filter((p) => /^[A-Z][a-z]{2} \d/.test(p.renews)).map((p) => { const d = new Date(`${p.renews}, ${new Date().getFullYear()}`); if (d < Date.now()) d.setFullYear(d.getFullYear() + 1); return { p, d }; }).sort((a, b) => a.d - b.d).slice(0, 3);
+  const dated = S.policies.filter((p) => /^[A-Z][a-z]{2} \d/.test(p.renews) && !/Employer/.test(p.carrier)).map((p) => { const d = new Date(/\d{4}/.test(p.renews) ? p.renews : `${p.renews}, ${new Date().getFullYear()}`); if (d < Date.now()) d.setFullYear(d.getFullYear() + 1); return { p, d }; }).sort((a, b) => a.d - b.d).slice(0, 3);
   v.innerHTML = `<div class="home">${nudgeHtml()}
     <div class="home-hd"><h2>${H.title}</h2><p>${H.sub(S.policies.length, watching)}</p></div>
     <div class="cols"><div class="col-a"><div class="list">${S.policies.map(row).join('')}<button type="button" class="row-add" data-act="add-policy">${ic('plus', 18, 2.2)}${H.add}</button></div></div>
@@ -483,7 +485,7 @@ function closeSheet(silent) {
 }
 const okIcon = `<span class="ok">${ic('check', 26, 2.6)}</span>`;
 const success = (title, body, close) => `<div class="flow-done">${okIcon}<h3>${esc(title)}</h3><p>${esc(body)}</p><button type="button" class="btn wide" data-a="flow-done">${esc(close)}</button></div>`;
-const acctOpt = (b, sel) => `<option value="${b.id}"${b.id === sel ? ' selected' : ''}>${esc(b.bank)} ${esc(b.name)} ••${b.last4} · ${money(b.balance, 2)}</option>`;
+const acctOpt = (b, sel) => `<option value="${b.id}"${b.id === sel ? ' selected' : ''}>${esc(b.bank)} ••${b.last4} · ${money(b.balance, 2)}</option>`;
 const bankOf = (id) => S.banks.find((b) => b.id === id);
 /* Each flow is self-contained and calls done(result) once, whether it finishes or is closed. */
 function flowShell(done) { let finished = false, result = false; return { end: (r) => { result = r; }, close: () => { if (finished) return; finished = true; done(result); }, onDone: (body) => { const b = $('[data-a=flow-done]', body); if (b) b.addEventListener('click', () => closeSheet()); } }; }
@@ -687,7 +689,7 @@ async function renewal() {
   await sleep(700);
   const r = await nudge({ text: fn(R.nudge, pol), yes: R.shop, alt: fn(R.direct, pol), no: R.no });
   if (r === 'no') return;
-  setStation(8);
+  setStation(8); S.lock = true;
   go('guide'); stream.innerHTML = '';
   const list = fn(R.offers, pol);
   me(r === 'yes' ? R.shop : fn(R.direct, pol)); await sleep(400);
