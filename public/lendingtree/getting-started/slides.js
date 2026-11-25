@@ -170,12 +170,13 @@ const podRow = (p, k) => {
 };
 const RS = [['Stakeholder interviews', 0.5, -1], ['Market research', 1.5, 1], ['Provisional vision', 3, -1], ['Contextual inquiry', 4, 1], ['Synthesis', 5, -1], ['Concept design', 6, 1], ['Validation', 7, -1], ['Go-to-market', 8, 1]];
 const disruption = `
-<svg class="dis" viewBox="0 0 1200 470" role="img" aria-label="Three independent pods running repeating cycles through the year, and a research-led reset that reaches a phase gate in month nine and an alpha in month twelve">
+<svg class="dis" viewBox="0 0 1200 524" role="img" aria-label="Three independent pods running repeating cycles through the year, and a research-led reset that reaches a phase gate in month nine and an alpha in month twelve">
   ${Array.from({ length: 12 }, (_, i) => `<text class="lb mo" x="${mx(i + 0.5)}" y="26">${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}</text>`).join('')}
   <path class="axis" d="M${M0} 38H1170"/>
-  <path class="tick mk" d="M${mx(3)} 38V44M${mx(3)} 98V224M${mx(3)} 290V400"/><text class="lb acc sm" x="${mx(3)}" y="62">Day 90</text>
+  <path class="tick mk" d="M${mx(3)} 38V44M${mx(3)} 82V278M${mx(3)} 380V454"/><text class="lb acc sm" x="${mx(3)}" y="62">Day 90</text>
   <text class="hd" ${A(0.2)} x="18" y="66" text-anchor="start">Three independent pods</text>
-  <text class="lb" ${A(0.3)} x="18" y="88" text-anchor="start">PM · Designer · Engineer, principal level. No brief from me. They eat what they kill.</text>
+  <text class="lb sm" ${A(0.3)} x="18" y="86" text-anchor="start"><tspan x="18">PM · Designer · Engineer,</tspan><tspan x="18" dy="17">all at principal level.</tspan><tspan x="18" dy="17">No brief from me.</tspan><tspan x="18" dy="17">They eat what they kill.</tspan></text>
+  <g transform="translate(0 54)">
   ${PODS.map(podRow).join('')}
   <g ${A(2.6, 'fade')}>
     <circle class="stn open" cx="${M0 + 6}" cy="246" r="5.5"/><text class="lb sm" x="${M0 + 20}" y="251" text-anchor="start">Open charter</text>
@@ -193,6 +194,7 @@ const disruption = `
   <path class="skip" ${A(4.2, 'fade')} d="M${M0 + 30} 418V362" marker-end="url(#ah)"/>
   <text class="lb acc" ${A(4.0)} x="18" y="436" text-anchor="start">Hypotheses to invalidate</text>
   ${['Bank connectivity through MCP', 'Assistants as underwriting intelligence'].map((t, i) => { const w = [236, 300][i], x = [250, 498][i]; return `<g ${A((4.1 + i * 0.15).toFixed(2), 'drop')}><rect class="chip" x="${x}" y="420" width="${w}" height="30" rx="15"/><text class="lb" x="${x + w / 2}" y="440">${t}</text></g>`; }).join('')}
+  </g>
 </svg>`;
 
 /* ----------------------------------------------------------- 7 visiontypes */
@@ -200,10 +202,10 @@ const LIFE = ['Lead', 'MQL', 'Application', 'Offers and quotes', 'Review and sel
 const frames = (url, label, sub, d) => `
   <div class="vt a" style="--d:${d}">
     <h3>${label}</h3><p>${sub}</p>
-    <div class="fr">
+    <a class="fr" href="${url}" aria-label="Open ${label.slice(3)}">
       <div class="desk"><i></i><div class="scr"><iframe title="${label}, desktop" data-src="${url}?embed=1" loading="lazy" tabindex="-1"></iframe></div></div>
       <div class="phone"><div class="scr"><iframe title="${label}, mobile" data-src="${url}?embed=1&path=insurance" loading="lazy" tabindex="-1"></iframe></div></div>
-    </div>
+    </a>
   </div>`;
 const visiontypes = `
 <div class="vts">

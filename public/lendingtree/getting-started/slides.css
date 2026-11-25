@@ -152,7 +152,8 @@ svg .a.gy { transform-origin: center bottom; }
 .vts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.4em; }
 .vt h3 { font: 700 1.2em var(--head); letter-spacing: 0; text-transform: none; color: var(--ink); }
 .vt p { font-size: .9em; color: var(--muted); margin: .2em 0 .9em; }
-.fr { position: relative; padding-right: 9%; }
+.fr { position: relative; padding-right: 9%; display: block; text-decoration: none; color: inherit; cursor: pointer; }
+.fr:hover .desk, .fr:focus-visible .desk { border-color: var(--ink); } .fr:hover .phone, .fr:focus-visible .phone { border-color: #55606e; }
 .desk { border: 1px solid var(--rule); border-radius: 10px; background: #fff; overflow: hidden; }
 .desk > i { display: block; height: 1.1em; background: var(--surface2); border-bottom: 1px solid var(--rule); }
 .scr { position: relative; overflow: hidden; background: #fff; container-type: inline-size; }
