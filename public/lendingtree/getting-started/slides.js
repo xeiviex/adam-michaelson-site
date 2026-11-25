@@ -109,9 +109,9 @@ const impact = `
   <div class="cand">
     <h3 ${A(0.2)}>Candidate first bets</h3>
     <ul>
-      <li ${A(0.35)}>The Power of Choice</li>
-      <li ${A(0.5)}>A Companion</li>
-      <li ${A(0.65)}>Aligned Outcomes</li>
+      <li ${A(0.35)}><a href="/lendingtree/choice/">The Power of Choice</a></li>
+      <li ${A(0.5)}><a href="/lendingtree/companion/">A Companion</a></li>
+      <li ${A(0.65)}><a href="/lendingtree/outcomes/">Aligned Outcomes</a></li>
       <li ${A(0.8)} class="a more">Other in-flight work, ideas from the team, other ideas of mine, etc.</li>
     </ul>
   </div>
