@@ -230,7 +230,7 @@ const time = `${timeChart()}
 const card = (d, part, fig, line, by, cls = '') => `<article ${A(d)}><h3>${part}</h3><b class="fig ${cls}">${fig}</b><p>${line}</p><em>${by}</em></article>`;
 const outcomes = `
 <div class="cards6">
-  ${card(0.2, 'Integration', '<span data-count="30" data-at="0.3" data-final="20–30">20–30</span>', 'Leaders interviewed; synthesis read out to all', 'January 15')}
+  ${card(0.2, 'Integration', '20–30', 'Leaders interviewed; synthesis read out to all', 'January 15')}
   ${card(0.5, 'Team leadership', '30 · 60 · 90', 'Expectations, assessments, changes; every team with a named lead', 'Day 90')}
   ${card(0.8, 'Protecting the core', '≥ Plan', 'The company plan’s core targets, jointly accountable', 'Every quarter')}
   ${card(1.1, 'Immediate impact', '$1M+', 'Profit booked, and annual run rate', 'Within year one')}
