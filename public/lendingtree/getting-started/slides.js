@@ -113,7 +113,7 @@ const impact = `
     <path class="ln bet" ${A((1.2 + i * 0.05).toFixed(2))} pathLength="1" d="M16 ${b.y}H${b.x - 9}"/>
     <g ${A((1.9 + b.x / 500).toFixed(2), 'pop')}>${dia(b.x, b.y, b.live ? 'go' : 'no')}</g>
     ${b.live ? `<path class="ln win" ${A((2.2 + b.x / 500).toFixed(2))} pathLength="1" d="M${b.x + 9} ${b.y}C${b.x + 160} ${b.y} 600 232 690 226"/>` : `<path ${A((2.1 + b.x / 500).toFixed(2), 'fade')} class="x" d="M${b.x + 20} ${b.y - 6}l12 12m0-12-12 12"/>`}`).join('')}
-    <path class="ln band" ${A(3.7)} pathLength="1" d="M686 226C740 222 760 150 800 112"/>
+    <path class="ln flow" ${A(3.7)} pathLength="1" d="M686 226C740 222 760 150 800 112"/>
     <circle ${A(4.3, 'pop')} class="goal" cx="806" cy="106" r="11"/>
     <text ${A(4.4)} class="big" x="828" y="96" text-anchor="start"><tspan data-count="1" data-at="4.4" data-dur="0.6" data-final="$1M+">$1M+</tspan></text>
     <text ${A(4.5)} class="lb" x="829" y="122" text-anchor="start">profit, year one</text>

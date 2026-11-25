@@ -18,16 +18,16 @@
 .on .a.gy { animation-name: gs-gy; transform-origin: center bottom; animation-duration: .7s; }
 svg .a { transform-box: fill-box; transform-origin: center; }
 svg .a.gy { transform-origin: center bottom; }
-.ln { fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 1; }
-.on .ln.a { animation: gs-draw .9s cubic-bezier(.4, 0, .2, 1) both; animation-delay: calc(var(--d, 0) * 1s); }
+.ln { fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
+.on .ln.a { animation: gs-draw .9s cubic-bezier(.4, 0, .2, 1) forwards; animation-delay: calc(var(--d, 0) * 1s); }
 @keyframes gs-in { from { opacity: 0; transform: translateY(.7em); } to { opacity: 1; transform: none; } }
 @keyframes gs-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes gs-drop { 0% { opacity: 0; transform: translateY(-1.6em); } 70% { opacity: 1; transform: translateY(.12em); } 100% { opacity: 1; transform: none; } }
 @keyframes gs-pop { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: none; } }
 @keyframes gs-gx { from { opacity: 0; transform: scaleX(0); } 20% { opacity: 1; } to { opacity: 1; transform: none; } }
 @keyframes gs-gy { from { opacity: 0; transform: scaleY(0); } 20% { opacity: 1; } to { opacity: 1; transform: none; } }
-@keyframes gs-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-@media (prefers-reduced-motion: reduce) { .a, .on .a { opacity: 1; animation: none; } .ln, .on .ln.a { stroke-dashoffset: 0; animation: none; } }
+@keyframes gs-draw { from { stroke-dashoffset: 1; opacity: 1; } to { stroke-dashoffset: 0; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .a, .on .a { opacity: 1; animation: none; } .ln, .on .ln.a { stroke-dashoffset: 0; opacity: 1; animation: none; } }
 
 /* shared svg parts */
 .lb.sm { font-size: 13px; fill: var(--muted); } .lb.acc { fill: var(--acc-hi); font-weight: 600; } .lb.wh { fill: var(--ink); font-weight: 600; } .lb.mut { fill: var(--muted); }
@@ -87,7 +87,7 @@ svg .a.gy { transform-origin: center bottom; }
 .vis svg .bt { font: 700 17px var(--head); fill: var(--ink); } .vis svg .bt.wh { fill: var(--dark); font-size: 20px; } .vis svg .bt.hire { fill: var(--body); }
 .vis svg .bs { font-size: 13px; fill: var(--muted); }
 .tm { fill: var(--surface2); } .tm.hire { fill: none; stroke: var(--rule); stroke-dasharray: 4 4; }
-.ln.dsh { stroke-dasharray: 4 5; stroke-dashoffset: 0; } .on .ln.dsh.a { animation-name: gs-fade; }
+.ln.dsh { stroke-dasharray: 4 5; stroke-dashoffset: 0; } .on .ln.dsh.a { animation-name: gs-fade; animation-fill-mode: forwards; }
 .pulse { opacity: 0; } .pulse.dn { fill: var(--acc-hi); } .pulse.up { fill: var(--ink); }
 .on .pulse.dn { animation: gs-dn 2.4s linear 2.6s infinite; } .on .pulse.up { animation: gs-up 2.4s linear 3.8s infinite; }
 @keyframes gs-dn { 0% { opacity: 0; transform: translateY(0); } 10%, 85% { opacity: 1; } 100% { opacity: 0; transform: translateY(88px); } }
@@ -98,7 +98,7 @@ svg .a.gy { transform-origin: center bottom; }
 /* ---- 4 core ---- */
 .corec { max-height: 40vh; }
 .band { fill: var(--acc-soft); }
-.ln.plan { stroke: var(--muted); stroke-width: 2; stroke-dasharray: .012 .012; stroke-dashoffset: 0; } .on .ln.plan.a { animation-name: gs-fade; }
+.ln.plan { stroke: var(--muted); stroke-width: 2; stroke-dasharray: .012 .012; stroke-dashoffset: 0; } .on .ln.plan.a { animation-name: gs-fade; animation-fill-mode: forwards; }
 .ln.corel { stroke: var(--ink); stroke-width: 4; stroke-linecap: round; } .on .ln.corel.a { animation-duration: 1.6s; }
 .rv { fill: var(--bg); stroke: var(--ink); stroke-width: 3; }
 .sup { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .9em; }
@@ -114,7 +114,7 @@ svg .a.gy { transform-origin: center bottom; }
 .cand li.more { background: none; border: 1px dashed var(--rule); color: var(--body); font-weight: 400; font-size: .92em; line-height: 1.4; }
 .vis svg .lb[text-anchor=start], .vis svg text[text-anchor=start] { text-anchor: start; } .vis svg text[text-anchor=end] { text-anchor: end; }
 .st0 { fill: var(--muted); }
-.ln.bet { stroke: var(--muted); stroke-width: 2; } .ln.win { stroke: var(--acc); stroke-width: 4; stroke-linecap: round; } .ln.band { stroke: var(--acc); stroke-width: 12; stroke-linecap: round; }
+.ln.bet { stroke: var(--muted); stroke-width: 2; } .ln.win { stroke: var(--acc); stroke-width: 4; stroke-linecap: round; } .ln.flow { stroke: var(--acc); stroke-width: 12; stroke-linecap: round; }
 .x { stroke: var(--muted); stroke-width: 2; fill: none; }
 .vis svg .big { font: 700 40px var(--head); fill: var(--ink); }
 
@@ -209,3 +209,7 @@ svg .a.gy { transform-origin: center bottom; }
   .life { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 1em; } .life li::after { display: none; }
   .gnl, .gnr { grid-template-columns: minmax(0, 1fr); gap: .2em; } .gnr { padding: .4em 0; } .gng { height: 1em; } .gnt { white-space: normal; flex-wrap: wrap; }
 }
+
+/* dashed lines fade in, so they start hidden like everything else */
+.ln.dsh, .ln.plan { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .ln.dsh, .ln.plan { opacity: 1; } }
