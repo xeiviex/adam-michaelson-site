@@ -5,7 +5,7 @@ export const META = {
   eyebrow: 'Draft · v1',
   title: 'Year one: outcomes and plan',
   intro: 'What I will commit to in the first year, and the milestones toward it. Every target is a draft until the stakeholder interviews are done and Finance confirms the baselines at Day 30.',
-  planNote: 'Months run from my start date. A month is drawn as four weeks.',
+  planNote: 'Assumes a start date of January 1, 2027. Each month is drawn as four weeks.',
 };
 
 export const WEEKS = 48;
@@ -28,18 +28,18 @@ export const TRACKS = [
     ],
   },
   {
-    id: 'team', name: 'Team leadership', sub: 'Trusted lieutenants, clear expectations, a stronger team',
-    card: { value: '100%', unit: 'of teams led by a named lieutenant', by: 'Day 60', status: 'draft',
+    id: 'team', name: 'Team leadership', sub: 'Trusted leads, clear expectations, a stronger team',
+    card: { value: '100%', unit: 'of teams led by a named, accountable lead', by: 'Day 60', status: 'draft',
       points: ['Written expectations for every role by Day 30', 'Every team member assessed by Day 60', 'Staffing changes made by Day 90'] },
     bars: [
       { s: 1, e: 4, row: 1, label: 'Observe, set expectations', short: 'Observe', light: true },
-      { s: 5, e: 8, row: 1, label: 'Name lieutenants', short: 'Appoint' },
+      { s: 5, e: 8, row: 1, label: 'Name team leads', short: 'Appoint' },
       { s: 9, e: 12, row: 1, label: 'Make changes', short: 'Adjust' },
       { s: 13, e: 48, row: 1, label: 'Level up: operating cadence, coaching, quarterly reviews' },
     ],
     ms: [
       { w: 4, t: 'Role expectations published', ev: 'Reviewed with each team' },
-      { w: 8, t: 'Lieutenants named and running their teams', ev: 'Operating cadence in place' },
+      { w: 8, t: 'Team leads named and running their teams', ev: 'Operating cadence in place' },
       { w: 12, t: 'Staffing changes made', ev: 'Roles filled or in the hiring pipeline' },
     ],
   },
@@ -59,9 +59,9 @@ export const TRACKS = [
     ],
   },
   {
-    id: 'impact', name: 'Immediate impact', sub: 'New ROI greater than my comp',
-    card: { value: '> 1×', unit: 'my comp in net new contribution', by: 'Month 6', status: 'draft',
-      points: ['First experiment live by Day 60', 'Each bet gets a kill or scale decision within 60 days', 'Year-end multiple set at Day 90'] },
+    id: 'impact', name: 'Immediate impact', sub: 'New profit from new work, proven by experiment',
+    card: { value: '$1M+', unit: 'annualized profit from new work', by: 'December 31', status: 'draft',
+      points: ['First experiment live by Day 60', 'Each bet gets a kill or scale decision within 60 days', 'Run rate reported monthly from Month 6'] },
     bars: [
       { s: 3, e: 4, row: 1, label: 'Choose the first bets', short: '' },
       { s: 5, e: 12, row: 1, label: 'First experiments, MVPs' },
@@ -71,7 +71,8 @@ export const TRACKS = [
     ms: [
       { w: 4, t: 'First bets chosen', ev: 'Each with a hypothesis, a cost and a kill rule' },
       { w: 8, t: 'First experiment live', ev: 'Instrumented, with a holdout' },
-      { w: 24, t: 'New contribution passes 1× comp', ev: 'Reconciled by Finance' },
+      { w: 24, t: 'First bets returning a profit', ev: 'Run rate reconciled by Finance' },
+      { w: 48, t: '$1M+ annualized profit from new work', ev: 'Run rate reconciled by Finance' },
     ],
   },
   {
@@ -116,19 +117,15 @@ export function milestones() {
   return all;
 }
 
-export function when(w) {
-  if (w === 2) return 'Week 2';
-  if (w === 4) return 'Day 30';
-  if (w === 8) return 'Day 60';
-  if (w === 12) return 'Day 90';
-  return 'Month ' + Math.ceil(w / 4);
-}
+export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const DATES = { 2: 'Jan 15', 4: 'Jan 31', 8: 'Mar 1', 12: 'Mar 31', 24: 'Jun 30', 36: 'Sep 30', 48: 'Dec 31' };
+export function when(w) { return DATES[w] || MONTHS[Math.ceil(w / 4) - 1]; }
 
 /* My time, as a share of the week, by phase. Draft. Each column adds to 100. */
-export const PHASES = ['Weeks 1 to 2', 'Weeks 3 to 4', 'Days 31 to 60', 'Days 61 to 90', 'Months 4 to 6', 'Months 7 to 12'];
+export const PHASES = ['Jan 1 to 15', 'Jan 16 to 31', 'February', 'March', 'Apr to Jun', 'Jul to Dec'];
 export const ALLOC = [
   { id: 'integration', pct: [60, 20, 0, 0, 0, 0], keep: 'The interviews themselves and the readout.', give: 'Scheduling, note capture and follow-ups.' },
-  { id: 'team', pct: [10, 20, 25, 20, 15, 15], keep: 'Choosing and coaching the lieutenants; expectations and assessments.', give: 'Day-to-day team management, to the lieutenants.' },
+  { id: 'team', pct: [10, 20, 25, 20, 15, 15], keep: 'Choosing and coaching the team leads; expectations and assessments.', give: 'Day-to-day team management, to the team leads.' },
   { id: 'core', pct: [10, 20, 20, 15, 15, 15], keep: 'The KPI review and clearing roadblocks that need my level.', give: 'Running the core roadmap, to the existing product lead and team.' },
   { id: 'impact', pct: [0, 15, 25, 25, 20, 15], keep: 'Choosing the bets and the kill or scale calls.', give: 'Build, launch and monitoring, to one owner per bet.' },
   { id: 'disruption', pct: [0, 5, 10, 20, 35, 45], keep: 'A seat in the deep research and the vision that comes out of it.', give: 'Leading each disruption team, to its principal.' },

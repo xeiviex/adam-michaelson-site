@@ -61,3 +61,4 @@ Trophy, balloons, streamers (party popper) and coins play as Lottie animations f
 
 ## LendingTree year one (2026-11-24)
 - `/lendingtree/year-one/` is a draft page: outcome cards, a 48-week Gantt, a time-allocation table and a milestone list. All four read from `public/lendingtree/year-one/data.js` (`TRACKS`, `ALLOC`); edit numbers there. Every target is a draft until baselines are confirmed. Not linked from the deck yet.
+- `/lendingtree/getting-started/` is the slide deck for the "getting started" video: one slide per topic, content in `public/lendingtree/getting-started/content.js`, drawn by the shared `/achieve/deck/app.js`. Add `?present` to hide the header, nav and Details button for clean video capture. Assumes a January 1, 2027 start. Keep the internal framing (naval model, past-employer lessons) out of the copy.

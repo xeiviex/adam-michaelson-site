@@ -1,4 +1,4 @@
-import { META, WEEKS, CHECKPOINTS, TRACKS, PHASES, ALLOC, milestones, when } from './data.js';
+import { META, WEEKS, CHECKPOINTS, TRACKS, PHASES, ALLOC, MONTHS, milestones, when } from './data.js';
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
@@ -27,7 +27,7 @@ const g = $('gantt');
 g.style.setProperty('--weeks', WEEKS);
 const ax = el('div', 'lane ax'); ax.append(el('div', 'lh'));
 const axg = el('div', 'axis');
-for (let m = 1; m <= WEEKS / 4; m++) { const c = el('div', CHECKPOINTS[m] ? 'cp' : ''); c.append(el('b', '', 'M' + m)); if (CHECKPOINTS[m]) c.append(el('span', '', CHECKPOINTS[m])); axg.append(c); }
+for (let m = 1; m <= WEEKS / 4; m++) { const c = el('div', CHECKPOINTS[m] ? 'cp' : ''); c.append(el('b', '', MONTHS[m - 1])); if (CHECKPOINTS[m]) c.append(el('span', '', CHECKPOINTS[m])); axg.append(c); }
 ax.append(axg); g.append(ax);
 
 TRACKS.forEach((tr) => {
