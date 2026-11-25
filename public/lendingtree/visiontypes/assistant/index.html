@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-no-scroll-hint>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>LendingTree inside your assistant | Adam Michaelson</title>
+<meta name="description" content="A clickable visiontype: how LendingTree could work inside a consumer AI assistant, from the first question to servicing.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site-bar.css?v=3">
+<link rel="stylesheet" href="/lendingtree/visiontypes/assistant/assistant.css?v=1">
+<script>(function(){var q=location.search;if(/[?&]embed=1/.test(q))document.documentElement.classList.add('embed');})();</script>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+</head>
+<body class="gpt">
+<header class="sbar"><div class="in">
+  <a class="nm" href="/">Adam Michaelson</a>
+  <nav class="trail" aria-label="Breadcrumb"><a href="/lendingtree/"><span class="bk" aria-hidden="true">&lsaquo; </span>LendingTree</a></nav>
+</div></header>
+
+<div class="app" id="app">
+  <aside class="side" id="side" aria-label="Chat history">
+    <div class="s-top"><span class="logo" id="logoIc"></span><button class="ib" id="sideClose" type="button" aria-label="Close sidebar"></button></div>
+    <nav class="s-nav">
+      <button class="s-item" type="button" id="newChat"><span class="ico" id="nwIc"></span>New chat</button>
+      <button class="s-item" type="button" tabindex="-1"><span class="ico" id="srIc"></span>Search chats</button>
+      <button class="s-item" type="button" tabindex="-1"><span class="ico" id="libIc"></span>Library</button>
+    </nav>
+    <div class="s-label">Apps</div>
+    <div class="s-app"><img src="/lendingtree/img/lt-leaf.png" alt="" width="18" height="18"><span>LendingTree</span><small>Connected</small></div>
+    <div class="s-label">Chats</div>
+    <ul class="s-list" id="hist"></ul>
+    <div class="s-user"><span class="me" id="meA"></span><span><b id="meName"></b><small>Plus</small></span></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <main class="main">
+    <header class="top">
+      <button class="ib menu" id="menuBtn" type="button" aria-label="Open sidebar"></button>
+      <button class="model" type="button" tabindex="-1">ChatGPT <span class="ico" id="mdIc"></span></button>
+      <div class="top-r"><span class="conn" title="LendingTree is connected through MCP"><img src="/lendingtree/img/lt-leaf.png" alt="" width="14" height="14">LendingTree connected</span><button class="share" type="button" tabindex="-1"><span class="ico" id="shIc"></span>Share</button><button class="ib cmp" type="button" id="cmpBtn" aria-label="New chat"></button><span class="me small" id="meB"></span></div>
+    </header>
+    <div class="scroller" id="scroller" tabindex="0" aria-label="Conversation">
+      <div class="col" id="col" role="log" aria-live="polite" aria-relevant="additions"></div>
+    </div>
+    <form class="composer" id="composer" autocomplete="off">
+      <div class="suggest" id="suggest" aria-label="Suggested replies"></div>
+      <div class="box">
+        <button type="button" class="ib plus" id="plusBtn" aria-label="Attach" tabindex="-1"></button>
+        <textarea id="gptInput" rows="1" placeholder="Ask anything" aria-label="Message ChatGPT" enterkeyhint="send"></textarea>
+        <button type="button" class="ib mic" id="micBtn" aria-label="Dictate" tabindex="-1"></button>
+        <button type="submit" class="send" id="sendBtn" aria-label="Send message" disabled></button>
+      </div>
+      <p class="fine">ChatGPT can make mistakes. Check important info.</p>
+    </form>
+  </main>
+</div>
+
+<!-- Prototype controls. Not part of the product. -->
+<div class="dev" id="dev">
+  <div class="dev-menu" id="devMenu" hidden>
+    <p class="dev-t">Prototype controls. Not part of the product.</p>
+    <button type="button" id="doAuto" class="sw-row" role="switch" aria-checked="true"><span class="sw-label">Auto-play</span><span class="sw-state">On</span><span class="sw" aria-hidden="true"><i></i></span></button>
+    <div class="seg-l" id="lblPath">Path</div>
+    <div class="seg" role="group" aria-labelledby="lblPath" data-k="path"><button type="button" data-v="loan">Loan</button><button type="button" data-v="insurance">Insurance</button></div>
+    <div class="seg-l" id="lblEntry">How it starts</div>
+    <div class="seg" role="group" aria-labelledby="lblEntry" data-k="entry"><button type="button" data-v="user">Person asks</button><button type="button" data-v="agent">Assistant notices</button></div>
+    <div class="seg-l" id="lblStage">Stage</div>
+    <div class="seg" role="group" aria-labelledby="lblStage" data-k="stage"><button type="button" data-v="shop">Shopping</button><button type="button" data-v="servicing">Servicing</button></div>
+    <button type="button" id="doReset" class="dev-reset">Restart</button>
+    <p class="dev-n" id="devNote"></p>
+  </div>
+  <div class="dev-combo">
+    <button type="button" class="dev-main" id="devToggle" aria-pressed="true" aria-label="Auto-play is on. Pause"><span class="dev-lbl">Prototype</span><span class="dev-ic" id="devIc"></span></button>
+    <button type="button" class="dev-caret" id="devBtn" aria-expanded="false" aria-controls="devMenu" aria-haspopup="true" aria-label="Prototype settings"><svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+</div>
+<div class="pm" id="pm" hidden>
+  <div class="pm-card" role="dialog" aria-modal="true" aria-labelledby="pmTitle" aria-describedby="pmText">
+    <span class="pm-k">Prototype</span>
+    <h2 id="pmTitle"></h2>
+    <p id="pmText"></p>
+    <div class="pm-acts" id="pmActs"></div>
+  </div>
+</div>
+<script type="module" src="/lendingtree/visiontypes/assistant/app.js?v=1"></script>
+</body>
+</html>
