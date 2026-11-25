@@ -356,7 +356,7 @@ const fold = (h) => h
   .replace(/class="a ([^"]*)" (style="[^"]*") class="([^"]*)"/g, 'class="$3 a $1" $2');
 
 const RAW = [
-  { id: 'thesis', name: 'The year in one line', title: 'Protect the core. Deliver new profit. Disrupt ourselves.', sub: 'My first year at LendingTree, in one line', draw: open },
+  { id: 'thesis', name: 'My first year', title: 'Protect the core. Deliver new profit. Disrupt ourselves.', sub: 'My first year at LendingTree', draw: open },
   { id: 'integration', name: 'Integration', title: 'Integration', sub: 'Two weeks of stakeholder interviews, then a readout', draw: integration, details: D.integration },
   { id: 'team', name: 'Team leadership', title: 'Team leadership', sub: 'A clear chain of command, and a team that keeps getting stronger', draw: team, details: D.team, links: [['/product/', 'How I do product']] },
   { id: 'core', name: 'Protecting the core', title: 'Protecting the core', sub: 'Safe with me, and growing', draw: core, details: D.core },
