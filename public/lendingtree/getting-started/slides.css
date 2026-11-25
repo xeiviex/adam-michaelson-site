@@ -108,6 +108,9 @@ svg .a.gy { transform-origin: center bottom; }
 @keyframes gs-dn { 0% { opacity: 0; transform: translateY(0); } 10%, 85% { opacity: 1; } 100% { opacity: 0; transform: translateY(88px); } }
 @keyframes gs-up { 0% { opacity: 0; transform: translateY(88px); } 10%, 85% { opacity: 1; } 100% { opacity: 0; transform: translateY(0); } }
 .t3 { max-width: 60em; margin-inline: auto; width: 100%; }
+.vis svg.org.m { display: none; }
+.vis svg .pt { font: 700 11.5px var(--head); fill: var(--ink); } .vis svg .pt.wh { fill: var(--dark); font-size: 15px; } .vis svg .pt.hire { fill: var(--body); } .vis svg .pt.sm { font: 600 10.5px var(--sans); }
+.vis svg .ps { font-size: 9.5px; fill: var(--muted); } .vis svg .pl { font-size: 10.5px; fill: var(--muted); } .vis svg .pl.acc { fill: var(--acc-hi); font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .pulse { display: none; } }
 
 /* ---- 4 core ---- */
@@ -222,6 +225,7 @@ svg .a.gy { transform-origin: center bottom; }
   .dots { gap: 4px; } .dots a { width: 12px; }
   .vis { min-width: 0; max-width: 100%; }
   .vis svg { min-width: 700px; } .vis { overflow-x: auto; }
+  .vis svg.org { display: none; } .vis svg.org.m { display: block; min-width: 0; max-height: none; }
   .th3, .sup, .cards6, .vts, .need ol { grid-template-columns: minmax(0, 1fr); }
   .base { padding-inline: 1.2em; white-space: normal; font-size: 1em; text-align: center; }
   .th3 > div, .th3 > div:first-child, .th3 > div:last-child { padding: 1.2em 0; border-left: 0; border-top: 1px solid var(--rule); } .th3 svg { min-width: 0; }

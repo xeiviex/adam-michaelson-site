@@ -71,6 +71,30 @@ const integration = `
 const box = (x, y, w, h, t, cls, d, sub) => `<g ${A(d)}><rect class="bx ${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/><text class="bt ${cls}" x="${x + w / 2}" y="${y + h / 2 + (sub ? -3 : 5)}">${t}</text>${sub ? `<text class="bs ${cls}" x="${x + w / 2}" y="${y + h / 2 + 15}">${sub}</text>` : ''}</g>`;
 const LEADS = [300, 600, 900];
 const teams = LEADS.map((cx, k) => [-74, 0, 74].map((dx, j) => `<rect ${A((2.0 + k * 0.15 + j * 0.05).toFixed(2))} class="tm${k === 2 ? ' hire' : ''}" x="${cx + dx - 31}" y="318" width="62" height="38" rx="7"/>`).join('')).join('');
+/* The same chain of command, redrawn tall for phones, where the wide version would have to scroll sideways. */
+const pb = (x, y, w, h, t, cls, d, sub) => `<g ${A(d)}><rect class="bx ${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="7"/><text class="pt ${cls}" x="${x + w / 2}" y="${y + h / 2 + (sub ? -2 : 4)}">${t}</text>${sub ? `<text class="ps" x="${x + w / 2}" y="${y + h / 2 + 12}">${sub}</text>` : ''}</g>`;
+const PL = [65, 180, 295];
+const teamPhone = `
+<svg class="org m" viewBox="0 0 360 292" role="img" aria-label="Chain of command: the CPO, three leads and their teams, with the heads of technology, analytics and strategy, and marketing as partners">
+  <defs><marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#6cc3f5" stroke-width="1.6"/></marker></defs>
+  <path class="ln rule" ${A(0.9)} pathLength="1" d="M85 58V96M65 96H295M65 96V116M180 96V116M295 96V116"/>
+  <path class="ln rule" ${A(1.7)} pathLength="1" d="${PL.slice(0, 2).map((c) => `M${c} 162V180M${c - 34} 180H${c + 34}M${c - 34} 180V196M${c} 180V196M${c + 34} 180V196`).join('')}"/>
+  <path class="ln rule dsh" ${A(1.9)} d="M295 162V180M261 180H329M261 180V196M295 180V196M329 180V196"/>
+  <path class="ln acc" ${A(0.6)} pathLength="1" d="M150 34H190"/>
+  <text class="pl acc" ${A(0.7)} x="265" y="13">Partners: the heads of</text>
+  <g ${A(0.75)}><rect class="bx dk" x="190" y="18" width="150" height="60" rx="7"/><text class="pt sm" x="265" y="35">Technology</text><text class="pt sm" x="265" y="52">Analytics and strategy</text><text class="pt sm" x="265" y="69">Marketing</text></g>
+  ${pb(20, 12, 130, 46, 'CPO', 'wh', 0.2)}
+  ${pb(15, 116, 100, 46, 'Senior director', 'dk', 1.2, 'Product')}
+  ${pb(130, 116, 100, 46, 'Senior director', 'dk', 1.35, 'Product')}
+  ${pb(245, 116, 100, 46, 'Head of design', 'hire', 1.5, 'To hire')}
+  ${PL.map((c, k) => [-34, 0, 34].map((dx, j) => `<rect ${A((1.9 + k * 0.12 + j * 0.04).toFixed(2))} class="tm${k === 2 ? ' hire' : ''}" x="${c + dx - 13}" y="196" width="26" height="20" rx="4"/>`).join('')).join('')}
+  <path class="skip" ${A(2.8, 'fade')} d="M104 58C120 66 122.500 78 122.500 100V226" marker-end="url(#ahp)"/>
+  <path class="skip" ${A(3.1, 'fade')} d="M134 58C134 86 237.500 78 237.500 102V226" marker-end="url(#ahp)"/>
+  <text class="pl acc" ${A(2.9)} x="122" y="246">When a team is in trouble</text>
+  <text class="pl acc" ${A(3.2)} x="238" y="264">Coaching rising leaders</text>
+  <text class="pl" ${A(2.4)} x="180" y="286">Solid lines: clarity down, feedback up</text>
+</svg>`;
+
 const team = `
 <svg class="org" viewBox="0 0 1200 410" role="img" aria-label="Chain of command: the CPO, three leads and their teams, with the heads of technology, analytics and strategy, and marketing as partners">
   <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#6cc3f5" stroke-width="1.6"/></marker></defs>
@@ -96,6 +120,7 @@ const team = `
   <text class="lb acc" ${A(3.3)} x="450" y="384">When a team is in trouble</text>
   <text class="lb acc" ${A(3.7)} x="750" y="384">Coaching rising leaders</text>
 </svg>
+${teamPhone}
 <ol class="trk t3">
   <li class="on link a" style="--d:4.2"><div class="st"><em>By day 30</em><b>Set expectations</b><small>Outputs and outcomes for every role</small></div></li>
   <li class="on link a" style="--d:4.5"><div class="st"><em>By day 60</em><b>Assess</b><small>Every team member, one on one</small></div></li>
