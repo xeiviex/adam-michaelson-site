@@ -68,10 +68,10 @@ PHASES.forEach((p) => { const th = el('th', '', p); th.scope = 'col'; hr.append(
 const thead = el('thead'); thead.append(hr); tb.append(thead);
 const body = el('tbody');
 ALLOC.forEach((r) => {
-  const tr = el('tr', r.id === 'buffer' ? 'buf' : ''); const th = el('th', '', nameOf(r)); th.scope = 'row'; tr.append(th);
+  const tr = el('tr', r.keep ? '' : 'buf'); const th = el('th', '', nameOf(r)); th.scope = 'row'; tr.append(th);
   r.pct.forEach((v) => { const td = el('td', v ? '' : 'zero', v ? v + '%' : '\u2013'); td.style.setProperty('--v', v / 60); tr.append(td); });
   body.append(tr);
-  if (r.id === 'buffer') return;
+  if (!r.keep) return;
   const c = el('article', 'del'); c.append(el('h3', '', nameOf(r)));
   const k = el('p'); k.append(el('span', '', 'I keep'), document.createTextNode(r.keep)); c.append(k);
   const g2 = el('p'); g2.append(el('span', '', 'I delegate'), document.createTextNode(r.give)); c.append(g2);
