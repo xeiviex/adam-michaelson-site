@@ -14,6 +14,9 @@
 .on .a.fade { animation-name: gs-fade; }
 .on .a.drop { animation-name: gs-drop; animation-duration: .7s; }
 .on .a.pop { animation-name: gs-pop; animation-duration: .35s; }
+/* a figure arriving at the end of a line: it slides out from the line's end and settles, with no change of text */
+.on .a.land { animation-name: gs-land; animation-duration: .6s; }
+svg .a.land { transform-origin: left center; }
 .on .a.gx { animation-name: gs-gx; transform-origin: left center; }
 .on .a.gy { animation-name: gs-gy; transform-origin: center bottom; animation-duration: .7s; }
 svg .a { transform-box: fill-box; transform-origin: center; }
@@ -23,6 +26,7 @@ svg .a.gy { transform-origin: center bottom; }
 @keyframes gs-in { from { opacity: 0; transform: translateY(.7em); } to { opacity: 1; transform: none; } }
 @keyframes gs-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes gs-drop { 0% { opacity: 0; transform: translateY(-1.6em); } 70% { opacity: 1; transform: translateY(.12em); } 100% { opacity: 1; transform: none; } }
+@keyframes gs-land { from { opacity: 0; transform: translateX(-14px) scale(.9); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
 @keyframes gs-pop { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: none; } }
 @keyframes gs-gx { from { opacity: 0; transform: scaleX(0); } 20% { opacity: 1; } to { opacity: 1; transform: none; } }
 @keyframes gs-gy { from { opacity: 0; transform: scaleY(0); } 20% { opacity: 1; } to { opacity: 1; transform: none; } }
@@ -73,7 +77,8 @@ svg .a.gy { transform-origin: center bottom; }
 .arrow { height: 2px; background: var(--acc); position: relative; }
 .arrow::after { content: ''; position: absolute; right: -1px; top: -4px; border: 5px solid transparent; border-left-color: var(--acc); border-right: 0; }
 .count { color: var(--body); font-size: 1.1em; margin-bottom: .9em; }
-.count b { font: 700 1.9em var(--head); color: var(--ink); margin-right: .25em; font-variant-numeric: tabular-nums; }
+/* fixed width, so the words beside the number do not shift as it counts from one digit to two */
+.count b { font: 700 1.9em var(--head); color: var(--ink); margin-right: .25em; font-variant-numeric: tabular-nums; display: inline-block; min-width: 2.05em; }
 .cal { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)) 1.4em repeat(5, minmax(0, 1fr)); gap: .5em; }
 .cal li { background: var(--surface2); border-radius: 10px; padding: .7em .3em .5em; display: flex; flex-direction: column; align-items: center; gap: .4em; position: relative; }
 .cal li.wk { grid-column: 7; }
