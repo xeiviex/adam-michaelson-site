@@ -62,6 +62,9 @@ svg .a.gy { transform-origin: center bottom; }
 
 /* ---- 2 integration ---- */
 .intg { display: grid; grid-template-columns: auto 3.5em minmax(0, 1fr) 3.5em minmax(0, 17em); align-items: center; gap: 1em; }
+.whow { display: flex; align-items: stretch; gap: .9em; }
+.vis svg.brace { width: 1.3em; height: auto; flex: none; align-self: stretch; }
+.brace path { fill: none; stroke: var(--acc); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linecap: round; }
 .who { list-style: none; display: grid; gap: .6em; }
 .who li { border: 1px solid var(--rule); border-radius: 10px; padding: .7em 1.1em; color: var(--ink); font-weight: 600; white-space: nowrap; }
 .arrow { height: 2px; background: var(--acc); position: relative; }
@@ -208,7 +211,7 @@ svg .a.gy { transform-origin: center bottom; }
   .base { padding-inline: 1.2em; white-space: normal; font-size: 1em; text-align: center; }
   .th3 > div { min-height: 0; padding: 1.2em; }
   .intg, .bets { grid-template-columns: minmax(0, 1fr); } .intg .arrow { display: none; }
-  .who { grid-auto-flow: column; }
+  .who { grid-auto-flow: column; } .vis svg.brace { display: none; min-width: 0; }
   .life { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 1em; } .life li::after { display: none; }
   .gnl, .gnr { grid-template-columns: minmax(0, 1fr); gap: .2em; } .gnr { padding: .4em 0; } .gng { height: 1em; } .gnt { white-space: normal; flex-wrap: wrap; }
 }

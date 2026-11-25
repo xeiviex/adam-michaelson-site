@@ -27,9 +27,12 @@ let dn = 0;
 const cal = DAYS.map((day, i) => `<li${i === 5 ? ' class="wk"' : ''}><span class="dots">${day.map((m) => `<i ${A((0.9 + (dn++) * 0.085).toFixed(2), 'pop' + (m === 6 ? ' big' : ''))}></i>`).join('')}</span><b>${DOW[i % 5]}</b>${i % 5 === 0 ? `<small>Jan ${i === 0 ? 4 : 11}</small>` : ''}</li>`).join('');
 const integration = `
 <div class="intg">
-  <ul class="who">
-    <li ${A(0.2)}>C-team</li><li ${A(0.35)}>VPs</li><li ${A(0.5)}>Direct reports</li>
-  </ul>
+  <div class="whow">
+    <ul class="who">
+      <li ${A(0.2)}>C-team</li><li ${A(0.35)}>VPs</li><li ${A(0.5)}>Direct reports</li>
+    </ul>
+    <svg class="brace a fade" style="--d:.6" viewBox="0 0 20 100" preserveAspectRatio="none" aria-hidden="true"><path d="M2 1C9 1 10 6 10 13V39C10 46 11 50 18 50C11 50 10 54 10 61V87C10 94 9 99 2 99"/></svg>
+  </div>
   <span class="arrow a gx" style="--d:.7"></span>
   <div class="calw">
     <p class="count a fade" style="--d:.8"><b data-count="${dn}" data-at="0.9" data-dur="${(dn * 0.085).toFixed(1)}" data-final="20 to 30">20 to 30</b> interviews in two weeks</p>
