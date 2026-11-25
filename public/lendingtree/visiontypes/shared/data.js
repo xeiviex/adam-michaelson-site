@@ -55,3 +55,10 @@ export const AUTO_CURRENT = { carrier: 'Progressive', icon: 'progressive', premi
 export const LIFECYCLE = ['Lead', 'MQL', 'Application', 'Offers and quotes', 'Review and selection', 'Funding or binding', 'Servicing', 'Regular engagement', 'Renewal or upgrade'];
 
 export const money = (n, d = 0) => '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+
+/* Lender and bank logos, by the name shown in the prototypes. Icons are in /lendingtree/img/lenders/<id>-icon.png
+   (square mark) with a <id>-full.png wordmark beside each. A name without an entry falls back to its initials. */
+export const LENDER_ICONS = {
+  Figure: 'figure', 'Rocket Mortgage': 'rocket-mortgage', Rocket: 'rocket-mortgage', 'Bank of America': 'bank-of-america', 'Toyota Financial': 'toyota-financial',
+};
+export const lenderIcon = (name) => (LENDER_ICONS[name] ? '/lendingtree/img/lenders/' + LENDER_ICONS[name] + '-icon.png' : null);

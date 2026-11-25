@@ -1,7 +1,7 @@
 /* Visiontype B: the whole customer lifecycle on LendingTree's own website (wide) and app (phone).
    Copy and step definitions live in content.js; sample data in ../shared/data.js. No network, nothing is sent anywhere.
    URL params: ?path=loan|insurance  ?stage=shop|home|servicing  ?auto=0|1  ?embed=1  ?speed=N */
-import { PERSON, BRAND, BANKS, LOANS, POLICIES, AUTO_CURRENT, HELOC_ESTIMATE, LIFECYCLE, money } from '../shared/data.js';
+import { PERSON, BRAND, BANKS, LOANS, POLICIES, AUTO_CURRENT, HELOC_ESTIMATE, LIFECYCLE, money, lenderIcon } from '../shared/data.js';
 import { PROTO, SHELL, LANDING, PATHS, HOME, FLOWS, parseFund } from './content.js';
 
 /* ---------- small helpers ---------- */
@@ -33,7 +33,8 @@ const ic = (n, s = 20, w = 1.8) => `<svg class="i" viewBox="0 0 24 24" width="${
 const LOAN_ICON = { Mortgage: 'home', 'Auto loan': 'car', 'Home equity line': 'line' };
 const POL_ICON = { Auto: 'car', Homeowners: 'home', Life: 'heart', Medical: 'cross', 'Vision and dental': 'smile', Pet: 'paw', Motorcycle: 'bike' };
 const CARRIER_COLOR = { Allstate: '#0033a0', 'State Farm': '#e31937', Travelers: '#d71e28', Progressive: '#1e5aa8', GEICO: '#1f55a0', Nationwide: '#0a5bb5', Trupanion: '#2e4a8b' };
-const mono = (name, cls = '') => `<span class="mono ${cls}" aria-hidden="true">${esc(name.replace(/^Employer plan \(|\)$/g, '').split(' ').filter((w) => /^[A-Z0-9]/.test(w)).map((w) => w[0]).slice(0, 2).join(''))}</span>`;
+const mono = (name, cls = '') => (lenderIcon(name) ? `<span class="cm lender ${cls}"><img src="${lenderIcon(name)}" alt=""></span>` : monoText(name, cls));
+const monoText = (name, cls = '') => `<span class="mono ${cls}" aria-hidden="true">${esc(name.replace(/^Employer plan \(|\)$/g, '').split(' ').filter((w) => /^[A-Z0-9]/.test(w)).map((w) => w[0]).slice(0, 2).join(''))}</span>`;
 const cmark = (p) => (p.icon ? `<span class="cm"><img src="/lendingtree/img/carriers/${p.icon}-icon.png" alt=""></span>` : mono(p.carrier || p.lender || p.bank));
 const policyNo = (p) => { let h = 7; for (const c of p.carrier + p.type) h = (h * 31 + c.charCodeAt(0)) % 1e9; const s = String(1e9 + h).slice(1); return `${s.slice(0, 3)} ${s.slice(3, 6)} ${s.slice(6, 9)}`; };
 const monthYear = (m) => { const d = new Date(); d.setMonth(d.getMonth() + m); return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); };

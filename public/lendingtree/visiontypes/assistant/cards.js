@@ -4,7 +4,7 @@
      auto   how auto-play completes it, the way a person would. It gets A = { pause, tap, type, slide }.
    ctx = { val (resolve copy that may be a function of state), S (state), pick (choose an offer), pause (a cancellable sleep) } */
 import { h, $, $$, icon, ico, LEAF, carrierIcon, reduced } from './kit.js';
-import { BANKS, BRAND, money } from '../shared/data.js';
+import { BANKS, BRAND, money, lenderIcon } from '../shared/data.js';
 
 const check = (size) => icon('check', size || 14, 2.6);
 
@@ -17,8 +17,8 @@ function shell(step, ctx, cls, ...body) {
   if (foot || step.credit) el.append(h('footer', { class: 'ltc-f' }, foot && h('span', null, foot), step.credit && h('span', { class: 'qw' }, step.credit)));
   return el;
 }
-const logo = (o) => (o.icon
-  ? h('span', { class: 'lg' }, h('img', { src: carrierIcon(o.icon), alt: '', loading: 'lazy' }))
+const logo = (o) => (o.icon || lenderIcon(o.lender || o.name)
+  ? h('span', { class: 'lg' }, h('img', { src: o.icon ? carrierIcon(o.icon) : lenderIcon(o.lender || o.name), alt: '', loading: 'lazy' }))
   : h('span', { class: 'lg mono', style: 'color:' + (o.mono ? o.mono[1] : '#333') }, o.mono ? o.mono[0] : o.name[0]));
 const doneLine = (text) => h('div', { class: 'done-line' }, h('span', { class: 'dl-ic', html: check(12) }), text);
 function lock(el, btn, text) {
