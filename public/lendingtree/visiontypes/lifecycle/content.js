@@ -1,4 +1,4 @@
-/* Visiontype B: every word and every step definition lives here, so the wording is easy to edit.
+/* Visiontype A: every word and every step definition lives here, so the wording is easy to edit.
    The engine (app.js) reads these and never hard-codes copy. Sample data comes from ../shared/data.js. */
 import { PERSON, BANKS, HELOC_OFFERS, HELOC_ESTIMATE, AUTO_QUOTES, AUTO_CURRENT, POLICIES, LOANS, money } from '../shared/data.js';
 
@@ -11,7 +11,7 @@ const mortgage = LOANS.find((l) => l.id === 'mortgage');
 /* ---------- prototype chrome (outside the product) ---------- */
 export const PROTO = {
   back: 'Back to the slides',
-  label: 'Visiontype B',
+  label: 'Visiontype A',
   note: 'Prototype controls. Not part of the product.',
   fiction: 'Every person, offer and quote here is fictional.',
   paths: { loan: 'Loan', insurance: 'Insurance' },

@@ -1,4 +1,4 @@
-/* Visiontype A: LendingTree inside a consumer AI assistant (drawn as ChatGPT).
+/* Visiontype B: LendingTree inside a consumer AI assistant (drawn as ChatGPT).
    This file is the engine. It plays the script in script.js, renders the cards in cards.js, and runs auto-play:
    the prototype types, taps and fills the way a person would, and the Prototype control (outside the product UI)
    pauses it, switches path and entry, restarts, or jumps to servicing.

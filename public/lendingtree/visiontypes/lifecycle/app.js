@@ -1,4 +1,4 @@
-/* Visiontype B: the whole customer lifecycle on LendingTree's own website (wide) and app (phone).
+/* Visiontype A: the whole customer lifecycle on LendingTree's own website (wide) and app (phone).
    Copy and step definitions live in content.js; sample data in ../shared/data.js. No network, nothing is sent anywhere.
    URL params: ?path=loan|insurance  ?stage=shop|home|servicing  ?auto=0|1  ?embed=1  ?speed=N */
 import { PERSON, BRAND, BANKS, LOANS, POLICIES, AUTO_CURRENT, HELOC_ESTIMATE, LIFECYCLE, money, lenderIcon } from '../shared/data.js';

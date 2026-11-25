@@ -5,8 +5,9 @@
    Assumes a January 1, 2027 start. Roles are used in place of names, except Sarah's. */
 
 const A = (d, cls = '') => `class="a ${cls}" style="--d:${d}"`;
-const VT_A = '/lendingtree/visiontypes/assistant/';
-const VT_B = '/lendingtree/visiontypes/lifecycle/';
+/* A is LendingTree's own website and app; B is the same journey inside an assistant. */
+const VT_A = '/lendingtree/visiontypes/lifecycle/';
+const VT_B = '/lendingtree/visiontypes/assistant/';
 
 /* ------------------------------------------------------------------ 1 open */
 const open = `
@@ -183,8 +184,8 @@ const frames = (url, label, sub, d) => `
   </div>`;
 const visiontypes = `
 <div class="vts">
-  ${frames(VT_A, 'A. Inside ChatGPT', 'It could as easily be Muse, Grok, Instinct or another assistant.', 0.2)}
-  ${frames(VT_B, 'B. LendingTree website and app', 'The same journey on LendingTree’s own surfaces.', 0.5)}
+  ${frames(VT_A, 'A. LendingTree website and app', 'The whole journey on LendingTree’s own surfaces.', 0.2)}
+  ${frames(VT_B, 'B. Inside ChatGPT', 'The same journey in an assistant. It could as easily be Muse, Grok or Instinct.', 0.5)}
 </div>
 <ol class="life a" style="--d:.9">${LIFE.map((s, i) => `<li style="--k:${i}"><span>${s}</span></li>`).join('')}</ol>`;
 
