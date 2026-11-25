@@ -3,7 +3,7 @@
      wait   a promise that resolves when the person finishes the card (cards without one do not block the conversation)
      auto   how auto-play completes it, the way a person would. It gets A = { pause, tap, type, slide }.
    ctx = { val (resolve copy that may be a function of state), S (state), pick (choose an offer), pause (a cancellable sleep) } */
-import { h, $, $$, icon, ico, LEAF, carrierIcon, reduced } from './kit.js';
+import { h, $, $$, icon, ico, LEAF, carrierIcon, reduced } from './kit.js?v=7';
 import { BANKS, BRAND, money, lenderIcon } from '../shared/data.js';
 
 const check = (size) => icon('check', size || 14, 2.6);
@@ -235,6 +235,14 @@ export function receipt(step, ctx) {
     h('dl', { class: 'kv' }, ctx.val(step.rows).map(([k, v]) => h('div', null, h('dt', null, k), h('dd', null, v)))),
     step.next && h('div', { class: 'rc-n' }, h('b', null, step.nextTitle), h('ol', null, step.next.map((n) => h('li', null, n)))));
   return { el };
+}
+
+/* ---------- what the person already holds ---------- */
+export function holdings(step, ctx) {
+  const rows = step.rows.map((r) => h('li', { class: 'hd-r' }, logo(r),
+    h('div', { class: 'hd-n' }, h('b', null, r.name), h('span', null, r.kind)),
+    h('div', { class: 'hd-v' }, h('b', null, r.big), h('small', null, r.sub))));
+  return { el: shell(step, ctx, 'holdings', h('ul', { class: 'hd' }, rows)) };
 }
 
 /* ---------- extra payments ---------- */
