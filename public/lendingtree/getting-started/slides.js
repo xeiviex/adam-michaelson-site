@@ -83,7 +83,7 @@ const QX = [80, 350, 620, 890, 1160];
 const core = `
 <svg class="corec" viewBox="0 0 1200 330" role="img" aria-label="Core KPIs tracking the company plan through four quarterly reviews and finishing above it">
   <rect ${A(0.3, 'fade')} class="band" x="80" y="40" width="270" height="230"/>
-  <text class="lb acc" ${A(0.5)} x="96" y="64" text-anchor="start">Transition, in partnership with Sarah</text>
+  <text class="lb acc" ${A(0.5)} x="215" y="70"><tspan x="215">Transition</tspan><tspan class="thin" x="215" dy="20">in partnership with Sarah</tspan></text>
   <path class="axis" d="M80 270H1160"/>
   ${QX.slice(1).map((x) => `<path class="tick" d="M${x} 270V40"/>`).join('')}
   ${['Q1', 'Q2', 'Q3', 'Q4'].map((q, i) => `<text class="lb" x="${QX[i] + 135}" y="296">${q}</text>`).join('')}

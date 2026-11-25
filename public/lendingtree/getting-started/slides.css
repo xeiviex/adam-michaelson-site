@@ -221,3 +221,5 @@ svg .a.gy { transform-origin: center bottom; }
 /* dashed lines fade in, so they start hidden like everything else */
 .ln.dsh, .ln.plan { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .ln.dsh, .ln.plan { opacity: 1; } }
+
+.vis svg .lb.acc .thin { font-weight: 400; }
