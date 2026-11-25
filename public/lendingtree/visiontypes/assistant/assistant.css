@@ -452,3 +452,7 @@ html.embed .side { padding-bottom: 10px; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   .ring, .spin { border-color: var(--lt) !important; }
 }
+
+/* visible countdown under the interstitial's buttons while auto-play is on */
+.pm-card p.pm-count { margin-top: 12px; font-size: 13px; color: #6b6b76; text-align: center; }
+.pm-count b { display: inline-block; min-width: 1ch; font-variant-numeric: tabular-nums; color: #111; }

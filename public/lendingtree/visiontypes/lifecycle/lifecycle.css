@@ -370,3 +370,7 @@ html.embed .pstrip, html.embed .dev { display: none; }
   .seal path { stroke-dashoffset: 0; animation: none; }
   .spin { animation-duration: 1.6s !important; }
 }
+
+/* visible countdown under the interstitial's buttons while auto-play is on */
+.pm-count { margin: 12px 0 0; font-size: 13px; color: #6b7280; text-align: center; }
+.pm-count b { font-variant-numeric: tabular-nums; color: #111827; }

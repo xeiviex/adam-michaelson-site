@@ -318,12 +318,16 @@ async function modal(kind) {
   const a = h('button', { type: 'button', class: 'pm-b ghost', onclick: () => done('a') }, M.a);
   const b = h('button', { type: 'button', class: 'pm-b', onclick: () => done('b') }, h('span', null, val2(M.b)), h('i', { class: 'pm-cd', 'aria-hidden': 'true' }));
   pmActs.replaceChildren(a, b);
+  $$('.pm-count', pm).forEach((n) => { n.hidden = true; n.className = ''; });
   pm.hidden = false; appEl.inert = true; b.focus({ preventScroll: true });
   const SECS = 9;
   const act = await awaitUser({ kind: 'modal', auto: kind === 'interstitial' ? async (A) => {
     b.style.setProperty('--cd', SECS / cfg.speed + 's'); b.classList.remove('count'); void b.offsetWidth; b.classList.add('count');
-    try { await A.pause(SECS * 1000); } catch (e) { b.classList.remove('count'); throw e; }
-    done('b');
+    const cd = h('p', { class: 'pm-count', role: 'timer', 'aria-live': 'off' });
+    pmActs.after(cd);
+    try { for (let n = SECS; n > 0; n--) { cd.replaceChildren('Jumping ahead to servicing in ', h('b', null, String(n))); await A.pause(1000); } }
+    catch (e) { b.classList.remove('count'); cd.hidden = true; throw e; }
+    cd.hidden = true; done('b');
   } : null }, wait);
   hideModal();
   next(act);

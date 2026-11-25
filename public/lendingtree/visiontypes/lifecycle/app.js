@@ -706,14 +706,27 @@ async function renewal() {
 }
 
 /* ---------- prototype chrome: interstitial, controls ---------- */
-function modal(M, buttons) {
+function modal(M, buttons, secs = 0) {
   const pm = $('#pmodal');
   $('#pmTitle').textContent = M.title; $('#pmBody').textContent = M.body;
   $('#pmBtns').innerHTML = buttons.map(([v, label], i) => `<button type="button" class="${i ? 'pm-b ghost' : 'pm-b'}" data-v="${v}">${esc(label)}</button>`).join('');
   pm.hidden = false; requestAnimationFrame(() => pm.classList.add('on')); $('#pmBtns button').focus({ preventScroll: true });
+  /* With auto-play on, the first button presses itself after a visible countdown. Pausing auto-play stops it. */
+  clearInterval(cdTimer); const cd = $('#pmCount'); cd.hidden = true;
+  if (secs && S.auto) {
+    let n = secs;
+    const paint = () => { cd.innerHTML = `${esc(M.countdown || 'Continuing in')} <b>${n}</b>`; };
+    paint(); cd.hidden = false;
+    cdTimer = setInterval(() => {
+      if (pm.hidden || !S.auto) { clearInterval(cdTimer); cd.hidden = true; return; }
+      n--; if (n > 0) return paint();
+      clearInterval(cdTimer); $('#pmBtns button').click();
+    }, 1000 / SPEED);
+  }
   return wait((fin) => { $('#pmBtns').onclick = (e) => { const b = e.target.closest('button'); if (b) { hideModal(); fin(b.dataset.v); } }; }, null);
 }
-function hideModal() { const pm = $('#pmodal'); pm.hidden = true; pm.classList.remove('on'); }
+let cdTimer = 0;
+function hideModal() { const pm = $('#pmodal'); pm.hidden = true; pm.classList.remove('on'); clearInterval(cdTimer); }
 
 async function start(stage) {
   run++; cur = null; autoGen++;
@@ -724,7 +737,7 @@ async function start(stage) {
     else { const d = P(); closeDeal(S.path, d.offers.find((o) => o.id === d.recommend)); S.done = new Set([0, 1, 2, 3, 4, 5]); go(d.homeView); }
     if (stage !== 'servicing') {
       await homeTour(P());
-      if (!EMBED) { const r = await modal(PROTO.afterClose, [['next', PROTO.afterClose.primary], ['restart', PROTO.afterClose.secondary]]); if (r === 'restart') return void start('shop'); }
+      if (!EMBED) { const r = await modal(PROTO.afterClose, [['next', PROTO.afterClose.primary], ['restart', PROTO.afterClose.secondary]], 9); if (r === 'restart') return void start('shop'); }
     }
     await servicing();
     await renewal();

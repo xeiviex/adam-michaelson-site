@@ -20,7 +20,7 @@ export const PROTO = {
   afterClose: {
     title: 'That is the purchase, start to finish.',
     body: 'Next comes the part most marketplaces skip: what happens after the close.',
-    primary: 'Jump ahead to servicing', secondary: 'Restart',
+    primary: 'Jump ahead to servicing', secondary: 'Restart', countdown: 'Jumping ahead to servicing in',
   },
   theEnd: {
     title: 'That is the whole lifecycle.',
