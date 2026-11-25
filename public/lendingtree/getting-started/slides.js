@@ -129,6 +129,23 @@ ${teamPhone}
 
 /* ------------------------------------------------------------------ 4 core */
 const QX = [80, 350, 620, 890, 1160];
+/* The same chart redrawn for phones: the whole year fits the width, drawn taller so the rise above plan reads. */
+const PQ = [20, 100, 180, 260, 340];
+const corePhone = `
+<svg class="corec m" viewBox="0 0 360 232" role="img" aria-label="Core KPIs tracking the company plan through four quarterly reviews and finishing above it">
+  <rect ${A(0.3, 'fade')} class="band" x="20" y="26" width="80" height="164"/>
+  <text class="pl acc" ${A(0.5)} x="60" y="44"><tspan x="60">Transition</tspan><tspan class="thin" x="60" dy="13">with Sarah</tspan></text>
+  <path class="axis" d="M20 190H340"/>
+  ${PQ.slice(1).map((x) => `<path class="tick" d="M${x} 190V26"/>`).join('')}
+  ${['Q1', 'Q2', 'Q3', 'Q4'].map((q, i) => `<text class="pl" x="${PQ[i] + 40}" y="206">${q}</text>`).join('')}
+  <path class="ln plan" ${A(0.8)} pathLength="1" d="M20 152C120 146 240 132 340 120"/>
+  <path class="ln corel" ${A(1.8)} pathLength="1" d="M20 156C60 158 80 148 100 144S150 130 180 122S230 100 260 90S310 66 340 54"/>
+  <text class="pl" ${A(1.4)} x="334" y="148" text-anchor="end">Company plan</text>
+  <text class="pt" ${A(3.4)} x="330" y="38" text-anchor="end">Core KPIs</text>
+  ${[[100, 144], [180, 122], [260, 90], [340, 54]].map((q, i) => `<circle ${A((2.3 + i * 0.35).toFixed(2), 'pop')} class="rv" cx="${q[0]}" cy="${q[1]}" r="5.5"/>`).join('')}
+  <g ${A(3.6, 'fade')}><circle class="rv" cx="26" cy="223" r="4.5"/><text class="pl" x="38" y="227" text-anchor="start">Review, every quarter</text></g>
+</svg>`;
+
 const core = `
 <svg class="corec" viewBox="0 0 1200 330" role="img" aria-label="Core KPIs tracking the company plan through four quarterly reviews and finishing above it">
   <rect ${A(0.3, 'fade')} class="band" x="80" y="40" width="270" height="230"/>
@@ -142,6 +159,7 @@ const core = `
   <text class="lb wh" ${A(3.4)} x="1150" y="62" text-anchor="end">Core KPIs</text>
   ${[[350, 204], [620, 180], [890, 136], [1160, 78]].map((p, i) => `<g ${A((2.3 + i * 0.35).toFixed(2), 'pop')}><circle class="rv" cx="${p[0]}" cy="${p[1]}" r="7"/><text class="lb sm" x="${p[0] - (i === 3 ? 12 : 0)}" y="${p[1] + 28}" ${i === 3 ? 'text-anchor="end"' : ''}>Review</text></g>`).join('')}
 </svg>
+${corePhone}
 <div class="sup">
   <div ${A(3.8)}><b>Understand</b><small>In the team’s meetings and working sessions</small></div>
   <div ${A(4.0)}><b>Remove roadblocks</b><small>Clear the red tape</small></div>
