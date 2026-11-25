@@ -16,7 +16,7 @@ const open = `
     <div ${A(1.5, 'drop')}><b>Deliver new profit</b><small>$1M+ in year one</small></div>
     <div ${A(2.0, 'drop new')}><b>Disrupt ourselves</b><small>Three pods + research-led reset</small></div>
   </div>
-  <div class="base a gx" style="--d:.2"><span>Raise the bar</span><span>Learn fast</span><span>Lead the team</span></div>
+  <div class="base a gx" style="--d:.2"><span>Raise the bar</span><i aria-hidden="true"></i><span>Learn fast</span><i aria-hidden="true"></i><span>Lead the team</span></div>
 </div>`;
 
 /* ----------------------------------------------------------- 2 integration */
@@ -271,7 +271,7 @@ const close = `
       <div ${A(1.2, 'drop')}><b>Deliver new profit</b><small class="fg">$1M+</small></div>
       <div class="a drop new" style="--d:1.6"><b>Disrupt ourselves</b><small class="fg">3 pods · M9 gate · M12 alpha</small></div>
     </div>
-    <div class="base a gx" style="--d:.2"><span>Raise the bar</span><span>Learn fast</span><span>Lead the team</span></div>
+    <div class="base a gx" style="--d:.2"><span>Raise the bar</span><i aria-hidden="true"></i><span>Learn fast</span><i aria-hidden="true"></i><span>Lead the team</span></div>
   </div>
   <div class="need">
     <h3 ${A(2.2)}>What I need</h3>
