@@ -1,8 +1,10 @@
 /* Visiontype A: the whole customer lifecycle on LendingTree's own website (wide) and app (phone).
-   Copy and step definitions live in content.js; sample data in ../shared/data.js. No network, nothing is sent anywhere.
-   URL params: ?path=loan|insurance  ?stage=shop|home|servicing  ?auto=0|1  ?embed=1  ?speed=N */
+   Copy and step definitions live in content.js; sample data in ../shared/data.js. The only network call is a question
+   the visitor chooses to ask the guide (../shared/agent.js), which falls back to an offline answer when it cannot connect.
+   URL params: ?path=loan|insurance  ?stage=shop|home|servicing  ?auto=0|1  ?embed=1  ?speed=N  ?mock=1 (test aid) */
 import { PERSON, BRAND, BANKS, LOANS, POLICIES, AUTO_CURRENT, HELOC_ESTIMATE, LIFECYCLE, money, lenderIcon } from '../shared/data.js';
-import { PROTO, SHELL, LANDING, PATHS, HOME, FLOWS, parseFund } from './content.js';
+import { PROTO, SHELL, LANDING, PATHS, HOME, FLOWS, NOW, parseFund } from './content.js?v=7';
+import { ask } from '../shared/agent.js';
 
 /* ---------- small helpers ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -49,6 +51,8 @@ const START_STAGE = ['home', 'servicing'].includes(Q.get('stage')) ? Q.get('stag
 function resetState() {
   Object.assign(S, {
     view: 'guide', station: 0, lock: false, done: new Set(), open: { loans: null, insurance: null, acct: null }, nudge: null, nudgeCb: null,
+    /* flow: the tab the journey is waiting on. cp: where a rest would resume. sel/held/ctx: what the guide is told with a question. */
+    flow: 'guide', cp: null, sel: null, held: false, resting: false, landing: false, ctx: NOW.landing,
     loans: LOANS.filter((l) => !l.isNew).map((l) => ({ ...l })), banks: BANKS.map((b) => ({ ...b })),
     policies: POLICIES.map((p) => ({ ...p, ...(p.id === 'auto' ? { deductible: AUTO_CURRENT.deductible, liability: AUTO_CURRENT.liability } : {}) })),
     watch: Object.fromEntries(POLICIES.map((p) => [p.id, !/Employer/.test(p.carrier)])), extra: {}, claims: {},
@@ -69,15 +73,36 @@ async function tick(ms, ok) {
 }
 const sleep = (ms) => { const my = run; return tick(ms, () => my === run); };
 /* Wait for the viewer to act. `auto` is a list of steps auto-play performs the way a person would. */
-function wait(register, auto) {
+/* opts.hint returns the control (or group) the viewer acts on next; opts.kind names the wait for the code that needs to know. */
+function wait(register, auto, opts = {}) {
   const my = run;
   return new Promise((resolve) => {
-    const tok = { auto };
+    const tok = { auto, hint: opts.hint, kind: opts.kind };
     tok.finish = (v) => { if (my !== run || cur !== tok) return; cur = null; autoGen++; resolve(v); };
-    cur = tok; register(tok.finish); kick();
+    cur = tok; register(tok.finish); kick(); keyFocus(tok);
   });
 }
 const find = (t) => (typeof t === 'function' ? t() : typeof t === 'string' ? $$(t).filter((e) => !e.disabled && e.getClientRects().length).pop() : t) || null;
+/* The next thing to act on in the step that is waiting, if any. */
+function hintNode(tok = cur) {
+  if (!tok) return null;
+  if (tok.hint) { const n = tok.hint(); return n && n.getClientRects().length ? n : null; }
+  for (const st of tok.auto || []) { const n = (st.tap || st.type) && find(st.tap || st.type); if (n && n.getClientRects().length) return n; }
+  return null;
+}
+/* Someone driving by keyboard should not have to tab from the top each time a step replaces the control they just used. */
+let keyed = false, lastTouch = 0;
+function keyFocus(tok) {
+  if (S.auto || !keyed) return;
+  requestAnimationFrame(() => {
+    if (cur !== tok) return;
+    const a = document.activeElement;
+    if (a && a !== document.body && a !== main && a.isConnected && a.getClientRects().length) return;
+    let n = hintNode(tok);
+    if (n && !n.matches('button, input, select')) n = n.querySelector('button:not(:disabled), input');
+    if (n) n.focus({ preventScroll: true });
+  });
+}
 function kick() {
   if (!S.auto || !cur || !cur.auto) return;
   const tok = cur, gen = ++autoGen, my = run;
@@ -115,7 +140,7 @@ function kick() {
     } catch (e) { if (!(e instanceof Cancel)) throw e; }
   })();
 }
-function setAuto(v) { S.auto = v; autoGen++; $$('.pressing').forEach((n) => n.classList.remove('pressing')); paintDev(); if (v) kick(); }
+function setAuto(v) { S.auto = v; autoGen++; $$('.pressing').forEach((n) => n.classList.remove('pressing')); paintDev(); if (v) { threadShow(false); kick(); } }
 
 /* ---------- shell: views, tabs, lifecycle strip, toast ---------- */
 const main = $('#main'), stream = $('#stream'), sheet = $('#sheet'), scrim = $('#scrim');
@@ -129,8 +154,12 @@ function go(view) {
   S.view = view;
   SHELL.tabs.forEach((t) => { $('#v-' + t.id).hidden = t.id !== view; });
   if (view === 'loans') renderLoans(); if (view === 'insurance') renderInsurance();
-  paintTabs(); main.scrollTop = view === 'guide' ? main.scrollHeight : 0;
+  paintTabs(); paintDock(); main.scrollTop = view === 'guide' ? main.scrollHeight : 0;
 }
+/* The journey itself moving to a tab. A viewer wandering to another tab uses go(), and is offered the way back. */
+function flowGo(view) { S.flow = view; go(view); }
+const now = (c) => { S.ctx = c; };
+const setCp = (c) => { S.cp = c; };
 function setStation(i, force) { if (S.lock && !force) return; if (i !== S.station) S.done.add(S.station); S.station = i; S.done.delete(i); paintLife(); }
 function paintLife() {
   $('#life').innerHTML = `<div class="life-in"><ol>${LIFECYCLE.map((n, i) => `<li class="${i === S.station ? 'cur' : S.done.has(i) ? 'done' : ''}"><i></i><span>${n}</span></li>`).join('')}</ol>
@@ -166,7 +195,7 @@ async function say(text, sub) {
 function me(text) { const m = el('<div class="msg me"><span></span></div>'); m.firstChild.textContent = text; return add(m); }
 async function choose(options, autoIdx) {
   const box = add(el(`<div class="chips" role="group">${options.map((o, i) => `<button type="button" class="chip" data-i="${i}">${esc(o)}</button>`).join('')}</div>`));
-  const i = await wait((fin) => box.addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) fin(Number(b.dataset.i)); }), autoIdx == null ? null : [{ tap: () => box.children[autoIdx], read: 1500 }]);
+  const i = await wait((fin) => box.addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) fin(Number(b.dataset.i)); }), autoIdx == null ? null : [{ tap: () => box.children[autoIdx], read: 1500 }], { hint: () => box });
   box.remove(); me(options[i]); await sleep(350);
   return options[i];
 }
@@ -191,7 +220,7 @@ async function landing() {
       fin({ path: c.path, text: c.text });
     });
     $('form', hero).addEventListener('submit', (e) => { e.preventDefault(); const text = input.value.trim(); if (text.length >= 3) fin({ path: L.insuranceWords.test(text + ' ') ? 'insurance' : 'loan', text }); });
-  }, [{ type: () => input, text: L.typed[S.path], read: 2200 }, { tap: () => send, read: 700 }]);
+  }, [{ type: () => input, text: L.typed[S.path], read: 2200 }, { tap: () => send, read: 700 }], { hint: () => $('form', hero) });
   await scene();
   return goal;
 }
@@ -202,7 +231,8 @@ async function onfile(O) {
     <div class="btns"><button type="button" class="btn" data-a="ok">${esc(O.ok)}</button><button type="button" class="btn quiet" data-a="edit">${esc(O.edit)}</button></div></div>`), true);
   await wait((fin) => {
     $('[data-a=ok]', card).addEventListener('click', () => fin());
-    $('[data-a=edit]', card).addEventListener('click', (e) => { $$('dd', card).forEach((d) => { d.innerHTML = `<input value="${esc(d.textContent)}" aria-label="Edit">`; }); e.currentTarget.remove(); const f = $('input', card); if (f) f.focus(); });
+    $('[data-a=edit]', card).addEventListener('click', (e) => { $$('dl > div', card).forEach((r) => { const d = $('dd', r); d.innerHTML = `<input value="${esc(d.textContent)}" aria-label="${esc($('dt', r).textContent)}">`; }); e.currentTarget.remove(); const f = $('input', card); if (f) f.focus(); });
+    card.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches('input')) fin(); });
   }, [{ tap: () => $('[data-a=ok]', card), read: 3000 }]);
   $$('input', card).forEach((i) => { i.parentNode.textContent = i.value; });
   $('.btns', card).remove(); card.classList.add('settled');
@@ -252,8 +282,9 @@ function offerCard(o, kind, D, rec, current) {
 }
 /* Returns the chosen offer. "Think about it" ends gracefully and can come back. */
 async function offersScene(P, D) {
-  const kind = S.path, list = D.offers, rec = D.recommend;
+  const kind = S.path, list = D.offers, rec = D.recommend, recOffer = list.find((o) => o.id === rec);
   for (;;) {
+    S.sel = null; now(NOW.offers(list.map((o) => o.lender || o.carrier), recOffer.lender || recOffer.carrier, P.think));
     await say(fn(D.offersIntro, list.length));
     setStation(3);
     add(el(kind === 'loan' ? loanChart(list, D.chart, rec) : premiumChart(list, D.current, D.chart)), true);
@@ -264,36 +295,50 @@ async function offersScene(P, D) {
     grid.addEventListener('click', (e) => { const b = e.target.closest('[data-a=more]'); if (!b) return; const more = $('.offer-more', b.closest('.offer')); more.hidden = !more.hidden; b.setAttribute('aria-expanded', String(!more.hidden)); });
     const hi = (id, on) => $$(`[data-offer="${id}"]`, stream).forEach((n) => n.classList.toggle('hi', on));
     $$('.pt, .bar-row[data-offer]:not(.now)', stream).forEach((n) => { n.addEventListener('pointerenter', () => hi(n.dataset.offer, true)); n.addEventListener('pointerleave', () => hi(n.dataset.offer, false)); n.addEventListener('click', () => { const c = $(`.offer[data-offer="${n.dataset.offer}"]`, grid); if (c) c.scrollIntoView({ block: 'center', behavior: smooth() }); }); });
-    await sleep(2200);
-    setStation(4);
-    await say(fn(D.advisor, newPolicy()));
-    const think = add(el(`<div class="think"><button type="button" class="link" data-a="think">${esc(P.think)}</button></div>`));
-    const r = await wait((fin) => {
-      grid.addEventListener('click', (e) => { const b = e.target.closest('[data-a=pick]'); if (b) fin(b.dataset.id); });
-      $('button', think).addEventListener('click', () => fin('think'));
-    }, [{ tap: () => $(`.offer[data-offer="${rec}"] [data-a=more]`, grid), read: 2600 }, { tap: () => $(`.offer[data-offer="${rec}"] [data-a=pick]`, grid), read: 2800 }]);
-    think.remove();
-    if (r !== 'think') return list.find((o) => o.id === r);
-    /* A: wants to think about it */
-    me(P.think);
-    await say(P.watch.say); await say(P.watch.ask);
-    const w = await choose([P.watch.yes, P.watch.no], null);
+    /* The cards can be chosen the moment they appear. The guide's advice follows, and steps aside if they have already picked. */
+    let r = null;
+    const picked = new Promise((res) => grid.addEventListener('click', (e) => { const b = e.target.closest('[data-a=pick]'); if (b && !r) { r = b.dataset.id; res(); } }));
+    await Promise.race([sleep(2200), picked]);
+    if (!r) { setStation(4); await Promise.race([say(fn(D.advisor, newPolicy())), picked]); }
+    if (!r) {
+      const think = add(el(`<div class="think"><button type="button" class="link" data-a="think">${esc(P.think)}</button></div>`));
+      const v = await wait((fin) => {
+        picked.then(() => fin(r));
+        $('button', think).addEventListener('click', () => fin('think'));
+      }, [{ tap: () => $(`.offer[data-offer="${rec}"] [data-a=more]`, grid), read: 2600 }, { tap: () => $(`.offer[data-offer="${rec}"] [data-a=pick]`, grid), read: 2800 }], { hint: () => grid, kind: 'offers' });
+      think.remove();
+      r = r || v;
+    }
+    if (r !== 'think' && r !== 'rest') {
+      setStation(4);
+      $$('[data-a=pick]', grid).forEach((b) => { b.disabled = true; }); $(`.offer[data-offer="${r}"]`, grid).classList.add('chosen');
+      return list.find((o) => o.id === r);
+    }
+    /* A: wants to think about it. 'rest' is the same ending reached by asking the guide, which has already replied. */
+    S.resting = true; now(NOW.watch);
+    if (r === 'think') { me(P.think); await say(P.watch.say); }
+    await say(D.watchAsk || P.watch.ask);
+    const w = await choose([P.watch.yes, P.watch.no], 0);
     const on = w === P.watch.yes, W = P.watch.card;
-    const card = add(el(`<div class="card rest"><span class="rest-ic${on ? ' on' : ''}">${ic(on ? 'eye' : 'check', 22)}</span><div><b>${esc(on ? W.on : W.off)}</b><p>${esc(on ? W.onSub : W.offSub)}</p></div><button type="button" class="btn ghost">${esc(W.back)}</button></div>`));
-    await wait((fin) => $('button', card).addEventListener('click', () => fin()), null);
+    const card = add(el(`<div class="card rest"><span class="rest-ic${on ? ' on' : ''}">${ic(on ? 'eye' : 'check', 22)}</span><div><b>${esc(on ? W.on : W.off)}</b><p>${esc(on ? W.onSub(recOffer) : W.offSub)}</p></div><button type="button" class="btn ghost">${esc(W.back)}</button></div>`));
+    await wait((fin) => $('button', card).addEventListener('click', () => fin()), [{ tap: () => $('button', card), read: 3600 }]);
+    S.resting = false;
     await scene();
   }
 }
 
 /* application: LendingTree gathers what the lender or carrier needs */
-async function application(A, o) {
+async function application(A, o, prog, save) {
   const steps = A.steps;
   const card = add(el(`<div class="card app"><header><h3>${esc(A.title(o))}</h3><span class="app-n"></span></header><div class="prog"><i></i></div>
     <ol>${steps.map((s) => `<li data-step="${s.id}"><span class="st-dot">${ic('check', 14, 3)}</span><div class="st-b"><b>${esc(s.title)}</b><div class="st-body"></div></div></li>`).join('')}</ol></div>`), true);
   const paint = (n) => { $('.app-n', card).textContent = `${n} of ${steps.length} done`; $('.prog i', card).style.width = `${(n / steps.length) * 100}%`; };
-  paint(0); await sleep(900);
-  for (let i = 0; i < steps.length; i++) {
+  /* steps finished before a rest are still finished */
+  prog.sums.forEach((sum, i) => { const li = $(`[data-step="${steps[i].id}"]`, card); li.classList.add('done'); $('.st-body', li).innerHTML = `<p class="st-done">${esc(sum)}</p>`; });
+  paint(prog.sums.length); await sleep(900);
+  for (let i = prog.sums.length; i < steps.length; i++) {
     const s = steps[i], li = $(`[data-step="${s.id}"]`, card), body = $('.st-body', li);
+    now(NOW.app(A.title(o), s, i + 1, steps.length));
     li.classList.add('active'); reveal(li);
     let summary = s.done;
     if (s.questions) {
@@ -301,7 +346,7 @@ async function application(A, o) {
       for (const q of s.questions) {
         body.innerHTML = `<p>${esc(q.q)}</p><div class="chips in">${q.options.map((op, k) => `<button type="button" class="chip" data-i="${k}">${esc(op)}</button>`).join('')}</div>`;
         reveal(li);
-        const k = await wait((fin) => body.addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) fin(Number(b.dataset.i)); }, { once: false }), [{ tap: () => $$('.chip', body)[q.auto], read: 1700 }]);
+        const k = await wait((fin) => body.addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) fin(Number(b.dataset.i)); }), [{ tap: () => $$('.chip', body)[q.auto], read: 1700 }], { hint: () => $('.chips', body) });
         answers.push(q.options[k]);
       }
       summary = s.done(answers);
@@ -315,13 +360,14 @@ async function application(A, o) {
     }
     body.innerHTML = `<p class="st-done">${esc(summary)}</p>`;
     li.classList.remove('active'); li.classList.add('done'); paint(i + 1);
+    prog.sums.push(summary); save(prog);
     await sleep(550);
   }
   await sleep(500);
 }
 
 /* signing, then the celebration */
-async function signing(G, terms, o) {
+async function signing(G, terms, o, onSigned) {
   const name = `${PERSON.first} ${PERSON.last}`;
   const card = add(el(`<div class="card sign"><h3>${esc(G.title)}</h3><p class="sign-sub">${esc(G.sub(o))}</p>
     <dl class="terms">${terms.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
@@ -331,7 +377,11 @@ async function signing(G, terms, o) {
   const input = $('#sig', card), btn = $('[data-a=sign]', card);
   $('[data-a=full]', card).addEventListener('click', (e) => { const f = $('.full', card); f.hidden = !f.hidden; e.currentTarget.setAttribute('aria-expanded', String(!f.hidden)); });
   input.addEventListener('input', () => { btn.disabled = input.value.trim().length < 3; });
-  await wait((fin) => btn.addEventListener('click', () => fin()), [{ type: () => input, text: name, read: 4200 }, { tap: () => btn, read: 800 }]);
+  await wait((fin) => {
+    btn.addEventListener('click', () => fin());
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !btn.disabled) fin(); });
+  }, [{ type: () => input, text: name, read: 4200 }, { tap: () => btn, read: 800 }], { hint: () => (btn.disabled ? input : btn) });
+  input.readOnly = true; onSigned();
   btn.disabled = true; btn.classList.add('busy'); btn.innerHTML = '<span class="spin" aria-hidden="true"></span>'; await sleep(1100);
 }
 function confetti() {
@@ -341,13 +391,15 @@ function confetti() {
   for (let i = 0; i < 34; i++) { const a = (i * 137.5) % 360; h += `<i style="--x:${Math.round(Math.cos(a) * (60 + (i * 37) % 150))}px;--y:${-40 - ((i * 53) % 130)}px;--r:${(i * 97) % 360}deg;--d:${(i % 7) * 40}ms;background:${colors[i % colors.length]}"></i>`; }
   return `<span class="confetti" aria-hidden="true">${h}</span>`;
 }
-async function celebrate(Dn, o) {
+async function celebrate(Dn, o, homeView) {
   const facts = Dn.facts ? fn(Dn.facts, o) : null;
   const card = add(el(`<div class="card party"><span class="seal">${confetti()}<svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M15 27l8 8 14-16"/></svg></span>
     <h2>${esc(Dn.title)}</h2><p>${esc(Dn.body(o))}</p>
     ${facts ? `<dl>${facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : ''}
     <button type="button" class="btn">${esc(Dn.cta)}</button></div>`), true);
-  await wait((fin) => $('button', card).addEventListener('click', () => fin()), [{ tap: () => $('button', card), read: 4200 }]);
+  /* the button keeps working afterwards, for anyone who comes back to this card from another tab */
+  let seen = false;
+  await wait((fin) => $('button', card).addEventListener('click', () => { if (seen) go(homeView); else { seen = true; fin(); } }), [{ tap: () => $('button', card), read: 4200 }]);
 }
 
 /* ---------- the shopping journey ---------- */
@@ -362,44 +414,67 @@ function closeDeal(path, o) {
   }
 }
 const newPolicy = () => S.policies.find((p) => p.id === 'auto');
-async function shop() {
-  go('guide'); stream.innerHTML = ''; setStation(0);
-  const goal = await landing();
-  if (goal.path !== S.path) { S.path = goal.path; paintDev(); }
-  const path = S.path, P = PATHS[path];
-  add(el(`<div class="msg g"><img class="g-av" src="${LEAF}" alt=""><div class="g-t"><p>${esc(LANDING.q)}</p></div></div>`));
-  me(goal.text); await sleep(500);
-  for (const line of P.opening) await say(line);
+/* landing, or the opening after someone switched here by asking */
+async function intro(switched) {
+  flowGo('guide'); stream.innerHTML = ''; setStation(0);
+  let lines = PATHS[S.path].switched;
+  if (!switched) {
+    S.landing = true; paintDock(); now(NOW.landing);
+    const goal = await landing();
+    S.landing = false; paintDock();
+    if (goal.path !== S.path) { S.path = goal.path; paintDev(); }
+    add(el(`<div class="msg g"><img class="g-av" src="${LEAF}" alt=""><div class="g-t"><p>${esc(LANDING.q)}</p></div></div>`));
+    me(goal.text); await sleep(500);
+    lines = PATHS[S.path].opening;
+  }
+  setCp({ at: 'qualify', i: 0 }); now(NOW.opening);
+  for (const line of lines) await say(line);
+}
+async function qualify(P, from, back) {
+  if (back) await say(SHELL.rest.back);
   setStation(1);
-  for (const q of P.qualify) { await say(q.q, q.sub); await choose(q.options, q.auto); }
+  for (let i = from; i < P.qualify.length; i++) {
+    const q = P.qualify[i];
+    setCp({ at: 'qualify', i }); now(NOW.qualify(q, i + 1, P.qualify.length));
+    await say(q.q, q.sub); await choose(q.options, q.auto);
+  }
+  setCp({ at: 'qualify', i: P.qualify.length }); now(NOW.onfile(P.onfile));
   await say(P.onfile.intro);
   setStation(2);
   await onfile(P.onfile);
+  now(NOW.checking);
   await checking(P.checking);
   await scene();
-  const o = await offersScene(P, { offers: P.offers, recommend: P.recommend, offersIntro: P.offersIntro, chart: P.chart, advisor: P.advisor, current: path === 'insurance' ? AUTO_CURRENT : null });
-  await finish(P, o, P.app, P.sign.terms(o), P.done);
-  closeDeal(path, o);
-  go(P.homeView);
 }
-async function finish(P, o, A, terms, Dn, quiet) {
-  if (!quiet) me(`${P.choose} ${o.lender || o.carrier}`);
-  await say(P.picked(o));
+/* application, signature, celebration. base is the checkpoint a rest returns to; prog is how far a rested application got. */
+async function finish(P, o, A, terms, Dn, quiet, base, prog, onSigned) {
+  const save = (p) => setCp({ ...base, o, prog: p });
+  S.sel = o.id; now(NOW.picked(o.lender || o.carrier));
+  if (prog) await say(SHELL.rest.back);
+  else {
+    prog = { sums: [] }; save(prog);
+    if (!quiet) me(`${P.choose} ${o.lender || o.carrier}`);
+    await say(P.picked(o));
+    await scene();
+  }
+  if (!prog.sign) {
+    setStation(2);
+    await application(A, o, prog, save);
+    await say(A.finished(o));
+    prog.sign = true; save(prog);
+    await scene();
+  }
+  setStation(5); now(NOW.sign(P.sign.sub(o), P.sign.cta));
+  await signing(P.sign, terms, o, () => { setCp({ at: 'held' }); S.held = true; onSigned(); });
   await scene();
-  setStation(2);
-  await application(A, o);
-  await say(A.finished(o));
-  await scene();
-  setStation(5);
-  await signing(P.sign, terms, o);
-  await scene();
-  await celebrate(Dn, o);
+  now(NOW.done(Dn));
+  await celebrate(Dn, o, P.homeView);
 }
 
 /* ---------- home bases ---------- */
 function nudgeHtml() {
   const n = S.nudge; if (!n) return '';
-  return `<div class="nudge"><img src="${LEAF}" alt=""><div><p>${esc(n.text)}</p>${n.yes ? `<div class="btns"><button type="button" class="btn sm" data-a="nudge" data-v="yes">${esc(n.yes)}</button>${n.alt ? `<button type="button" class="btn sm ghost" data-a="nudge" data-v="alt">${esc(n.alt)}</button>` : ''}<button type="button" class="btn sm quiet" data-a="nudge" data-v="no">${esc(n.no)}</button></div>` : ''}</div></div>`;
+  return `<div class="nudge"><img src="${LEAF}" alt=""><div><p>${esc(n.text)}</p>${n.yes ? `<div class="btns"><button type="button" class="btn sm" data-a="nudge" data-v="yes">${esc(n.yes)}</button>${n.alt ? `<button type="button" class="btn sm ghost" data-a="nudge" data-v="alt">${esc(n.alt)}</button>` : ''}${n.no ? `<button type="button" class="btn sm quiet" data-a="nudge" data-v="no">${esc(n.no)}</button>` : ''}</div>` : ''}</div></div>`;
 }
 const chev = `<span class="chev">${ic('down', 18, 2)}</span>`;
 function renderLoans() {
@@ -470,7 +545,7 @@ let sheetOnClose = null, sheetFrom = null;
 function openSheet(html, onClose) {
   if (!sheet.hidden) closeSheet();
   sheetFrom = document.activeElement; sheetOnClose = onClose || null;
-  sheet.innerHTML = `<div class="grab" aria-hidden="true"></div><button type="button" class="sx" data-act="close-sheet" aria-label="Close">${ic('x', 18, 2.2)}</button><div class="sheet-in">${html}</div>`;
+  sheet.innerHTML = `<div class="grab" aria-hidden="true"></div>${EMBED ? '' : `<button type="button" class="sask" data-act="ask" aria-label="${esc(SHELL.ask.label)}"><img src="${LEAF}" alt="">${esc(SHELL.ask.short)}</button>`}<button type="button" class="sx" data-act="close-sheet" aria-label="Close">${ic('x', 18, 2.2)}</button><div class="sheet-in">${html}</div>`;
   sheet.hidden = false; scrim.hidden = false; sheet.scrollTop = 0;
   requestAnimationFrame(() => { sheet.classList.add('on'); scrim.classList.add('on'); });
   if (!S.auto) sheet.querySelector('.sx').focus({ preventScroll: true });
@@ -556,7 +631,7 @@ function moveSheet() {
 }
 function connectSheet() {
   const H = HOME.loans, left = H.banksToConnect.filter((b) => !S.banks.some((x) => x.bank === b.bank));
-  const body = openSheet(`<h3>${H.connect}</h3><p class="sub">Pick your bank. You sign in with them, and LendingTree only sees balances and transactions.</p><div class="opts">${left.map((b, i) => `<button type="button" class="opt" data-i="${i}">${mono(b.bank)}<span><b>${esc(b.bank)}</b></span>${ic('right', 18, 2)}</button>`).join('')}</div>`);
+  const body = openSheet(`<h3>${H.connect}</h3><p class="sub">${left.length ? H.connectSub : H.connectNone}</p><div class="opts">${left.map((b, i) => `<button type="button" class="opt" data-i="${i}">${mono(b.bank)}<span><b>${esc(b.bank)}</b></span>${ic('right', 18, 2)}</button>`).join('')}</div>`);
   body.addEventListener('click', (e) => {
     const b = e.target.closest('.opt'); if (!b) return; const bank = left[Number(b.dataset.i)];
     setSheet(`<div class="flow-done"><span class="spin big" aria-hidden="true"></span><h3>Connecting to ${esc(bank.bank)}</h3><p>This takes a few seconds.</p></div>`);
@@ -589,7 +664,7 @@ function addPolicySheet() {
     const b = e.target.closest('button'); if (!b) return;
     if (b.dataset.q) addIt(q[Number(b.dataset.q)]);
     else if (b.dataset.a === 'copy') toast('Address copied.');
-    else if (b.dataset.a === 'upload') addIt({ carrier: 'Travelers', icon: 'travelers', type: 'Umbrella', premium: 34, per: 'month', renews: 'Aug 2', covers: '$1,000,000 liability' });
+    else if (b.dataset.a === 'upload') { if (S.policies.some((p) => p.type === A.uploaded.type)) toast(A.uploadedAlready); else addIt(A.uploaded); }
   });
 }
 function claimFlow(p, done = () => {}) {
@@ -617,6 +692,7 @@ function claimFlow(p, done = () => {}) {
         sh.onDone(setSheet(`<div class="flow-done left">${okIcon}<h3>${F.done.title}</h3><p class="claim-no"><span>${F.done.number}</span><b>${no}</b></p><ol class="next-steps">${F.done.steps(p.carrier).map(([k, v]) => `<li><b>${k}</b><span>${v}</span></li>`).join('')}</ol><p class="fine">${F.done.note}</p><button type="button" class="btn wide" data-a="flow-done">${F.done.close}</button></div>`));
       };
       $('[data-a=claim-next]', body).addEventListener('click', file); $('[data-a=claim-none]', body).addEventListener('click', file);
+      $$('input', body).forEach((f) => f.addEventListener('keydown', (e) => { if (e.key === 'Enter') file(); }));
     }
   };
   step(0);
@@ -631,11 +707,12 @@ $('#lt').addEventListener('click', (e) => {
   const b = e.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act, id = b.dataset.id, loan = S.loans.find((l) => l.id === id), pol = S.policies.find((p) => p.id === id);
   if (a === 'close-sheet') closeSheet();
+  else if (a === 'ask') dockOpen();
   else if (a === 'loan') { S.open.loans = S.open.loans === id ? null : id; renderLoans(); }
   else if (a === 'acct') { S.open.acct = S.open.acct === id ? null : id; renderLoans(); }
   else if (a === 'policy') { S.open.insurance = S.open.insurance === id ? null : id; renderInsurance(); }
-  else if (a === 'pay') payFlow(id);
-  else if (a === 'extra') (loan.payment ? payoffFlow({ loan: id, extra: 100 }) : toast('Nothing is due on this line yet.'));
+  else if (a === 'pay') (loan.payment ? payFlow(id) : toast(HOME.loans.nothingDue));
+  else if (a === 'extra') (loan.payment ? payoffFlow({ loan: id, extra: 100 }) : toast(HOME.loans.nothingDue));
   else if (a === 'loan-details') factsSheet(`${loan.lender} ${loan.type.toLowerCase()}`, 'Everything about this loan.', [['Balance', money(loan.balance)], loan.limit ? ['Credit limit', money(loan.limit)] : ['Original amount', money(loan.original)], ['Rate', `${loan.rate}%`], ['Payment', loan.payment ? `${money(loan.payment)}, due ${loan.due}` : 'Nothing due yet'], ['Autopay', 'On, from Chase ••4471']], `<div class="opts"><button type="button" class="opt" data-act="doc"><span class="ib">${ic('file', 20)}</span><span><b>Statements and documents</b></span>${ic('right', 18, 2)}</button></div>`);
   else if (a === 'doc') { closeSheet(); toast('Your documents would open here.'); }
   else if (a === 'transfer') transferFlow({ from: id, to: id === 'chase' ? 'ally' : 'chase' });
@@ -651,66 +728,94 @@ $('#lt').addEventListener('click', (e) => {
 $('#lt').addEventListener('change', (e) => { const w = e.target.closest('[data-act=watch]'); if (w) { S.watch[w.dataset.id] = w.checked; toast(w.checked ? 'Watching this policy for a better rate.' : 'Stopped watching this policy.'); renderInsurance(); } });
 scrim.addEventListener('click', () => closeSheet());
 $('#logo').addEventListener('click', () => go('guide'));
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (!$('#pmodal').hidden) { if (pmDismiss) pmDismiss(); } else if (!sheet.hidden) closeSheet();
+});
 
 /* ---------- after the close: servicing, engagement, renewal ---------- */
 async function nudge(n) {
   S.nudge = n; rerender(); main.scrollTo({ top: 0, behavior: smooth() });
-  const r = await wait((fin) => { S.nudgeCb = fin; }, [{ tap: '[data-a=nudge][data-v=yes]', read: 5200 }]);
+  const r = await wait((fin) => { S.nudgeCb = fin; }, [{ tap: '[data-a=nudge][data-v=yes]', read: 5200 }], { hint: () => $(`#v-${S.flow} .nudge .btns`) });
   S.nudge = null; S.nudgeCb = null; rerender();
   return r;
 }
 async function homeTour(P) {
-  setStation(6);
+  setStation(6); now(NOW.tour(HOME[P.homeView].title));
   S.nudge = { text: P.tour }; rerender();
   await sleep(2400);
   if (S.auto) { const id = P.homeView === 'loans' ? S.loans.find((l) => l.isNew).id : 'auto'; S.open[P.homeView] = id; rerender(); }
   await sleep(3800);
 }
-async function servicing() {
+/* Someone driving by hand gets to finish what they are doing before the prototype speaks over the product. */
+async function settle() {
+  const typing = () => { const i = $('#dockIn'); return !!(i && i.value); };
+  while (!S.auto && (!sheet.hidden || ASK.busy || typing() || Date.now() - lastTouch < 5000 / SPEED)) await sleep(250);
+}
+async function servicing(from = 0, back) {
   const P = PATHS[S.path];
-  go(P.homeView); S.nudge = null; S.open[P.homeView] = null; rerender(); setStation(6);
-  await timeSkip(PROTO.skips.servicing);
-  for (const t of P.servicing) {
+  flowGo(P.homeView); S.nudge = null; S.open[P.homeView] = null; rerender(); setStation(6);
+  if (!back) await timeSkip(PROTO.skips.servicing);
+  for (let i = from; i < P.servicing.length; i++) {
+    const t = P.servicing[i];
+    setCp({ at: 'servicing', i });
     await sleep(900);
+    now(NOW.nudge('servicing', t.gist, t.yes, t.no));
     const r = await nudge({ text: fn(t.text, newPolicy()), yes: t.yes, no: t.no });
+    now(NOW.between(HOME[P.homeView].title));
     if (r !== 'yes') continue;
+    now(NOW.flow(FLOWS[t.kind].title));
     if (t.kind === 'transfer') await wait((fin) => transferFlow(t, fin), FLOW_AUTO);
     else if (t.kind === 'payoff') await wait((fin) => payoffFlow(t, fin), [{ tap: '.sheet .chip[data-c="200"]', read: 3200 }, { tap: `.sheet .chip[data-c="${t.extra}"]`, read: 1800 }, ...FLOW_AUTO]);
     else if (t.kind === 'claim') await wait((fin) => claimFlow(newPolicy(), fin), CLAIM_AUTO());
+    now(NOW.between(HOME[P.homeView].title));
     if (t.kind !== 'transfer' && S.auto) { S.open[P.homeView] = t.loan || t.policy; rerender(); }
     await sleep(2600);
   }
 }
-async function renewal() {
-  const P = PATHS[S.path], R = P.renewal, pol = newPolicy();
-  S.open[P.homeView] = null; rerender();
-  await timeSkip(PROTO.skips.engagement);
-  setStation(7);
-  await sleep(700);
-  const r = await nudge({ text: fn(R.nudge, pol), yes: R.shop, alt: fn(R.direct, pol), no: R.no });
-  if (r === 'no') return;
-  setStation(8); S.lock = true;
-  go('guide'); stream.innerHTML = '';
-  const list = fn(R.offers, pol);
-  me(r === 'yes' ? R.shop : fn(R.direct, pol)); await sleep(400);
-  await say(R.opening);
-  let o;
-  if (r === 'yes') {
-    await say(R.question.q); await choose(R.question.options, R.question.auto);
-    o = await offersScene(P, { offers: list, recommend: R.recommend, offersIntro: R.offersIntro, chart: R.chart, advisor: R.advisor, current: R.current, offerDetails: R.offerDetails });
-  } else o = list.find((x) => x.id === (R.directId || R.recommend));
-  await finish(P, o, R.app, R.signTerms(o), R.done, r !== 'yes');
-  if (S.path === 'loan') { S.loans.forEach((l) => { l.isNew = false; }); S.loans.push(R.newLoan(o)); } else { S.policies = S.policies.map((p) => (p.id === 'home' ? { ...p, carrier: o.carrier, icon: o.icon, premium: o.premium, isNew: true } : { ...p, isNew: false })); }
-  S.open[P.homeView] = null; go(P.homeView);
+/* cp carries a rest's return point: the nudge, the offers (sub 'offers') or the application (sub 'finish'). */
+async function renewal(cp = {}) {
+  const P = PATHS[S.path], R = P.renewal, pol = S.policies.find((p) => p.id === 'auto'), list = fn(R.offers, pol);
+  let r = cp.r, o = cp.o;
+  if (!cp.sub) {
+    setCp({ at: 'renewal' }); S.lock = false;
+    flowGo(P.homeView); S.open[P.homeView] = null; rerender();
+    if (!cp.back) await timeSkip(PROTO.skips.engagement);
+    setStation(7);
+    await sleep(700);
+    now(NOW.nudge('renewal', R.gist, R.shop, R.no));
+    r = await nudge({ text: fn(R.nudge, pol), yes: R.shop, alt: fn(R.direct, pol), no: R.no });
+    if (r === 'no') { now(NOW.end); return; }
+    setStation(8); S.lock = true;
+    flowGo('guide'); stream.innerHTML = '';
+    now(NOW.renewalQ(R.question));
+    me(r === 'yes' ? R.shop : fn(R.direct, pol)); await sleep(400);
+    await say(R.opening);
+    if (r === 'yes') { await say(R.question.q); await choose(R.question.options, R.question.auto); }
+  }
+  if (r !== 'yes') o = o || list.find((x) => x.id === (R.directId || R.recommend));
+  else if (!o) {
+    setCp({ at: 'renewal', sub: 'offers', r });
+    o = await offersScene(P, { offers: list, recommend: R.recommend, offersIntro: R.offersIntro, chart: R.chart, advisor: R.advisor, current: R.current, offerDetails: R.offerDetails, watchAsk: R.watchAsk });
+  }
+  await finish(P, o, R.app, R.signTerms(o), R.done, r !== 'yes', { at: 'renewal', sub: 'finish', r }, cp.sub === 'finish' ? cp.prog : null, () => {
+    if (S.path === 'loan') { S.loans.forEach((l) => { l.isNew = false; }); S.loans.push(R.newLoan(o)); } else { S.policies = S.policies.map((p) => (p.id === 'home' ? { ...p, carrier: o.carrier, icon: o.icon, premium: o.premium, isNew: true } : { ...p, isNew: false })); }
+    S.open[P.homeView] = null;
+  });
+  now(NOW.end);
+  flowGo(P.homeView);
   await sleep(3200);
 }
 
 /* ---------- prototype chrome: interstitial, controls ---------- */
-function modal(M, buttons, secs = 0) {
+/* dismiss, when given, is the choice made by clicking outside the card or pressing Escape. */
+let cdTimer = 0, pmDismiss = null;
+function modal(M, buttons, secs = 0, dismiss) {
   const pm = $('#pmodal');
   $('#pmTitle').textContent = M.title; $('#pmBody').textContent = M.body;
+  $('#pmBtns').className = buttons.length > 2 ? 'pm-btns stack' : 'pm-btns';
   $('#pmBtns').innerHTML = buttons.map(([v, label], i) => `<button type="button" class="${i ? 'pm-b ghost' : 'pm-b'}" data-v="${v}">${esc(label)}</button>`).join('');
+  threadShow(false);
   pm.hidden = false; requestAnimationFrame(() => pm.classList.add('on')); $('#pmBtns button').focus({ preventScroll: true });
   /* With auto-play on, the first button presses itself after a visible countdown. Pausing auto-play stops it. */
   clearInterval(cdTimer); const cd = $('#pmCount'); cd.hidden = true;
@@ -724,30 +829,194 @@ function modal(M, buttons, secs = 0) {
       clearInterval(cdTimer); $('#pmBtns button').click();
     }, 1000 / SPEED);
   }
-  return wait((fin) => { $('#pmBtns').onclick = (e) => { const b = e.target.closest('button'); if (b) { hideModal(); fin(b.dataset.v); } }; }, null);
+  return wait((fin) => {
+    const done = (v) => { hideModal(); fin(v); };
+    $('#pmBtns').onclick = (e) => { const b = e.target.closest('button'); if (b) done(b.dataset.v); };
+    pmDismiss = dismiss ? () => done(dismiss) : null;
+  }, null);
 }
-let cdTimer = 0;
-function hideModal() { const pm = $('#pmodal'); pm.hidden = true; pm.classList.remove('on'); clearInterval(cdTimer); }
+function hideModal() { const pm = $('#pmodal'); pm.hidden = true; pm.classList.remove('on'); clearInterval(cdTimer); pmDismiss = null; }
+$('#pmodal').addEventListener('click', (e) => { if (e.target === e.currentTarget && pmDismiss) pmDismiss(); });
 
-async function start(stage) {
+/* ---------- the journey, which can be entered at any checkpoint: from the top, from a jump, or after a rest ---------- */
+async function launch(fn_) {
   run++; cur = null; autoGen++;
-  closeSheet(true); hideModal(); $('#skip').hidden = true; resetState(); paintDev(); paintLife();
-  try {
-    const P = () => PATHS[S.path];
-    if (stage === 'shop') await shop();
-    else { const d = P(); closeDeal(S.path, d.offers.find((o) => o.id === d.recommend)); S.done = new Set([0, 1, 2, 3, 4, 5]); go(d.homeView); }
-    if (stage !== 'servicing') {
-      await homeTour(P());
-      if (!EMBED) { const r = await modal(PROTO.afterClose, [['next', PROTO.afterClose.primary], ['restart', PROTO.afterClose.secondary]], 9); if (r === 'restart') return void start('shop'); }
-    }
-    await servicing();
-    await renewal();
-    if (EMBED) { await sleep(3000); return void start(START_STAGE); }
-    const r = await modal(PROTO.theEnd, [['restart', PROTO.theEnd.primary], ['other', PROTO.theEnd.other[S.path]]]);
-    if (r === 'other') S.path = S.path === 'loan' ? 'insurance' : 'loan';
-    start('shop');
-  } catch (e) { if (!(e instanceof Cancel)) throw e; }
+  closeSheet(true); hideModal(); $('#skip').hidden = true; $('#skip').classList.remove('on'); S.landing = false;
+  try { await fn_(); } catch (e) { if (!(e instanceof Cancel)) throw e; }
 }
+function start(stage, cp) {
+  return launch(async () => {
+    resetState(); paintDev(); paintLife();
+    if (stage !== 'shop') {
+      const d = PATHS[S.path], o = d.offers.find((x) => x.id === d.recommend);
+      closeDeal(S.path, o); S.sel = o.id; S.held = true; S.done = new Set([0, 1, 2, 3, 4, 5]); flowGo(d.homeView);
+    }
+    await journey(cp || { at: stage === 'shop' ? 'shop' : stage === 'servicing' ? 'servicing' : 'tour' });
+  });
+}
+async function journey(cp) {
+  let at = cp.at;
+  if (at === 'shop') { await intro(cp.switched); at = 'qualify'; }
+  const P = PATHS[S.path];
+  if (at === 'qualify') { await qualify(P, cp.at === 'qualify' ? cp.i : 0, cp.back); at = 'offers'; }
+  let o = cp.o;
+  if (at === 'offers') {
+    setCp({ at: 'offers' });
+    o = await offersScene(P, { offers: P.offers, recommend: P.recommend, offersIntro: P.offersIntro, chart: P.chart, advisor: P.advisor, current: S.path === 'insurance' ? AUTO_CURRENT : null });
+    at = 'finish';
+  }
+  if (at === 'finish') {
+    await finish(P, o, P.app, P.sign.terms(o), P.done, false, { at: 'finish' }, cp.at === 'finish' ? cp.prog : null, () => closeDeal(S.path, o));
+    flowGo(P.homeView); at = 'tour';
+  }
+  if (at === 'tour') {
+    setCp({ at: 'tour' });
+    await homeTour(P);
+    if (!EMBED) { await settle(); const r = await modal(PROTO.afterClose, [['next', PROTO.afterClose.primary], ['restart', PROTO.afterClose.secondary]], 9); if (r === 'restart') { resetAsk(); return void start('shop'); } }
+    at = 'servicing';
+  }
+  if (at === 'servicing') { await servicing(cp.at === 'servicing' ? cp.i : 0, cp.at === 'servicing' && cp.back); at = 'renewal'; }
+  if (at === 'renewal') await renewal(cp.at === 'renewal' ? cp : {});
+  if (EMBED) { await sleep(3000); return void start(START_STAGE); }
+  setCp({ at: 'end' });
+  await settle();
+  /* Clicking outside the card, or Escape, is the same as choosing to play with it. */
+  const r = await modal(PROTO.theEnd, [['restart', PROTO.theEnd.primary], ['other', PROTO.theEnd.other[S.path]], ['self', PROTO.theEnd.self]], 0, 'self');
+  if (r === 'other') S.path = S.path === 'loan' ? 'insurance' : 'loan';
+  if (r === 'self') setAuto(false);
+  resetAsk(); start('shop');
+}
+
+/* A calm stopping point, reached by telling the guide you want to stop or think it over. Nothing is lost, and one button resumes. */
+const restsAtHome = (cp) => cp.at === 'servicing' || (cp.at === 'renewal' && !cp.sub);
+const restsInGuide = (cp) => ['qualify', 'offers', 'finish'].includes(cp.at) || (cp.at === 'renewal' && !!cp.sub);
+function pauseFlow() {
+  const cp = S.cp;
+  if (!cp || S.resting) return false;
+  if (cur && cur.kind === 'offers') { cur.finish('rest'); return true; }
+  if (!restsAtHome(cp) && !restsInGuide(cp)) return false;
+  launch(() => rest(cp));
+  return true;
+}
+async function rest(cp) {
+  const R = SHELL.rest, P = PATHS[S.path];
+  S.resting = true;
+  if (restsAtHome(cp)) {
+    now(NOW.rested(R.homeResume));
+    flowGo(P.homeView); S.open[P.homeView] = null;
+    await nudge({ text: R.home, yes: R.homeResume });
+  } else {
+    now(NOW.rested(R.resume));
+    flowGo('guide'); await scene();
+    const card = add(el(`<div class="card rest"><span class="rest-ic">${ic('check', 22)}</span><div><b>${esc(R.title)}</b><p>${esc(cp.o ? R.app(cp.o.lender || cp.o.carrier) : R.shop)}</p></div><button type="button" class="btn">${esc(R.resume)}</button></div>`));
+    await wait((fin) => $('button', card).addEventListener('click', () => fin()), [{ tap: () => $('button', card), read: 3600 }]);
+    await scene();
+  }
+  S.resting = false;
+  await journey({ ...cp, back: true });
+}
+
+/* ---------- ask the guide: a question at any point, answered by the live LendingTree agent ---------- */
+const dock = $('#dock'), ASK = { msgs: [], busy: false, gen: 0, last: null };
+const MOCK = Q.get('mock') === '1';
+/* TEST AID, only with ?mock=1: canned replies so every action can be exercised without the network. Not part of the product. */
+function mockAsk(req) {
+  const q = req.messages[req.messages.length - 1].content.toLowerCase();
+  const hit = [
+    ['think about it', 'pause', 'Of course. Nothing is submitted, and I will keep everything as it is until you are ready.'],
+    ['insurance instead', 'insurance', 'Sure. Let us look at your car insurance instead.'],
+    ['loan instead', 'loan', 'Sure. Let us look at borrowing instead.'],
+    ['my loans', 'home', 'Here is everything you hold, in one place.'],
+    ['start over', 'restart', 'No problem. Let us start again from the top.'],
+  ].find(([k]) => q.includes(k));
+  const out = hit ? { text: hit[2], action: hit[1] } : { text: `Good question. In this sample nothing is final until you sign, and looking around never affects your credit. Whenever you are ready, carry on with the ${req.stage} step in front of you.`, action: 'continue' };
+  return new Promise((r) => setTimeout(() => r({ ...out, live: false }), 400));
+}
+if (MOCK) window.__vt = { S, ASK };
+
+function buildDock() {
+  const A = SHELL.ask;
+  dock.innerHTML = `<div class="dock-thread" id="dockThread" hidden><button type="button" class="dock-x" id="dockHide" aria-label="${esc(A.hide)}">${ic('down', 16, 2.4)}</button><div class="dock-log" id="dockLog" role="log" aria-live="polite"></div></div>
+    <div class="dock-row"><button type="button" class="dock-back" id="dockBack" hidden>${esc(A.back)}${ic('right', 15, 2.6)}</button>
+      <button type="button" class="dock-pill" id="dockPill" aria-label="${esc(A.label)}"><img src="${LEAF}" alt=""><span>${esc(A.short)}</span></button>
+      <form class="dock-form" id="dockForm" autocomplete="off"><img src="${LEAF}" alt=""><input type="text" id="dockIn" maxlength="300" enterkeyhint="send" placeholder="${esc(A.placeholder)}" aria-label="${esc(A.label)}"><button type="submit" aria-label="${esc(A.send)}" disabled>${ic('right', 18, 2.4)}</button></form></div>`;
+  dock.hidden = false;
+  const input = $('#dockIn');
+  input.addEventListener('input', paintAsk);
+  input.addEventListener('blur', () => setTimeout(() => { if (!input.value && document.activeElement !== input && !dock.classList.contains('has-thread')) dock.classList.remove('open'); }, 0));
+  $('#dockForm').addEventListener('submit', (e) => { e.preventDefault(); const t = input.value.trim(); if (t.length >= 2 && !ASK.busy) submitAsk(t); });
+  $('#dockPill').addEventListener('click', dockOpen);
+  $('#dockHide').addEventListener('click', () => threadShow(false));
+  $('#dockBack').addEventListener('click', () => { go(S.flow); requestAnimationFrame(markReady); });
+  dock.addEventListener('keydown', (e) => { if (e.key !== 'Escape') return; e.stopPropagation(); threadShow(false); input.blur(); });
+  paintDock();
+}
+function dockOpen() { if (dock.hidden) return; dock.classList.add('open'); $('#dockIn').focus({ preventScroll: true }); }
+function paintAsk() { $('#dockForm button').disabled = ASK.busy || $('#dockIn').value.trim().length < 2; }
+function paintDock() {
+  if (dock.hidden) return;
+  $('#lt').classList.toggle('no-ask', !!S.landing && S.view === 'guide'); /* the opening screen is already one big question */
+  $('#dockBack').hidden = S.view === S.flow;
+}
+function threadShow(on) {
+  if (dock.hidden || (!on && !dock.classList.contains('has-thread') && !dock.classList.contains('open'))) return;
+  $('#dockThread').hidden = !on; dock.classList.toggle('has-thread', on);
+  if (!on && !$('#dockIn').value && document.activeElement !== $('#dockIn')) dock.classList.remove('open');
+  fitDock();
+}
+/* while an answer is open, the page can scroll far enough that nothing is stuck underneath it */
+function fitDock() { const lt = $('#lt'), on = dock.classList.contains('has-thread'); lt.classList.toggle('asking', on); if (on) lt.style.setProperty('--dock-h', `${dock.offsetHeight}px`); }
+function resetAsk() { ASK.gen++; ASK.msgs = []; ASK.busy = false; if (dock.hidden) return; $('#dockLog').innerHTML = ''; $('#dockIn').value = ''; paintAsk(); threadShow(false); dock.classList.remove('open'); }
+/* What the guide is told: where the journey is, plus anything the visitor has wandered off to look at. */
+function askContext() {
+  let { stage, step } = S.ctx;
+  const t = $('.sheet-in h3', sheet);
+  if (!sheet.hidden && t && !S.ctx.sheet) step += NOW.panel(t.textContent);
+  else if (sheet.hidden && S.view !== S.flow) step += NOW.elsewhere(SHELL.tabs.find((x) => x.id === S.view).label);
+  return { stage, step: step.slice(0, 300) };
+}
+async function submitAsk(text) {
+  if (S.auto) setAuto(false);
+  const my = ++ASK.gen, log = $('#dockLog'), pause = (ms) => new Promise((r) => setTimeout(r, ms));
+  const q = el('<div class="msg me"><span></span></div>'); q.firstChild.textContent = text;
+  const a = el(`<div class="msg g"><img class="g-av" src="${LEAF}" alt=""><div class="g-t"><span class="dots" role="img" aria-label="${esc(SHELL.ask.thinking)}"><i></i><i></i><i></i></span></div></div>`);
+  log.append(q, a); $('#dockIn').value = ''; ASK.busy = true; paintAsk();
+  dock.classList.add('open'); threadShow(true); log.scrollTop = log.scrollHeight;
+  ASK.msgs.push({ role: 'user', content: text });
+  const req = { surface: 'lifecycle', path: S.path, ...askContext(), selected: S.sel, held: S.held, messages: ASK.msgs.slice(-12) };
+  ASK.last = req;
+  const [out] = await Promise.all([MOCK ? mockAsk(req) : ask(req), pause(700)]);
+  if (my !== ASK.gen) return;
+  ASK.msgs.push({ role: 'assistant', content: out.text });
+  $('.g-t', a).innerHTML = `<p>${esc(out.text)}</p>`;
+  fitDock(); log.scrollTop = q.offsetTop - 2;
+  await pause(out.action === 'continue' ? 350 : 1100); /* long enough to read the reply before the screen changes */
+  if (my !== ASK.gen) return;
+  ASK.busy = false; paintAsk();
+  act(out.action);
+}
+/* What each reply does to the journey. The words are the agent's; this only moves the product to match them. */
+function act(action) {
+  if ((action === 'loan' || action === 'insurance') && (action !== S.path || S.held || !S.cp || S.cp.at === 'shop')) { S.path = action; return void start('shop', { at: 'shop', switched: true }); }
+  if (action === 'restart') return void start('shop');
+  if (action === 'pause' && pauseFlow()) return;
+  if (action === 'home') { closeSheet(); go(PATHS[S.path].homeView); main.scrollTo({ top: 0, behavior: smooth() }); }
+  requestAnimationFrame(markReady);
+}
+/* Bring the step that is waiting into view, clear of the answer, and pulse the control that carries it on. */
+function markReady() {
+  if (sheet.hidden && S.view !== S.flow) return; /* the way back is offered beside the ask field instead */
+  const n = hintNode(); if (!n) return;
+  if (main.contains(n)) {
+    const r = n.getBoundingClientRect(), m = main.getBoundingClientRect(), d = dock.hidden ? null : dock.getBoundingClientRect();
+    const floor = d && r.right > d.left && r.left < d.right ? d.top - 20 : m.bottom - 20;
+    const by = r.height > floor - m.top - 12 || r.top < m.top + 12 ? r.top - m.top - 12 : r.bottom > floor ? r.bottom - floor : 0;
+    if (by) main.scrollBy({ top: by, behavior: smooth() });
+  }
+  n.classList.remove('ready'); void n.offsetWidth; n.classList.add('ready');
+  clearTimeout(markReady.t); markReady.t = setTimeout(() => $$('.ready').forEach((x) => x.classList.remove('ready')), 2600);
+}
+if (!EMBED) buildDock();
 
 const IC_PAUSE = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="3.5" y="2.5" width="3.2" height="11" rx="1" fill="currentColor"/><rect x="9.3" y="2.5" width="3.2" height="11" rx="1" fill="currentColor"/></svg>';
 const IC_PLAY = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 2.8v10.4a.6.6 0 0 0 .9.5l8.2-5.2a.6.6 0 0 0 0-1L5.4 2.3a.6.6 0 0 0-.9.5z" fill="currentColor"/></svg>';
@@ -763,17 +1032,27 @@ $('#devJumps').innerHTML = Object.entries(PROTO.jumps).map(([k, v]) => `<button 
 const setMenu = (open) => { devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); };
 devBtn.addEventListener('click', () => setMenu(devMenu.hidden));
 $('#devToggle').addEventListener('click', () => setAuto(!S.auto));
-$('#devPath').addEventListener('click', (e) => { const b = e.target.closest('[data-path]'); if (!b) return; S.path = b.dataset.path; setMenu(false); start('shop'); });
-$('#devJumps').addEventListener('click', (e) => { const b = e.target.closest('[data-stage]'); if (!b) return; setMenu(false); start(b.dataset.stage); });
-$('#doReset').addEventListener('click', () => { setMenu(false); S.auto = true; start('shop'); });
+$('#devPath').addEventListener('click', (e) => { const b = e.target.closest('[data-path]'); if (!b) return; S.path = b.dataset.path; setMenu(false); resetAsk(); start('shop'); });
+$('#devJumps').addEventListener('click', (e) => { const b = e.target.closest('[data-stage]'); if (!b) return; setMenu(false); resetAsk(); start(b.dataset.stage); });
+$('#doReset').addEventListener('click', () => { setMenu(false); S.auto = true; resetAsk(); start('shop'); });
 document.addEventListener('pointerdown', (e) => {
   if (!devMenu.hidden && !$('#dev').contains(e.target)) setMenu(false);
+  if (!e.isTrusted) return;
+  keyed = false;
+  if (!$('#lt').contains(e.target)) return;
+  lastTouch = Date.now();
   /* a real tap inside the product means the viewer is driving: auto-play steps aside until they press play */
-  if (e.isTrusted && S.auto && !EMBED && $('#lt').contains(e.target)) setAuto(false);
+  if (S.auto && !EMBED) setAuto(false);
+  /* a tap anywhere else puts an open answer away, and the tap still lands */
+  if (!ASK.busy && !dock.contains(e.target) && !e.target.closest('[data-act=ask]')) threadShow(false);
 }, true);
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !devMenu.hidden) { setMenu(false); devBtn.focus(); }
-  if (e.isTrusted && S.auto && !EMBED && $('#lt').contains(e.target) && (e.key === 'Enter' || e.key === ' ' || e.key.length === 1)) setAuto(false);
+  if (!e.isTrusted) return;
+  keyed = true;
+  if (!$('#lt').contains(e.target)) return;
+  lastTouch = Date.now();
+  if (S.auto && !EMBED && (e.key === 'Enter' || e.key === ' ' || e.key.length === 1)) setAuto(false);
 });
 
 resetState();

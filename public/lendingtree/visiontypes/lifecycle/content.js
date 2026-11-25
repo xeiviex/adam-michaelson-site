@@ -25,7 +25,7 @@ export const PROTO = {
   theEnd: {
     title: 'That is the whole lifecycle.',
     body: 'From first question to renewal, all on LendingTree’s own website and app.',
-    primary: 'Restart', other: { loan: 'Play the insurance path', insurance: 'Play the loan path' },
+    primary: 'Restart', other: { loan: 'Play the insurance path', insurance: 'Play the loan path' }, self: 'Play with it yourself',
   },
   skips: { servicing: 'Three months later', engagement: 'Six months in' },
 };
@@ -34,7 +34,41 @@ export const PROTO = {
 export const SHELL = {
   tabs: [{ id: 'guide', label: 'Guide' }, { id: 'loans', label: 'Loans' }, { id: 'insurance', label: 'Insurance' }],
   guideName: 'LendingTree guide',
-  ask: 'Ask anything',
+  /* a question at any point, answered by the guide */
+  ask: { placeholder: 'Ask a question', short: 'Ask', label: 'Ask the LendingTree guide a question', send: 'Send', hide: 'Hide the answer', thinking: 'LendingTree guide is thinking', back: 'Pick up where you left off' },
+  /* a calm stopping point when someone wants to think it over */
+  rest: {
+    title: 'Saved for later',
+    shop: 'Nothing has been submitted, and nothing here touched your credit.',
+    app: (name) => `Your application with ${name} is saved as it stands. Nothing is final until you sign.`,
+    resume: 'Pick up where I left off',
+    back: 'Welcome back. Here is where we left off.',
+    home: 'No rush. I have set that aside, and nothing has changed.', homeResume: 'Pick it back up',
+  },
+};
+
+/* ---------- what the live agent is told about the screen (sent with a question, never shown) ---------- */
+export const NOW = {
+  landing: { stage: 'landing', step: 'The opening screen asks "What are you trying to do?". Next: say what they want in the field, or pick a suggestion.' },
+  opening: { stage: 'questions', step: 'The guide is introducing what it can do. Next: three quick questions.' },
+  qualify: (q, i, n) => ({ stage: 'questions', step: `Question ${i} of ${n}: "${q.q}" Choices: ${q.options.join('; ')}. Next: pick one of the choices.` }),
+  onfile: (o) => ({ stage: 'details on file', step: `A card titled "${o.title}" shows what LendingTree already has on file. Next: press "${o.ok}", or "${o.edit}".` }),
+  checking: { stage: 'gathering offers', step: 'LendingTree is checking with providers. Next: the offers appear in a moment.' },
+  offers: (names, rec, think) => ({ stage: 'offers', step: `Comparing ${names.join(', ')}, with a chart. The guide recommends ${rec}. Next: press "Choose" on one, open its details, or press "${think}".` }),
+  watch: { stage: 'thinking it over', step: 'They want to think about it, and the guide asked whether to keep watching for a better deal. Next: answer yes or no, then come back to the offers whenever they like.' },
+  rested: (resume) => ({ stage: 'paused', step: `They paused. Everything is saved and nothing is submitted. Next: press "${resume}" when they are ready.` }),
+  picked: (name) => ({ stage: 'application', step: `They chose ${name}. Next: a short application that LendingTree mostly fills in.` }),
+  app: (title, s, i, n) => ({ stage: 'application', step: `"${title}", step ${i} of ${n}: ${s.title}. Next: ${s.cta ? `press "${s.cta}"` : s.questions ? 'answer the question on the card' : 'this step finishes by itself'}.` }),
+  sign: (sub, cta) => ({ stage: 'signing', step: `The plain-language agreement for the ${sub} is on screen. Nothing is final yet. Next: type their full name and press "${cta}".` }),
+  done: (d) => ({ stage: 'closed', step: `It is signed. The confirmation reads "${d.title}". Next: press "${d.cta}".` }),
+  tour: (title) => ({ stage: 'home base', step: `The "${title}" home base shows everything they hold, including the new one. Next: tap anything to look closer. Servicing comes next.` }),
+  nudge: (stage, gist, yes, no) => ({ stage, step: `On the home base, the guide suggests ${gist}. Next: press "${yes}" or "${no}".` }),
+  flow: (title) => ({ stage: 'servicing', sheet: true, step: `The "${title}" panel is open on the home base. Next: finish it with the button at the bottom, or close it.` }),
+  between: (title) => ({ stage: 'home base', step: `The "${title}" home base. Next: the guide will bring up the next thing worth doing in a moment.` }),
+  renewalQ: (q) => ({ stage: 'renewal', step: `The guide asked "${q.q}" Choices: ${q.options.join('; ')}. Next: pick one.` }),
+  end: { stage: 'the end', step: 'The whole lifecycle has been shown. Next: look around the home base, or start again.' },
+  elsewhere: (tab) => ` Right now they are looking at the ${tab} tab instead.`,
+  panel: (title) => ` They also have the "${title}" panel open.`,
 };
 
 export const LANDING = {
@@ -59,6 +93,11 @@ export const PATHS = {
     opening: [
       'A deck is a great project.',
       `You have a lot of equity in ${PERSON.address.split(',')[0]}, so a home equity line is likely your lowest-cost way to pay for it. You could borrow up to about ${money(HELOC_ESTIMATE.max)}. Three quick questions and I will show you real offers.`,
+    ],
+    /* the opening when someone switches here by asking, rather than from the first screen */
+    switched: [
+      'Happy to. Let us look at paying for that backyard deck.',
+      `You have a lot of equity in ${PERSON.address.split(',')[0]}, so a home equity line is likely your lowest-cost way to do it. You could borrow up to about ${money(HELOC_ESTIMATE.max)}. Three quick questions and I will show you real offers.`,
     ],
     qualify: [
       { id: 'amount', q: 'Roughly what do you expect the deck to cost?', options: ['Under $25,000', `About ${money(HELOC_ESTIMATE.deckBudget)}`, '$60,000 or more', 'Not sure yet'], auto: 1 },
@@ -111,16 +150,17 @@ export const PATHS = {
       say: 'Take all the time you need. These three offers are saved, and nothing here touched your credit.',
       ask: 'Want me to keep watching for a better deal while you decide?',
       yes: 'Yes, keep watching', no: 'No thanks',
-      card: { on: 'Watching home equity rates for you', onSub: 'I will let you know the moment something beats Figure at 7.90%.', off: 'Your offers are saved', offSub: 'They are good for 30 days. Come back whenever you are ready.', back: 'See the offers again' },
+      card: { on: 'Watching home equity rates for you', onSub: (o) => `I will let you know the moment something beats ${o.lender} at ${o.apr.toFixed(2)}%.`, off: 'Your offers are saved', offSub: 'They are good for 30 days. Come back whenever you are ready.', back: 'See the offers again' },
     },
     tour: 'Your new line sits alongside everything else you owe. Tap any loan to see more.',
     servicing: [
-      { kind: 'transfer', text: `Heads up: your ${mortgage.lender} payment of ${money(mortgage.payment)} comes out of Fifth Third Joint Checking in 3 days, and that account has ${money(1885.4, 2)}. Want to move money over from savings?`, yes: 'Move money', no: 'Not now', from: 'ally', to: 'fifththird', amount: 1000, why: `${mortgage.lender} payment on the 1st` },
-      { kind: 'payoff', text: 'Twelve on-time payments in a row on your auto loan. Nicely done. A little extra each month would finish it sooner and save you interest. Want to see the numbers?', yes: 'Show me', no: 'Not now', loan: 'auto', extra: 100 },
+      { kind: 'transfer', text: `Heads up: your ${mortgage.lender} payment of ${money(mortgage.payment)} comes out of Fifth Third Joint Checking in 3 days, and that account has ${money(1885.4, 2)}. Want to move money over from savings?`, yes: 'Move money', no: 'Not now', gist: `moving ${money(1000)} from savings into Fifth Third Joint Checking so the ${mortgage.lender} mortgage payment clears in 3 days`, from: 'ally', to: 'fifththird', amount: 1000, why: `${mortgage.lender} payment on the 1st` },
+      { kind: 'payoff', text: 'Twelve on-time payments in a row on your auto loan. Nicely done. A little extra each month would finish it sooner and save you interest. Want to see the numbers?', yes: 'Show me', no: 'Not now', gist: 'paying a little extra each month on the auto loan to finish it sooner and save interest', loan: 'auto', extra: 100 },
     ],
     renewal: {
       nudge: `I ran a quick check on your loans. ${mortgage.lender} has a home equity special for existing customers, and with your mortgage in good standing and your home now worth about $655,000, you could get up to $75,000. That is enough to redo a bathroom.`,
       shop: 'Shop it around', direct: 'Start with Rocket', no: 'Not now', directId: 'rocket',
+      gist: `a home equity special from ${mortgage.lender} for existing customers, up to $75,000, enough to redo a bathroom`,
       opening: 'Happy to. I already know your home, your income and the line you have with Figure, so this will be quick.',
       question: { q: 'How much are you thinking for the bathroom?', options: ['About $25,000', 'About $40,000', 'The full $75,000'], auto: 0 },
       offersIntro: 'Three lenders, including the Rocket special. None of them needs anything new from you.',
@@ -155,6 +195,10 @@ export const PATHS = {
     offers: AUTO_QUOTES, recommend: 'geico',
     opening: [
       'Sorry to hear that. Let us see if someone can do better.',
+      `I can see your ${AUTO_CURRENT.carrier} policy on the ${PERSON.vehicle}: ${money(AUTO_CURRENT.premium)} a year with a ${money(AUTO_CURRENT.deductible)} deductible. Three quick questions and I will bring back real quotes.`,
+    ],
+    switched: [
+      'Happy to. Let us see if someone can do better on your car insurance.',
       `I can see your ${AUTO_CURRENT.carrier} policy on the ${PERSON.vehicle}: ${money(AUTO_CURRENT.premium)} a year with a ${money(AUTO_CURRENT.deductible)} deductible. Three quick questions and I will bring back real quotes.`,
     ],
     qualify: [
@@ -208,16 +252,18 @@ export const PATHS = {
       say: 'Take all the time you need. These three quotes are saved, and nothing here touched your credit.',
       ask: `Your ${AUTO_CURRENT.carrier} policy renews on Mar 14. Want me to keep watching for a better price until then?`,
       yes: 'Yes, keep watching', no: 'No thanks',
-      card: { on: 'Watching auto rates for you', onSub: `I will let you know if anything beats GEICO at ${money(AUTO_QUOTES[0].premium)} before your renewal.`, off: 'Your quotes are saved', offSub: 'They are good for 30 days. Come back whenever you are ready.', back: 'See the quotes again' },
+      card: { on: 'Watching auto rates for you', onSub: (q) => `I will let you know if anything beats ${q.carrier} at ${money(q.premium)} before your renewal.`, off: 'Your quotes are saved', offSub: 'They are good for 30 days. Come back whenever you are ready.', back: 'See the quotes again' },
     },
     tour: 'Your new policy sits alongside everything else that protects you. Tap any policy to see more.',
     servicing: [
-      { kind: 'transfer', text: `Heads up: your ${home.carrier} homeowners premium of ${money(home.premium)} comes out of Fifth Third Joint Checking in 4 days, and that account has ${money(1885.4, 2)}. Want to move money over from savings?`, yes: 'Move money', no: 'Not now', from: 'ally', to: 'fifththird', amount: 500, why: `${home.carrier} premium on ${home.renews}` },
-      { kind: 'claim', text: (p) => `Sorry about that fender-bender. I hope everyone is okay. I can start the claim with ${p.carrier} now. I already have your policy and your car, so it takes about two minutes.`, yes: 'Start my claim', no: 'Not now', policy: 'auto' },
+      { kind: 'transfer', text: `Heads up: your ${home.carrier} homeowners premium of ${money(home.premium)} comes out of Fifth Third Joint Checking in 4 days, and that account has ${money(1885.4, 2)}. Want to move money over from savings?`, yes: 'Move money', no: 'Not now', gist: `moving ${money(500)} from savings into Fifth Third Joint Checking so the ${home.carrier} homeowners premium clears in 4 days`, from: 'ally', to: 'fifththird', amount: 500, why: `${home.carrier} premium on ${home.renews}` },
+      { kind: 'claim', text: (p) => `Sorry about that fender-bender. I hope everyone is okay. I can start the claim with ${p.carrier} now. I already have your policy and your car, so it takes about two minutes.`, yes: 'Start my claim', no: 'Not now', gist: 'starting an auto claim for a fender-bender, which takes about two minutes', policy: 'auto' },
     ],
     renewal: {
       nudge: (p) => `I ran a quick check on your policies. Your ${home.carrier} homeowners renews on ${home.renews} at ${money(home.premium)}. ${p.carrier} will cover the house for ${money(1608)} if you bundle it with your auto policy. Same coverage, ${money(home.premium - 1608)} less a year.`,
       shop: 'Shop it around', direct: (p) => `Start with ${p.carrier}`, no: 'Not now',
+      gist: `bundling the homeowners policy with the auto carrier for ${money(1608)} a year instead of renewing with ${home.carrier} at ${money(home.premium)}`,
+      watchAsk: `Your ${home.carrier} policy renews on ${home.renews}. Want me to keep watching for a better price until then?`,
       opening: 'Happy to. I already know the house and the coverage you carry, so this will be quick.',
       question: { q: 'Keep the same $1,000 home deductible?', options: ['Yes, keep it', 'Show me $2,500 too'], auto: 0 },
       offersIntro: `Three carriers, next to your ${home.carrier} renewal. None of them needs anything new from you.`,
@@ -259,7 +305,8 @@ export const HOME = {
     actions: { pay: 'Pay now', extra: 'Pay extra', details: 'Details' },
     accountsTitle: 'Your accounts', accountsSub: (total) => `${money(total, 2)} across your banks`,
     acctActions: { transfer: 'Transfer', activity: 'Recent activity' },
-    connect: 'Connect another account',
+    connect: 'Connect another account', connectSub: 'Pick your bank. You sign in with them, and LendingTree only sees balances and transactions.', connectNone: 'Every bank in this sample is already connected.',
+    nothingDue: 'Nothing is due on this line yet.',
     move: 'Move money',
     moveOptions: [
       { id: 'pay', label: 'Make a loan payment', sub: 'Pay any loan from any account' },
@@ -276,7 +323,8 @@ export const HOME = {
     actions: { card: 'ID card', coverage: 'Coverage', claim: 'File a claim', reshop: 'Re-shop' },
     watch: 'Watch for better rates', watchOn: 'I will check prices 45 days before renewal.', employer: 'Through your employer. Changes happen at open enrollment.',
     add: 'Add a policy',
-    addWays: { title: 'Add a policy', sub: 'Three ways. Pick the easiest.', email: 'add@mail.lendingtree.example', quoted: [{ carrier: 'Progressive', icon: 'progressive', type: 'Motorcycle', premium: 46, per: 'month', renews: 'Jun 9', covers: '2019 Triumph Bonneville' }] },
+    addWays: { title: 'Add a policy', sub: 'Three ways. Pick the easiest.', email: 'add@mail.lendingtree.example', quoted: [{ carrier: 'Progressive', icon: 'progressive', type: 'Motorcycle', premium: 46, per: 'month', renews: 'Jun 9', covers: '2019 Triumph Bonneville' }],
+      uploaded: { carrier: 'Travelers', icon: 'travelers', type: 'Umbrella', premium: 34, per: 'month', renews: 'Aug 2', covers: '$1,000,000 liability' }, uploadedAlready: 'That policy is already here.' },
     nextTitle: 'Coming up',
     coverage: {
       Auto: [['Liability', (p) => p.liability || '100/300/100'], ['Collision', (p) => `${money(p.deductible || 500)} deductible`], ['Comprehensive', (p) => `${money(p.deductible || 500)} deductible`], ['Uninsured motorist', () => '100/300'], ['Roadside and rental', () => 'Included']],
@@ -286,6 +334,7 @@ export const HOME = {
       'Vision and dental': [['Cleanings', () => 'Two a year, covered'], ['Eye exam', () => 'One a year, covered'], ['Annual max', () => '$2,000 per person']],
       Pet: [['Covers', () => 'Accidents and illness'], ['Reimbursement', () => '90%'], ['Deductible', () => '$250']],
       Motorcycle: [['Liability', () => '100/300/50'], ['Collision', () => '$500 deductible']],
+      Umbrella: [['Extra liability', () => '$1,000,000'], ['Sits on top of', () => 'Your home and auto policies']],
     },
     reshopCarriers: [['GEICO', 'geico', 0.84], ['Travelers', 'travelers', 0.88], ['Nationwide', 'nationwide', 0.93]],
   },
