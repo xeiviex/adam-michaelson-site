@@ -283,12 +283,13 @@ async function main() {
   await opener();
   return play('pitch');
 }
-function start() {
+function start(keep) {
+  const chosen = keep && S ? S.mainSel : null;   /* servicing follows the lender or carrier picked while shopping */
   run++; autoTok++; pending = null;
   hideModal();
   col.textContent = ''; col.classList.remove('empty'); suggest.textContent = ''; setInput('');
   scroller.scrollTop = 0; stick = true; focusEl = null;
-  scenes = getScenes(cfg.path); freshState(); paintHistory(); paintDev(); syncUrl();
+  scenes = getScenes(cfg.path); freshState(); S.mainSel = chosen; paintHistory(); paintDev(); syncUrl();
   main().catch((e) => { if (e !== CANCEL && e !== STOP) throw e; });
 }
 
@@ -300,8 +301,8 @@ async function modal(kind) {
   markTurnEnd();
   const M = MODALS[kind];
   const next = (act) => {
-    if (kind === 'interstitial' && act === 'b') cfg.stage = 'servicing';
-    else if (act === 'b') { cfg.path = cfg.path === 'loan' ? 'insurance' : 'loan'; cfg.stage = 'shop'; }
+    if (kind === 'interstitial' && act === 'b') { cfg.stage = 'servicing'; return start(true); }
+    if (act === 'b') { cfg.path = cfg.path === 'loan' ? 'insurance' : 'loan'; cfg.stage = 'shop'; }
     else cfg.stage = cfg.embed && cfg.stageGiven ? cfg.stage : 'shop';
     start();
   };

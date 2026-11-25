@@ -212,7 +212,7 @@ export function celebrate(step, ctx) {
     body.push(h('div', { class: 'idc' }, h('div', { class: 'idc-t' }, h('span', { class: 'lg' }, h('img', { src: carrierIcon(c.icon), alt: '' })), h('b', null, c.carrier), h('span', { class: 'idc-st' }, c.status)),
       h('div', { class: 'idc-b' }, h('div', null, h('small', null, 'Insured'), h('span', null, c.name)), h('div', null, h('small', null, 'Vehicle'), h('span', null, c.vehicle)), h('div', null, h('small', null, 'Policy'), h('span', null, c.policy)))));
   }
-  const el = shell({ ...step, context: step.small ? 'Confirmed' : 'Confirmed by the ' + BRAND.agent }, ctx, 'celebrate' + (step.small ? ' small' : ''), body);
+  const el = shell({ ...step, context: 'Confirmed' }, ctx, 'celebrate' + (step.small ? ' small' : ''), body);
   requestAnimationFrame(() => setTimeout(() => burst(mark), 450));
   return { el };
 }

@@ -79,7 +79,7 @@ const loanOffer = (o, amount, extra) => ({
 const quoteOffer = (q) => ({
   id: q.id, name: q.carrier, icon: q.icon, tag: q.tag,
   big: money(q.premium), bigLabel: 'a year', sub: 'Saves ' + money(AUTO_CURRENT.premium - q.premium) + ' a year',
-  stats: [perMonth(q.premium) + ' a month', q.liability + ' liability', money(q.deductible) + ' deductible'],
+  stats: [q.liability + ' liability', money(q.deductible) + ' deductible'],
   raw: q,
 });
 /* The second time around (the check-in offer on the loan path). These three are extra to the shared data. */
