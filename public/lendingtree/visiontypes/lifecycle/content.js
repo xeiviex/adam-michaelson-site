@@ -168,7 +168,7 @@ export const PATHS = {
       rows: [['Driver', `${PERSON.first} ${PERSON.last}`], ['Vehicle', PERSON.vehicle], ['Garaged at', PERSON.address], ['Current policy', `${AUTO_CURRENT.carrier}, ${money(AUTO_CURRENT.premium)} a year`], ['Liability', AUTO_CURRENT.liability], ['Deductible', money(AUTO_CURRENT.deductible)]],
       ok: 'Looks right', edit: 'Update something',
     },
-    checking: { text: 'Gathering quotes from carriers. This does not affect your credit.', names: ['GEICO', 'State Farm', 'Travelers', 'and 14 more'] },
+    checking: { text: 'Gathering quotes from carriers. This does not affect your credit.', names: ['GEICO', 'State Farm', 'Liberty Mutual', 'and 14 more'] },
     offersIntro: (n) => `${n} carriers beat what you pay today. Here they are next to your ${AUTO_CURRENT.carrier} policy.`,
     chart: { title: 'Yearly premium, next to what you pay now', today: 'Today' },
     advisor: `GEICO matches your current liability limits, halves your deductible and saves ${money(AUTO_CURRENT.premium - AUTO_QUOTES[0].premium)} a year. State Farm costs a bit more but raises your liability protection and bundles with your home policy.`,

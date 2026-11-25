@@ -47,7 +47,7 @@ export const HELOC_ESTIMATE = { max: 300000, deckBudget: 42000 };
 export const AUTO_QUOTES = [
   { id: 'geico', carrier: 'GEICO', icon: 'geico', premium: 1716, deductible: 500, liability: '100/300/100', tag: 'Lowest price' },
   { id: 'statefarm', carrier: 'State Farm', icon: 'state-farm', premium: 1802, deductible: 500, liability: '250/500/100', tag: 'Bundle with your home policy' },
-  { id: 'travelers', carrier: 'Travelers', icon: 'travelers', premium: 1894, deductible: 250, liability: '250/500/100', tag: 'Lowest deductible' },
+  { id: 'liberty', carrier: 'Liberty Mutual', icon: 'liberty-mutual', premium: 1894, deductible: 250, liability: '250/500/100', tag: 'Lowest deductible' },
 ];
 export const AUTO_CURRENT = { carrier: 'Progressive', icon: 'progressive', premium: 2184, deductible: 1000, liability: '100/300/100' };
 

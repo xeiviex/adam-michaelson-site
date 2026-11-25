@@ -292,7 +292,7 @@ function insuranceScenes() {
       { t: 'goto', scene: 'intake' },
     ],
     agentOpen: [
-      { t: 'bot', flag: { text: ASSISTANTS[0] + ' checked in', icon: 'spark' }, text: 'Hi ' + first + '. I’ve been watching for better deals on your insurance and I noticed that ' + sf.carrier + ' has some new rates that are worth checking out. You pay ' + AUTO_CURRENT.carrier + ' ' + money(AUTO_CURRENT.premium) + ' a year for the Highlander right now.\n\nWant me to pull quotes through ' + BRAND.name + ' and compare?' },
+      { t: 'bot', flag: { text: ASSISTANTS[0] + ' checked in', icon: 'spark' }, text: 'Hi ' + first + '. I’ve been watching for better deals on your insurance and I noticed that ' + AUTO_QUOTES[2].carrier + ' has some new deals that are worth checking out. You pay ' + AUTO_CURRENT.carrier + ' ' + money(AUTO_CURRENT.premium) + ' a year for the Highlander right now.\n\nWant me to pull quotes through ' + BRAND.name + ' and compare?' },
       { t: 'choice', options: [{ label: 'Sure, show me', say: 'Sure, show me.', auto: true }, { label: 'Not right now', say: 'Not right now.', neg: true, go: 'notNow' }] },
       { t: 'goto', scene: 'intake' },
     ],
