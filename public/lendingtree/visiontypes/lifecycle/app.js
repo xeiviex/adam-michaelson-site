@@ -1043,8 +1043,10 @@ document.addEventListener('pointerdown', (e) => {
   lastTouch = Date.now();
   /* a real tap inside the product means the viewer is driving: auto-play steps aside until they press play */
   if (S.auto && !EMBED) setAuto(false);
-  /* a tap anywhere else puts an open answer away, and the tap still lands */
-  if (!ASK.busy && !dock.contains(e.target) && !e.target.closest('[data-act=ask]')) threadShow(false);
+}, true);
+/* A tap anywhere else in the product puts an open answer away. On click, not on press, so the page cannot shift under the tap. */
+document.addEventListener('click', (e) => {
+  if (e.isTrusted && !ASK.busy && $('#lt').contains(e.target) && !dock.contains(e.target) && !e.target.closest('[data-act=ask]')) threadShow(false);
 }, true);
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !devMenu.hidden) { setMenu(false); devBtn.focus(); }
