@@ -10,7 +10,7 @@ const mortgage = LOANS.find((l) => l.id === 'mortgage');
 
 /* ---------- prototype chrome (outside the product) ---------- */
 export const PROTO = {
-  back: 'Back to Adam’s proposal',
+  back: 'Back to the slides',
   label: 'Visiontype B',
   note: 'Prototype controls. Not part of the product.',
   fiction: 'Every person, offer and quote here is fictional.',
@@ -111,7 +111,7 @@ export const PATHS = {
       say: 'Take all the time you need. These three offers are saved, and nothing here touched your credit.',
       ask: 'Want me to keep watching for a better deal while you decide?',
       yes: 'Yes, keep watching', no: 'No thanks',
-      card: { on: 'Watching home equity rates for you', onSub: 'I will let you know the moment something beats Figure at 7.90%.', off: 'Your offers are saved', offSub: 'They are good for 30 days. Come back whenever you are ready.', back: 'See the offers again' },
+      card: { on: 'Watching home equity rates for you', onSub: 'I will let you know the moment something beats Figure at 7.90%.', off: 'Your offers are saved', offSub: 'They are good for 30 days. Come back whenever you are ready.', back: 'Back to the slides' },
     },
     tour: 'Your new line sits alongside everything else you owe. Tap any loan to see more.',
     servicing: [
@@ -208,7 +208,7 @@ export const PATHS = {
       say: 'Take all the time you need. These three quotes are saved, and nothing here touched your credit.',
       ask: `Your ${AUTO_CURRENT.carrier} policy renews on Mar 14. Want me to keep watching for a better price until then?`,
       yes: 'Yes, keep watching', no: 'No thanks',
-      card: { on: 'Watching auto rates for you', onSub: `I will let you know if anything beats GEICO at ${money(AUTO_QUOTES[0].premium)} before your renewal.`, off: 'Your quotes are saved', offSub: 'They are good for 30 days. Come back whenever you are ready.', back: 'See the quotes again' },
+      card: { on: 'Watching auto rates for you', onSub: `I will let you know if anything beats GEICO at ${money(AUTO_QUOTES[0].premium)} before your renewal.`, off: 'Your quotes are saved', offSub: 'They are good for 30 days. Come back whenever you are ready.', back: 'Back to the slides' },
     },
     tour: 'Your new policy sits alongside everything else that protects you. Tap any policy to see more.',
     servicing: [
