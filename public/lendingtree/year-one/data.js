@@ -16,7 +16,7 @@ export const CHECKPOINTS = { 1: 'Day 30', 2: 'Day 60', 3: 'Day 90', 6: 'Month 6'
 export const TRACKS = [
   {
     id: 'integration', name: 'Integration', sub: 'People, culture, strategy, work in flight, commitments',
-    card: { value: '20–30', unit: 'leaders interviewed', by: 'January 15', status: 'draft',
+    card: { value: '~30', unit: 'leaders interviewed', by: 'January 15', status: 'draft',
       points: ['The C-team, VPs and my direct reports', 'A synthesis with key findings and next steps, read out to everyone interviewed'] },
     bars: [
       { s: 1, e: 2, row: 1, label: 'Stakeholder interviews' },

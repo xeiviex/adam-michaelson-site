@@ -10,19 +10,42 @@ const VT_A = '/lendingtree/visiontypes/lifecycle/';
 const VT_B = '/lendingtree/visiontypes/assistant/';
 
 /* ------------------------------------------------------------------ 1 open */
+/* Each pillar is drawn as a miniature of its own slide later in the deck: the core line held above plan (slide 4),
+   bets that stop or add up (slide 5), and pods cycling over a research track that reaches its gate (slide 6). */
+const dm = (x, y, cls) => `<path class="dia ${cls}" d="M${x} ${y - 7}l7 7-7 7-7-7z"/>`;
+const g1 = (d) => `<svg viewBox="0 0 300 124" aria-hidden="true">
+  <path class="ln plan" ${A(d)} pathLength="1" d="M10 82 290 62"/>
+  <path class="ln corel" ${A(d + 0.3)} pathLength="1" d="M10 86C90 88 150 72 290 34"/>
+  ${[[103, 80], [183, 63], [290, 34]].map((q, i) => `<circle ${A((d + 0.7 + i * 0.2).toFixed(2), 'pop')} class="rv" cx="${q[0]}" cy="${q[1]}" r="6"/>`).join('')}
+</svg>`;
+const g2 = (d) => `<svg viewBox="0 0 300 124" aria-hidden="true">
+  ${[[18, 104, 1], [48, 124, 0], [78, 150, 1], [108, 166, 0]].map((r, i) => `<path class="ln bet" ${A((d + i * 0.06).toFixed(2))} pathLength="1" d="M10 ${r[0]}H${r[1] - 7}"/><g ${A((d + 0.5 + i * 0.08).toFixed(2), 'pop')}>${dm(r[1], r[0], r[2] ? 'go' : 'no')}</g>${r[2] ? '' : `<path ${A((d + 0.7).toFixed(2), 'fade')} class="x" d="M${r[1] + 14} ${r[0] - 5}l10 10m0-10-10 10"/>`}`).join('')}
+  <path class="ln win" ${A(d + 0.8)} pathLength="1" d="M111 18C170 18 190 64 230 64"/>
+  <path class="ln win" ${A(d + 0.8)} pathLength="1" d="M157 78C195 78 205 64 230 64"/>
+  <path class="ln flow" ${A(d + 1.3)} pathLength="1" d="M228 64C252 62 264 42 284 26"/>
+  <circle ${A(d + 1.8, 'pop')} class="goal" cx="286" cy="24" r="8"/>
+</svg>`;
+const g3 = (d) => `<svg viewBox="0 0 300 124" aria-hidden="true">
+  ${[[16, 14], [44, 48], [72, 82]].map((r, k) => { let o = ''; for (let i = 0, x = r[1]; x <= 290; x += 34, i++) o += i % 4 === 3 ? `<g ${A((d + k * 0.2 + i * 0.06).toFixed(2), 'pop')}>${dm(x, r[0], 'go')}</g>` : `<circle ${A((d + k * 0.2 + i * 0.06).toFixed(2), 'pop')} class="stn${i % 4 === 0 ? ' open' : ''}" cx="${x}" cy="${r[0]}" r="5"/>`; return o; }).join('')}
+  <path class="ln res" ${A(d + 0.9)} pathLength="1" d="M10 108H214"/>
+  <g ${A(d + 1.6, 'pop')}>${dm(224, 108, 'gate')}</g>
+  <path class="ln res2" ${A(d + 1.7)} pathLength="1" d="M234 108H280"/>
+  <circle ${A(d + 2.1, 'pop')} class="goal" cx="286" cy="108" r="7"/>
+</svg>`;
+const base = `<div class="base a gx" style="--d:.2"><span>Raise the bar</span><i aria-hidden="true"></i><span>Learn fast</span><i aria-hidden="true"></i><span>Lead the team</span></div>`;
 const open = `
 <div class="th">
   <div class="th3">
-    <div ${A(1.0, 'drop')}><b>Protect the core</b><small>Core targets, partner with Sarah</small></div>
-    <div ${A(1.5, 'drop')}><b>Deliver new profit</b><small>$1M+ in year one</small></div>
-    <div ${A(2.0, 'drop new')}><b>Disrupt ourselves</b><small>Three pods + research-led reset</small></div>
+    <div>${g1(0.9)}<b ${A(0.9)}>Protect the core</b><small ${A(1.0)}>Core targets, partner with Sarah</small></div>
+    <div>${g2(2.0)}<b ${A(2.0)}>Deliver new profit</b><small ${A(2.1)}>$1M+ in year one</small></div>
+    <div>${g3(3.4)}<b ${A(3.4)}>Disrupt ourselves</b><small ${A(3.5)}>Three pods + research-led reset</small></div>
   </div>
-  <div class="base a gx" style="--d:.2"><span>Raise the bar</span><i aria-hidden="true"></i><span>Learn fast</span><i aria-hidden="true"></i><span>Lead the team</span></div>
+  ${base}
 </div>`;
 
 /* ----------------------------------------------------------- 2 integration */
 /* Ten working days, January 4 to 15. Each entry is that day's interviews: 6 = 60 minutes, 3 = 30 minutes. */
-const DAYS = [[6, 6, 6, 3], [6, 6, 3], [6, 6, 3], [6, 3, 3], [6, 3], [6, 6, 3], [6, 3, 3], [6, 6, 3], [6, 3], [3, 3]];
+const DAYS = [[6, 6, 6, 3], [6, 6, 3], [6, 6, 3], [6, 3, 3], [6, 3, 3], [6, 6, 3], [6, 3, 3], [6, 6, 3], [6, 3], [6, 3, 3]];
 const DOW = ['M', 'T', 'W', 'T', 'F'];
 let dn = 0;
 const cal = DAYS.map((day, i) => `<li${i === 5 ? ' class="wk"' : ''}><span class="dots">${day.map((m) => `<i ${A((0.9 + (dn++) * 0.085).toFixed(2), 'pop' + (m === 6 ? ' big' : ''))}></i>`).join('')}</span><b>${DOW[i % 5]}</b>${i % 5 === 0 ? `<small>Jan ${i === 0 ? 4 : 11}</small>` : ''}</li>`).join('');
@@ -36,7 +59,7 @@ const integration = `
   </div>
   <span class="arrow a gx" style="--d:.7"></span>
   <div class="calw">
-    <p class="count a fade" style="--d:.8"><b data-count="${dn}" data-at="0.9" data-dur="${(dn * 0.085).toFixed(1)}" data-final="20 to 30">20 to 30</b> interviews in two weeks</p>
+    <p class="count a fade" style="--d:.8"><b data-count="${dn}" data-pre="~" data-at="0.9" data-dur="${(dn * 0.085).toFixed(1)}">~${dn}</b> interviews in two weeks</p>
     <ol class="cal">${cal}</ol>
     <p class="key a fade" style="--d:.8"><i class="big"></i>60 minutes<i></i>30 minutes<span>Charlotte · Seattle · Denver · Zoom</span></p>
   </div>
@@ -49,7 +72,7 @@ const box = (x, y, w, h, t, cls, d, sub) => `<g ${A(d)}><rect class="bx ${cls}" 
 const LEADS = [300, 600, 900];
 const teams = LEADS.map((cx, k) => [-74, 0, 74].map((dx, j) => `<rect ${A((2.0 + k * 0.15 + j * 0.05).toFixed(2))} class="tm${k === 2 ? ' hire' : ''}" x="${cx + dx - 31}" y="318" width="62" height="38" rx="7"/>`).join('')).join('');
 const team = `
-<svg class="org" viewBox="0 0 1200 410" role="img" aria-label="Chain of command: the CPO, three leads and their teams, with the head of technology, Sarah and the head of marketing as partners">
+<svg class="org" viewBox="0 0 1200 410" role="img" aria-label="Chain of command: the CPO, three leads and their teams, with the heads of technology, analytics and strategy, and marketing as partners">
   <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#6cc3f5" stroke-width="1.6"/></marker></defs>
   <path class="ln rule" ${A(0.9)} pathLength="1" d="M600 78V124M300 124H900M300 124V170M600 124V170M900 124V170"/>
   <path class="ln rule" ${A(1.8)} pathLength="1" d="M300 234V276M226 276H374M226 276V318M300 276V318M374 276V318M600 234V276M526 276H674M526 276V318M600 276V318M674 276V318"/>
@@ -59,7 +82,7 @@ const team = `
   ${box(100, 12, 220, 64, 'Head of technology', 'dk', 0.5)}
   <path class="ln acc" ${A(0.75)} pathLength="1" d="M700 44H800M800 27V61M800 27H836M800 61H836"/>
   <text class="lb acc" ${A(0.85)} x="750" y="34">Partners</text>
-  ${box(836, 10, 304, 32, 'Sarah · Analytics and strategy', 'dk sm', 0.9)}
+  ${box(836, 10, 304, 32, 'Head of analytics and strategy', 'dk sm', 0.9)}
   ${box(836, 46, 304, 32, 'Head of marketing', 'dk sm', 1.0)}
   ${box(500, 12, 200, 66, 'CPO', 'wh', 0.2)}
   ${box(185, 170, 230, 64, 'Senior director', 'dk', 1.2, 'Product')}
@@ -230,7 +253,7 @@ const time = `${timeChart()}
 const card = (d, part, fig, line, by, cls = '') => `<article ${A(d)}><h3>${part}</h3><b class="fig ${cls}">${fig}</b><p>${line}</p><em>${by}</em></article>`;
 const outcomes = `
 <div class="cards6">
-  ${card(0.2, 'Integration', '20–30', 'Leaders interviewed; synthesis read out to all', 'January 15')}
+  ${card(0.2, 'Integration', '~30', 'Leaders interviewed; synthesis read out to all', 'January 15')}
   ${card(0.5, 'Team leadership', '30 · 60 · 90', 'Expectations, assessments, changes; every team with a named lead', 'Day 90')}
   ${card(0.8, 'Protecting the core', '≥ Plan', 'The company plan’s core targets, jointly accountable', 'Every quarter')}
   ${card(1.1, 'Immediate impact', '$1M+', 'Profit booked, and annual run rate', 'Within year one')}
@@ -275,11 +298,11 @@ const close = `
 <div class="cl">
   <div class="th sm">
     <div class="th3">
-      <div ${A(0.8, 'drop')}><b>Protect the core</b><small class="fg">≥ Plan</small></div>
-      <div ${A(1.2, 'drop')}><b>Deliver new profit</b><small class="fg">$1M+</small></div>
-      <div class="a drop new" style="--d:1.6"><b>Disrupt ourselves</b><small class="fg">3 pods · M9 gate · M12 alpha</small></div>
+      <div><b ${A(0.8)}>Protect the core</b><small class="fg a" style="--d:.9">≥ Plan</small></div>
+      <div><b ${A(1.2)}>Deliver new profit</b><small class="fg a" style="--d:1.3">$1M+</small></div>
+      <div><b ${A(1.6)}>Disrupt ourselves</b><small class="fg a" style="--d:1.7">3 pods · M9 gate · M12 alpha</small></div>
     </div>
-    <div class="base a gx" style="--d:.2"><span>Raise the bar</span><i aria-hidden="true"></i><span>Learn fast</span><i aria-hidden="true"></i><span>Lead the team</span></div>
+    ${base}
   </div>
   <div class="need">
     <h3 ${A(2.2)}>What I need</h3>
@@ -315,7 +338,7 @@ const D = {
     ${lnk([['/product/internal-stakeholder-interviews/', 'How I run internal stakeholder interviews'], ['/product/30-60-90/', 'How I approach the first 30, 60 and 90 days']])}`,
   team: `
     <h4>Structure</h4>
-    ${ul(['The senior directors of product are my leads. A head of design joins them.', 'The head of technology, Sarah and the head of marketing are my partners. They and my other peers represent the product direction to their own teams wherever possible.', 'One clear line of communication, through the leads. They run the day-to-day and bring me decisions.', 'I step in directly when a team is in real trouble, and I make time to coach rising leaders.'])}
+    ${ul(['The senior directors of product are my leads. A head of design joins them.', 'The heads of technology, analytics and strategy, and marketing are my partners. They and my other peers represent the product direction to their own teams wherever possible.', 'One clear line of communication, through the leads. They run the day-to-day and bring me decisions.', 'I step in directly when a team is in real trouble, and I make time to coach rising leaders.'])}
     <h4>What I expect from a lead</h4>
     ${ul(['Works well with me, without friction.', 'Shows clear alignment and support.', 'Gets results on what I ask.'])}
     <h4>Earning trust in the first 30 days</h4>
