@@ -104,7 +104,8 @@ const impact = `
     <ul>
       <li ${A(0.35)}>The Power of Choice</li>
       <li ${A(0.5)}>A Companion</li>
-      <li ${A(0.65)} class="a more">Other in-flight work, ideas from the team, other ideas of mine, etc.</li>
+      <li ${A(0.65)}>Aligned Outcomes</li>
+      <li ${A(0.8)} class="a more">Other in-flight work, ideas from the team, other ideas of mine, etc.</li>
     </ul>
   </div>
   <svg viewBox="0 0 940 400" role="img" aria-label="Six bets. Each reaches a decision at its own date. Three stop and three continue, adding up to more than one million dollars of profit in year one">
@@ -160,7 +161,7 @@ const disruption = `
   <g ${A(5.4, 'pop')}><circle class="goal" cx="${mx(12) - 2}" cy="344" r="10"/><text class="lb wh" x="${mx(12)}" y="322" text-anchor="end">Alpha in market</text></g>
   <path class="skip" ${A(4.2, 'fade')} d="M${M0 + 30} 418V362" marker-end="url(#ah)"/>
   <text class="lb acc" ${A(4.0)} x="18" y="436" text-anchor="start">Hypotheses to invalidate</text>
-  ${['Aligned Outcomes', 'Bank connectivity through MCP', 'Assistants as underwriting intelligence'].map((t, i) => { const w = [150, 236, 300][i], x = [250, 412, 660][i]; return `<g ${A((4.1 + i * 0.15).toFixed(2), 'drop')}><rect class="chip" x="${x}" y="420" width="${w}" height="30" rx="15"/><text class="lb" x="${x + w / 2}" y="440">${t}</text></g>`; }).join('')}
+  ${['Bank connectivity through MCP', 'Assistants as underwriting intelligence'].map((t, i) => { const w = [236, 300][i], x = [250, 498][i]; return `<g ${A((4.1 + i * 0.15).toFixed(2), 'drop')}><rect class="chip" x="${x}" y="420" width="${w}" height="30" rx="15"/><text class="lb" x="${x + w / 2}" y="440">${t}</text></g>`; }).join('')}
 </svg>`;
 
 /* ----------------------------------------------------------- 7 visiontypes */
@@ -326,15 +327,15 @@ const D = {
     <h4>The target</h4>
     <p>$1M+ in profit booked in year one, and the new work running at $1M+ a year. Profit is net of what it costs to build and run.</p>
     <h4>Candidates, not commitments</h4>
-    <p>The two named bets are starting points. Other in-flight work, ideas from the team and more of my own compete for the same capacity.</p>
-    ${lnk([['/lendingtree/choice/', 'The Power of Choice', 'prototype'], ['/lendingtree/companion/', 'A Companion', 'prototype'], ['/lendingtree1/', 'The thinking behind them']])}`,
+    <p>The three named bets are starting points. Other in-flight work, ideas from the team and more of my own compete for the same capacity.</p>
+    ${lnk([['/lendingtree/choice/', 'The Power of Choice', 'prototype'], ['/lendingtree/companion/', 'A Companion', 'prototype'], ['/lendingtree/outcomes/', 'Aligned Outcomes', 'prototype: partner API and dashboard'], ['/lendingtree1/', 'The thinking behind them']])}`,
   disruption: `
     <h4>Three independent pods</h4>
     ${ul(['Three people each: a PM, a designer and an engineer, all at principal level.', 'Staffed from inside where someone fits and can be freed up; otherwise hired or contracted.', '100% allocated, and running by day 90. Internally staffed pods can start sooner.', 'Accountable only for their charter. I give them no brief.', 'Each cycle: an open charter, the smallest credible test, an evidence review, and a decision to scale, pivot or stop.'])}
     <h4>The research-led reset</h4>
     ${tbl(['Step', 'When'], [['Stakeholder interviews', 'Month 1'], ['Market research and internal reflection', 'Months 1 to 2'], ['Contextual inquiry with lenders, carriers, partners and shoppers', 'Months 2 to 4'], ['Provisional vision and strategy', 'Month 3, day 90'], ['Synthesis', 'Month 5'], ['Concept design', 'Month 6'], ['Validation', 'Month 7'], ['Go-to-market plan', 'Month 8'], ['Executive phase gate', 'Month 9'], ['Alpha in market', 'Month 12']])}
-    <p>I lead this, with a team staffed internally wherever possible. The three hypotheses are there to be invalidated, not defended.</p>
-    ${lnk([['/lendingtree/outcomes/', 'Aligned Outcomes', 'prototype'], ['/lendingtree/#mcp', 'LendingTree in AI-native channels'], ['/product/contextual-inquiry/', 'Contextual inquiry']])}`,
+    <p>I lead this, with a team staffed internally wherever possible. The two hypotheses are there to be invalidated, not defended.</p>
+    ${lnk([['/lendingtree/#mcp', 'LendingTree in AI-native channels'], ['/product/contextual-inquiry/', 'Contextual inquiry']])}`,
   time: `
     <h4>What I keep and what I delegate</h4>
     ${tbl(['Part', 'I keep', 'I delegate'], [
@@ -359,8 +360,8 @@ const RAW = [
   { id: 'integration', name: 'Integration', title: 'Integration', sub: 'Two weeks of stakeholder interviews, then a readout', draw: integration, details: D.integration },
   { id: 'team', name: 'Team leadership', title: 'Team leadership', sub: 'A clear chain of command, and a team that keeps getting stronger', draw: team, details: D.team, links: [['/product/', 'How I do product']] },
   { id: 'core', name: 'Protecting the core', title: 'Protecting the core', sub: 'Safe with me, and growing', draw: core, details: D.core },
-  { id: 'impact', name: 'Immediate impact', title: 'Immediate impact', sub: 'New profit in year one, from bets that earn their place', draw: impact, details: D.impact, links: [['/lendingtree/choice/', 'The Power of Choice'], ['/lendingtree/companion/', 'A Companion']] },
-  { id: 'disruption', name: 'Disruption', title: 'Disruption', sub: 'Put LendingTree out of business: three pods and a research-led reset', draw: disruption, details: D.disruption, links: [['/lendingtree/outcomes/', 'Aligned Outcomes']] },
+  { id: 'impact', name: 'Immediate impact', title: 'Immediate impact', sub: 'New profit in year one, from bets that earn their place', draw: impact, details: D.impact, links: [['/lendingtree/choice/', 'The Power of Choice'], ['/lendingtree/companion/', 'A Companion'], ['/lendingtree/outcomes/', 'Aligned Outcomes']] },
+  { id: 'disruption', name: 'Disruption', title: 'Disruption', sub: 'Put LendingTree out of business: three pods and a research-led reset', draw: disruption, details: D.disruption },
   { id: 'visiontypes', name: 'Visiontypes', title: 'Visiontypes', sub: 'Where this could go, across the whole customer lifecycle', draw: visiontypes, links: [[VT_A, 'Open visiontype A'], [VT_B, 'Open visiontype B']] },
   { id: 'time', name: 'My time', title: 'My time', sub: 'Balance carefully, delegate everything I can', draw: time, details: D.time },
   { id: 'outcomes', name: 'Year-one outcomes', title: 'Year-one outcomes', sub: 'What I will commit to', draw: outcomes, details: D.outcomes },
