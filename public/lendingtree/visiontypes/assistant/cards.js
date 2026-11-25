@@ -87,7 +87,7 @@ function accountField(f, ctx, set) {
   f.ids.forEach((id) => {
     const b = BANKS.find((x) => x.id === id);
     const btn = h('button', { type: 'button', class: 'acct', role: 'radio', 'aria-checked': 'false', 'data-v': id, onclick: () => { $$('.acct', wrap).forEach((x) => x.setAttribute('aria-checked', String(x === btn))); set(id); } },
-      h('span', { class: 'ac-ic', html: icon('bank', 18) }), h('span', { class: 'ac-n' }, h('b', null, b.bank + ' ' + b.name), h('small', null, '••' + b.last4)), h('span', { class: 'ac-b' }, money(b.balance, 2)), h('span', { class: 'radio' }));
+      (lenderIcon(b.bank) ? h('span', { class: 'ac-ic logo' }, h('img', { src: lenderIcon(b.bank), alt: '' })) : h('span', { class: 'ac-ic', html: icon('bank', 18) })), h('span', { class: 'ac-n' }, h('b', null, b.bank + ' ' + b.name), h('small', null, '••' + b.last4)), h('span', { class: 'ac-b' }, money(b.balance, 2)), h('span', { class: 'radio' }));
     wrap.append(btn);
   });
   return wrap;

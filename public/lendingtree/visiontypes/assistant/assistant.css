@@ -456,3 +456,7 @@ html.embed .side { padding-bottom: 10px; }
 /* visible countdown under the interstitial's buttons while auto-play is on */
 .pm-card p.pm-count { margin-top: 12px; font-size: 13px; color: #6b6b76; text-align: center; }
 .pm-count b { display: inline-block; min-width: 1ch; font-variant-numeric: tabular-nums; color: #111; }
+
+/* bank logos in account rows */
+.ac-ic.logo { background: #fff; box-shadow: inset 0 0 0 1px #e6e6ea; }
+.ac-ic.logo img { width: 62%; height: 62%; object-fit: contain; display: block; }
