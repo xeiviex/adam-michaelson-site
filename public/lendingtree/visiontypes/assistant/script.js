@@ -73,7 +73,7 @@ const MONO = { figure: ['F', '#1f2937'], rocket: ['R', '#c8102e'], bofa: ['B', '
 const loanOffer = (o, amount, extra) => ({
   id: o.id, name: o.lender, mono: MONO[o.id], tag: o.tag,
   big: pct(o.apr), bigLabel: 'APR', sub: 'About ' + money(payment(amount, o.apr)) + ' a month',
-  stats: [money(o.limit) + ' limit', o.fund, o.fee, o.draw].filter(Boolean),
+  stats: [money(o.limit) + ' limit', o.fund, o.fee],
   raw: o, ...extra,
 });
 const quoteOffer = (q) => ({

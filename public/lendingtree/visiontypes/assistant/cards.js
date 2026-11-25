@@ -47,9 +47,9 @@ export function compare(step, ctx) {
   let body;
   if (step.kind === 'loan') {
     const pts = list.map((o) => ({ o, x: daysOf(o.raw.fund), y: o.raw.apr }));
-    const ys = pts.map((p) => p.y), lo = Math.floor((Math.min(...ys) - 0.12) * 5) / 5, hi = Math.ceil((Math.max(...ys) + 0.12) * 5) / 5, xmax = 32;
+    const ys = pts.map((p) => p.y), lo = Math.round((Math.min(...ys) - 0.15) * 10) / 10, hi = Math.round((Math.max(...ys) + 0.15) * 10) / 10, xmax = 32;
     const top = (y) => ((hi - y) / (hi - lo)) * 100, left = (x) => (x / xmax) * 100;
-    const yt = []; for (let y = lo + 0.2; y < hi - 0.01; y += 0.2) yt.push(Math.round(y * 10) / 10);
+    const yt = []; for (let y = Math.ceil(lo * 5 + 0.01) / 5; y < hi - 0.01; y += 0.2) yt.push(Math.round(y * 10) / 10);
     body = h('div', { class: 'plot', role: 'img', 'aria-label': 'Rate against time to fund. ' + pts.map((p) => p.o.name + ': ' + p.o.big + ' APR, ' + p.o.raw.fund.toLowerCase()).join('. ') },
       h('div', { class: 'pl-y' }, 'APR'),
       h('div', { class: 'pl-area' },
@@ -60,7 +60,7 @@ export function compare(step, ctx) {
       h('div', { class: 'pl-x' }, 'Time to fund'));
   } else {
     const cur = step.current, max = cur.premium;
-    const row = (o, i, isCur) => h('div', { class: 'bar-r' + (isCur ? ' cur' : '') + (o.id === step.best ? ' best' : ''), style: '--d:' + i },
+    const row = (o, i, isCur) => h('div', { class: 'bar-r' + (isCur ? ' cur' : '') + (!isCur && o.id === step.best ? ' best' : ''), style: '--d:' + i },
       logo(isCur ? { icon: cur.icon, name: cur.carrier } : o),
       h('div', { class: 'bar-m' },
         h('div', { class: 'bar-t' }, h('b', null, isCur ? cur.carrier : o.name), isCur ? h('span', { class: 'tag grey' }, 'Today') : (o.id === step.best && h('span', { class: 'tag' }, 'My pick')), h('span', { class: 'bar-p' }, money(isCur ? cur.premium : o.raw.premium))),
@@ -178,7 +178,7 @@ export function contract(step, ctx) {
   const refresh = () => { line.textContent = name.value; btn.disabled = !(agree.checked && name.value.trim().length > 2); };
   agree.addEventListener('change', refresh); name.addEventListener('input', refresh);
   const signBox = h('form', { class: 'sig', autocomplete: 'off', onsubmit: (e) => { e.preventDefault(); if (btn.disabled) return; lock(el, btn, 'Signed by ' + name.value.trim()); go({}); } },
-    h('label', { class: 'agree' }, agree, h('span', { class: 'box', html: check(12) }), h('span', null, step.consent)),
+    h('label', { class: 'agree' }, agree, h('span', { class: 'cbx', html: check(12) }), h('span', null, step.consent)),
     h('div', { class: 'sig-f' }, name, line), btn);
   const el = shell(step, ctx, 'contract', h('h3', null, ctx.val(step.title)), h('ol', { class: 'ct' }, secs), signBox);
   /* the assistant walks through it: sections arrive one at a time, then the signature opens */
@@ -188,7 +188,7 @@ export function contract(step, ctx) {
   };
   const walked = walk();
   walked.catch(() => {});
-  return { el, wait, auto: async (A) => { await walked; await A.pause(900); await A.tap(agree.parentNode); await A.pause(300); await A.type(name, step.signer); await A.pause(500); await A.tap(btn); } };
+  return { el, wait, auto: async (A) => { await walked; await A.pause(900); if (!agree.checked) await A.tap(agree.parentNode); await A.pause(300); await A.type(name, step.signer); await A.pause(500); await A.tap(btn); } };
 }
 
 /* ---------- done: funds on the way, or coverage in effect ---------- */
