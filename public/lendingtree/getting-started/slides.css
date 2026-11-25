@@ -80,7 +80,8 @@ svg .a.gy { transform-origin: center bottom; }
 .on .cal .dots i.a { animation-name: gs-pop; } .cal .dots i:not(.big) { --o: .7; }
 .cal b { font: 700 .8em var(--head); color: var(--muted); }
 .cal small { position: absolute; top: calc(100% + .4em); font-size: .78em; color: var(--muted); white-space: nowrap; }
-.key { display: flex; align-items: center; gap: .5em; font-size: .85em; color: var(--muted); margin-top: 2.2em; }
+/* a rule under both weeks, so the legend and the locations read as notes on the whole calendar */
+.key { display: flex; align-items: center; gap: .5em; font-size: .85em; color: var(--muted); margin-top: 2.6em; padding-top: .9em; border-top: 1px solid var(--rule); }
 .key i { opacity: 1; background: var(--acc-hi); } .key i:not(.big) { margin-left: 1em; } .key span { margin-left: auto; color: var(--body); }
 .out { background: var(--ink); border-radius: 14px; padding: 1.6em 1.5em; display: flex; flex-direction: column; gap: .35em; }
 .out em { font: 700 .76em var(--sans); letter-spacing: .08em; text-transform: uppercase; color: #3a6f96; font-style: normal; }
