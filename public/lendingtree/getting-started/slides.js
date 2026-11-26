@@ -70,6 +70,13 @@ const integration = `
 /* ------------------------------------------------------------------ 3 team */
 const box = (x, y, w, h, t, cls, d, sub) => `<g ${A(d)}><rect class="bx ${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/><text class="bt ${cls}" x="${x + w / 2}" y="${y + h / 2 + (sub ? -3 : 5)}">${t}</text>${sub ? `<text class="bs ${cls}" x="${x + w / 2}" y="${y + h / 2 + 15}">${sub}</text>` : ''}</g>`;
 const LEADS = [300, 600, 900];
+/* Clarity down (blue) and feedback up (white): a dot travels the line between the CPO and each lead, in both directions.
+   The motion is SVG's own animateMotion, looping; the group is only shown once the slide's lines have drawn. */
+const pulses = (leads, x, y0, bus, r) => `<g class="pulses" aria-hidden="true">${leads.map(([lx, ly], i) => {
+  const down = `M${x} ${y0}V${bus}H${lx}V${ly - 2}`, up = `M${lx} ${ly - 2}V${bus}H${x}V${y0}`;
+  const dot = (cls, path, begin) => `<circle class="pulse ${cls}" r="${r}" opacity="0"><animateMotion dur="2.6s" begin="${begin}s" repeatCount="indefinite" path="${path}"/><animate attributeName="opacity" dur="2.6s" begin="${begin}s" repeatCount="indefinite" values="0;1;1;0" keyTimes="0;0.12;0.86;1"/></circle>`;
+  return dot('dn', down, (i * 0.45).toFixed(2)) + dot('up', up, (1.3 + i * 0.45).toFixed(2));
+}).join('')}</g>`;
 const teams = LEADS.map((cx, k) => [-74, 0, 74].map((dx, j) => `<rect ${A((2.0 + k * 0.15 + j * 0.05).toFixed(2))} class="tm${k === 2 ? ' hire' : ''}" x="${cx + dx - 31}" y="318" width="62" height="38" rx="7"/>`).join('')).join('');
 /* The same chain of command, redrawn tall for phones, where the wide version would have to scroll sideways. */
 const pb = (x, y, w, h, t, cls, d, sub) => `<g ${A(d)}><rect class="bx ${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="7"/><text class="pt ${cls}" x="${x + w / 2}" y="${y + h / 2 + (sub ? -2 : 4)}">${t}</text>${sub ? `<text class="ps" x="${x + w / 2}" y="${y + h / 2 + 12}">${sub}</text>` : ''}</g>`;
@@ -92,6 +99,7 @@ const teamPhone = `
   <path class="skip" ${A(3.1, 'fade')} d="M134 58C134 86 237.500 78 237.500 102V226" marker-end="url(#ahp)"/>
   <text class="pl acc" ${A(2.9)} x="122" y="246">When a team is in trouble</text>
   <text class="pl acc" ${A(3.2)} x="238" y="264">Coaching rising leaders</text>
+  ${pulses([[65, 116], [180, 116], [295, 116]], 85, 60, 96, 3)}
   <text class="pl" ${A(2.4)} x="180" y="286">Solid lines: clarity down, feedback up</text>
 </svg>`;
 
@@ -114,7 +122,7 @@ const team = `
   ${box(785, 170, 230, 64, 'Head of design', 'hire', 1.5, 'To hire')}
   ${teams}
   <text class="lb" ${A(2.5)} x="362" y="114">Clarity down, feedback up</text>
-  <circle class="pulse dn" cx="600" cy="80" r="4"/><circle class="pulse up" cx="600" cy="80" r="4"/>
+  ${pulses([[300, 170], [600, 170], [900, 170]], 600, 80, 124, 4)}
   <path class="skip" ${A(3.2, 'fade')} d="M540 78C470 96 450 130 450 176V330" marker-end="url(#ah)"/>
   <path class="skip" ${A(3.6, 'fade')} d="M660 78C730 96 750 130 750 176V330" marker-end="url(#ah)"/>
   <text class="lb acc" ${A(3.3)} x="450" y="384">When a team is in trouble</text>

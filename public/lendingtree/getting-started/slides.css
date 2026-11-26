@@ -103,15 +103,13 @@ svg .a.gy { transform-origin: center bottom; }
 .vis svg .bt.sm { font-size: 14px; font-weight: 600; }
 .tm { fill: var(--surface2); } .tm.hire { fill: none; stroke: var(--rule); stroke-dasharray: 4 4; }
 .ln.dsh { stroke-dasharray: 4 5; stroke-dashoffset: 0; } .on .ln.dsh.a { animation-name: gs-fade; animation-fill-mode: forwards; }
-.pulse { opacity: 0; } .pulse.dn { fill: var(--acc-hi); } .pulse.up { fill: var(--ink); }
-.on .pulse.dn { animation: gs-dn 2.4s linear 2.6s infinite; } .on .pulse.up { animation: gs-up 2.4s linear 3.8s infinite; }
-@keyframes gs-dn { 0% { opacity: 0; transform: translateY(0); } 10%, 85% { opacity: 1; } 100% { opacity: 0; transform: translateY(88px); } }
-@keyframes gs-up { 0% { opacity: 0; transform: translateY(88px); } 10%, 85% { opacity: 1; } 100% { opacity: 0; transform: translateY(0); } }
+.pulse.dn { fill: var(--acc-hi); } .pulse.up { fill: var(--ink); }
+.pulses { opacity: 0; } .on .pulses { animation: gs-fade .5s 2.6s forwards; }
 .t3 { max-width: 60em; margin-inline: auto; width: 100%; }
 .vis svg.org.m { display: none; }
 .vis svg .pt { font: 700 11.5px var(--head); fill: var(--ink); } .vis svg .pt.wh { fill: var(--dark); font-size: 15px; } .vis svg .pt.hire { fill: var(--body); } .vis svg .pt.sm { font: 600 10.5px var(--sans); }
 .vis svg .ps { font-size: 9.5px; fill: var(--muted); } .vis svg .pl { font-size: 10.5px; fill: var(--muted); } .vis svg .pl.acc { fill: var(--acc-hi); font-weight: 600; }
-@media (prefers-reduced-motion: reduce) { .pulse { display: none; } }
+@media (prefers-reduced-motion: reduce) { .pulses { display: none; } }
 
 /* ---- 4 core ---- */
 .corec { max-height: 40vh; }
