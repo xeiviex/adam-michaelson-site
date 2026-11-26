@@ -881,7 +881,7 @@ async function journey(cp) {
   setCp({ at: 'end' });
   await settle();
   /* Clicking outside the card, or Escape, is the same as choosing to play with it. */
-  const r = await modal(PROTO.theEnd, [['restart', PROTO.theEnd.primary], ['other', PROTO.theEnd.other[S.path]], ['self', PROTO.theEnd.self]], 0, 'self');
+  const r = await modal(PROTO.theEnd, [['self', PROTO.theEnd.self], ['restart', PROTO.theEnd.primary], ['other', PROTO.theEnd.other[S.path]]], 0, 'self');
   if (r === 'other') S.path = S.path === 'loan' ? 'insurance' : 'loan';
   if (r === 'self') setAuto(false);
   resetAsk(); start('shop');

@@ -436,7 +436,7 @@ input.ready { animation: readyline 1.2s ease-in-out 2; }
   .dock-form input { font-size: 16px; }
   /* over a sheet, Ask moves into the sheet's own header */
   .lt:has(.sheet:not([hidden])) .dock:not(.open) { display: none; }
-  .lt:has(.sheet:not([hidden])) .dock { bottom: calc(14px + env(safe-area-inset-bottom)); }
+  .lt:has(.sheet:not([hidden])) .dock { bottom: calc(22px + env(safe-area-inset-bottom)); }
   .sask { position: absolute; z-index: 2; top: 18px; right: 60px; display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 13px 0 4px; border: 0; border-radius: 999px; background: #eef2f6; color: var(--ink); font-weight: 600; font-size: 13.5px; }
   .sask img { width: 26px; height: 26px; padding: 5px; border-radius: 50%; background: #fff; }
   .sheet h3 { padding-right: 118px; } .flow-done h3 { padding-right: 0; }
