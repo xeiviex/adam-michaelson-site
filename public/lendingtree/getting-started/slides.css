@@ -199,7 +199,8 @@ svg .a.gy { transform-origin: center bottom; }
 
 /* ---- the economics ---- */
 .ec { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.6em; }
-.ec-p h3 { font: 700 1.25em var(--head); letter-spacing: 0; text-transform: none; color: var(--ink); margin-bottom: .7em; } .ec-p h3 span { font: 400 .68em var(--sans); color: var(--muted); margin-left: .5em; }
+.ec-p h3 { font: 700 1.25em var(--head); letter-spacing: 0; text-transform: none; color: var(--ink); margin-bottom: .2em; }
+.ec-u { font: 600 .74em var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .9em; } .ec-p h3 span { font: 400 .68em var(--sans); color: var(--muted); margin-left: .5em; }
 .ec-row { display: grid; gap: .25em; margin-bottom: .75em; } .ec-row > span { font-size: .9em; color: var(--body); }
 .ec-b { display: flex; align-items: center; height: 2.1em; padding-right: 4.2em; position: relative; }
 .ec-b i { display: block; height: 100%; flex: none; } .ec-b i:first-child { border-radius: 5px 0 0 5px; } .ec-b i:last-of-type { border-radius: 0 5px 5px 0; } .ec-b i:first-child:last-of-type { border-radius: 5px; }
