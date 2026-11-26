@@ -208,12 +208,33 @@ function reveal(node, top) {
 }
 function add(node, top) { stream.append(node); reveal(node, top); return node; }
 async function scene() { stream.classList.add('out'); await sleep(260); stream.innerHTML = ''; stream.classList.remove('out'); main.scrollTop = 0; }
+/* Type text into an element, quickly, the way a chat reply arrives. The whole text is laid out from the first frame
+   (the part not yet typed is there but invisible), so lines never re-wrap and nothing below it moves while it types.
+   `wait` is the pause to use between characters and `alive` says whether to carry on. */
+async function typeInto(node, text, wait = sleep, alive = () => true) {
+  if (reduced() || !text) { node.textContent = text; return; }
+  node.innerHTML = '<span class="ty"></span><span class="ty-rest" aria-hidden="true"></span>';
+  const a = node.firstChild, b = node.lastChild; b.textContent = text;
+  node.classList.add('typing'); node.setAttribute('aria-busy', 'true');
+  const total = Math.min(1800, Math.max(350, text.length * 15)), step = total / text.length;
+  for (let i = 0; i < text.length;) {
+    const chunk = step < 9 ? Math.ceil(9 / step) : 1;
+    i = Math.min(text.length, i + chunk);
+    a.textContent = text.slice(0, i); b.textContent = text.slice(i);
+    await wait(Math.max(8, step * chunk));
+    if (!alive()) return;
+  }
+  node.classList.toggle('typing', false); node.removeAttribute('aria-busy'); node.textContent = text;
+}
+/* The guide speaks: dots while it "thinks", then the line types in, then any small print fades in under it. */
 async function say(text, sub) {
   const m = add(el(`<div class="msg g"><img class="g-av" src="${LEAF}" alt=""><div class="g-t"><span class="dots" aria-label="${SHELL.guideName} is typing"><i></i><i></i><i></i></span></div></div>`));
-  await sleep(650);
-  $('.g-t', m).innerHTML = `<p>${esc(text)}</p>${sub ? `<small>${esc(sub)}</small>` : ''}`;
-  reveal(m);
-  await sleep(Math.min(2000, 380 + text.length * 13));
+  await sleep(900);
+  $('.g-t', m).innerHTML = `<p></p>${sub ? `<small class="late">${esc(sub)}</small>` : ''}`;
+  const p = $('p', m); p.textContent = text; reveal(m); /* laid out in full first, so the scroll happens once */
+  await typeInto(p, text);
+  if (sub) $('small', m).classList.add('in');
+  await sleep(Math.min(1400, 260 + text.length * 8));
   return m;
 }
 function me(text) { const m = el('<div class="msg me"><span></span></div>'); m.firstChild.textContent = text; return add(m); }
@@ -575,7 +596,11 @@ function openSheet(html, onClose) {
   if (!S.auto) sheet.querySelector('.sx').focus({ preventScroll: true });
   return $('.sheet-in', sheet);
 }
-function setSheet(html) { const b = $('.sheet-in', sheet); b.innerHTML = html; sheet.scrollTop = 0; fitDock(); return b; }
+function setSheet(html) {
+  const b = $('.sheet-in', sheet); b.innerHTML = html; sheet.scrollTop = 0; fitDock();
+  $$('.q', b).forEach((q) => { const text = q.textContent; if (!q.children.length) typeInto(q, text, (ms) => new Promise((r) => setTimeout(r, ms / SPEED)), () => q.isConnected); });
+  return b;
+}
 function closeSheet(silent) {
   if (sheet.hidden) return;
   sheet.hidden = true; scrim.hidden = true; sheet.classList.remove('on'); scrim.classList.remove('on');
@@ -1021,8 +1046,10 @@ async function submitAsk(text) {
   const [out] = await Promise.all([MOCK ? mockAsk(req) : ask(req), pause(700)]);
   if (my !== ASK.gen) return;
   ASK.msgs.push({ role: 'assistant', content: out.text });
-  $('.g-t', a).innerHTML = `<p>${esc(out.text)}</p>`;
+  $('.g-t', a).innerHTML = '<p></p>'; $('p', a).textContent = out.text;
   frame();
+  await typeInto($('p', a), out.text, (ms) => pause(ms / SPEED), () => my === ASK.gen);
+  if (my !== ASK.gen) return;
   await pause(out.action === 'continue' ? 350 : 1100); /* long enough to read the reply before the screen changes */
   if (my !== ASK.gen) return;
   ASK.busy = false; paintAsk();
