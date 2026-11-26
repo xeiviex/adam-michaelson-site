@@ -363,9 +363,9 @@ const TAKE = [
 ];
 const take = `
 <div class="lyr">
-  ${TAKE.map((r, k) => { const d = 0.2 + k * 0.75; return `<section class="ly ${r.cls || ''} a fade" style="--d:${d.toFixed(2)}">
-    <h3>${r.label}</h3>
-    <ul class="a fade" style="--d:${(d + 0.25).toFixed(2)}">${r.items.map((c) => `<li><button type="button" class="cp" data-topic="take:${c.key}" aria-haspopup="dialog"><b>${c.title}</b><small>${c.line}</small><i aria-hidden="true"></i></button></li>`).join('')}</ul>
+  ${TAKE.map((r, k) => { const d = 0.2 + k * 0.7; return `<section class="ly ${r.cls || ''}">
+    <h3 class="a fade" style="--d:${d.toFixed(2)}">${r.label}</h3>
+    <ul>${r.items.map((c, j) => `<li class="a fade" style="--d:${(d + 0.2 + j * 0.12).toFixed(2)}"><button type="button" class="cp" data-topic="take:${c.key}" aria-haspopup="dialog"><b>${c.title}</b><small>${c.line}</small><i aria-hidden="true"></i></button></li>`).join('')}</ul>
   </section>`; }).join('\n  ')}
 </div>
 <div class="ly-f">

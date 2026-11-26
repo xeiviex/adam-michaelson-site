@@ -216,26 +216,26 @@ svg .a.gy { transform-origin: center bottom; }
 
 /* ---- what this will take: three layers, each resting on the one below, and go-to-market alongside.
    Every component is a button that opens its own sheet. ---- */
-.lyr { display: grid; gap: .45em; }
-.ly { display: grid; gap: .35em; background: var(--surface2); border-radius: 16px; padding: .7em 1em .45em; }
-.ly h3 { padding-left: .9em; }
-.ly ul { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .3em; }
-.cp { position: relative; display: flex; flex-direction: column; justify-content: flex-start; width: 100%; height: 100%; text-align: left; font: inherit; color: inherit; background: transparent; border: 0; border-radius: 10px; padding: .3em 2.1em .4em .8em; cursor: pointer; transition: background-color .15s; }
+.lyr { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.6em; align-items: start; }
+.ly { display: grid; gap: .8em; }
+.ly h3 { padding-left: .1em; min-height: 1.3em; }
+.ly ul { list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: .6em; }
+.cp { position: relative; display: flex; flex-direction: column; justify-content: flex-start; width: 100%; height: 100%; text-align: left; font: inherit; color: inherit; background: var(--surface2); border: 0; border-radius: 12px; padding: .85em 2.5em .9em 1em; min-height: 7em; cursor: pointer; transition: background-color .15s; }
 .cp b { display: block; font: 700 1.13em/1.15 var(--head); letter-spacing: -.015em; color: var(--ink); }
 .cp small { display: block; font-size: .84em; line-height: 1.35; color: var(--muted); margin-top: .2em; }
 /* the mark that says it opens */
-.cp i { position: absolute; right: .6em; top: .3em; width: 1.25em; height: 1.25em; border-radius: 50%; border: 1.5px solid var(--muted); color: var(--muted); transition: border-color .15s, color .15s, background-color .15s; }
+.cp i { position: absolute; right: .8em; top: .85em; width: 1.25em; height: 1.25em; border-radius: 50%; border: 1.5px solid var(--muted); color: var(--muted); transition: border-color .15s, color .15s, background-color .15s; }
 .cp i::before, .cp i::after { content: ''; position: absolute; left: 50%; top: 50%; width: .6em; height: 1.5px; margin: -.75px 0 0 -.3em; background: currentColor; }
 .cp i::after { transform: rotate(90deg); }
-.cp:hover, .cp:focus-visible { background: rgba(255, 255, 255, .07); } .cp:hover i, .cp:focus-visible i { border-color: var(--acc); background: var(--acc); color: var(--on-acc); }
+.cp:hover, .cp:focus-visible { background: #1d2733; } .cp:hover i, .cp:focus-visible i { border-color: var(--acc); background: var(--acc); color: var(--on-acc); }
 .cp:focus-visible { outline: 2px solid var(--acc-hi); outline-offset: 1px; }
-.ly.plat { background: var(--ink); } .ly.plat h3 { color: #3a6f96; } .ly.plat .cp b { color: var(--dark); } .ly.plat .cp small { color: #3a4450; } .ly.plat .cp i { border-color: #5b6675; color: #5b6675; }
-.ly.plat .cp:hover, .ly.plat .cp:focus-visible { background: rgba(6, 8, 11, .07); } .ly.plat .cp:hover i, .ly.plat .cp:focus-visible i { border-color: var(--acc); color: var(--on-acc); } .ly.plat .cp:focus-visible { outline-color: var(--acc); }
-.ly.gtm { background: transparent; box-shadow: inset 0 0 0 1px var(--rule); }
-.ly-f { display: grid; gap: .25em; text-align: center; }
+.ly.plat .cp { background: var(--ink); } .ly.plat h3 { color: var(--acc-hi); } .ly.plat .cp b { color: var(--dark); } .ly.plat .cp small { color: #3a4450; } .ly.plat .cp i { border-color: #5b6675; color: #5b6675; }
+.ly.plat .cp:hover, .ly.plat .cp:focus-visible { background: #dfe4ea; } .ly.plat .cp:hover i, .ly.plat .cp:focus-visible i { border-color: var(--acc); color: var(--on-acc); } .ly.plat .cp:focus-visible { outline-color: var(--acc); }
+.ly.gtm .cp { background: transparent; box-shadow: inset 0 0 0 1px var(--rule); } .ly.gtm .cp:hover, .ly.gtm .cp:focus-visible { background: var(--surface2); }
+.ly-f { display: grid; gap: .25em; text-align: center; margin-top: 1.4em; }
 .ly-g { color: var(--body); }
 /* short laptop screens: the same rows, a little closer together, so the slide does not scroll */
-@media (min-width: 761px) and (max-height: 800px) { .lyr { gap: .3em; } .ly { padding: .6em 1em .35em; gap: .2em; } .cp { padding-block: .25em .3em; } .ly-f { gap: .1em; } }
+@media (min-width: 761px) and (max-height: 800px) { .ly { gap: .5em; } .ly ul { gap: .4em; } .cp { padding-block: .6em .65em; min-height: 6.4em; } .ly-f { gap: .1em; margin-top: .8em; } }
 /* a component's sheet is short, so it takes the height of its text */
 @media (min-width: 761px) { dialog.dlg.topic { width: min(760px, calc(100vw - 32px)); height: fit-content; max-height: min(88dvh, 880px); } }
 
@@ -311,7 +311,7 @@ svg .a.gy { transform-origin: center bottom; }
   .t3 > li::after { clip-path: inset(0 0 100% 0); }
   .vis svg.org { display: none; } .vis svg.org.m { display: block; min-width: 0; max-height: none; }
   .vis svg.corec { display: none; } .vis svg.corec.m { display: block; min-width: 0; max-height: none; } .sup > div + div::before { display: none; }
-  .th3, .sup, .cards6, .vts, .need ol, .ly ul, .ec, .ec-f { grid-template-columns: minmax(0, 1fr); } .ly { padding: .8em .5em .4em; } .ly ul { gap: 0; } .cp { min-height: 44px; padding-block: .55em; justify-content: center; } .cp b { font-size: 1.12em; } .cp small { display: none; } .cp i { top: 50%; margin-top: -.62em; } .ly-f, .ly-f .acct { text-align: left; } .ec, .ec-f { gap: 1.2em; }
+  .th3, .sup, .cards6, .vts, .need ol, .ly ul, .ec, .ec-f { grid-template-columns: minmax(0, 1fr); } .lyr { grid-template-columns: minmax(0, 1fr); gap: 1.1em; } .ly { gap: .4em; } .ly ul { gap: .35em; } .cp { min-height: 44px; padding-block: .55em; justify-content: center; } .cp b { font-size: 1.12em; } .cp small { display: none; } .cp i { top: 50%; margin-top: -.62em; } .ly-f, .ly-f .acct { text-align: left; } .ec, .ec-f { gap: 1.2em; }
   .base { padding-inline: 1.2em; white-space: normal; font-size: 1em; text-align: center; }
   .th3 > div, .th3 > div:first-child, .th3 > div:last-child { padding: 1.2em 0; border-left: 0; border-top: 1px solid var(--rule); } .th3 > div + div::before { display: none; } .th3 svg { min-width: 0; }
   .intg, .bets { grid-template-columns: minmax(0, 1fr); } .intg .arrow { display: none; }
