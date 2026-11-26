@@ -272,28 +272,29 @@ const nd = (d, n, t, sub, cls = '') => `<div ${A(d)} class="a nd ${cls}"><i>${n}
 const take = `
 <div class="stk">
   <p class="stk-l a fade" style="--d:1.0">Where the customer is</p>
-  <div class="stk-r two">
+  <div class="stk-r three">
     ${nd(1.1, 1, 'AI assistants', 'OpenAI first, then Google, Anthropic and others')}
-    ${nd(1.3, 6, 'LendingTree website and app', 'One account for loans, policies and linked accounts')}
+    ${nd(1.3, 2, 'Partner products', 'Embedded in their purchase flow, three partners in 2027')}
+    ${nd(1.5, 3, 'LendingTree website and app', 'One account for loans, policies and linked accounts')}
   </div>
-  <div class="stk-c two a fade" style="--d:.9"><span></span><span></span></div>
+  <div class="stk-c three a fade" style="--d:.9"><span></span><span></span><span></span></div>
   <div class="stk-p a" style="--d:.2">
     <h3>LendingTree platform</h3>
     <div class="stk-r three">
-      ${nd(0.4, 2, 'The LendingTree agent', 'MCP and API, with consent and an audit trail', 'on')}
+      ${nd(0.4, 4, 'The LendingTree agent', 'MCP, API and an embedded SDK, with consent and an audit trail', 'on')}
       ${nd(0.55, 5, 'Closing and binding rails', 'Disclosures, signature, funding, policy binding', 'on')}
-      ${nd(0.7, 7, 'One chosen partner', 'No flood of calls, texts and emails', 'on')}
+      ${nd(0.7, 6, 'One chosen partner', 'No flood of calls, texts and emails', 'on')}
     </div>
   </div>
-  <div class="stk-c three a fade" style="--d:1.6"><span></span><span></span><span></span></div>
+  <div class="stk-c three a fade" style="--d:1.8"><span></span><span></span><span></span></div>
   <div class="stk-r three">
-    ${nd(1.8, 3, 'Data connections', 'Plaid, Finicity, property and credit, by consent')}
-    ${nd(2.0, 4, 'Alpha lenders', 'Firm offers and applications through an API')}
-    ${nd(2.2, 4, 'Alpha carriers', 'Bindable quotes and policies through an API')}
+    ${nd(2.0, 7, 'Data connections', 'Plaid, Finicity, property and credit, by consent')}
+    ${nd(2.2, 8, 'Alpha lenders', 'Firm offers and applications through an API')}
+    ${nd(2.4, 8, 'Alpha carriers', 'Bindable quotes and policies through an API')}
   </div>
-  <p class="stk-l a fade" style="--d:1.7">What it connects to</p>
+  <p class="stk-l a fade" style="--d:1.9">What it connects to</p>
 </div>
-<p class="acct a fade" style="--d:2.8">First version: one loan product, one insurance product, one assistant, a handful of partners.</p>`;
+<p class="acct a fade" style="--d:3.0">First version: one loan product, one insurance product, one assistant, one embedded partner, a handful of lenders and carriers.</p>`;
 
 /* ------------------------------------------------------------- the economics */
 /* Per consumer request, from the model's default inputs. Lead prices and conversion rates are assumptions. */
@@ -426,12 +427,13 @@ const D = {
     <h4>What the visiontypes assume, and a first version of each</h4>
     ${tbl(['', 'What we would need', 'First version'], [
       ['1', 'Assistant partnerships', 'OpenAI first, then Google, Anthropic and others: listing in their app programme, review, commercial terms, attribution.'],
-      ['2', 'The LendingTree agent: MCP and API', 'The tools an assistant calls: eligibility, offers and quotes, application status, servicing. With sign-in, consent and an audit trail.'],
-      ['3', 'Data connections', 'Aggregators such as Plaid and Finicity for bank, income and assets; property and vehicle data; a soft credit pull. All by consent.'],
-      ['4', 'Alpha lenders and carriers', 'Two or three of each who return firm offers and bindable quotes, and accept an application, through an API.'],
+      ['2', 'Embedded partners', 'Companies who put LendingTree financing and insurance inside their own purchase flow. Three in 2027, ten in 2028, twenty in 2029. The partner is paid a fee, in place of what we spend to acquire a lead.'],
+      ['3', 'The customer account', 'One home on LendingTree’s website and app for loans, policies and linked accounts. Read-only to start (balances, due dates, renewals), then payments and claims.'],
+      ['4', 'The LendingTree agent: MCP, API and an embedded SDK', 'The tools an assistant or a partner calls: eligibility, offers and quotes, application status, servicing. With sign-in, consent and an audit trail. The embedded SDK is new technology we would need to build.'],
       ['5', 'Closing and binding rails', 'Disclosures, e-signature, funding status, policy binding and ID card, with licensing and compliance signed off first.'],
-      ['6', 'The customer account', 'One home for loans, policies and linked accounts. Read-only to start (balances, due dates, renewals), then payments and claims.'],
-      ['7', 'One chosen partner', 'In these journeys the shopper picks who contacts them, so the request is not sold to several partners and the flood of calls, texts and emails stops.'],
+      ['6', 'One chosen partner', 'In these journeys the shopper picks who contacts them, so the request is not sold to several partners and the flood of calls, texts and emails stops.'],
+      ['7', 'Data connections', 'Aggregators such as Plaid and Finicity for bank, income and assets; property and vehicle data; a soft credit pull. All by consent.'],
+      ['8', 'Alpha lenders and carriers', 'Two or three of each who return firm offers and bindable quotes, and accept an application, through an API.'],
     ])}
     <p>Some of this LendingTree has today. Finding out how much is part of my first two weeks.</p>`,
   economics: `
