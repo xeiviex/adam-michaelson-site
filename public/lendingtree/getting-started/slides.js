@@ -267,6 +267,56 @@ const visiontypes = `
 </div>
 <ol class="life a" style="--d:.9">${LIFE.map((s, i) => `<li style="--k:${i}"><span>${s}</span></li>`).join('')}</ol>`;
 
+/* ------------------------------------------------------- what this will take */
+const nd = (d, n, t, sub, cls = '') => `<div ${A(d)} class="a nd ${cls}"><i>${n}</i><div><b>${t}</b><small>${sub}</small></div></div>`;
+const take = `
+<div class="stk">
+  <p class="stk-l a fade" style="--d:1.0">Where the customer is</p>
+  <div class="stk-r two">
+    ${nd(1.1, 1, 'AI assistants', 'OpenAI first, then Google, Anthropic and others')}
+    ${nd(1.3, 6, 'LendingTree website and app', 'One account for loans, policies and linked accounts')}
+  </div>
+  <div class="stk-c two a fade" style="--d:.9"><span></span><span></span></div>
+  <div class="stk-p a" style="--d:.2">
+    <h3>LendingTree platform</h3>
+    <div class="stk-r three">
+      ${nd(0.4, 2, 'The LendingTree agent', 'MCP and API, with consent and an audit trail', 'on')}
+      ${nd(0.55, 5, 'Closing and binding rails', 'Disclosures, signature, funding, policy binding', 'on')}
+      ${nd(0.7, 7, 'One chosen partner', 'No flood of calls, texts and emails', 'on')}
+    </div>
+  </div>
+  <div class="stk-c three a fade" style="--d:1.6"><span></span><span></span><span></span></div>
+  <div class="stk-r three">
+    ${nd(1.8, 3, 'Data connections', 'Plaid, Finicity, property and credit, by consent')}
+    ${nd(2.0, 4, 'Alpha lenders', 'Firm offers and applications through an API')}
+    ${nd(2.2, 4, 'Alpha carriers', 'Bindable quotes and policies through an API')}
+  </div>
+  <p class="stk-l a fade" style="--d:1.7">What it connects to</p>
+</div>
+<p class="acct a fade" style="--d:2.8">First version: one loan product, one insurance product, one assistant, a handful of partners.</p>`;
+
+/* ------------------------------------------------------------- the economics */
+/* Per consumer request, from the model's default inputs. Lead prices and conversion rates are assumptions. */
+const ECON = [
+  { name: 'Home equity line', today: 120, close: 248, serv: 278, flat: 175, fmt: (n) => '$' + n },
+  { name: 'Auto insurance', today: 36, close: 27, serv: 25, flat: 17, fmt: (n) => '$' + n },
+];
+const econ = `
+<div class="ec">
+  ${ECON.map((e, k) => { const max = e.close + e.serv, w = (n) => (n / max * 100).toFixed(1), d = 0.3 + k * 1.4; return `
+  <section class="ec-p">
+    <h3 ${A(d)}>${e.name} <span>per consumer request</span></h3>
+    <div class="ec-row a" style="--d:${(d + 0.15).toFixed(2)}"><span>Today, selling leads</span><div class="ec-b"><i class="lead a gx" style="--d:${(d + 0.25).toFixed(2)};width:${w(e.today)}%"></i><b>${e.fmt(e.today)}</b></div></div>
+    <div class="ec-row a" style="--d:${(d + 0.5).toFixed(2)}"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:${(d + 0.6).toFixed(2)};width:${w(e.close)}%"><em>At close</em></i><i class="serv a gx" style="--d:${(d + 0.9).toFixed(2)};width:${w(e.serv)}%"><em>Servicing</em></i><b>${e.fmt(e.close + e.serv)}</b></div></div>
+    <div class="ec-row a" style="--d:${(d + 1.0).toFixed(2)}"><span>Outcomes, with no lift in conversion</span><div class="ec-b"><i class="flat a gx" style="--d:${(d + 1.1).toFixed(2)};width:${w(e.flat)}%"></i><b>${e.fmt(e.flat)}</b></div></div>
+  </section>`; }).join('')}
+</div>
+<div class="ec-f">
+  <div class="ec-t a" style="--d:3.4"><h3>The terms</h3><p>5% of the loan or first-year premium at close or bind. 15% of interest while we service a loan. A monthly fee per policy in force. Each request goes to one chosen partner.</p></div>
+  <div class="ec-ramp a" style="--d:3.7"><h3>Share of volume on outcomes</h3><ol>${[['Start', 1], ['6 months', 10], ['1 year', 50], ['2 years', 100]].map((r, i) => `<li><i class="a gy" style="--d:${(3.9 + i * 0.2).toFixed(1)};height:${Math.max(r[1], 4)}%"></i><b>${r[1]}%</b><span>${r[0]}</span></li>`).join('')}</ol></div>
+</div>
+<p class="ec-w a fade" style="--d:4.8">Lead prices and conversion rates are my assumptions, since LendingTree does not publish them. Being paid on close in home equity, and on bind in insurance, needs legal review first.</p>`;
+
 /* ------------------------------------------------------------------ 8 time */
 const PH = ['Jan 1–15', 'Jan 16–31', 'February', 'March', 'Apr–Jun', 'Jul–Dec'];
 const BANDS = [
@@ -381,6 +431,32 @@ const tbl = (head, rows) => `<div class="hs"><table><thead><tr>${head.map((h) =>
 const lnk = (xs) => `<ul class="lk">${xs.map((x) => `<li><a href="${x[0]}">${x[1]}</a>${x[2] ? ` <span>${x[2]}</span>` : ''}</li>`).join('')}</ul>`;
 
 const D = {
+  take: `
+    <h4>What the visiontypes assume, and a first version of each</h4>
+    ${tbl(['', 'What we would need', 'First version'], [
+      ['1', 'Assistant partnerships', 'OpenAI first, then Google, Anthropic and others: listing in their app programme, review, commercial terms, attribution.'],
+      ['2', 'The LendingTree agent: MCP and API', 'The tools an assistant calls: eligibility, offers and quotes, application status, servicing. With sign-in, consent and an audit trail.'],
+      ['3', 'Data connections', 'Aggregators such as Plaid and Finicity for bank, income and assets; property and vehicle data; a soft credit pull. All by consent.'],
+      ['4', 'Alpha lenders and carriers', 'Two or three of each who return firm offers and bindable quotes, and accept an application, through an API.'],
+      ['5', 'Closing and binding rails', 'Disclosures, e-signature, funding status, policy binding and ID card, with licensing and compliance signed off first.'],
+      ['6', 'The customer account', 'One home for loans, policies and linked accounts. Read-only to start (balances, due dates, renewals), then payments and claims.'],
+      ['7', 'One chosen partner', 'In these journeys the shopper picks who contacts them, so the request is not sold to several partners and the flood of calls, texts and emails stops.'],
+    ])}
+    <p>Some of this LendingTree has today. Finding out how much is part of my first two weeks.</p>`,
+  economics: `
+    <h4>Per consumer request, at the model’s default inputs</h4>
+    ${tbl(['', 'Home equity line', 'Auto insurance'], [
+      ['Today, selling leads', '$120 (three leads at $40)', '$36 (three leads at $12)'],
+      ['Paid on outcomes', '$526 ($248 at close, $278 from servicing)', '$52 ($27 at bind, $25 from servicing)'],
+      ['Outcomes, with no lift in conversion', '$175', '$17'],
+      ['Break-even', 'A 1.8% funded rate per request', 'About double today’s assumed bind rate per lead'],
+    ])}
+    <h4>What is assumed</h4>
+    ${ul(['Price per lead, leads sold per request, and funded and bind rates are assumptions. LendingTree does not publish them, and every comparison moves with them.', 'Marketing cost per request comes from LendingTree’s reported segment margins and is charged equally to both models.', 'The default outcome case assumes one chosen partner closes as many requests as three lead buyers do today. The no-lift row shows the case where it does not.', 'Sending each request to one partner gives up two thirds of today’s lead revenue per request.'])}
+    <h4>Over 36 months on the ramp</h4>
+    <p>With illustrative volumes, revenue is about 32% higher than staying on leads. All of that comes from home equity. Auto insurance finishes slightly behind, because servicing fees arrive later than lead fees.</p>
+    <h4>To review with counsel before anything else</h4>
+    ${ul(['Home equity: US rules on referral fees for mortgage-type loans (RESPA Section 8) constrain fees paid to a referrer on close.', 'Insurance: being paid when a policy binds generally requires a producer licence.', 'The proposed terms are large next to market norms: 5% at close is about five times a typical origination fee, and 15% of interest is several times a typical servicing fee.'])}`,
   integration: `
     <h4>Who, and how</h4>
     ${ul(['The C-team, VP-level leaders (a short list if there are many) and my direct reports: 20 at minimum, 30 at most.', 'No more than six a day. 60 minutes with key stakeholders, 30 with roles further from product.', 'In person where I can, in Charlotte, Seattle and Denver. Otherwise by Zoom.', 'Others, such as board members and directors, are added as the interviews point to them.', 'Everyone gets a fresh conversation, including the leaders I met while interviewing. These are different questions.'])}
@@ -449,6 +525,8 @@ const RAW = [
   { id: 'impact', name: 'Immediate impact', title: 'Immediate impact', sub: 'New profit in year one, from bets that earn their place', draw: impact, details: D.impact, links: [['/lendingtree/choice/', 'The Power of Choice'], ['/lendingtree/companion/', 'A Companion'], ['/lendingtree/outcomes/', 'Aligned Outcomes']] },
   { id: 'disruption', name: 'Disruption', title: 'Disruption', sub: 'Put LendingTree out of business: three pods and a research-led reset', draw: disruption, details: D.disruption },
   { id: 'visiontypes', name: 'Visiontypes', title: 'Visiontypes', sub: 'Where this could go, across the whole customer lifecycle', draw: visiontypes, links: [[VT_A, 'Open visiontype A'], [VT_B, 'Open visiontype B']] },
+  { id: 'take', name: 'What this will take', title: 'What this will take', sub: 'What the visiontypes assume, and the first version of each', draw: take, details: D.take },
+  { id: 'economics', name: 'The economics', title: 'The economics', sub: 'Selling leads against being paid on outcomes', draw: econ, details: D.economics },
   { id: 'time', name: 'My time', title: 'My time', sub: 'Balance carefully, delegate everything I can', draw: time, details: D.time },
   { id: 'outcomes', name: 'Year-one outcomes', title: 'Year-one outcomes', sub: 'My commitments', draw: outcomes, details: D.outcomes },
   { id: 'plan', name: 'Year-one plan', title: 'Year-one plan', sub: 'Assumes a January 1 start', draw: plan, details: D.outcomes },
