@@ -129,29 +129,60 @@ function botOpen(flag) {
   m.append(t); add(m);
   return { m, t };
 }
+/* The answer streams in the way it does in ChatGPT: a few characters at a time, left to right, quickly. The whole
+   message takes 350ms to 1.8s depending on its length (scaled by ?speed like every other wait). Only text nodes are
+   written, so **bold** never shows as markup. While it streams the visible text is hidden from assistive tech and a
+   visually hidden copy of the whole answer is read once; with reduced motion the text simply appears.
+   A run that is cancelled mid-stream (restart, path switch) leaves the full sentence if the message is still on the page. */
+const STREAM = { min: 350, max: 1800, perChar: 7, tick: 22 };
+const wholeText = (paras) => paras.map((p) => h('p', null, p.words.map((w) => (w.b ? h('b', null, w.t) : w.t))));
 async function botFill(t, text) {
   const my = run;
-  t.textContent = '';
   const paras = parseRich(text);
   S.log.push({ role: 'assistant', content: String(text).replace(/\*\*/g, '') });
-  if (reduced() || cfg.speed > 12) {
-    paras.forEach((p) => t.append(h('p', null, p.words.map((w) => (w.b ? h('b', null, w.t) : w.t)))));
-  } else {
-    col.setAttribute('aria-busy', 'true');
-    for (const p of paras) {
-      const pe = h('p'); t.append(pe);
-      let bold = null, n = 0;
-      for (const w of p.words) {
-        if (w.b) { if (!bold) { bold = h('b'); pe.append(bold); } bold.append(w.t); } else { bold = null; pe.append(w.t); }
-        if (/\S/.test(w.t) && ++n % 2 === 0 && !hurry()) { await sleep(34 + Math.random() * 36); alive(my); }
+  if (reduced() || cfg.speed > 12 || hurry()) { t.replaceChildren(...wholeText(paras)); return; }
+  /* one text node per run of plain or bold words; each paragraph joins the page when its first character does */
+  const segs = [];
+  let total = 0;
+  for (const p of paras) {
+    const pe = h('p');
+    let last = null;
+    for (const w of p.words) {
+      if (last && last.b === !!w.b) { last.full += w.t; } else {
+        const node = document.createTextNode('');
+        if (w.b) pe.append(h('b', null, node)); else pe.append(node);
+        last = { node, full: w.t, b: !!w.b, pe, n: 0 }; segs.push(last);
       }
+      total += w.t.length;
     }
-    col.removeAttribute('aria-busy');
   }
+  const plain = paras.map((p) => p.words.map((w) => w.t).join('')).join(' ');
+  const sr = h('div', { class: 'sr-only' }, plain);
+  t.setAttribute('aria-hidden', 'true'); t.textContent = ''; t.classList.add('stream'); t.after(sr);
+  let shown = 0, si = 0;
+  const show = (to) => {
+    while (shown < to && si < segs.length) {
+      const g = segs[si], take = Math.min(g.full.length - g.n, to - shown);
+      if (!g.pe.isConnected) t.append(g.pe);
+      g.n += take; shown += take; g.node.data = g.full.slice(0, g.n);
+      if (g.n >= g.full.length) si++;
+    }
+  };
+  const dur = Math.min(STREAM.max, Math.max(STREAM.min, total * STREAM.perChar)) / cfg.speed, t0 = performance.now();
+  try {
+    while (shown < total) {
+      await sleep(STREAM.tick * cfg.speed, my);   /* a real 22ms or so between writes, whatever the speed */
+      show(hurry() ? total : Math.max(shown + 1, Math.round(total * Math.min(1, (performance.now() - t0) / dur))));
+    }
+  } catch (e) {
+    if (t.isConnected) show(total);
+    throw e;
+  } finally { t.classList.remove('stream'); }
 }
 async function botSay(text, flag, rest) {
-  const { t } = botOpen(flag);
-  await sleep(650 + Math.min(700, text.length * 3));
+  const { m, t } = botOpen(flag);
+  try { await sleep(700 + Math.min(500, text.length * 2)); }   /* the thinking dot: 0.7s to 1.2s */
+  catch (e) { m.remove(); throw e; }
   await botFill(t, text);
   await linger(rest == null ? Math.min(2400, 500 + text.length * 13) : rest);
 }
@@ -409,7 +440,7 @@ async function aside(text, p) {
       c.end(off ? AGENT.offline : topic.done, off);
       await sleep(550);
       said = botOpen();
-      await sleep(400);
+      await sleep(700);
     } else { [res] = await Promise.all([reply, sleep(900)]); alive(my); }
     await botFill(said.t, res.text);
     await sleep(450);
