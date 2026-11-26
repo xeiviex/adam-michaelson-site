@@ -299,14 +299,14 @@ const take = `
 /* ------------------------------------------------------------- the economics */
 /* Per consumer request, from the model's default inputs. Lead prices and conversion rates are assumptions. */
 const ECON = [
-  { name: 'Home equity line', today: 120, close: 248, serv: 278, flat: 175, fmt: (n) => '$' + n },
-  { name: 'Auto insurance', today: 36, close: 27, serv: 25, flat: 17, fmt: (n) => '$' + n },
+  { name: 'Loans', eg: 'Example: a home equity line', today: 120, close: 248, serv: 278, flat: 175, fmt: (n) => '$' + n },
+  { name: 'Insurance', eg: 'Example: an auto policy', today: 36, close: 27, serv: 25, flat: 17, fmt: (n) => '$' + n },
 ];
 const econ = `
 <div class="ec">
   ${ECON.map((e, k) => { const max = e.close + e.serv, w = (n) => (n / max * 100).toFixed(1), d = 0.3 + k * 1.4; return `
   <section class="ec-p">
-    <h3 ${A(d)}>${e.name} <span>per consumer request</span></h3>
+    <h3 ${A(d)}>${e.name} <span>${e.eg}, per consumer request</span></h3>
     <div class="ec-row a" style="--d:${(d + 0.15).toFixed(2)}"><span>Today, selling leads</span><div class="ec-b"><i class="lead a gx" style="--d:${(d + 0.25).toFixed(2)};width:${w(e.today)}%"></i><b>${e.fmt(e.today)}</b></div></div>
     <div class="ec-row a" style="--d:${(d + 0.5).toFixed(2)}"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:${(d + 0.6).toFixed(2)};width:${w(e.close)}%"><em>At close</em></i><i class="serv a gx" style="--d:${(d + 0.9).toFixed(2)};width:${w(e.serv)}%"><em>Servicing</em></i><b>${e.fmt(e.close + e.serv)}</b></div></div>
     <div class="ec-row a" style="--d:${(d + 1.0).toFixed(2)}"><span>Outcomes, with no lift in conversion</span><div class="ec-b"><i class="flat a gx" style="--d:${(d + 1.1).toFixed(2)};width:${w(e.flat)}%"></i><b>${e.fmt(e.flat)}</b></div></div>
@@ -437,6 +437,7 @@ const D = {
     ])}
     <p>Some of this LendingTree has today. Finding out how much is part of my first two weeks.</p>`,
   economics: `
+    <p>The slide shows one example of each kind of product: a home equity line for loans, and an auto policy for insurance. The economics differ a good deal by product, because the fee is a share of the amount. The model has a section for each product type and an aggregate.</p>
     <h4>Per consumer request, at the model’s default inputs</h4>
     ${tbl(['', 'Home equity line', 'Auto insurance'], [
       ['Today, selling leads', '$120 (three leads at $40)', '$36 (three leads at $12)'],
