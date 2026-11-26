@@ -305,7 +305,9 @@ export const HOME = {
     actions: { pay: 'Pay now', extra: 'Pay extra', details: 'Details' },
     accountsTitle: 'Your accounts', accountsSub: (total) => `${money(total, 2)} across your banks`,
     acctActions: { transfer: 'Transfer', activity: 'Recent activity' },
-    connect: 'Connect another account', connectSub: 'Pick your bank. You sign in with them, and LendingTree only sees balances and transactions.', connectNone: 'Every bank in this sample is already connected.',
+    connect: 'Connect another account', connectSub: 'Pick your bank. You sign in with them, and LendingTree only sees balances and transactions.', connectNone: 'Every bank in this sample is already connected.', connectSearch: 'Search for your bank', connectPopular: 'Popular', connectResults: 'Results', connectEmpty: 'No bank by that name in this sample. Try another.',
+    /* More institutions for the search. Only names: each gets a sample checking account when connected. */
+    bankCatalog: ['Ally Bank', 'American Express', 'Bank of America', 'Capital One', 'Charles Schwab', 'Chase', 'Chime', 'Citi', 'Citizens', 'Discover', 'Fidelity', 'Fifth Third Bank', 'Huntington', 'KeyBank', 'Navy Federal Credit Union', 'PNC', 'Regions', 'SoFi', 'TD Bank', 'Truist', 'U.S. Bank', 'USAA', 'Wells Fargo'],
     nothingDue: 'Nothing is due on this line yet.',
     move: 'Move money',
     moveOptions: [

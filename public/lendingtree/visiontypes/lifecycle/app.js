@@ -3,7 +3,7 @@
    the visitor chooses to ask the guide (../shared/agent.js), which falls back to an offline answer when it cannot connect.
    URL params: ?path=loan|insurance  ?stage=shop|home|servicing  ?auto=0|1  ?embed=1  ?speed=N  ?mock=1 (test aid) */
 import { PERSON, BRAND, BANKS, LOANS, POLICIES, AUTO_CURRENT, HELOC_ESTIMATE, LIFECYCLE, money, lenderIcon } from '../shared/data.js';
-import { PROTO, SHELL, LANDING, PATHS, HOME, FLOWS, NOW, parseFund } from './content.js?v=7';
+import { PROTO, SHELL, LANDING, PATHS, HOME, FLOWS, NOW, parseFund } from './content.js?v=8';
 import { ask } from '../shared/agent.js';
 
 /* ---------- small helpers ---------- */
@@ -678,11 +678,27 @@ function moveSheet() {
   const body = openSheet(`<h3>${H.move}</h3><div class="opts">${H.moveOptions.map((o) => `<button type="button" class="opt" data-o="${o.id}"><span class="ib">${ic(icons[o.id], 20)}</span><span><b>${o.label}</b><small>${o.sub}</small></span>${ic('right', 18, 2)}</button>`).join('')}</div>`);
   body.addEventListener('click', (e) => { const b = e.target.closest('.opt'); if (!b) return; ({ pay: () => payFlow(S.loans[0].id), transfer: () => transferFlow({ from: 'ally', to: 'chase' }), bill: billFlow })[b.dataset.o](); });
 }
+/* Connect another account: search any bank, as a bank-linking service would let you, with a few popular ones listed first. */
 function connectSheet() {
-  const H = HOME.loans, left = H.banksToConnect.filter((b) => !S.banks.some((x) => x.bank === b.bank));
-  const body = openSheet(`<h3>${H.connect}</h3><p class="sub">${left.length ? H.connectSub : H.connectNone}</p><div class="opts">${left.map((b, i) => `<button type="button" class="opt" data-i="${i}">${mono(b.bank)}<span><b>${esc(b.bank)}</b></span>${ic('right', 18, 2)}</button>`).join('')}</div>`);
+  const H = HOME.loans, held = (name) => S.banks.some((x) => x.bank === name);
+  const popular = H.banksToConnect.filter((b) => !held(b.bank));
+  /* a bank from the wider list gets a plausible sample account, the same one every time for that name */
+  const sample = (name) => { let n = 0; for (const ch of name) n = (n * 31 + ch.charCodeAt(0)) % 9973; return { bank: name, name: 'Checking', last4: String(1000 + (n * 7) % 9000), balance: 800 + (n % 5200) + 0.42 }; };
+  const all = [...popular, ...H.bankCatalog.filter((n) => !held(n) && !popular.some((p) => p.bank === n || n.includes(p.bank) || p.bank.includes(n))).map(sample)].sort((x, y) => x.bank.localeCompare(y.bank));
+  const body = openSheet(`<h3>${H.connect}</h3><p class="sub">${all.length ? H.connectSub : H.connectNone}</p>${all.length ? `<label class="bsearch">${ic('search', 18, 2)}<input type="search" id="bankQ" placeholder="${esc(H.connectSearch)}" aria-label="${esc(H.connectSearch)}" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"></label><div class="opts-h" id="bankH"></div><div class="opts" id="bankL" aria-live="polite"></div>` : ''}`);
+  if (!all.length) return;
+  const list = $('#bankL', body), head = $('#bankH', body), q = $('#bankQ', body);
+  let shown = [];
+  const paint = () => {
+    const s = q.value.trim().toLowerCase();
+    shown = s ? all.filter((b) => b.bank.toLowerCase().includes(s)).sort((x, y) => (y.bank.toLowerCase().startsWith(s) ? 1 : 0) - (x.bank.toLowerCase().startsWith(s) ? 1 : 0)).slice(0, 8) : popular.length ? popular : all.slice(0, 6);
+    head.textContent = s ? H.connectResults : H.connectPopular;
+    list.innerHTML = shown.length ? shown.map((b, i) => `<button type="button" class="opt" data-i="${i}">${mono(b.bank)}<span><b>${esc(b.bank)}</b></span>${ic('right', 18, 2)}</button>`).join('') : `<p class="bnone">${esc(H.connectEmpty)}</p>`;
+    fitDock();
+  };
+  q.addEventListener('input', paint); paint();
   body.addEventListener('click', (e) => {
-    const b = e.target.closest('.opt'); if (!b) return; const bank = left[Number(b.dataset.i)];
+    const b = e.target.closest('.opt'); if (!b) return; const bank = shown[Number(b.dataset.i)];
     setSheet(`<div class="flow-done"><span class="spin big" aria-hidden="true"></span><h3>Connecting to ${esc(bank.bank)}</h3><p>This takes a few seconds.</p></div>`);
     setTimeout(() => { if (sheet.hidden) return; S.banks.push({ ...bank, id: bank.bank.toLowerCase().replace(/\W/g, ''), isNew: true }); rerender(); $('[data-a=flow-done]', setSheet(success(`${bank.bank} is connected`, `${bank.name} ••${bank.last4} now shows with your other accounts.`, 'Done'))).addEventListener('click', () => closeSheet()); }, 1400 / SPEED);
   });
