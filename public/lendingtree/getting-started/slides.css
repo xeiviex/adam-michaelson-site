@@ -124,7 +124,7 @@ svg .a.gy { transform-origin: center bottom; }
 .slide.on .t3 > li .st { animation: gs-fade .5s both; animation-delay: calc(var(--d) * 1s + .15s); }
 @keyframes gs-wipe { to { clip-path: inset(0); } }
 @media (prefers-reduced-motion: reduce) { .t3 > li::before, .t3 > li .st { opacity: 1; animation: none !important; } .t3 > li::after { clip-path: none; animation: none !important; } }
-.vis svg.org.m { display: none; }
+.vis svg.org.m { display: none; } .vis svg.m { display: none; }
 .vis svg .pt { font: 700 11.5px var(--head); fill: var(--ink); } .vis svg .pt.wh { fill: var(--dark); font-size: 15px; } .vis svg .pt.hire { fill: var(--body); } .vis svg .pt.sm { font: 600 10.5px var(--sans); }
 .vis svg .ps { font-size: 9.5px; fill: var(--muted); } .vis svg .pl { font-size: 10.5px; fill: var(--muted); } .vis svg .pl.acc { fill: var(--acc-hi); font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .pulses { display: none; } }
@@ -310,6 +310,7 @@ svg .a.gy { transform-origin: center bottom; }
   .vis svg { min-width: 700px; } .vis { overflow-x: auto; }
   .t3 > li::after { clip-path: inset(0 0 100% 0); }
   .vis svg.org { display: none; } .vis svg.org.m { display: block; min-width: 0; max-height: none; }
+  .vis svg.dk { display: none; } .vis svg.m { display: block; min-width: 0; max-height: none; width: 100%; }
   .vis svg.corec { display: none; } .vis svg.corec.m { display: block; min-width: 0; max-height: none; } .sup > div + div::before { display: none; }
   .th3, .sup, .cards6, .vts, .need ol, .ly ul, .ec, .ec-f { grid-template-columns: minmax(0, 1fr); } .lyr { grid-template-columns: minmax(0, 1fr); gap: 1.1em; } .ly { gap: .4em; } .ly ul { gap: .35em; } .cp { min-height: 44px; padding-block: .55em; justify-content: center; } .cp b { font-size: 1.12em; } .cp small { display: none; } .cp i { top: 50%; margin-top: -.62em; } .ly-f, .ly-f .acct { text-align: left; } .ec, .ec-f { gap: 1.2em; }
   .base { padding-inline: 1.2em; white-space: normal; font-size: 1em; text-align: center; }
@@ -367,6 +368,6 @@ svg .a.gy { transform-origin: center bottom; }
 @media (max-width: 760px) {
   /* phones: no room beside the title, so the buttons take their own row straight under it, on the right */
   .sb { grid-template-rows: auto auto minmax(0, 1fr); }
-  .rail { position: static; grid-row: 2; padding-top: 0; justify-content: flex-end; }
+  .rail { position: static; grid-row: 2; padding-top: 0; justify-content: flex-end; flex-wrap: wrap; }
   .sb > .vis { grid-row: 3; }
 }

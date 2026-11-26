@@ -199,6 +199,21 @@ ${corePhone}
 /* Six unlabelled bets. Each has a decision at its own distance; three stop there, three carry on and add up. */
 const BETS = [{ y: 50, x: 300, live: true }, { y: 110, x: 470 }, { y: 170, x: 240 }, { y: 230, x: 590, live: true }, { y: 290, x: 380 }, { y: 350, x: 520, live: true }];
 const dia = (x, y, cls) => `<path class="dia ${cls}" d="M${x} ${y - 9}l9 9-9 9-9-9z"/>`;
+/* The same drawing for phones: bets run a shorter distance, the three that pay join one line down the right to the result. */
+const BX = (b) => Math.round(b.x * 0.42);
+const impactPhone = `<svg class="m" viewBox="0 0 360 436" role="img" aria-label="Six bets. Each reaches a decision at its own date. Three stop and three continue, adding up to more than one million dollars of profit in year one">
+    <text class="lb acc" ${A(0.8)} x="4" y="18" text-anchor="start">Kill rule and decision date, written first</text>
+    ${BETS.map((b, i) => { const x = BX(b); return `<rect ${A((0.9 + i * 0.06).toFixed(2), 'pop')} class="st0" x="4" y="${b.y - 6}" width="12" height="12" rx="2"/>
+    <path class="ln bet" ${A((1.2 + i * 0.05).toFixed(2))} pathLength="1" d="M16 ${b.y}H${x - 9}"/>
+    <g ${A((1.9 + b.x / 500).toFixed(2), 'pop')}>${dia(x, b.y, b.live ? 'go' : 'no')}</g>
+    ${b.live ? `<path class="ln win" ${A((2.2 + b.x / 500).toFixed(2))} pathLength="1" d="M${x + 9} ${b.y}C${x + 70} ${b.y} 312 ${b.y} 312 ${b.y + 30}"/>` : `<path ${A((2.1 + b.x / 500).toFixed(2), 'fade')} class="x" d="M${x + 20} ${b.y - 6}l12 12m0-12-12 12"/>`}`; }).join('')}
+    <path class="ln flow" ${A(3.7)} pathLength="1" d="M312 80V380"/>
+    <circle ${A(4.3, 'pop')} class="goal" cx="312" cy="394" r="11"/>
+    <text ${A(4.45, 'land')} class="big" x="290" y="408" text-anchor="end">$1M+</text>
+    <text ${A(4.75, 'fade')} class="lb" x="290" y="430" text-anchor="end">profit, year one</text>
+    <text ${A(2.6)} class="lb sm" x="${BX(BETS[3])}" y="${BETS[3].y + 28}">Decision</text>
+    <text ${A(2.5)} class="lb sm" x="${BX(BETS[2]) + 44}" y="${BETS[2].y + 5}" text-anchor="start">Stopped</text>
+  </svg>`;
 const impact = `
 <div class="bets">
   <div class="cand">
@@ -210,7 +225,7 @@ const impact = `
       <li ${A(0.8)} class="a more">Other in-flight work, ideas from the team, other ideas of mine, etc.</li>
     </ul>
   </div>
-  <svg viewBox="0 0 940 400" role="img" aria-label="Six bets. Each reaches a decision at its own date. Three stop and three continue, adding up to more than one million dollars of profit in year one">
+  <svg class="dk" viewBox="0 0 940 400" role="img" aria-label="Six bets. Each reaches a decision at its own date. Three stop and three continue, adding up to more than one million dollars of profit in year one">
     <text class="lb acc" ${A(0.8)} x="6" y="18" text-anchor="start">Kill rule and decision date, written first</text>
     ${BETS.map((b, i) => `<rect ${A((0.9 + i * 0.06).toFixed(2), 'pop')} class="st0" x="4" y="${b.y - 6}" width="12" height="12" rx="2"/>
     <path class="ln bet" ${A((1.2 + i * 0.05).toFixed(2))} pathLength="1" d="M16 ${b.y}H${b.x - 9}"/>
@@ -223,6 +238,7 @@ const impact = `
     <text ${A(2.6)} class="lb sm" x="${BETS[3].x}" y="${BETS[3].y + 28}">Decision</text>
     <text ${A(2.5)} class="lb sm" x="${BETS[2].x + 44}" y="${BETS[2].y + 5}" text-anchor="start">Stopped</text>
   </svg>
+  ${impactPhone}
 </div>`;
 
 /* ------------------------------------------------------------ 6 disruption */
@@ -241,8 +257,48 @@ const podRow = (p, k) => {
   return out;
 };
 const RS = [['Stakeholder interviews', 0.5, -1], ['Market research', 1.5, 1], ['Provisional vision', 3, -1], ['Contextual inquiry', 4, 1], ['Synthesis', 5, -1], ['Concept design', 6, 1], ['Validation', 7, -1], ['Go-to-market', 8, 1]];
+/* The same drawing for phones: one narrow column. The eight steps of the next chapter are numbered on the line and named in a list beneath it. */
+const pmx = (m) => 20 + m * 26.5;
+const pdia = (x, y, cls) => `<path class="dia ${cls}" d="M${x} ${y - 7}l7 7-7 7-7-7z"/>`;
+const PY = [128, 176, 224];
+const podRowPhone = (p, k) => {
+  const y = PY[k];
+  let out = `<text class="lb wh" ${A(0.4 + k * 0.5)} x="4" y="${y - 14}" text-anchor="start">${p.n}</text>`;
+  out += [0, 1, 2].map((j) => `<circle ${A((0.5 + k * 0.5 + j * 0.06).toFixed(2), 'pop')} class="ppl" cx="${56 + j * 12}" cy="${y - 19}" r="4"/>`).join('');
+  out += `<path class="ln pod" ${A(0.9 + k * 0.5)} pathLength="1" d="M${pmx(p.s)} ${y}H338"/>`;
+  let i = 0;
+  for (let m = p.s; m <= 12.01; m += 0.75, i++) {
+    const x = pmx(m).toFixed(1), d = (1.0 + k * 0.5 + i * 0.07).toFixed(2);
+    out += i % 4 === 3 ? `<g ${A(d, 'pop')}>${pdia(x, y, 'go')}</g>` : `<circle ${A(d, 'pop')} class="stn${i % 4 === 0 ? ' open' : i % 4 === 2 ? ' ev' : ''}" cx="${x}" cy="${y}" r="4.2"/>`;
+  }
+  return out;
+};
+const disruptionPhone = `<svg class="m" viewBox="0 0 360 596" role="img" aria-label="Three independent pods running repeating cycles through the year, and the next chapter, which reaches a phase gate in month nine and an alpha in month twelve">
+  <text class="hd" ${A(0.2)} x="4" y="16" text-anchor="start">Three independent pods</text>
+  <text class="lb sm" ${A(0.3)} x="4" y="38" text-anchor="start"><tspan x="4">PM · Designer · Engineer, all at principal level.</tspan><tspan x="4" dy="18">No brief from me. They eat what they kill.</tspan></text>
+  ${Array.from({ length: 12 }, (_, i) => `<text class="lb mo" x="${pmx(i + 0.5)}" y="82">${'JFMAMJJASOND'[i]}</text>`).join('')}
+  <path class="axis" d="M20 90H338"/>
+  <text class="lb acc sm" ${A(6.0, 'fade')} x="${pmx(3) + 6}" y="106" text-anchor="start">Day 90</text><path class="tick mk" ${A(6.6, 'down')} d="M${pmx(3)} 90V236M${pmx(3)} 352V392"/>
+  ${PODS.map(podRowPhone).join('')}
+  <g ${A(2.6, 'fade')}>
+    <circle class="stn open" cx="12" cy="256" r="4.2"/><text class="lb sm" x="24" y="261" text-anchor="start">Open charter</text>
+    <circle class="stn" cx="170" cy="256" r="4.2"/><text class="lb sm" x="182" y="261" text-anchor="start">Smallest test</text>
+    <circle class="stn ev" cx="12" cy="280" r="4.2"/><text class="lb sm" x="24" y="285" text-anchor="start">Evidence review</text>
+    ${pdia(170, 280, 'go')}<text class="lb sm" x="182" y="285" text-anchor="start">Decision, then again</text>
+  </g>
+  <text class="hd" ${A(3.0)} x="4" y="326" text-anchor="start">The next chapter</text>
+  <text class="lb sm" ${A(3.0)} x="356" y="326" text-anchor="end">Led by me</text>
+  <path class="ln res" ${A(3.2)} pathLength="1" d="M20 372H${pmx(8.5) - 10}"/>
+  <path class="ln res2" ${A(4.9)} pathLength="1" d="M${pmx(8.5) + 10} 372H${pmx(12) - 8}"/>
+  ${RS.map((r, i) => `<g ${A((3.3 + i * 0.18).toFixed(2), 'pop')}><circle class="stn res" cx="${pmx(r[1])}" cy="372" r="5"/><text class="lb sm" x="${pmx(r[1])}" y="394">${i + 1}</text></g>`).join('')}
+  <g ${A(4.8, 'pop')}>${pdia(pmx(8.5), 372, 'gate')}<text class="lb sm wh" x="${pmx(8.5)}" y="354">Phase gate</text></g>
+  <g ${A(5.4, 'pop')}><circle class="goal" cx="${pmx(12) - 2}" cy="372" r="8"/><text class="lb sm wh" x="344" y="354" text-anchor="end">Alpha</text></g>
+  ${RS.map((r, i) => `<text class="lb sm${r[0] === 'Provisional vision' ? ' wh' : ''}" ${A((3.4 + i * 0.18).toFixed(2), 'fade')} x="${i < 4 ? 4 : 186}" y="${420 + (i % 4) * 21}" text-anchor="start">${i + 1}  ${r[0]}${r[0] === 'Provisional vision' ? ', day 90' : ''}</text>`).join('')}
+  <text class="lb acc" ${A(4.0)} x="4" y="520" text-anchor="start">Hypotheses to invalidate</text>
+  ${['Bank connectivity through MCP', 'Assistants as underwriting intelligence'].map((t, i) => { const w = [250, 320][i], y = 532 + i * 32; return `<g ${A((4.1 + i * 0.15).toFixed(2), 'drop')}><rect class="chip" x="4" y="${y}" width="${w}" height="26" rx="13"/><text class="lb sm" x="${4 + w / 2}" y="${y + 17.5}">${t}</text></g>`; }).join('')}
+</svg>`;
 const disruption = `
-<svg class="dis" viewBox="0 0 1200 524" role="img" aria-label="Three independent pods running repeating cycles through the year, and the next chapter, which reaches a phase gate in month nine and an alpha in month twelve">
+<svg class="dis dk" viewBox="0 0 1200 524" role="img" aria-label="Three independent pods running repeating cycles through the year, and the next chapter, which reaches a phase gate in month nine and an alpha in month twelve">
   ${Array.from({ length: 12 }, (_, i) => `<text class="lb mo" x="${mx(i + 0.5)}" y="26">${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}</text>`).join('')}
   <path class="axis" d="M${M0} 38H1170"/>
   ${/* last of all: the Day 90 label fades in, then its dotted line draws from top to bottom */''}<text class="lb acc sm" ${A(6.0, 'fade')} x="${mx(3)}" y="62">Day 90</text><path class="tick mk" ${A(6.6, 'down')} d="M${mx(3)} 38V44M${mx(3)} 72V454"/>
@@ -268,7 +324,8 @@ const disruption = `
   <text class="lb acc" ${A(4.0)} x="18" y="436" text-anchor="start">Hypotheses to invalidate</text>
   ${['Bank connectivity through MCP', 'Assistants as underwriting intelligence'].map((t, i) => { const w = [236, 300][i], x = [250, 498][i]; return `<g ${A((4.1 + i * 0.15).toFixed(2), 'drop')}><rect class="chip" x="${x}" y="420" width="${w}" height="30" rx="15"/><text class="lb" x="${x + w / 2}" y="440">${t}</text></g>`; }).join('')}
   </g>
-</svg>`;
+</svg>
+${disruptionPhone}`;
 
 /* ----------------------------------------------------------- 7 visiontypes */
 const LIFE = ['Lead', 'MQL', 'Application', 'Offers and quotes', 'Review and selection', 'Funding or binding', 'Servicing', 'Regular engagement', 'Renewal or upgrade'];
