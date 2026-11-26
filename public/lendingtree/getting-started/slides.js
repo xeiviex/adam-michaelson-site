@@ -376,7 +376,7 @@ const take = `
 /* ------------------------------------------------------------- the economics */
 /* Per consumer request, from the model's default inputs. Lead prices and conversion rates are assumptions. */
 const ECON = [
-  { name: 'Loans', eg: 'Example: a home equity line', today: 120, close: 248, serv: 137, flat: 129, fmt: (n) => '$' + n },
+  { name: 'Loans', eg: 'Example: a home equity line', today: 120, close: 248, serv: 137, tot: 386, flat: 129, fmt: (n) => '$' + n },
   { name: 'Insurance', eg: 'Example: an auto policy', today: 36, close: 108, serv: 14, flat: 41, fmt: (n) => '$' + n },
 ];
 const econ = `
@@ -386,7 +386,7 @@ const econ = `
     <h3 ${A(d)}>${e.name} <span>${e.eg}</span></h3>
     <p class="ec-u a fade" style="--d:${(d + 0.1).toFixed(2)}">Revenue per shopper</p>
     <div class="ec-row a" style="--d:${(d + 0.15).toFixed(2)}"><span>Today, selling leads</span><div class="ec-b"><i class="lead a gx" style="--d:${(d + 0.25).toFixed(2)};width:${w(e.today)}%"></i><b>${e.fmt(e.today)}</b></div></div>
-    <div class="ec-row a" style="--d:${(d + 0.5).toFixed(2)}"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:${(d + 0.6).toFixed(2)};width:${w(e.close)}%"><em>At close</em></i><i class="serv a gx" style="--d:${(d + 0.9).toFixed(2)};width:${w(e.serv)}%"${e.serv / max < 0.24 ? ' title="Servicing"' : ''}>${e.serv / max < 0.24 ? '' : '<em>Servicing</em>'}</i><b>${e.fmt(e.close + e.serv)}</b></div></div>
+    <div class="ec-row a" style="--d:${(d + 0.5).toFixed(2)}"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:${(d + 0.6).toFixed(2)};width:${w(e.close)}%"><em>At close</em></i><i class="serv a gx" style="--d:${(d + 0.9).toFixed(2)};width:${w(e.serv)}%"${e.serv / max < 0.24 ? ' title="Servicing"' : ''}>${e.serv / max < 0.24 ? '' : '<em>Servicing</em>'}</i><b>${e.fmt(e.tot || e.close + e.serv)}</b></div></div>
     <div class="ec-row a" style="--d:${(d + 1.0).toFixed(2)}"><span>Outcomes, with no lift in conversion</span><div class="ec-b"><i class="flat a gx" style="--d:${(d + 1.1).toFixed(2)};width:${w(e.flat)}%"></i><b>${e.fmt(e.flat)}</b></div></div>
   </section>`; }).join('')}
   <section class="ec-p">
