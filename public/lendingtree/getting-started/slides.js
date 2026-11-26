@@ -7,7 +7,7 @@
 const A = (d, cls = '') => `class="a ${cls}" style="--d:${d}"`;
 /* A is LendingTree's own website and app; B is the same journey inside an assistant. */
 /* The financial model behind the economics slide (a Google Sheet; it must be shared for viewers to open it). */
-const MODEL = 'https://docs.google.com/spreadsheets/d/1glW9gqsHZVuckE-SjVn55BDVfIpuT7_-Wo7HdigRQBk/edit';
+const MODEL = 'https://docs.google.com/spreadsheets/d/1ZNICgz-Fl4ehNqrGEjh2WeMkJAzekxib6-NE0aAu0ag/edit';
 const VT_A = '/lendingtree/visiontypes/lifecycle/';
 const VT_B = '/lendingtree/visiontypes/assistant/';
 const VT_C = '/lendingtree/visiontypes/embedded/';
@@ -344,7 +344,7 @@ const TAKE = [
       deps: 'Closing and binding rails, one chosen partner, and data connections.' },
     { key: 'first', title: 'A first embedded partner', line: 'Signed, integrated and live in 2027',
       what: 'One company signed, integrated and live in 2027, as the reference for the next two that year.',
-      hard: ['The first partner signs before there is a reference to point to.', 'The contract, the integration and the compliance review each take time, and they have to be planned together.', 'The fee has to be worth it to them. The model assumes 2% of the loan, in place of our marketing spend.', 'The choice of first partner sets the pattern for the ones that follow.'],
+      hard: ['The first partner signs before there is a reference to point to.', 'The contract, the integration and the compliance review each take time, and they have to be planned together.', 'The fee has to be worth it to them. The model assumes 40% of our fee at close or bind, in place of our marketing spend.', 'The choice of first partner sets the pattern for the ones that follow.'],
       first: 'One partner and one purchase flow, with financing and insurance inside their checkout.',
       deps: 'Partner products and its embedded SDK, closing and binding rails, an embedded partnerships team, and a go-to-market for embedded.' },
   ] },
@@ -356,7 +356,7 @@ const TAKE = [
       deps: 'A go-to-market for embedded, and partner products.' },
     { key: 'gtm', title: 'A go-to-market for embedded', line: 'Targets, the partner fee, the launch playbook',
       what: 'Which partners we target first, the fee we pay them, the launch playbook, and how we measure each partner.',
-      hard: ['It is needed alongside the technology, not after it, so it has to be written before there is a product to show.', 'The partner fee has to work for the partner and for our margin. The model assumes 2% of the loan.', 'Measuring a partner needs attribution through to a funded loan or a bound policy.', 'Marketing, Partnerships, Product and Finance each hold a part of it, and it needs one owner.'],
+      hard: ['It is needed alongside the technology, not after it, so it has to be written before there is a product to show.', 'The partner fee has to work for the partner and for our margin. The model assumes 40% of our fee at close or bind.', 'Measuring a partner needs attribution through to a funded loan or a bound policy.', 'Marketing, Partnerships, Product and Finance each hold a part of it, and it needs one owner.'],
       first: 'A short list of target partners, one fee structure, and a launch playbook written with the first partner.',
       deps: 'An embedded partnerships team, a first embedded partner, and the LendingTree agent.' },
   ] },
@@ -393,13 +393,13 @@ const econ = `
   <section class="ec-p">
     <h3 ${A(3.1)}>Embedded <span>Example: a financed used car</span></h3>
     <p class="ec-u a fade" style="--d:3.2">Revenue per purchase</p>
-    <div class="ec-row a" style="--d:3.25"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:3.35;width:69.5%"><em>At close</em></i><i class="serv a gx" style="--d:3.65;width:30.5%"><em>Servicing</em></i><b>$1,947</b></div></div>
-    <div class="ec-row a" style="--d:3.8"><span>Paid to the partner, 2% of the loan</span><div class="ec-b"><i class="flat a gx" style="--d:3.9;width:27.8%"></i><b>$541</b></div></div>
+    <div class="ec-row a" style="--d:3.25"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:3.35;width:67.5%"><em>At close</em></i><i class="serv a gx" style="--d:3.65;width:32.5%"><em>Servicing</em></i><b>$803</b></div></div>
+    <div class="ec-row a" style="--d:3.8"><span>Paid to the partner, 40% of our fee at close</span><div class="ec-b"><i class="flat a gx" style="--d:3.9;width:27%"></i><b>$217</b></div></div>
     <div class="ec-row a" style="--d:4.1"><span>Partners live</span><p class="ec-n"><b>3</b> in 2027<i></i><b>10</b> in 2028<i></i><b>20</b> in 2029</p></div>
   </section>
 </div>
 <div class="ec-f">
-  <div class="ec-t a" style="--d:4.5"><h3>The terms</h3><p>A fee at close or bind, set by product: 1.25% of a mortgage, $450 per auto policy. A share of interest while we service a loan, or a monthly fee per policy. We service 70% from the start, and 10% of those move to the lender or carrier each year. Each request goes to one chosen partner. Embedded partners are paid 2% in place of our marketing spend.</p></div>
+  <div class="ec-t a" style="--d:4.5"><h3>The terms</h3><p>A fee at close or bind, set by product: 1.25% of a mortgage, $450 per auto policy. A share of interest while we service a loan, or a monthly fee per policy. We service 70% from the start, and 10% of those move to the lender or carrier each year. Each request goes to one chosen partner. Embedded partners are paid 40% of our fee at close or bind, in place of our marketing spend.</p></div>
   <div class="ec-ramp a" style="--d:4.8"><h3>Share of volume on outcomes</h3><ol>${[['Start', 1], ['6 months', 10], ['1 year', 50], ['2 years', 100]].map((r, i) => `<li><i class="a gy" style="--d:${(5.0 + i * 0.2).toFixed(1)};height:${Math.max(r[1], 4)}%"></i><b>${r[1]}%</b><span>${r[0]}</span></li>`).join('')}</ol></div>
 </div>
 <p class="ec-w a fade" style="--d:5.9">Lead prices and conversion rates are my assumptions, informed by my experience at Lendio, since LendingTree does not publish them. Being paid on close in mortgage, and on bind in insurance, needs legal review first.</p>`;
@@ -538,10 +538,10 @@ const D = {
     <p>On the model’s volumes, a year with every shopper on outcomes earns about $2.6B, against about $1.0B selling leads. With no lift in conversion it earns about $0.9B, which is below today. Auto insurance is about three quarters of the gain. Home equity only matches leads, and personal loans earn less than they do today.</p>
     <h4>Embedded: per financed used-car purchase</h4>
     ${tbl(['', 'Revenue', 'After the partner fee and cost to serve'], [
-      ['Loan only', '$1,947 ($1,354 at close, $594 from servicing)', '$1,143'],
-      ['Loan and an insurance policy', '$2,477', '$1,586'],
+      ['Loan only', '$803 ($541 at close, $261 from servicing)', '$323'],
+      ['Loan and an insurance policy', '$1,333', '$653'],
     ])}
-    <p>The partner is paid 2% of the loan, about $541, in place of marketing spend. For that reason the embedded example uses a higher fee than auto loans on LendingTree’s own site: 5% of the loan at close and 15% of interest. With three partners in 2027, ten in 2028 and twenty in 2029, and an assumed 500 financed purchases per partner each month, the purchases made in those three years are worth about $280M of revenue over their life, and about $157M after partner fees, cost to serve, building the technology and onboarding partners.</p>
+    <p>LendingTree charges the lender the same as for an auto loan on its own site: 2% of the loan at close and a share of interest while it services the loan. The partner is paid 40% of LendingTree’s fee at close or bind, about $217 on the loan, in place of marketing spend. The 40% is my assumption. With three partners in 2027, ten in 2028 and twenty in 2029, and an assumed 500 financed purchases per partner each month, the purchases made in those three years are worth about $122M of revenue over their life, and about $41M after partner fees, cost to serve, building the technology and onboarding partners.</p>
     <h4>What is assumed</h4>
     ${ul(['Price per lead, leads sold per shopper, and funded and bind rates are assumptions, informed by my experience at Lendio. LendingTree does not publish them, and every comparison moves with them.', 'The default outcome case assumes one chosen partner closes as many shoppers as three lead buyers do today. The no-lift row shows the case where it does not.', 'Sending each request to one partner gives up two thirds of today’s lead revenue per shopper.', 'The fees are starting points for a negotiation, not agreed terms.'])}
     <h4>How much we service</h4>
