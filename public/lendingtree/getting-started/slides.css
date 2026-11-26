@@ -14,6 +14,7 @@
 .on .a.fade { animation-name: gs-fade; }
 .on .a.drop { animation-name: gs-drop; animation-duration: .7s; }
 .on .a.pop { animation-name: gs-pop; animation-duration: .35s; }
+.on .a.wipe { animation-name: gs-wipex; animation-duration: .4s; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
 /* a figure arriving at the end of a line: it slides out from the line's end and settles, with no change of text */
 .on .a.land { animation-name: gs-land; animation-duration: .6s; }
 svg .a.land { transform-origin: left center; }
@@ -27,6 +28,7 @@ svg .a.gy { transform-origin: center bottom; }
 @keyframes gs-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes gs-drop { 0% { opacity: 0; transform: translateY(-1.6em); } 70% { opacity: 1; transform: translateY(.12em); } 100% { opacity: 1; transform: none; } }
 @keyframes gs-land { from { opacity: 0; transform: translateX(-14px) scale(.9); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
+@keyframes gs-wipex { from { opacity: 1; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(0); } }
 @keyframes gs-pop { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: none; } }
 @keyframes gs-gx { from { opacity: 0; transform: scaleX(0); } 20% { opacity: 1; } to { opacity: 1; transform: none; } }
 @keyframes gs-gy { from { opacity: 0; transform: scaleY(0); } 20% { opacity: 1; } to { opacity: 1; transform: none; } }
@@ -90,7 +92,7 @@ svg .a.gy { transform-origin: center bottom; }
 .cal small { position: absolute; top: calc(100% + .4em); font-size: .78em; color: var(--muted); white-space: nowrap; }
 /* a rule under both weeks, so the legend and the locations read as notes on the whole calendar */
 .key { display: flex; align-items: center; gap: .5em; font-size: .85em; color: var(--muted); margin-top: 2.6em; padding-top: .9em; border-top: 1px solid var(--rule); }
-.key i { opacity: 1; background: var(--acc-hi); } .key i:not(.big) { margin-left: 1em; } .key span { margin-left: auto; color: var(--body); }
+.key i { opacity: 1; background: var(--acc-hi); } .key i:not(.big) { margin-left: 1em; } .key > span { margin-left: auto; color: var(--body); white-space: pre; }
 .out { background: var(--ink); border-radius: 14px; padding: 1.6em 1.5em; display: flex; flex-direction: column; gap: .35em; }
 .out em { font: 700 .76em var(--sans); letter-spacing: .08em; text-transform: uppercase; color: #3a6f96; font-style: normal; }
 .out b { font: 700 1.45em/1.15 var(--head); color: var(--dark); } .out small { color: #3a4450; font-size: .95em; }

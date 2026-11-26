@@ -1,7 +1,7 @@
 /* Draws /lendingtree/getting-started/ from slides.js. Same model as /lendingtree/: one slide, one drawing, a Details sheet.
    The drawing's motion is CSS: a slide gets .on when it is shown, and anything with class "a" builds in after --d seconds.
    Arriving on a slide replays its build. Press R to replay the current slide. */
-import { SLIDES } from './slides.js?v=39';
+import { SLIDES } from './slides.js?v=40';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const $ = (s) => document.querySelector(s);
@@ -31,7 +31,7 @@ function counts(el) {
     timers.push(setTimeout(() => {
       const t0 = performance.now(), dur = (+n.dataset.dur || 1.2) * 1000;
       const step = (t) => {
-        const k = Math.min(1, (t - t0) / dur), v = Math.round(to * (1 - Math.pow(1 - k, 3)));
+        const k = Math.min(1, (t - t0) / dur), v = Math.round(to * k); // linear, so the number keeps pace with the marks it is counting
         n.textContent = k === 1 ? fin : (n.dataset.pre || '') + v + (n.dataset.post || '');
         if (k < 1 && slides[idx] === el) requestAnimationFrame(step); else n.textContent = fin;
       };

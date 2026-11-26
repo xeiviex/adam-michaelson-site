@@ -50,24 +50,28 @@ const open = `
 /* Ten working days, January 4 to 15. Each entry is that day's interviews: 6 = 60 minutes, 3 = 30 minutes. */
 const DAYS = [[6, 6, 6, 3], [6, 6, 3], [6, 6, 3], [6, 3, 3], [6, 3, 3], [6, 6, 3], [6, 3, 3], [6, 6, 3], [6, 3], [6, 3, 3]];
 const DOW = ['M', 'T', 'W', 'T', 'F'];
+/* Build order: who (top to bottom), the brace wipes in, the arrow draws, the day columns fade in left to right, the
+   legend fades in, then the bubbles pop while the count runs, then the second arrow, the readout card, and the cities. */
 let dn = 0;
-const cal = DAYS.map((day, i) => `<li${i === 5 ? ' class="wk"' : ''}><span class="dots">${day.map((m) => `<i ${A((0.9 + (dn++) * 0.085).toFixed(2), 'pop' + (m === 6 ? ' big' : ''))}></i>`).join('')}</span><b>${DOW[i % 5]}</b>${i % 5 === 0 ? `<small>Jan ${i === 0 ? 4 : 11}</small>` : ''}</li>`).join('');
+const T_COLS = 1.9, T_BUBBLES = 3.2, STEP = 0.085;
+const cal = DAYS.map((day, i) => `<li class="a fade${i === 5 ? ' wk' : ''}" style="--d:${(T_COLS + i * 0.07).toFixed(2)}"><span class="dots">${day.map((m) => `<i ${A((T_BUBBLES + (dn++) * STEP).toFixed(2), 'pop' + (m === 6 ? ' big' : ''))}></i>`).join('')}</span><b>${DOW[i % 5]}</b>${i % 5 === 0 ? `<small>Jan ${i === 0 ? 4 : 11}</small>` : ''}</li>`).join('');
+const T_END = T_BUBBLES + dn * STEP;
 const integration = `
 <div class="intg">
   <div class="whow">
     <ul class="who">
-      <li ${A(0.2)}>C-team</li><li ${A(0.35)}>VPs</li><li ${A(0.5)}>Direct reports</li>
+      <li ${A(0.2, 'fade')}>C-team</li><li ${A(0.45, 'fade')}>VPs</li><li ${A(0.7, 'fade')}>Direct reports</li>
     </ul>
-    <svg class="brace a fade" style="--d:.6" viewBox="0 0 20 100" preserveAspectRatio="none" aria-hidden="true"><path d="M2 1C9 1 10 6 10 13V39C10 46 11 50 18 50C11 50 10 54 10 61V87C10 94 9 99 2 99"/></svg>
+    <svg class="brace a wipe" style="--d:1.0" viewBox="0 0 20 100" preserveAspectRatio="none" aria-hidden="true"><path d="M2 1C9 1 10 6 10 13V39C10 46 11 50 18 50C11 50 10 54 10 61V87C10 94 9 99 2 99"/></svg>
   </div>
-  <span class="arrow a gx" style="--d:.7"></span>
+  <span class="arrow a gx" style="--d:1.4"></span>
   <div class="calw">
-    <p class="count a fade" style="--d:.8"><b data-count="${dn}" data-pre="~" data-at="0.9" data-dur="${(dn * 0.085).toFixed(1)}">~${dn}</b> interviews in two weeks</p>
+    <p class="count a fade" style="--d:${T_BUBBLES}"><b data-count="${dn}" data-pre="~" data-at="${T_BUBBLES}" data-dur="${(dn * STEP).toFixed(1)}">~${dn}</b> interviews in two weeks</p>
     <ol class="cal">${cal}</ol>
-    <p class="key a fade" style="--d:.8"><i class="big"></i>60 minutes<i></i>30 minutes<span>Charlotte · Seattle · Denver · Zoom</span></p>
+    <p class="key a fade" style="--d:2.8"><i class="big"></i>60 minutes<i></i>30 minutes<span>${['Charlotte', 'Seattle', 'Denver', 'Zoom'].map((c, i) => `<span class="a fade" style="--d:${(T_END + 1.5 + i * 0.25).toFixed(2)}">${i ? ' · ' : ''}${c}</span>`).join('')}</span></p>
   </div>
-  <span class="arrow a gx" style="--d:${(1.1 + dn * 0.085).toFixed(2)}"></span>
-  <div class="out a" style="--d:${(1.5 + dn * 0.085).toFixed(2)}"><em>January 15</em><b>Synthesis and readout</b><small>Topics, key findings, next steps</small></div>
+  <span class="arrow a gx" style="--d:${(T_END + 0.2).toFixed(2)}"></span>
+  <div class="out a fade" style="--d:${(T_END + 0.7).toFixed(2)}"><em>January 15</em><b>Synthesis and readout</b><small>Topics, key findings, next steps</small></div>
 </div>`;
 
 /* ------------------------------------------------------------------ 3 team */
