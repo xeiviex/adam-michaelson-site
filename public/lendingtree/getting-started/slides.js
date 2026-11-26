@@ -320,7 +320,7 @@ const TAKE = [
       hard: ['Every call acts on a person’s financial data, so each one needs sign-in, consent and an audit trail.', 'It has to return real answers, which depends on lenders and carriers responding through an API.', 'The embedded SDK is new technology we would need to build, and it runs inside other companies’ products.', 'Three ways in means three things to secure, version and support.'],
       first: 'Eligibility, and offers and quotes, for one loan product and one insurance product, through one assistant.',
       deps: 'Alpha lenders and carriers, data connections, and closing and binding rails.' },
-    { key: 'rails', title: 'Closing and binding rails', line: 'Underwriting, closing, funding, binding',
+    { key: 'rails', title: 'Closing and binding rails', line: 'Underwriting, funding, binding',
       what: 'Everything needed to finish the transaction with the customer, not hand it off: disclosures, e-signature, funding status, policy binding and the ID card.',
       hard: ['Home equity: US rules on referral fees for mortgage-type loans (RESPA Section 8) constrain fees paid to a referrer on close.', 'Insurance: being paid when a policy binds generally requires a producer licence.', 'Disclosures and licensing differ by product and by state.', 'Funding and binding happen in the lender’s or carrier’s systems, so status has to come back from them reliably.'],
       first: 'One loan product and one insurance product, with licensing and compliance signed off first. Review with counsel comes before anything is built.',
