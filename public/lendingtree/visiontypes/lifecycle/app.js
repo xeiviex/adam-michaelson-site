@@ -5,7 +5,7 @@
 import { PERSON, BRAND, BANKS, LOANS, POLICIES, AUTO_CURRENT, HELOC_ESTIMATE, LIFECYCLE, money, lenderIcon } from '../shared/data.js';
 import { PROTO, SHELL, LANDING, PATHS, HOME, FLOWS, NOW, parseFund } from './content.js?v=8';
 import { ask } from '../shared/agent.js';
-import { away, watchAttention, attentionReset } from '../shared/attention.js?v=1';
+import { away, watchAttention, attentionReset } from '../shared/attention.js?v=2';
 
 /* ---------- small helpers ---------- */
 const $ = (s, r = document) => r.querySelector(s);

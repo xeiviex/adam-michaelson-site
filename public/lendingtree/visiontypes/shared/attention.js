@@ -19,7 +19,7 @@ export const away = () => document.hidden || held;
 
 const CSS = `
 .vt-away { position: fixed; left: 50%; top: 14px; transform: translateX(-50%); z-index: 500; display: flex; flex-direction: column; align-items: center; gap: 2px;
-  max-width: calc(100vw - 24px); padding: 10px 18px 11px; border-radius: 12px; background: rgba(13, 27, 42, .95); color: #fff; text-align: center;
+  width: max-content; max-width: calc(100vw - 24px); padding: 10px 18px 11px; border-radius: 12px; background: rgba(13, 27, 42, .95); color: #fff; text-align: center;
   font: 500 13px/1.35 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; box-shadow: 0 10px 30px rgba(0, 0, 0, .3), 0 0 0 2px rgba(255, 255, 255, .85);
   pointer-events: none; animation: vt-away-in .28s cubic-bezier(.2, .8, .3, 1); }
 .vt-away[hidden] { display: none; }

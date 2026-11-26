@@ -9,7 +9,7 @@ import { PERSON, money, lenderIcon } from '../shared/data.js';
 import { MARKET, LISTINGS, HERO_ID, carName, priceBreakdown, monthlyPayment, loanNumbers, FINANCE, APPLICANT, AUTO_LOAN_OFFERS, LOAN_RECOMMEND, CURRENT_POLICY, CURRENT_WITH_TACOMA, TWO_CAR_QUOTES, INSURANCE_RECOMMEND, DELIVERY, ORDER_NUMBER, GOOGLE_PROFILE, ADDRESS_SUGGESTIONS, SEARCH } from './data.js?v=1';
 import { PROTO, SHELL, SEARCH_T, DETAIL_T, STEPS, FLOW_T, SUMMARY_T, DETAILS_T, GOOGLE_T, TRADE_T, PAY_T, FIN_STEPS, FIN, INS, DELIVERY_T, REVIEW_T, DONE_T, ASK_T, NOW, APPLICANT_AUTO } from './content.js?v=1';
 import { ask } from '../shared/agent.js';
-import { away, watchAttention, attentionReset } from '../shared/attention.js?v=1';
+import { away, watchAttention, attentionReset } from '../shared/attention.js?v=2';
 
 /* ---------- small helpers ---------- */
 const $ = (s, r = document) => r.querySelector(s);

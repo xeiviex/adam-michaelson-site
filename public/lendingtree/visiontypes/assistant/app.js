@@ -13,7 +13,7 @@ import * as CARDS from './cards.js?v=8';
 import { getScenes, findOffer, routeOpener, matchChoice, matchOpener, noteFor, holdings, OPENERS, TITLES, HERO, PROTO_NOTE, DEFAULT_SEL, SERVICING, MODALS, AGENT, NOTES } from './script.js?v=8';
 import { PERSON, BRAND } from '../shared/data.js';
 import { ask } from '../shared/agent.js';
-import { away, watchAttention, attentionReset } from '../shared/attention.js?v=1';
+import { away, watchAttention, attentionReset } from '../shared/attention.js?v=2';
 
 /* ---------- settings ---------- */
 const Q = new URLSearchParams(location.search);
