@@ -7,7 +7,7 @@
 const A = (d, cls = '') => `class="a ${cls}" style="--d:${d}"`;
 /* A is LendingTree's own website and app; B is the same journey inside an assistant. */
 /* The financial model behind the economics slide (a Google Sheet; it must be shared for viewers to open it). */
-const MODEL = 'https://docs.google.com/spreadsheets/d/1Pv9WwcmAjMGJtT58Wq5uin1fhGBgVDNJGyUgKFaPbcc/edit';
+const MODEL = 'https://docs.google.com/spreadsheets/d/1LmkZxZ4h1CQvXU9iJhrIu7MxAvyAgw5la24MGb_6zOA/edit';
 const VT_A = '/lendingtree/visiontypes/lifecycle/';
 const VT_B = '/lendingtree/visiontypes/assistant/';
 const VT_C = '/lendingtree/visiontypes/embedded/';
@@ -36,7 +36,7 @@ const g3 = (d) => `<svg viewBox="0 0 300 124" aria-hidden="true">
   <circle ${A(d + 2.1, 'pop')} class="goal" cx="286" cy="108" r="7"/>
 </svg>`;
 /* The white bar fades in after the three columns; then its words and dots fade in one by one, left to right. */
-const base = (d) => `<div class="base a fade" style="--d:${d}">${['Raise the bar', 'Learn fast', 'Lead the team'].map((t, i) => `${i ? `<i ${A((d + 0.25 + i * 0.7).toFixed(2), 'fade')} aria-hidden="true"></i>` : ''}<span ${A((d + 0.6 + i * 0.7).toFixed(2), 'fade')}>${t}</span>`).join('')}</div>`;
+const base = (d) => `<div class="base a fade" style="--d:${d}">${['Raise the bar', 'Transform', 'Learn fast', 'Lead the team'].map((t, i) => `${i ? `<i ${A((d + 0.25 + i * 0.7).toFixed(2), 'fade')} aria-hidden="true"></i>` : ''}<span ${A((d + 0.6 + i * 0.7).toFixed(2), 'fade')}>${t}</span>`).join('')}</div>`;
 const open = `
 <div class="th">
   <div class="th3">
@@ -294,30 +294,90 @@ const visiontypes = `
 <ol class="life a" style="--d:1.2">${LIFE.map((s, i) => `<li style="--k:${i}"><span>${s}</span></li>`).join('')}</ol>`;
 
 /* ------------------------------------------------------- what this will take */
-/* Three layers, titles only: customer surfaces sit on the platform, which sits on signed partners.
-   Each layer arrives as its label, then its three titles together. The sentences are in the Details sheet. */
-const LAYERS = [
-  ['Where the customer is', ['AI assistants', 'Partner products', 'LendingTree website and app']],
-  ['LendingTree platform', ['The LendingTree agent', 'Closing and binding rails', 'One chosen partner'], 'plat'],
-  ['Who we need to sign', ['Data connections', 'Alpha lenders and carriers', 'A first embedded partner']],
+/* Four calm rows: customer surfaces sit on the platform, which sits on signed partners; go-to-market runs alongside.
+   Each component is a button that opens its own sheet (data-topic, see app.js). The sheet bodies are built below, by TAKE_TOPICS. */
+const TAKE = [
+  { label: 'Where the customer is', items: [
+    { key: 'assistants', title: 'AI assistants', line: 'OpenAI first, then Google and others',
+      what: 'LendingTree offered inside the assistants people already ask about money, so a shopper can compare, apply and keep track without leaving the conversation.',
+      hard: ['Each assistant has its own app programme, review and rules, and these are still changing.', 'Commercial terms and attribution have to be agreed: who is credited when a loan closes or a policy binds.', 'A regulated product is offered inside someone else’s interface, so disclosures and consent have to hold there too.', 'We do not control the placement, and it can change.'],
+      first: 'One assistant, one loan product and one insurance product. OpenAI first, then Google, Anthropic and others.',
+      deps: 'The LendingTree agent, alpha lenders and carriers, and data connections.' },
+    { key: 'partners', title: 'Partner products', line: 'Embedded in their purchase flow',
+      what: 'Companies put LendingTree financing and insurance inside their own purchase flow, such as a car marketplace’s checkout. The partner is paid a fee, in place of what we spend to acquire a lead.',
+      hard: ['The embedded SDK is new technology we would need to build.', 'Each partner has its own checkout and its own roadmap, so every integration has to earn their engineering time.', 'The fee, the customer relationship and the data each side may use all have to be agreed in a contract.', 'A regulated product sits inside someone else’s experience, so compliance has to hold in their flow.'],
+      first: 'One partner live in 2027, then two more that year. The model assumes ten in 2028 and twenty in 2029.',
+      deps: 'The LendingTree agent, closing and binding rails, an embedded partnerships team, and a go-to-market for embedded.' },
+    { key: 'account', title: 'LendingTree website and app', line: 'One account for loans and policies',
+      what: 'The customer account: one home on LendingTree’s website and app for a person’s loans, policies and linked accounts, wherever they started.',
+      hard: ['It needs data back from lenders and carriers after the sale: balances, due dates, renewals. How much of that LendingTree receives today is to be confirmed in my first weeks.', 'Identity has to match across assistants, partners and our own surfaces, so one person has one account.', 'Payments and claims move money, and carry more regulatory weight than showing a balance.', 'It earns a regular visit only if it is useful between purchases.'],
+      first: 'Read-only to start: balances, due dates and renewals. Then payments and claims.',
+      deps: 'Data connections, alpha lenders and carriers, and closing and binding rails.' },
+  ] },
+  { label: 'LendingTree platform', cls: 'plat', items: [
+    { key: 'agent', title: 'The LendingTree agent', line: 'MCP, API and an embedded SDK',
+      what: 'The tools an assistant or a partner calls: eligibility, offers and quotes, application status, servicing. Offered three ways: MCP, API and an embedded SDK.',
+      hard: ['Every call acts on a person’s financial data, so each one needs sign-in, consent and an audit trail.', 'It has to return real answers, which depends on lenders and carriers responding through an API.', 'The embedded SDK is new technology we would need to build, and it runs inside other companies’ products.', 'Three ways in means three things to secure, version and support.'],
+      first: 'Eligibility, and offers and quotes, for one loan product and one insurance product, through one assistant.',
+      deps: 'Alpha lenders and carriers, data connections, and closing and binding rails.' },
+    { key: 'rails', title: 'Closing and binding rails', line: 'Disclosures, signature, funding, binding',
+      what: 'Everything needed to finish the transaction with the customer, not hand it off: disclosures, e-signature, funding status, policy binding and the ID card.',
+      hard: ['Home equity: US rules on referral fees for mortgage-type loans (RESPA Section 8) constrain fees paid to a referrer on close.', 'Insurance: being paid when a policy binds generally requires a producer licence.', 'Disclosures and licensing differ by product and by state.', 'Funding and binding happen in the lender’s or carrier’s systems, so status has to come back from them reliably.'],
+      first: 'One loan product and one insurance product, with licensing and compliance signed off first. Review with counsel comes before anything is built.',
+      deps: 'Alpha lenders and carriers, and data connections.' },
+    { key: 'chosen', title: 'One chosen partner', line: 'No flood of calls, texts and emails',
+      what: 'In these journeys the shopper picks who contacts them. The request is not sold to several partners, and the flood of calls, texts and emails stops.',
+      hard: ['Sending each request to one partner gives up two thirds of today’s lead revenue per request, on the model’s assumptions.', 'It pays only if one chosen partner closes as many requests as three lead buyers do today. That is an assumption, not a result.', 'Lenders and carriers have to agree to be paid on outcomes in place of leads.', 'It changes partner contracts, targets and reporting, so it needs the commercial and finance leaders with it.'],
+      first: 'A small share of volume in one loan product and one insurance product, measured against selling leads.',
+      deps: 'Alpha lenders and carriers, and closing and binding rails.' },
+  ] },
+  { label: 'Who we need to sign', items: [
+    { key: 'data', title: 'Data connections', line: 'Bank, property and credit data, by consent',
+      what: 'Access, by consent, to what an offer needs: bank, income and assets through aggregators such as Plaid and Finicity; property and vehicle data; a soft credit pull.',
+      hard: ['Each source is its own contract, cost and integration. Which of these LendingTree holds today is to be confirmed in my first weeks.', 'Consent has to be explicit, recorded and revocable, with an audit trail of every use.', 'Credit and bank data bring their own rules on permitted use, security and retention.', 'Coverage and quality vary, so every flow needs another path for when a connection fails.'],
+      first: 'The few sources one loan product and one insurance product need, by consent, with the audit trail from the start.',
+      deps: 'The LendingTree agent, which carries sign-in and consent.' },
+    { key: 'alpha', title: 'Alpha lenders and carriers', line: 'Firm offers and bindable quotes, by API',
+      what: 'Two or three lenders, and two or three carriers, who return firm offers and bindable quotes, and accept an application, through an API.',
+      hard: ['A firm offer or a bindable quote means real underwriting in real time, which not every partner’s systems can do.', 'They are asked to pay on outcomes, at terms that are large next to market norms.', 'Integration needs their engineering time and their compliance sign-off.', 'With too few of them, the shopper has little to choose from.'],
+      first: 'Two or three of each, in one loan product and one insurance product.',
+      deps: 'Closing and binding rails, one chosen partner, and data connections.' },
+    { key: 'first', title: 'A first embedded partner', line: 'Signed, integrated and live in 2027',
+      what: 'One company signed, integrated and live in 2027, as the reference for the next two that year.',
+      hard: ['The first partner signs before there is a reference to point to.', 'The contract, the integration and the compliance review each take time, and they have to be planned together.', 'The fee has to be worth it to them. The model assumes 2% of the loan, in place of our marketing spend.', 'The choice of first partner sets the pattern for the ones that follow.'],
+      first: 'One partner and one purchase flow, with financing and insurance inside their checkout.',
+      deps: 'Partner products and its embedded SDK, closing and binding rails, an embedded partnerships team, and a go-to-market for embedded.' },
+  ] },
+  { label: 'How we take it to market', cls: 'gtm', items: [
+    { key: 'team', title: 'An embedded partnerships team', line: 'Signs, launches and supports partners',
+      what: 'A group within Partnerships dedicated to this: finding and signing partners, launching them, and supporting them once live.',
+      hard: ['It is a different sale from signing lenders and carriers: the buyer is a product or commerce team.', 'Launching a partner needs engineering, legal and compliance alongside the commercial lead.', 'Whether this is new roles or a change to existing ones is a decision to make with the head of Partnerships. To be confirmed in my first weeks.', 'Support does not end at launch, and it grows with each partner.'],
+      first: 'A small group who own the first partner from signing through launch and support.',
+      deps: 'A go-to-market for embedded, and partner products.' },
+    { key: 'gtm', title: 'A go-to-market for embedded', line: 'Targets, the partner fee, the launch playbook',
+      what: 'Which partners we target first, the fee we pay them, the launch playbook, and how we measure each partner.',
+      hard: ['It is needed alongside the technology, not after it, so it has to be written before there is a product to show.', 'The partner fee has to work for the partner and for our margin. The model assumes 2% of the loan.', 'Measuring a partner needs attribution through to a funded loan or a bound policy.', 'Marketing, Partnerships, Product and Finance each hold a part of it, and it needs one owner.'],
+      first: 'A short list of target partners, one fee structure, and a launch playbook written with the first partner.',
+      deps: 'An embedded partnerships team, a first embedded partner, and the LendingTree agent.' },
+  ] },
 ];
 const take = `
 <div class="lyr">
-  ${LAYERS.map(([label, items, cls], k) => { const d = 0.2 + k * 0.9; return `<section class="ly ${cls || ''} a fade" style="--d:${d.toFixed(2)}">
-    <h3>${label}</h3>
-    <ul class="a fade" style="--d:${(d + 0.3).toFixed(2)}">${items.map((t) => `<li>${t}</li>`).join('')}</ul>
+  ${TAKE.map((r, k) => { const d = 0.2 + k * 0.75; return `<section class="ly ${r.cls || ''} a fade" style="--d:${d.toFixed(2)}">
+    <h3>${r.label}</h3>
+    <ul class="a fade" style="--d:${(d + 0.25).toFixed(2)}">${r.items.map((c) => `<li><button type="button" class="cp" data-topic="take:${c.key}" aria-haspopup="dialog"><b>${c.title}</b><small>${c.line}</small><i aria-hidden="true"></i></button></li>`).join('')}</ul>
   </section>`; }).join('\n  ')}
 </div>
 <div class="ly-f">
-  <p class="ly-g a fade" style="--d:2.9">To take it to market: an embedded partnerships team, and a go-to-market for embedded.</p>
-  <p class="acct a fade" style="--d:3.1">First version: one loan product, one insurance product, one assistant, one embedded partner, a handful of lenders and carriers.</p>
+  <p class="ly-g a fade" style="--d:3.2">I know this is a great deal of work, across technology, partners, legal and go-to-market. Each piece opens.</p>
+  <p class="acct a fade" style="--d:3.35">First version: one loan product, one insurance product, one assistant, one embedded partner, a handful of lenders and carriers.</p>
 </div>`;
 
 /* ------------------------------------------------------------- the economics */
 /* Per consumer request, from the model's default inputs. Lead prices and conversion rates are assumptions. */
 const ECON = [
-  { name: 'Loans', eg: 'Example: a home equity line', today: 120, close: 248, serv: 278, flat: 175, fmt: (n) => '$' + n },
-  { name: 'Insurance', eg: 'Example: an auto policy', today: 36, close: 108, serv: 25, flat: 44, fmt: (n) => '$' + n },
+  { name: 'Loans', eg: 'Example: a home equity line', today: 120, close: 248, serv: 137, flat: 129, fmt: (n) => '$' + n },
+  { name: 'Insurance', eg: 'Example: an auto policy', today: 36, close: 108, serv: 14, flat: 41, fmt: (n) => '$' + n },
 ];
 const econ = `
 <div class="ec">
@@ -332,13 +392,13 @@ const econ = `
   <section class="ec-p">
     <h3 ${A(3.1)}>Embedded <span>Example: a financed used car</span></h3>
     <p class="ec-u a fade" style="--d:3.2">Revenue per purchase</p>
-    <div class="ec-row a" style="--d:3.25"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:3.35;width:57.7%"><em>At close</em></i><i class="serv a gx" style="--d:3.65;width:42.3%"><em>Servicing</em></i><b>$2,346</b></div></div>
-    <div class="ec-row a" style="--d:3.8"><span>Paid to the partner, 2% of the loan</span><div class="ec-b"><i class="flat a gx" style="--d:3.9;width:23.1%"></i><b>$541</b></div></div>
+    <div class="ec-row a" style="--d:3.25"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:3.35;width:69.5%"><em>At close</em></i><i class="serv a gx" style="--d:3.65;width:30.5%"><em>Servicing</em></i><b>$1,947</b></div></div>
+    <div class="ec-row a" style="--d:3.8"><span>Paid to the partner, 2% of the loan</span><div class="ec-b"><i class="flat a gx" style="--d:3.9;width:27.8%"></i><b>$541</b></div></div>
     <div class="ec-row a" style="--d:4.1"><span>Partners live</span><p class="ec-n"><b>3</b> in 2027<i></i><b>10</b> in 2028<i></i><b>20</b> in 2029</p></div>
   </section>
 </div>
 <div class="ec-f">
-  <div class="ec-t a" style="--d:4.5"><h3>The terms</h3><p>5% of the loan at close. $450 per policy at bind. 15% of interest while we service a loan. A monthly fee per policy in force. Each request goes to one chosen partner. Embedded partners are paid 2% in place of our marketing spend.</p></div>
+  <div class="ec-t a" style="--d:4.5"><h3>The terms</h3><p>5% of the loan at close. $450 per policy at bind. 15% of interest while we service a loan. A monthly fee per policy in force. We service 70% from the start, and 10% of those move to the lender or carrier each year. Each request goes to one chosen partner. Embedded partners are paid 2% in place of our marketing spend.</p></div>
   <div class="ec-ramp a" style="--d:4.8"><h3>Share of volume on outcomes</h3><ol>${[['Start', 1], ['6 months', 10], ['1 year', 50], ['2 years', 100]].map((r, i) => `<li><i class="a gy" style="--d:${(5.0 + i * 0.2).toFixed(1)};height:${Math.max(r[1], 4)}%"></i><b>${r[1]}%</b><span>${r[0]}</span></li>`).join('')}</ol></div>
 </div>
 <p class="ec-w a fade" style="--d:5.9">Lead prices and conversion rates are my assumptions, informed by my experience at Lendio, since LendingTree does not publish them. Being paid on close in home equity, and on bind in insurance, needs legal review first.</p>`;
@@ -469,22 +529,24 @@ const D = {
     <h4>Per consumer request, at the model’s default inputs</h4>
     ${tbl(['', 'Home equity line', 'Auto insurance'], [
       ['Today, selling leads', '$120 (three leads at $40)', '$36 (three leads at $12)'],
-      ['Paid on outcomes', '$526 ($248 at close, $278 from servicing)', '$133 ($108 at bind, $25 from servicing)'],
-      ['Outcomes, with no lift in conversion', '$175', '$44'],
-      ['Break-even', 'A 1.8% funded rate per request', 'A 6.5% bind rate per request, below today’s assumed 8% per lead'],
+      ['Paid on outcomes', '$386 ($248 at close, $137 from servicing)', '$122 ($108 at bind, $14 from servicing)'],
+      ['Outcomes, with no lift in conversion', '$129', '$41'],
+      ['Break-even', 'A 2.5% funded rate per request, below today’s assumed 2.7% per lead', 'A 7.1% bind rate per request, below today’s assumed 8% per lead'],
     ])}
     <h4>Embedded: per financed used-car purchase</h4>
     ${tbl(['', 'Revenue', 'After the partner fee and cost to serve'], [
-      ['Loan only', '$2,346 ($1,354 at close, $993 from servicing)', '$1,337'],
-      ['Loan and an insurance policy', '$2,935', '$1,824'],
+      ['Loan only', '$1,947 ($1,354 at close, $594 from servicing)', '$1,143'],
+      ['Loan and an insurance policy', '$2,477', '$1,586'],
     ])}
-    <p>The partner is paid 2% of the loan, about $541, in place of marketing spend. With three partners in 2027, ten in 2028 and twenty in 2029, and an assumed 500 financed purchases per partner each month, the model shows about $226M of revenue over three years, with the cost of building the embedded technology paid back early in 2028. Acquisition cost is about 23% of revenue here, against 70% to 77% on leads today.</p>
+    <p>The partner is paid 2% of the loan, about $541, in place of marketing spend. With three partners in 2027, ten in 2028 and twenty in 2029, and an assumed 500 financed purchases per partner each month, the model shows about $214M of revenue over three years, with the cost of building the embedded technology paid back early in 2028. Acquisition cost is about 28% of revenue here, against 70% to 77% on leads today.</p>
     <h4>Across LendingTree’s products</h4>
-    <p>The model has a section for each of eight product types and an aggregate. The terms do not fit every product equally. They fit small business loans and insurance best. A 5% fee on a mortgage is about $21,000 a loan, which is not realistic and is the hardest legal case. Personal loans earn less on these terms than on leads. Leaving mortgage out, a request earns about $134 on outcomes against $42 on leads, and about $47 with no lift in conversion.</p>
+    <p>The model has a section for each of eight product types and an aggregate. The terms do not fit every product equally. They fit small business loans and insurance best. A 5% fee on a mortgage is about $21,000 a loan, which is not realistic and is the hardest legal case. Personal loans earn less on these terms than on leads. Leaving mortgage out, a request earns about $116 on outcomes against $42 on leads, and about $40 with no lift in conversion, which is slightly below today.</p>
     <h4>What is assumed</h4>
     ${ul(['Price per lead, leads sold per request, and funded and bind rates are assumptions, informed by my experience at Lendio. LendingTree does not publish them, and every comparison moves with them.', 'Marketing cost per request comes from LendingTree’s reported segment margins and is charged equally to both models.', 'The default outcome case assumes one chosen partner closes as many requests as three lead buyers do today. The no-lift row shows the case where it does not.', 'Sending each request to one partner gives up two thirds of today’s lead revenue per request.'])}
     <h4>Over 36 months on the ramp</h4>
-    <p>With illustrative volumes, home equity and auto insurance together earn about $4.2B on the ramp against about $1.8B staying on leads. Most of the difference is auto insurance, and it rests on carriers paying $450 for a bound policy where the model assumes they pay about $150 in lead fees today.</p>
+    <p>With illustrative volumes, home equity and auto insurance together earn about $4.1B on the ramp against about $1.8B staying on leads. Most of the difference is auto insurance, and it rests on carriers paying $450 for a bound policy where the model assumes they pay about $150 in lead fees today.</p>
+    <h4>How much we service</h4>
+    <p>Servicing revenue is counted on 70% of funded loans and bound policies from the start, because some lenders and carriers will keep servicing and some customers will go straight to them. Of those we service, 10% a year are assumed to move to the lender or carrier, at which point our servicing fee stops. Both figures are assumptions and are inputs in the model. Cost to serve is counted on the same share.</p>
     <h4>Why $450 for insurance</h4>
     <p>Each shopper is sold about three times today, so one fee has to replace three lead sales. Public estimates of what a carrier spends to win an auto policy run from about $450 for direct writers to about $900 through independent agents. The fee is set about 25% under an assumed $600. It is paid once, with no renewal commission.</p>
     <h4>To review with counsel before anything else</h4>
@@ -544,6 +606,13 @@ const D = {
   outcomes: `${lnk([['/lendingtree/year-one/', 'Outcome cards, the full plan and every milestone']])}`,
 };
 
+/* One sheet per component of "What this will take", each with the same four headings. */
+const TAKE_TOPICS = Object.fromEntries(TAKE.flatMap((r) => r.items).map((c) => [c.key, { title: c.title, body: `
+    <h4>What it is</h4><p>${c.what}</p>
+    <h4>Why it is hard</h4>${ul(c.hard)}
+    <h4>First version</h4><p>${c.first}</p>
+    <h4>Depends on</h4><p>${c.deps}</p>` }]));
+
 /* The A() helper writes its own class attribute; fold it into any class the tag already has. */
 const fold = (h) => h
   .replace(/class="([^"]*)"\s+class="a ([^"]*)"/g, 'class="$1 a $2"')
@@ -557,7 +626,7 @@ const RAW = [
   { id: 'impact', name: 'Immediate impact', title: 'Immediate impact', sub: 'New profit in year one, from bets that earn their place', draw: impact, details: D.impact, links: [['/lendingtree/choice/', 'The Power of Choice'], ['/lendingtree/companion/', 'A Companion'], ['/lendingtree/outcomes/', 'Aligned Outcomes']] },
   { id: 'disruption', name: 'Disruption', title: 'Disruption', sub: 'Put LendingTree out of business: three pods and a research-led reset', draw: disruption, details: D.disruption },
   { id: 'visiontypes', name: 'Visiontypes', title: 'Visiontypes', sub: 'Where this could go, across the whole customer lifecycle', draw: visiontypes, links: VTS.map((v) => [v.url, v.title]) },
-  { id: 'take', name: 'What this will take', title: 'What this will take', sub: 'What the visiontypes assume, and the first version of each', draw: take, details: D.take },
+  { id: 'take', name: 'What this will take', title: 'What this will take', sub: 'What the visiontypes assume, and the first version of each', draw: take, details: D.take, topics: TAKE_TOPICS },
   { id: 'economics', name: 'The economics', title: 'The economics', sub: 'Selling leads against being paid on outcomes', draw: econ, details: D.economics, links: [[MODEL, 'Open the model', 'pri']] },
   { id: 'time', name: 'My time', title: 'My time', sub: 'Balance carefully, delegate everything I can', draw: time, details: D.time },
   { id: 'outcomes', name: 'Year-one outcomes', title: 'Year-one outcomes', sub: 'My commitments', draw: outcomes, details: D.outcomes },

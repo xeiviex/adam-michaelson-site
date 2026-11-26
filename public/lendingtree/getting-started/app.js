@@ -152,10 +152,14 @@ vp.addEventListener('touchend', (e) => {
 
 let opener = null;
 trackEl.addEventListener('click', (e) => {
-  const b = e.target.closest('[data-open]'); if (!b) return;
-  const i = ids.indexOf(b.dataset.open), s = SLIDES[i];
-  $('#sheetTitle').textContent = s.title;
-  $('#sheetBody').innerHTML = s.details;
+  const b = e.target.closest('[data-open],[data-topic]'); if (!b) return;
+  /* data-open="<slideId>" opens that slide's Details; data-topic="<slideId>:<key>" opens one entry of its topics. */
+  const [sid, key] = (b.dataset.topic || b.dataset.open).split(':'), s = SLIDES[ids.indexOf(sid)];
+  const t = key ? s && s.topics && s.topics[key] : s && { title: s.title, body: s.details };
+  if (!t) return;
+  $('#sheetTitle').textContent = t.title;
+  $('#sheetBody').innerHTML = t.body;
+  sheet.classList.toggle('topic', !!key);
   opener = b; sheet.showModal(); $('#sheetBody').scrollTop = 0;
 });
 $('#sheetClose').addEventListener('click', () => sheet.close());
