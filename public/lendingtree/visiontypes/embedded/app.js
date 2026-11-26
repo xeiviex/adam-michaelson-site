@@ -196,9 +196,9 @@ async function press(node, live, target, click = true) {
   await bringIn(box(node), live);
   if (!node.isConnected) return false;
   const show = box(node);
-  cueAt(show); cue.className = 'cue show'; await cueWait(240, live);
+  cueAt(node); cue.className = 'cue show'; await cueWait(240, live); /* on the box itself when it is a checkbox; its whole label presses */
   show.classList.add('pressing'); cue.classList.add('down'); await cueWait(300, live);
-  show.classList.remove('pressing'); cueAt(show); cue.className = 'cue show ring';
+  show.classList.remove('pressing'); cueAt(node); cue.className = 'cue show ring';
   setTimeout(() => { cue.className = 'cue'; }, 560);
   if (!live()) return false;
   if (!click) return true;
