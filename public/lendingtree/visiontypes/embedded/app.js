@@ -128,7 +128,7 @@ function autoSteps() {
   if (S.gdlg) return [];
   if (S.screen === 'search') return [{ wait: 1200 }, tap(`[data-a=open][data-v=${HERO_ID}]`, 2800)];
   if (S.screen === 'detail') return [tap('[data-a=photo][data-v="1"]', 2600), tap('[data-a=photo][data-v="3"]', 1900), tap('[data-a=photo][data-v="4"]', 1900), see('#specs', 1400), see('#history', 2400), tap('[data-a=start]', 2400)];
-  if (S.screen === 'done') return [see('.next', 3200), { do: EMBED ? () => start(START_STAGE) : finale, read: EMBED ? 5000 : 5200 }];
+  if (S.screen === 'done') return [see('.whatnext', 3200), { do: EMBED ? () => start(START_STAGE) : finale, read: EMBED ? 5000 : 5200 }];
   const f = S.fin, n = S.ins;
   if (S.step === 'details') {
     if (S.det.stage === 'start') return [tap('[data-a=google]', 2600)];
@@ -280,7 +280,7 @@ function detailHtml() {
     <nav class="crumbs" aria-label="Breadcrumb"><button type="button" class="link" data-a="home">${ic('left', 15, 2.2)}${esc(T.backToResults)}</button><span>${T.crumbs.map(esc).join(' / ')} / ${esc(c.trim)}</span></nav>
     <div class="vdp-grid">
       <div class="gal"><div class="gal-stage" id="galStage"><img id="galImg" src="${ph[S.photo].src}" alt="${esc(carName(c))}. ${esc(ph[S.photo].alt)}" width="1264" height="848">
-          ${ph.length > 1 ? `<button type="button" class="gal-nav prev" data-a="photo-step" data-v="-1" aria-label="${esc(T.prev)}">${ic('left', 20, 2.2)}</button><button type="button" class="gal-nav next" data-a="photo-step" data-v="1" aria-label="${esc(T.next)}">${ic('right', 20, 2.2)}</button>` : ''}
+          ${ph.length > 1 ? `<button type="button" class="gal-nav gal-prev" data-a="photo-step" data-v="-1" aria-label="${esc(T.prev)}">${ic('left', 20, 2.2)}</button><button type="button" class="gal-nav gal-next" data-a="photo-step" data-v="1" aria-label="${esc(T.next)}">${ic('right', 20, 2.2)}</button>` : ''}
           <span class="gal-n" id="galN"${ph.length > 1 ? '' : ' hidden'}>${esc(T.photoCount(S.photo + 1, ph.length))}</span>
           <button type="button" class="lc-save${on ? ' on' : ''}" data-a="save" data-v="${c.id}" aria-pressed="${on}" aria-label="${esc(on ? SEARCH_T.saved : SEARCH_T.save)}">${ic('heart', 18, 2)}</button></div>
         ${ph.length > 1 ? `<div class="gal-thumbs">${ph.map((p, i) => `<button type="button" class="${i === S.photo ? 'on' : ''}" data-a="photo" data-v="${i}" aria-label="${esc(T.photo(i + 1))}: ${esc(p.alt)}" aria-current="${i === S.photo}"><img src="${p.src}" alt="" loading="lazy" width="158" height="106"></button>`).join('')}</div>` : ''}</div>
@@ -305,19 +305,18 @@ function stepperHtml() {
   const i = stepIdx(S.step);
   return `<ol class="steps" aria-label="${esc(FLOW_T.progress)}">${STEPS.map((s, k) => {
     const state = s.id === S.step ? 'cur' : S.done[s.id] ? 'done' : '';
-    return `<li class="${state}"><button type="button" data-a="goto" data-v="${s.id}"${canGo(s.id) ? '' : ' disabled'}${s.id === S.step ? ' aria-current="step"' : ''}><i>${S.done[s.id] && s.id !== S.step ? ic('check', 13, 3.2) : k + 1}</i><span>${esc(s.label)}</span></button></li>`;
+    return `<li class="${state}"><button type="button" data-a="goto" data-v="${s.id}"${canGo(s.id) ? '' : ' disabled'}${s.id === S.step ? ' aria-current="step"' : ''}><i>${S.done[s.id] && s.id !== S.step ? ic('check', 13, 3.2) : k + 1}</i><span>${esc(s.nav || s.label)}</span></button></li>`;
   }).join('')}</ol>
   <div class="steps-m"><b>${esc(STEPS[i].label)}</b><span>${esc(FLOW_T.stepOf(i + 1, STEPS.length))}</span><div class="steps-bar">${STEPS.map((s, k) => `<i class="${k < i || S.done[s.id] ? 'done' : k === i ? 'cur' : ''}"></i>`).join('')}</div></div>`;
 }
 const row = (k, v, cls = '') => `<div class="${cls}"><dt>${esc(k)}</dt><dd>${v}</dd></div>`;
 function sumBlocks() {
   const T = SUMMARY_T, b = B(), f = S.fin;
-  const price = `<dl class="sum-l">${row(T.price, money(b.price))}${row(T.tax, money(b.tax))}${row(T.titleReg, money(b.titleRegistration))}${row(T.doc, money(b.documentation))}${row(S.del.mode === 'pickup' && S.done.delivery ? T.pickup : T.delivery, T.free, 'good')}${S.trade === 'later' ? row(T.tradeLater, esc(T.tradeLaterV), 'mut') : ''}${row(T.total, money(b.total), 'tot')}</dl>`;
+  const price = `<dl class="sum-l">${row(T.price, money(b.price))}${row(T.taxesFees, money(b.tax + b.titleRegistration + b.documentation))}${row(S.del.mode === 'pickup' && S.done.delivery ? T.pickup : T.delivery, T.free, 'good')}${S.trade === 'later' ? row(T.tradeLater, esc(T.tradeLaterV), 'mut') : ''}${row(T.total, money(b.total), 'tot')}</dl>`;
   let pay = `<p class="sum-pend">${esc(T.payPending)}</p>`, due = null;
   if (S.pay.method === 'lt' && f.approved) {
     const o = offerOf(f.offer), n = nums(o);
-    pay = `<dl class="sum-l">${row(T.down, money(f.down))}${row(T.financed, money(n.financed))}${row(T.apr, `${o.apr.toFixed(2)}%`)}${row(T.term, esc(T.months(o.term)))}${row(T.monthly, `<b>${money(n.payment)}</b>${esc(T.perMo)}`, 'big')}</dl><div class="sum-who">${lmark(o.lender)}<span><b>${esc(o.lender)}</b>${credit('loan')}</span></div>`;
-    due = f.down;
+    pay = `<dl class="sum-l">${row(T.downDue, money(f.down))}${row(T.financed, money(n.financed))}${row(T.monthly, `<b>${money(n.payment)}</b>${esc(T.perMo)}`, 'big')}</dl><div class="sum-who">${lmark(o.lender)}<span><b>${esc(o.lender)}</b><em>${o.apr.toFixed(2)}% APR · ${esc(T.months(o.term))}</em>${credit('loan')}</span></div>`;
   } else if (S.pay.method === 'lt') {
     pay = `<dl class="sum-l">${row(T.down, money(f.down))}${row(T.estimate, `about ${money(estFor(S.car, f.down, f.term))}${esc(T.perMo)}`, 'mut')}</dl><p class="sum-pend">${esc(T.estimateNote)}</p>`;
   } else if (S.pay.method === 'cash' && S.done.payment) { pay = `<p class="sum-line">${esc(T.cash)}</p>`; due = b.total; }
@@ -336,6 +335,7 @@ function paintSummary(flashAll) {
   $('#sumBar').innerHTML = `<span class="sum-bar-t">${ic('doc', 17)}${esc(SUMMARY_T.toggle)}</span><span class="sum-bar-v"><b>${money(b.total)}</b>${esc(monthly)}${ic('down', 16, 2.4)}</span>`;
   $('#sumBar').setAttribute('aria-expanded', String(S.sumOpen)); sum.classList.toggle('open', S.sumOpen);
   $('#sumCar').innerHTML = `<b>${c.year} ${esc(c.make)} ${esc(c.model)}</b><span>${esc(c.trim)} · ${esc(DETAIL_T.sub(c).split(' · ').slice(1).join(' · '))}</span>`;
+  $('#sumNote').hidden = !!S.pay.method;
   for (const k of ['price', 'pay', 'ins']) {
     const n = $(`#sum-${k}`); if (sumLast[k] === blocks[k] && !flashAll) continue;
     n.innerHTML = blocks[k];
@@ -343,7 +343,7 @@ function paintSummary(flashAll) {
     sumLast[k] = blocks[k];
   }
 }
-const actions = (next, opts = {}) => `<div class="actions">${opts.noBack ? '' : `<button type="button" class="btn ghost" data-a="${opts.backA || 'back'}">${esc(opts.back || FLOW_T.back)}</button>`}${next ? `<button type="button" class="btn" data-a="${opts.a || 'next'}"${opts.disabled ? ' disabled' : ''}>${esc(next)}</button>` : ''}</div>`;
+const actions = (next, opts = {}) => `<div class="actions${next ? '' : ' soft'}">${opts.noBack ? '' : `<button type="button" class="btn ghost" data-a="${opts.backA || 'back'}">${esc(opts.back || FLOW_T.back)}</button>`}${next ? `<button type="button" class="btn" data-a="${opts.a || 'next'}"${opts.disabled ? ' disabled' : ''}>${esc(next)}</button>` : ''}</div>`;
 const optCard = (a, o, on, extra = '') => `<button type="button" class="opt${on ? ' on' : ''}" data-a="${a}" data-v="${o.id}" aria-pressed="${!!on}"><span class="opt-r" aria-hidden="true"></span><span class="opt-b"><b>${esc(o.title)}${o.credit ? ` <span class="opt-c"><img src="${LEAF}" alt="">${esc(o.credit)}</span>` : ''}</b><span>${esc(typeof o.sub === 'function' ? o.sub(S.det.address.split(',').slice(0, 2).join(',')) : o.sub)}</span>${extra}</span>${o.badge ? `<em class="opt-badge">${esc(o.badge)}</em>` : ''}</button>`;
 const field = (id, label, value, attrs = '', tag = '') => `<label class="fld" for="${id}"><span>${esc(label)}${tag ? `<em>${esc(tag)}</em>` : ''}</span><input id="${id}" data-f="${id}" value="${esc(value)}" autocomplete="off" ${attrs}></label>`;
 const working = (title, sub, lines, at, names) => `<div class="work"><span class="spin big" aria-hidden="true"></span><h2>${esc(title)}</h2>${sub ? `<p>${esc(sub)}</p>` : ''}${lines ? `<ul class="work-l">${lines.map((l, i) => `<li class="${i < at ? 'done' : i === at ? 'cur' : ''}"><i>${i < at ? ic('check', 13, 3.2) : ''}</i>${esc(l)}</li>`).join('')}</ul>` : ''}${names ? `<ul class="work-n">${names.map((x, i) => `<li style="--d:${i * 320}ms">${esc(x)}</li>`).join('')}</ul>` : ''}</div>`;
@@ -424,7 +424,7 @@ function offersHtml() {
         <button type="button" class="btn${o.id === rec ? '' : ' ghost'} wide" data-a="pick-offer" data-v="${o.id}" aria-label="${esc(T.choose)} ${esc(o.lender)}">${esc(T.choose)}</button></article>`).join('')}</div>
     <figure class="bars"><figcaption><b>${esc(T.barTitle)}</b><span>${esc(T.barNote)}</span></figcaption>${list.map(({ o, n }) => `<div class="bar-row${o.id === rec ? ' rec' : ''}"><span class="bar-name">${lmark(o.lender)}<span><b>${esc(o.lender)}</b><small>${o.apr.toFixed(2)}% · ${esc(T.term(o.term))}</small></span></span><span class="bar-track"><i style="width:${(n.interest / max) * 100}%"></i></span><span class="bar-val"><b>${money(n.interest)}</b></span></div>`).join('')}</figure>
     ${advisor(T.advisorName, T.advisor[rec]({ term: S.fin.term, bofa: by.bofa, chase: by.chase }))}
-    <div class="actions"><button type="button" class="btn ghost" data-a="fin-adjust">${esc(T.adjust)}</button></div>`;
+    <div class="actions soft"><button type="button" class="btn ghost" data-a="fin-adjust">${esc(T.adjust)}</button></div>`;
 }
 function stipsHtml() {
   const f = S.fin, o = offerOf(f.offer), T = FIN.stips, I = T.items, n = Number(f.stips.identity) + Number(f.stips.income), ready = f.stips.identity && f.stips.income && !f.busy;
@@ -443,7 +443,7 @@ function finHtml() {
   const idx = FIN_STEPS.findIndex((s) => s.id === f.stage), prog = idx >= 0 ? { i: idx + 1, n: FIN_STEPS.length, label: FIN_STEPS[idx].label } : null;
   let inner = '';
   if (f.stage === 'have') { const T = FIN.have; inner = `<h2>${esc(T.title)}</h2><p class="sub">${esc(T.sub)}</p>
-      <div class="have"><div><h3>${esc(T.haveTitle)}</h3><dl class="have-l">${T.rows(d, S.car, b.total).map(([k, v, src]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}<em class="src${src === 'Google' ? ' g' : ''}">${src === 'Google' ? G_LOGO(11) : MARK(12)}${esc(src)}</em></dd></div>`).join('')}</dl><p class="have-p"><img src="${LEAF}" alt="">${esc(T.profile)}</p></div>
+      <div class="have"><div><h3>${esc(T.haveTitle)}</h3><dl class="have-l">${T.rows(d, S.car, b.total).map(([k, v, src]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd><em class="src">${src === 'Google' ? G_LOGO(11) : MARK(12)}${esc(src)}</em></div>`).join('')}</dl><p class="have-p"><img src="${LEAF}" alt="">${esc(T.profile)}</p></div>
         <div><h3>${esc(T.needTitle)}</h3><ol class="need">${T.needs.map((x) => `<li>${esc(x)}</li>`).join('')}</ol><p class="have-t">${ic('bolt', 15, 2)}${esc(T.time)}</p></div></div>${actions(T.cta, back)}`; }
   if (f.stage === 'terms') { const T = FIN.terms; inner = `<h2>${esc(T.title)}</h2><p class="sub">${esc(T.sub)}</p>
       <div class="terms-g"><div><div class="fl">${esc(T.downLabel)}<b id="downV">${money(f.down)}</b></div><input type="range" class="range" id="f-down" data-f="f-down" min="0" max="${FINANCE.downMax}" step="500" value="${f.down}" aria-label="${esc(T.downAria)}">
@@ -471,7 +471,7 @@ function finHtml() {
       <div class="actions"><button type="button" class="btn ghost" data-a="fin-back"${f.signing ? ' disabled' : ''}>${esc(FIN.back)}</button><button type="button" class="btn${f.signing ? ' busy' : ''}" data-a="sign"${f.signing || f.sig.trim().length < 3 ? ' disabled' : ''}>${f.signing ? `<span class="spin" aria-hidden="true"></span>${esc(T.signing)}` : esc(T.cta)}</button></div>`; }
   if (f.stage === 'approved') { const T = FIN.approved, o = offerOf(f.offer), n = nums(o); inner = `<div class="party"><span class="seal">${confetti()}<svg viewBox="0 0 52 52" width="44" height="44" aria-hidden="true"><path d="M15 27l8 8 14-16"/></svg></span><h2>${esc(T.title)}</h2><p>${esc(T.body(o))}</p>
       <dl class="facts">${T.facts(o, n).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl><div class="party-who">${lmark(o.lender)}<b>${esc(o.lender)}</b></div></div>
-      <div class="actions"><button type="button" class="btn ghost" data-a="pay-change">${esc(PAY_T.done.change)}</button><button type="button" class="btn" data-a="next">${esc(T.cta)}</button></div>`; }
+      <div class="actions"><button type="button" class="btn" data-a="next">${esc(T.cta)}</button></div>`; }
   return moduleHtml('loan', inner, prog && f.stage !== 'approved' ? prog : null);
 }
 function paymentHtml() {
@@ -499,7 +499,7 @@ function quotesHtml() {
       ${TWO_CAR_QUOTES.map((q) => `<div class="quote${q.id === rec.id ? ' rec' : ''}">${q.id === rec.id ? `<em class="rib">${esc(T.rec)}</em>` : ''}<div class="q-id">${cmark(q.icon)}<div><b>${esc(q.carrier)}</b><span class="tag">${esc(q.tag)}</span></div></div><div class="q-bar">${bar(q)}<small>${esc(T.split(car, q))} · ${esc(T.cover(q))}</small></div><div class="q-val"><b>${money(q.total)}</b><span class="good">${esc(T.save(q.saving))}</span></div>
         <button type="button" class="btn${q.id === rec.id ? '' : ' ghost'} sm" data-a="pick-quote" data-v="${q.id}">${esc(T.choose(q))}</button></div>`).join('')}</div>
     ${advisor(T.advisorName, T.advisor(rec, low, car))}
-    <div class="actions"><button type="button" class="btn ghost" data-a="ins-back">${esc(FLOW_T.back)}</button><button type="button" class="btn ghost" data-a="ins-choice" data-v="add">${esc(T.stay)}</button></div>`;
+    <div class="actions soft"><button type="button" class="btn ghost" data-a="ins-back">${esc(FLOW_T.back)}</button><button type="button" class="btn ghost" data-a="ins-choice" data-v="add">${esc(T.stay)}</button></div>`;
 }
 function insuranceHtml() {
   const n = S.ins, car = S.car, when = INS.when;
@@ -511,7 +511,7 @@ function insuranceHtml() {
   if (n.stage === 'adding') inner = working(INS.adding.title(car), null, INS.adding.lines, n.line);
   if (n.stage === 'added') { const T = INS.added; inner = `<div class="party left"><span class="seal sm"><svg viewBox="0 0 52 52" width="30" height="30" aria-hidden="true"><path d="M15 27l8 8 14-16"/></svg></span><div><h2>${esc(T.title(car))}</h2><p>${esc(T.body)}</p></div></div>
       <div class="bound"><dl class="lines">${T.rows.map(([k, v]) => row(k, esc(v))).join('')}</dl>${idCard(CURRENT_WITH_TACOMA, when.card)}</div>
-      <div class="actions"><button type="button" class="btn ghost" data-a="ins-choice" data-v="shop">${esc(T.reshop)}</button><button type="button" class="btn" data-a="next">${esc(T.cta)}</button></div>`; }
+      <button type="button" class="link under" data-a="ins-choice" data-v="shop">${esc(T.reshop)}</button><div class="actions"><button type="button" class="btn" data-a="next">${esc(T.cta)}</button></div>`; }
   if (n.stage === 'checking') inner = working(INS.checking.title, INS.checking.sub(car), null, 0, INS.checking.names);
   if (n.stage === 'quotes') inner = quotesHtml();
   if (n.stage === 'confirm') { const T = INS.confirm, q = quoteOf(n.quote); inner = `<h2>${esc(T.title(q))}</h2><p class="sub">${esc(T.sub)}</p>
@@ -522,7 +522,7 @@ function insuranceHtml() {
   if (n.stage === 'binding') { const q = quoteOf(n.quote); inner = working(INS.binding.title(q), null, INS.binding.lines(q), n.line); }
   if (n.stage === 'bound') { const T = INS.bound, q = quoteOf(n.quote); inner = `<div class="party left"><span class="seal sm">${confetti()}<svg viewBox="0 0 52 52" width="30" height="30" aria-hidden="true"><path d="M15 27l8 8 14-16"/></svg></span><div><h2>${esc(T.title)}</h2><p>${esc(T.body(q))}</p></div></div>
       <div class="bound"><dl class="lines">${T.rows(q, refund(), loanDone() ? offerOf(S.fin.offer).lender : null).map(([k, v]) => row(k, esc(v))).join('')}</dl>${idCard(q, when.card)}</div>
-      <div class="actions"><button type="button" class="btn ghost" data-a="ins-change">${esc(INS.done.change)}</button><button type="button" class="btn" data-a="next">${esc(T.cta)}</button></div>`; }
+      <button type="button" class="link under" data-a="ins-change">${esc(INS.done.change)}</button><div class="actions"><button type="button" class="btn" data-a="next">${esc(T.cta)}</button></div>`; }
   return `<h1 class="vh">${esc(STEPS[3].label)}</h1>${moduleHtml('insurance', inner, null)}`;
 }
 
@@ -555,9 +555,10 @@ function reviewHtml() {
     <div class="actions"><button type="button" class="btn ghost" data-a="back"${S.placing ? ' disabled' : ''}>${esc(FLOW_T.back)}</button><button type="button" class="btn lg${S.placing ? ' busy' : ''}" data-a="place"${S.placing || !S.agree || missing ? ' disabled' : ''}>${S.placing ? `<span class="spin" aria-hidden="true"></span>${esc(T.placing)}` : esc(missing ? T.missing(missing.label) : T.cta)}</button></div>`;
 }
 function checkoutShell() {
+  if (dock.parentNode !== kt) kt.append(dock);
   view.innerHTML = `<div class="co"><div class="co-top" id="stepper"></div><div class="co-grid"><section class="co-main" id="stepBody"></section>
     <aside class="sum" id="sum" aria-label="${esc(SUMMARY_T.title)}"><button type="button" class="sum-bar" id="sumBar" data-a="sum-toggle" aria-controls="sumIn"></button>
-      <div class="sum-in" id="sumIn"><h2>${esc(SUMMARY_T.title)}</h2><div class="sum-car"><img src="${S.car.thumb || S.car.photo}" alt="" width="640" height="429"><div id="sumCar"></div></div><div id="sum-price"></div><div class="sum-sec" id="sum-pay"></div><div class="sum-sec" id="sum-ins"></div><p class="sum-note">${ic('lock', 14, 2)}${esc(SUMMARY_T.dueNote)}</p></div></aside></div></div>`;
+      <div class="sum-in" id="sumIn"><h2>${esc(SUMMARY_T.title)}</h2><div class="sum-car"><img src="${S.car.thumb || S.car.photo}" alt="" width="640" height="429"><div id="sumCar"></div></div><div id="sum-price"></div><div class="sum-sec" id="sum-pay"></div><div class="sum-sec" id="sum-ins"></div><p class="sum-note" id="sumNote">${ic('lock', 14, 2)}${esc(SUMMARY_T.dueNote)}</p></div></aside></div></div>`;
   sumLast = {};
 }
 const STEP_HTML = { details: detailsHtml, trade: tradeHtml, payment: paymentHtml, insurance: insuranceHtml, delivery: deliveryHtml, review: reviewHtml };
@@ -573,15 +574,15 @@ function confetti() {
 function doneHtml() {
   const T = DONE_T, c = S.car, d = S.det, pickup = S.del.mode === 'pickup', when = arrival(), loan = loanDone() ? offerOf(S.fin.offer) : null, q = S.ins.result === 'switched' ? quoteOf(S.ins.quote) : S.ins.result === 'added' ? CURRENT_WITH_TACOMA : null;
   const M_ = loan && q ? T.manage : T.manageSolo;
-  return `<div class="done">
+  return `<div class="conf">
     <div class="done-hero"><div class="done-t"><span class="seal">${confetti()}<svg viewBox="0 0 52 52" width="44" height="44" aria-hidden="true"><path d="M15 27l8 8 14-16"/></svg></span>
         <p class="kick">${esc(T.kicker(ORDER_NUMBER))}</p><h1>${esc((pickup ? T.titlePickup : T.title)(d.name.split(' ')[0], c))}</h1><p class="lead">${esc(T.sub(d.email))}</p>
-        <dl class="facts">${row(pickup ? T.facts.pickup : T.facts.delivery, esc(dayLong(when)))}${row(T.facts.payment, esc(loan ? `${money(nums(loan).payment)} a month` : S.pay.method === 'cash' ? SUMMARY_T.cash : S.pay.lender))}${q ? row(T.facts.insurance, esc(q.carrier)) : ''}</dl></div>
+        <dl class="facts">${row(pickup ? T.facts.pickup : T.facts.delivery, esc(dayShort(when)))}${row(T.facts.payment, esc(loan ? `${money(nums(loan).payment)} a month` : S.pay.method === 'cash' ? SUMMARY_T.cash : S.pay.lender))}${q ? row(T.facts.insurance, esc(q.carrier)) : ''}</dl></div>
       <figure class="done-ph"><img src="${photosOf(c)[0].src}" alt="${esc(carName(c))}" width="1264" height="848"><figcaption>${esc(carName(c))}</figcaption></figure></div>
-    <div class="done-grid"><section class="next"><h2>${esc(T.nextTitle)}</h2><ol>${T.next({ loan, insurer: q && q.carrier, pickup, whenShort: dayShort(when) }).map(([k, v]) => `<li><i></i><div><b>${esc(k)}</b><p>${esc(v)}</p></div></li>`).join('')}</ol></section>
-      <section class="held"><div class="ltm-brand"><img src="${LEAF}" alt=""><span><b>${esc(loan ? SHELL.credit.loan : SHELL.credit.insurance)}</b>${q ? `<small>${esc(SHELL.credit.qw)}</small>` : ''}</span></div>
+    <div class="done-grid"><section class="whatnext"><h2>${esc(T.nextTitle)}</h2><ol>${T.next({ loan, insurer: q && q.carrier, pickup, whenShort: dayShort(when) }).map(([k, v]) => `<li><i></i><div><b>${esc(k)}</b><p>${esc(v)}</p></div></li>`).join('')}</ol></section>
+      <section class="held"><div class="ltm-brand"><img src="${LEAF}" alt=""><span><b>${esc(T.heldTitle)}</b></span></div>
         ${loan ? `<div class="held-c">${lmark(loan.lender)}<div><span>${esc(T.loanCard)}</span><b>${esc(loan.lender)}</b><em>${esc(FIN.approved.line(loan, nums(loan)).split(' · ').slice(1).join(' · '))}</em></div></div>` : ''}
-        ${q ? `<div class="held-c">${cmark(q.icon)}<div><span>${esc(T.policyCard)}</span><b>${esc(q.carrier)}</b><em>${money(q.total)} a year · ${esc(INS.card.effective)} ${esc(dayShort(when))}</em></div></div>` : ''}
+        ${q ? `<div class="held-c">${cmark(q.icon)}<div><span>${esc(T.policyCard)}</span><b>${esc(q.carrier)}</b><em>${money(q.total)} a year · ${esc(INS.card.effective)} ${esc(dayShort(when))}</em><small>${esc(SHELL.credit.qw)}</small></div></div>` : ''}
         <p class="manage">${esc(M_.before)}<a href="${T.manage.href}"${EMBED ? ' target="_top"' : ''}>${esc(M_.link)}</a>${esc(M_.after)}</p></section></div>
     <div class="done-again"><button type="button" class="btn ghost" data-a="again">${esc(T.again)}</button></div>
     <footer class="ft"><span>${esc(SHELL.footer.line)}</span><span>${SHELL.footer.links.map(esc).join(' · ')}</span></footer></div>`;
@@ -600,7 +601,7 @@ function render() {
     $('#stepper').innerHTML = stepperHtml(); paintSummary();
     body = $('#stepBody'); body.innerHTML = STEP_HTML[S.step]();
     if (S.step === 'details' && S.det.stage === 'confirm') paintAddr();
-  } else view.innerHTML = S.screen === 'search' ? searchHtml() : S.screen === 'detail' ? detailHtml() : doneHtml();
+  } else { if (dock.parentNode !== kt) kt.append(dock); view.innerHTML = S.screen === 'search' ? searchHtml() : S.screen === 'detail' ? detailHtml() : doneHtml(); }
   if (changed) {
     body.classList.remove('enter'); void body.offsetWidth; body.classList.add('enter');
     const ltm = $('#ltm'), target = stepChanged || !ltm ? 0 : Math.max(0, topOf(ltm) - 12);
@@ -796,8 +797,13 @@ function buildDock() {
 }
 function dockOpen() { if (dock.hidden) return; dock.classList.add('open'); $('#dockIn').focus({ preventScroll: true }); }
 function paintAsk() { $('#dockForm button').disabled = ASK.busy || $('#dockIn').value.trim().length < 2; }
+/* On wide screens the field sits under the order summary; on phones it floats above the step's main button. */
+const wide = matchMedia('(min-width: 761px)');
+function placeDock() { const home = wide.matches && $('#sum') ? $('#sum') : kt; if (dock.parentNode !== home) home.append(dock); }
+wide.addEventListener('change', () => { if (!EMBED) { placeDock(); paintDock(); } });
 function paintDock() {
   if (EMBED) return;
+  placeDock();
   const on = askOn() || (dock.classList.contains('has-thread') && S.screen === 'checkout');
   if (!on && !dock.hidden) threadShow(false);
   dock.hidden = !on; kt.classList.toggle('has-ask', on);

@@ -95,7 +95,7 @@ export const STEPS = [
   { id: 'payment', label: 'Payment', short: 'Payment' },
   { id: 'insurance', label: 'Insurance', short: 'Insurance' },
   { id: 'delivery', label: 'Delivery or pickup', short: 'Delivery' },
-  { id: 'review', label: 'Review and place order', short: 'Review' },
+  { id: 'review', label: 'Review and place order', nav: 'Review', short: 'Review' },
 ];
 export const FLOW_T = {
   stepOf: (i, n) => `Step ${i} of ${n}`, back: 'Back', next: 'Continue', edit: 'Edit', change: 'Change',
@@ -104,11 +104,11 @@ export const FLOW_T = {
 
 export const SUMMARY_T = {
   title: 'Order summary', toggle: 'Order summary', show: 'Show', hide: 'Hide',
-  price: 'Vehicle price', tax: 'Sales tax (7.25%)', titleReg: 'Title and registration', doc: 'Documentation fee', delivery: 'Delivery', free: 'Free', pickup: 'Pickup',
+  price: 'Vehicle price', taxesFees: 'Taxes and fees', aprTerm: 'APR and term', tax: 'Sales tax (7.25%)', titleReg: 'Title and registration', doc: 'Documentation fee', delivery: 'Delivery', free: 'Free', pickup: 'Pickup',
   total: 'Total', tradeLater: 'Trade-in', tradeLaterV: 'Valued before delivery',
   payTitle: 'Payment', payPending: 'Chosen in the Payment step',
   cash: 'Paid in full', own: 'Your own lender', ownV: (n) => n,
-  down: 'Down payment', financed: 'Amount financed', apr: 'APR', term: 'Term', months: (n) => `${n} months`, monthly: 'Monthly payment', lender: 'Lender', perMo: '/mo',
+  down: 'Down payment', downDue: 'Down payment, due at delivery', financed: 'Amount financed', apr: 'APR', term: 'Term', months: (n) => `${n} months`, monthly: 'Monthly payment', lender: 'Lender', perMo: '/mo',
   dueToday: 'Due at delivery', dueNote: 'Nothing is charged until you place the order.',
   insTitle: 'Insurance', insPending: 'Proof of insurance needed before delivery',
   insBoth: 'Both vehicles', insAdded: 'Tacoma added', perYear: '/yr',
@@ -380,7 +380,7 @@ export const DONE_T = {
   ],
   manage: { before: 'Your loan and your policy can be ', link: `managed with ${LT}`, after: ', alongside everything else you hold.', href: '/lendingtree/visiontypes/lifecycle/?stage=home' },
   manageSolo: { before: 'Whatever you hold can be ', link: `managed with ${LT}`, after: ', in one place.' },
-  loanCard: 'Your loan', policyCard: 'Your policy',
+  heldTitle: `Arranged by ${LT}`, loanCard: 'Your loan', policyCard: 'Your policy',
   again: 'Keep browsing trucks',
 };
 
