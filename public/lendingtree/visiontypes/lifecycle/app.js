@@ -503,7 +503,7 @@ async function finish(P, o, A, terms, Dn, quiet, base, prog, onSigned) {
     await scene();
   }
   if (!prog.sign) {
-    setStation(2);
+    setStation(5); /* the chosen lender's or carrier's own checklist is part of funding or binding; the strip never steps backward */
     await application(A, o, prog, save);
     await say(A.finished(o));
     prog.sign = true; save(prog);
