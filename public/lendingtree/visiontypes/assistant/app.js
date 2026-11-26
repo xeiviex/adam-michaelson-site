@@ -102,11 +102,6 @@ new ResizeObserver(follow).observe(col);
 new ResizeObserver(follow).observe(scroller);
 const userScrolled = () => setTimeout(() => { stick = scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop < 80; }, 120);
 ['wheel', 'touchmove', 'keydown'].forEach((ev) => scroller.addEventListener(ev, userScrolled, { passive: true }));
-function reveal(el) {
-  const r = el.getBoundingClientRect(), s = scroller.getBoundingClientRect();
-  if (r.bottom > s.bottom - 14) scroller.scrollBy({ top: r.bottom - s.bottom + 22, behavior: smooth() });
-  else if (r.top < s.top + 8) scroller.scrollBy({ top: r.top - s.top - 22, behavior: smooth() });
-}
 function add(el, focus) { col.append(el); focusEl = focus === false ? null : el; focusSpan = false; stick = true; follow(); return el; }
 /* bring a card that is still waiting back under the latest answer, and keep that answer in view */
 function represent(el, from) {
@@ -129,29 +124,60 @@ function botOpen(flag) {
   m.append(t); add(m);
   return { m, t };
 }
+/* The answer streams in the way it does in ChatGPT: a few characters at a time, left to right, quickly. The whole
+   message takes 350ms to 1.8s depending on its length (scaled by ?speed like every other wait). Only text nodes are
+   written, so **bold** never shows as markup. While it streams the visible text is hidden from assistive tech and a
+   visually hidden copy of the whole answer is read once; with reduced motion the text simply appears.
+   A run that is cancelled mid-stream (restart, path switch) leaves the full sentence if the message is still on the page. */
+const STREAM = { min: 350, max: 1800, perChar: 7, tick: 22 };
+const wholeText = (paras) => paras.map((p) => h('p', null, p.words.map((w) => (w.b ? h('b', null, w.t) : w.t))));
 async function botFill(t, text) {
   const my = run;
-  t.textContent = '';
   const paras = parseRich(text);
   S.log.push({ role: 'assistant', content: String(text).replace(/\*\*/g, '') });
-  if (reduced() || cfg.speed > 12) {
-    paras.forEach((p) => t.append(h('p', null, p.words.map((w) => (w.b ? h('b', null, w.t) : w.t)))));
-  } else {
-    col.setAttribute('aria-busy', 'true');
-    for (const p of paras) {
-      const pe = h('p'); t.append(pe);
-      let bold = null, n = 0;
-      for (const w of p.words) {
-        if (w.b) { if (!bold) { bold = h('b'); pe.append(bold); } bold.append(w.t); } else { bold = null; pe.append(w.t); }
-        if (/\S/.test(w.t) && ++n % 2 === 0 && !hurry()) { await sleep(34 + Math.random() * 36); alive(my); }
+  if (reduced() || cfg.speed > 12 || hurry()) { t.replaceChildren(...wholeText(paras)); return; }
+  /* one text node per run of plain or bold words; each paragraph joins the page when its first character does */
+  const segs = [];
+  let total = 0;
+  for (const p of paras) {
+    const pe = h('p');
+    let last = null;
+    for (const w of p.words) {
+      if (last && last.b === !!w.b) { last.full += w.t; } else {
+        const node = document.createTextNode('');
+        if (w.b) pe.append(h('b', null, node)); else pe.append(node);
+        last = { node, full: w.t, b: !!w.b, pe, n: 0 }; segs.push(last);
       }
+      total += w.t.length;
     }
-    col.removeAttribute('aria-busy');
   }
+  const plain = paras.map((p) => p.words.map((w) => w.t).join('')).join(' ');
+  const sr = h('div', { class: 'sr-only' }, plain);
+  t.setAttribute('aria-hidden', 'true'); t.textContent = ''; t.classList.add('stream'); t.after(sr);
+  let shown = 0, si = 0;
+  const show = (to) => {
+    while (shown < to && si < segs.length) {
+      const g = segs[si], take = Math.min(g.full.length - g.n, to - shown);
+      if (!g.pe.isConnected) t.append(g.pe);
+      g.n += take; shown += take; g.node.data = g.full.slice(0, g.n);
+      if (g.n >= g.full.length) si++;
+    }
+  };
+  const dur = Math.min(STREAM.max, Math.max(STREAM.min, total * STREAM.perChar)) / cfg.speed, t0 = performance.now();
+  try {
+    while (shown < total) {
+      await sleep(STREAM.tick * cfg.speed, my);   /* a real 22ms or so between writes, whatever the speed */
+      show(hurry() ? total : Math.max(shown + 1, Math.round(total * Math.min(1, (performance.now() - t0) / dur))));
+    }
+  } catch (e) {
+    if (t.isConnected) show(total);
+    throw e;
+  } finally { t.classList.remove('stream'); }
 }
 async function botSay(text, flag, rest) {
-  const { t } = botOpen(flag);
-  await sleep(650 + Math.min(700, text.length * 3));
+  const { m, t } = botOpen(flag);
+  try { await sleep(700 + Math.min(500, text.length * 2)); }   /* the thinking dot: 0.7s to 1.2s */
+  catch (e) { m.remove(); throw e; }
   await botFill(t, text);
   await linger(rest == null ? Math.min(2400, 500 + text.length * 13) : rest);
 }
@@ -175,22 +201,70 @@ async function tool(step) {
 }
 
 /* ---------- waiting for the person (or auto-play standing in for them) ---------- */
+/* What the viewer sees when auto-play acts. A touch point lands on the control, the control presses in, a ring spreads
+   from the point as it is let go, and a control that is still there afterwards flashes once (one that has just become
+   the chosen one pulses instead). Before any of that the control is brought into view, only if it is not already
+   comfortably in view, and the page is allowed to come to rest. Every wait scales with ?speed. */
+const cue = h('div', { class: 'cue', 'aria-hidden': 'true' }, h('i'), h('b'));
+document.body.append(cue);
+let cueN = 0;
+const cueAt = (node, x) => { const r = node.getBoundingClientRect(); cue.style.left = (x == null ? r.left + Math.min(r.width / 2, Math.max(28, r.width - 34)) : x) + 'px'; cue.style.top = r.top + r.height / 2 + 'px'; };
+const cueShow = () => { cueN++; cue.className = 'cue show'; };
+const cueRing = () => { const n = ++cueN; cue.className = 'cue show ring'; setTimeout(() => { if (n === cueN) cue.className = 'cue'; }, 560); };
+function cueOff() { cueN++; cue.className = 'cue'; $$('.tap').forEach((n) => n.classList.remove('tap')); }
+const thumbX = (inp) => { const r = inp.getBoundingClientRect(), p = (inp.value - inp.min) / ((inp.max - inp.min) || 1); return r.left + 12 + p * (r.width - 24); };
+const CHOSEN = '[aria-checked="true"], .photo.on';
+function flash(el) {
+  requestAnimationFrame(() => {
+    if (!el.isConnected) return;
+    const c = el.matches(CHOSEN) || el.querySelector('input:checked') ? 'chosen' : 'tapped';
+    el.classList.add(c); setTimeout(() => el.classList.remove(c), 900);
+  });
+}
 function makeA(tok) {
   const pause = async (ms) => { await sleep(ms); if (!cfg.auto || tok !== autoTok) throw STOP; };
+  /* scroll only when the control is not comfortably in view, smoothly, then wait until nothing is moving */
+  const bringIn = async (el) => {
+    if (scroller.contains(el)) {
+      const r = el.getBoundingClientRect(), s = scroller.getBoundingClientRect();
+      if (r.top < s.top + 24 || r.bottom > s.bottom - 24) scroller.scrollBy({ top: r.top + r.height / 2 - (s.top + s.height / 2), behavior: reduced() ? 'auto' : 'smooth' });
+    }
+    let last = null, still = 0;
+    for (let i = 0; i < 24 && still < 2; i++) { await pause(70 * cfg.speed); const y = el.getBoundingClientRect().top; still = last != null && Math.abs(y - last) < 0.5 ? still + 1 : 0; last = y; }
+  };
+  const guard = async (fn) => { try { return await fn(); } catch (e) { cueOff(); throw e; } };
   return {
     pause,
-    async tap(el, hold) { if (!el || el.disabled) return; reveal(el); el.classList.add('tap'); await pause(hold || 300); el.classList.remove('tap'); focusEl = null; el.click(); },
-    async type(inp, text) {
-      reveal(inp); inp.classList.add('typing'); inp.value = ''; inp.dispatchEvent(new Event('input', { bubbles: true }));
+    /* act is what the press does when it is not a plain click (the composer's send button submits the scripted reply) */
+    tap: (el, hold, act) => guard(async () => {
+      if (!el || (el.disabled && !act)) return;
+      await bringIn(el);
+      if (!el.isConnected) return;
+      cueAt(el); cueShow(); await pause(240);
+      el.classList.add('tap'); cue.classList.add('down'); await pause(hold || 300);
+      el.classList.remove('tap'); cueAt(el); cueRing();
+      focusEl = null;
+      if (act) act(); else el.click();
+      flash(el);
+    }),
+    /* the touch point taps the field, then the text types */
+    type: (inp, text) => guard(async () => {
+      await bringIn(inp);
+      cueAt(inp); cueShow(); await pause(240); cue.classList.add('down'); await pause(160); cueRing();
+      inp.classList.add('typing'); inp.value = ''; inp.dispatchEvent(new Event('input', { bubbles: true }));
       try { for (const ch of text) { inp.value += ch; inp.dispatchEvent(new Event('input', { bubbles: true })); await pause(34 + Math.random() * 30); } } finally { inp.classList.remove('typing'); }
-    },
-    async slide(inp, to) {
-      reveal(inp); inp.classList.add('tap');
+    }),
+    /* the touch point lands on the thumb, holds it, and rides along as it is dragged */
+    slide: (inp, to) => guard(async () => {
+      await bringIn(inp);
+      cueAt(inp, thumbX(inp)); cueShow(); await pause(240);
+      inp.classList.add('tap'); cue.classList.add('down'); await pause(160);
       const from = Number(inp.value), step = Number(inp.step) || 1, frames = reduced() ? 1 : 26;
       try {
-        for (let i = 1; i <= frames; i++) { const e = 1 - Math.pow(1 - i / frames, 3); inp.value = String(Math.round((from + (to - from) * e) / step) * step); inp.dispatchEvent(new Event('input', { bubbles: true })); await pause(34); }
+        for (let i = 1; i <= frames; i++) { const e = 1 - Math.pow(1 - i / frames, 3); inp.value = String(Math.round((from + (to - from) * e) / step) * step); inp.dispatchEvent(new Event('input', { bubbles: true })); cueAt(inp, thumbX(inp)); await pause(34); }
       } finally { inp.classList.remove('tap'); }
-    },
+      cueAt(inp, thumbX(inp)); cueRing();
+    }),
   };
 }
 function startAuto() {
@@ -231,8 +305,8 @@ function submitChoice(o, text) {
   autoTok++; setInput('');
   pending.done({ o, text });
 }
-const typeComposer = async (A, text) => { input.classList.add('auto'); try { await A.type(input, text); await A.pause(380); sendBtn.classList.add('tap'); await A.pause(200); } finally { sendBtn.classList.remove('tap'); input.classList.remove('auto'); } };
-const autoChoice = (opts) => async (A) => { await A.pause(1100); const a = opts.find((x) => x.auto) || opts[0]; await typeComposer(A, a.say || a.label); submitChoice(a, a.say || a.label); };
+const typeComposer = async (A, text, submit) => { input.classList.add('auto'); try { await A.type(input, text); await A.pause(380); await A.tap(sendBtn, 200, submit); } finally { input.classList.remove('auto'); } };
+const autoChoice = (opts) => async (A) => { await A.pause(1100); const a = opts.find((x) => x.auto) || opts[0]; await typeComposer(A, a.say || a.label, () => submitChoice(a, a.say || a.label)); };
 
 async function choice(step) {
   markTurnEnd();
@@ -316,7 +390,7 @@ async function opener() {
   heroEl = h('div', { class: 'hero' }, h('h1', null, HERO),
     h('div', { class: 'starters' }, OPENERS.map((o) => h('button', { type: 'button', class: 'st', onclick: () => { autoTok++; setInput(''); done(o.text); } }, o.text))));
   col.append(heroEl); col.classList.add('empty');
-  const text = await awaitUser({ kind: 'opener', done, note: NOTES.opener, auto: async (A) => { await A.pause(1700); await typeComposer(A, def.text); setInput(''); done(def.text); } }, wait);
+  const text = await awaitUser({ kind: 'opener', done, note: NOTES.opener, auto: async (A) => { await A.pause(1700); await typeComposer(A, def.text, () => { setInput(''); done(def.text); }); } }, wait);
   dropHero();
   userRow(text);
   const r = routeOpener(text);
@@ -334,7 +408,7 @@ async function servicing() {
       let done;
       const wait = new Promise((r) => { done = r; });
       const box = add(h('div', { class: 'picker' }, h('span', { class: 'pk-k' }, 'Prototype'), h('b', null, MODALS.picker), left.map((x) => h('button', { type: 'button', onclick: () => done(x) }, x.label, h('span', { class: 'ico', html: icon('chevR', 15, 2.2) })))));
-      t = await awaitUser({ kind: 'picker', el: box, note: NOTES.picker(cfg.path), auto: async (A) => { await A.pause(600); done(left[0]); } }, wait);
+      t = await awaitUser({ kind: 'picker', el: box, note: NOTES.picker(cfg.path), auto: async (A) => { await A.pause(600); await A.tap($('button', box)); } }, wait);
       box.remove();
     }
     left.splice(left.indexOf(t), 1);
@@ -351,7 +425,7 @@ async function main() {
   S.started = true;
   return play('pitch');
 }
-function clearRun() { run++; autoTok++; pending = null; asideQ = []; wakers = []; parked = []; busy = false; early = null; holdWake = null; }
+function clearRun() { run++; autoTok++; cueOff(); pending = null; asideQ = []; wakers = []; parked = []; busy = false; early = null; holdWake = null; }
 function start(keep) {
   const chosen = keep && S ? S.mainSel : null;   /* servicing follows the lender or carrier picked while shopping */
   clearRun();
@@ -409,7 +483,7 @@ async function aside(text, p) {
       c.end(off ? AGENT.offline : topic.done, off);
       await sleep(550);
       said = botOpen();
-      await sleep(400);
+      await sleep(700);
     } else { [res] = await Promise.all([reply, sleep(900)]); alive(my); }
     await botFill(said.t, res.text);
     await sleep(450);
@@ -508,7 +582,7 @@ async function modal(kind) {
     pmActs.after(cd);
     try { for (let n = SECS; n > 0; n--) { cd.replaceChildren('Jumping ahead to servicing in ', h('b', null, String(n))); await A.pause(1000); } }
     catch (e) { b.classList.remove('count'); cd.hidden = true; throw e; }
-    cd.hidden = true; done('b');
+    cd.hidden = true; await A.tap(b);
   } : null }, wait);
   hideModal();
   next(act);
@@ -528,14 +602,14 @@ function resize() { input.style.height = 'auto'; input.style.height = Math.min(1
 function send() {
   const text = input.value.trim().slice(0, 400);
   if (!text || busy || cfg.embed || !pm.hidden) return;   /* while an answer is on its way the message waits in the box */
-  if (cfg.auto) setAuto(false);
+  if (cfg.auto) { setAuto(false); tip(true); }
   setInput('');
   if (pending && pending.kind === 'opener' && matchOpener(text)) { autoTok++; return pending.done(text); }
   if (pending && pending.kind === 'choice') { const o = matchChoice(text, pending.opts); if (o) return submitChoice(o, text); }
   pushAside(text);
 }
 /* typing takes the wheel. If auto-play was mid-word in the box, its text goes and the person's keystroke stays. */
-input.addEventListener('input', (e) => { if (e.isTrusted && cfg.auto && !cfg.embed) setAuto(false, e.data || ''); resize(); });
+input.addEventListener('input', (e) => { if (e.isTrusted && cfg.auto && !cfg.embed) { setAuto(false, e.data || ''); tip(true); } resize(); });
 input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
 $('#composer').addEventListener('submit', (e) => { e.preventDefault(); send(); });
 if (cfg.embed) input.readOnly = true;   /* embeds are watch-only */
@@ -563,12 +637,25 @@ function paintDev() {
   $$('.seg', devMenu).forEach((g) => $$('button', g).forEach((b) => b.setAttribute('aria-pressed', String(cfg[g.dataset.k] === b.dataset.v))));
 }
 function setAuto(v, keep) {
-  cfg.auto = v; autoTok++;
+  cfg.auto = v; autoTok++; cueOff();
+  if (v) tip(false);
   if (!v && input.classList.contains('auto')) { input.classList.remove('auto'); setInput(keep || ''); }
   paintDev(); paintSuggest(); syncUrl();
   if (v) startAuto();
 }
-const setMenu = (open) => { devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); };
+/* The callout that says auto-play has stopped. It belongs to the prototype's controls, and it appears each time the
+   viewer taking over inside the product pauses auto-play (never when they pause from the control itself, never in an
+   embed). It goes when auto-play resumes, when it is dismissed, when the menu opens, or after a while. */
+const devTip = $('#devTip');
+function tip(show) {
+  clearTimeout(tip.t);
+  show = !!show && !cfg.embed;
+  devTip.hidden = !show;
+  if (show) tip.t = setTimeout(() => tip(false), 14000);
+}
+$('#devResume').addEventListener('click', () => setAuto(true));
+$('#devTipX').addEventListener('click', () => tip(false));
+const setMenu = (open) => { if (open) tip(false); devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); };
 devBtn.addEventListener('click', () => setMenu(devMenu.hidden));
 document.addEventListener('pointerdown', (e) => { if (!devMenu.hidden && !$('#dev').contains(e.target)) setMenu(false); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !devMenu.hidden) { setMenu(false); devBtn.focus(); } });
