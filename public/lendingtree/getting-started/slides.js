@@ -316,7 +316,7 @@ const econ = `
   <div class="ec-t a" style="--d:3.4"><h3>The terms</h3><p>5% of the loan or first-year premium at close or bind. 15% of interest while we service a loan. A monthly fee per policy in force. Each request goes to one chosen partner.</p></div>
   <div class="ec-ramp a" style="--d:3.7"><h3>Share of volume on outcomes</h3><ol>${[['Start', 1], ['6 months', 10], ['1 year', 50], ['2 years', 100]].map((r, i) => `<li><i class="a gy" style="--d:${(3.9 + i * 0.2).toFixed(1)};height:${Math.max(r[1], 4)}%"></i><b>${r[1]}%</b><span>${r[0]}</span></li>`).join('')}</ol></div>
 </div>
-<p class="ec-w a fade" style="--d:4.8">Lead prices and conversion rates are my assumptions, since LendingTree does not publish them. Being paid on close in home equity, and on bind in insurance, needs legal review first.</p>`;
+<p class="ec-w a fade" style="--d:4.8">Lead prices and conversion rates are my assumptions, informed by my experience at Lendio, since LendingTree does not publish them. Being paid on close in home equity, and on bind in insurance, needs legal review first.</p>`;
 
 /* ------------------------------------------------------------------ 8 time */
 const PH = ['Jan 1–15', 'Jan 16–31', 'February', 'March', 'Apr–Jun', 'Jul–Dec'];
@@ -445,7 +445,7 @@ const D = {
       ['Break-even', 'A 1.8% funded rate per request', 'About double today’s assumed bind rate per lead'],
     ])}
     <h4>What is assumed</h4>
-    ${ul(['Price per lead, leads sold per request, and funded and bind rates are assumptions. LendingTree does not publish them, and every comparison moves with them.', 'Marketing cost per request comes from LendingTree’s reported segment margins and is charged equally to both models.', 'The default outcome case assumes one chosen partner closes as many requests as three lead buyers do today. The no-lift row shows the case where it does not.', 'Sending each request to one partner gives up two thirds of today’s lead revenue per request.'])}
+    ${ul(['Price per lead, leads sold per request, and funded and bind rates are assumptions, informed by my experience at Lendio. LendingTree does not publish them, and every comparison moves with them.', 'Marketing cost per request comes from LendingTree’s reported segment margins and is charged equally to both models.', 'The default outcome case assumes one chosen partner closes as many requests as three lead buyers do today. The no-lift row shows the case where it does not.', 'Sending each request to one partner gives up two thirds of today’s lead revenue per request.'])}
     <h4>Over 36 months on the ramp</h4>
     <p>With illustrative volumes, revenue is about 32% higher than staying on leads. All of that comes from home equity. Auto insurance finishes slightly behind, because servicing fees arrive later than lead fees.</p>
     <h4>To review with counsel before anything else</h4>
