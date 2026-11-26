@@ -343,6 +343,14 @@ html.embed .pstrip, html.embed .dev { display: none; }
 .sheet .chips.in { margin-top: 10px; } .sheet .btn.wide { margin-top: 22px; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .opts { display: grid; gap: 8px; margin-top: 16px; }
+/* bank search on the connect sheet */
+.bsearch { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding: 0 14px; height: 52px; border: 1.5px solid var(--line-d); border-radius: 14px; background: #fff; color: #7a8696; transition: border-color .15s, box-shadow .15s; }
+.bsearch:focus-within { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(11,92,255,.14); color: var(--blue); }
+.bsearch input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 16px; color: var(--ink); -webkit-appearance: none; appearance: none; }
+.bsearch input::placeholder { color: #8b96a5; } .bsearch input::-webkit-search-cancel-button { -webkit-appearance: none; }
+.opts-h { margin-top: 16px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--mut); }
+.opts-h + .opts { margin-top: 8px; }
+.bnone { padding: 14px 4px; color: var(--mut); font-size: 14.5px; }
 .opt { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; border: 1px solid var(--line); border-radius: 14px; background: #fff; padding: 13px 14px; min-height: 60px; transition: border-color .15s, background .15s, transform .15s, box-shadow .15s; } button.opt:hover { border-color: var(--blue); background: var(--blue-t); }
 .opt > span:not(.ib):not(.mono):not(.cm) { flex: 1; min-width: 0; } .opt b { display: block; font-weight: 600; font-size: 15px; } .opt small { color: var(--mut); font-size: 13px; } .opt > svg { color: #a0abb9; }
 .flow-done { text-align: center; padding: 18px 0 0; display: grid; justify-items: center; } .flow-done h3 { padding: 0; margin-top: 16px; } .flow-done > p { color: var(--body); margin-top: 6px; max-width: 360px; text-wrap: pretty; }
