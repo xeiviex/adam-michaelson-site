@@ -1,7 +1,7 @@
 /* Draws /lendingtree/getting-started/ from slides.js. Same model as /lendingtree/: one slide, one drawing, a Details sheet.
    The drawing's motion is CSS: a slide gets .on when it is shown, and anything with class "a" builds in after --d seconds.
    Arriving on a slide replays its build. Press R to replay the current slide. */
-import { SLIDES } from './slides.js?v=27';
+import { SLIDES } from './slides.js?v=28';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const $ = (s) => document.querySelector(s);
@@ -10,7 +10,7 @@ const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const trackEl = $('#track');
 trackEl.innerHTML = SLIDES.map((s, i) => `<section class="slide gs-${s.id}" id="${s.id}" aria-roledescription="slide" aria-labelledby="h-${s.id}"><div class="sb">
-  <header class="sh"><h2 id="h-${s.id}" tabindex="-1"><i>${two(i + 1)}</i> ${esc(s.title)}</h2><p class="sub">${esc(s.sub)}</p></header>
+  <header class="sh"><h2 id="h-${s.id}" tabindex="-1">${esc(s.title)}</h2><p class="sub">${esc(s.sub)}</p></header>
   <div class="vis">${s.draw}</div>
   <footer class="rail">${(s.links || []).map((l) => `<a class="btn link" href="${l[0]}">${esc(l[1])}</a>`).join('')}${s.details ? `<button type="button" class="btn" data-open="${s.id}" aria-haspopup="dialog">Details</button>` : ''}</footer></div></section>`).join('');
 const slides = [...trackEl.querySelectorAll('.slide')];
@@ -101,7 +101,7 @@ let opener = null;
 trackEl.addEventListener('click', (e) => {
   const b = e.target.closest('[data-open]'); if (!b) return;
   const i = ids.indexOf(b.dataset.open), s = SLIDES[i];
-  $('#sheetTitle').innerHTML = `<i>${two(i + 1)}</i> ${esc(s.title)}`;
+  $('#sheetTitle').textContent = s.title;
   $('#sheetBody').innerHTML = s.details;
   opener = b; sheet.showModal(); $('#sheetBody').scrollTop = 0;
 });
