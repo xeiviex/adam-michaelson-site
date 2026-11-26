@@ -36,6 +36,19 @@ svg.i { display: block; flex: none; }
 .dev-caret svg { transition: transform .15s; } .dev-caret[aria-expanded="true"] svg { transform: rotate(180deg); }
 .dev-combo button:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
 .dev-combo:has(.paused) { background: #6b7482; }
+/* The "auto-play paused" callout: the same colour as the control, outlined in white, so it reads as outside the product. */
+.dev-tip { position: absolute; left: 0; bottom: calc(100% + 12px); width: min(300px, calc(100vw - 32px)); padding: 14px 14px 12px; border-radius: 12px; background: var(--proto); color: #fff; box-shadow: 0 14px 38px rgba(13,27,42,.34), 0 0 0 3px rgba(255,255,255,.9); animation: tip-in .32s cubic-bezier(.2,.8,.3,1); }
+.dev-tip[hidden] { display: none; }
+.dev-tip::after { content: ''; position: absolute; left: 26px; bottom: -7px; width: 14px; height: 14px; background: var(--proto); transform: rotate(45deg); border-radius: 2px; }
+.dev-tip .dev-tag { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 2px 7px; border-radius: 5px; background: rgba(255,255,255,.2); margin-bottom: 8px; }
+.dev-tip b { display: block; font-size: 15.5px; font-weight: 700; }
+.dev-tip p { font-size: 13px; line-height: 1.4; margin: 3px 0 11px; color: rgba(255,255,255,.9); }
+.dev-tip-b { display: flex; gap: 8px; flex-wrap: wrap; }
+.dev-tip button { border: 0; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: 700; background: #fff; color: var(--proto); }
+.dev-tip button.q { background: rgba(255,255,255,.16); color: #fff; font-weight: 600; }
+.dev-tip button:hover { filter: brightness(.94); } .dev-tip button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@keyframes tip-in { from { opacity: 0; transform: translateY(8px) scale(.96); } }
+@media (prefers-reduced-motion: reduce) { .dev-tip { animation: none; } }
 .dev-menu { position: absolute; bottom: calc(100% + 8px); left: 0; width: 284px; padding: 14px; background: #fff; border: 1px solid #cdd5e0; border-radius: 12px; box-shadow: 0 12px 34px rgba(13,27,42,.2); color: #0d1b2a; }
 .dev-menu p { font-size: 12px; color: #5b6574; margin-bottom: 10px; }
 .dev-menu .dev-fine { margin: 10px 0 0; font-size: 11.5px; line-height: 1.45; }
@@ -96,7 +109,23 @@ html.embed .pstrip, html.embed .dev { display: none; }
 .btn.busy:disabled { background: var(--kt); border-color: var(--kt); color: #fff; opacity: .8; } .btn.busy .spin { border-color: rgba(255,255,255,.35); border-top-color: #fff; }
 .link { display: inline-flex; align-items: center; gap: 4px; border: 0; background: none; padding: 6px 2px; color: var(--kt); font-weight: 600; font-size: 14px; }
 .link:hover { text-decoration: underline; }
-.pressing { transform: scale(.97); box-shadow: 0 0 0 4px rgba(71,51,230,.26) !important; }
+.pressing { transform: scale(.96); box-shadow: 0 0 0 4px rgba(71,51,230,.3) !important; filter: brightness(.92); transition: transform .12s ease, box-shadow .12s ease, filter .12s ease; }
+/* Auto-play's touch point: a dot lands on the control, presses, and a ring spreads from it on release. */
+.cue { position: fixed; left: 0; top: 0; width: 0; height: 0; z-index: 400; pointer-events: none; }
+.cue i, .cue b { position: absolute; left: -17px; top: -17px; width: 34px; height: 34px; border-radius: 50%; opacity: 0; }
+.cue i { background: rgba(20,18,43,.34); border: 2px solid #fff; box-shadow: 0 2px 10px rgba(13,27,42,.32), 0 0 0 1px rgba(20,18,43,.5); transform: scale(1.5); transition: opacity .18s ease, transform .2s cubic-bezier(.2,.8,.3,1); }
+.cue b { border: 2px solid rgba(20,18,43,.7); box-shadow: 0 0 0 1.5px rgba(255,255,255,.85), inset 0 0 0 1.5px rgba(255,255,255,.85); }
+.cue.show i { opacity: 1; transform: scale(1); }
+.cue.show.down i { transform: scale(.72); background: rgba(20,18,43,.52); }
+.cue.show.ring i { opacity: 0; transform: scale(1.15); transition-duration: .4s; }
+.cue.show.ring b { animation: cue-ring .55s cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes cue-ring { from { opacity: .9; transform: scale(.7); } to { opacity: 0; transform: scale(2.5); } }
+/* A control that is still there after auto-play pressed it flashes once; one that has just become the chosen one pulses. */
+.tapped { animation: tapped .8s ease-out; }
+@keyframes tapped { 0% { box-shadow: 0 0 0 0 rgba(71,51,230,.5); } 100% { box-shadow: 0 0 0 14px rgba(71,51,230,0); } }
+.picked { animation: picked .7s cubic-bezier(.2,.8,.3,1); }
+@keyframes picked { 0% { transform: scale(1); } 35% { transform: scale(1.035); box-shadow: 0 0 0 6px rgba(8,193,119,.3); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .cue { display: none; } .tapped, .picked { animation: none; } }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { border: 1px solid var(--line-d); background: #fff; border-radius: 999px; padding: 9px 16px; font-weight: 500; font-size: 14.5px; color: var(--ink); white-space: nowrap; transition: border-color .15s, background .15s, transform .15s, box-shadow .15s; }
 .chip:hover { border-color: var(--kt); background: var(--kt-t2); }
@@ -466,6 +495,7 @@ html.embed .sum-in { max-height: none; }
   .dev { left: auto; right: 8px; top: 5px; bottom: auto; font-size: 12px; }
   .dev-main { padding: 6px 8px 6px 11px; } .dev-caret { padding: 0 9px; } .dev-word { display: none; }
   .dev-menu { bottom: auto; top: calc(100% + 8px); left: auto; right: 0; width: min(284px, calc(100vw - 16px)); }
+  .dev-tip { bottom: auto; top: calc(100% + 12px); left: auto; right: 0; width: min(300px, calc(100vw - 16px)); } .dev-tip::after { bottom: auto; top: -7px; left: auto; right: 44px; }
   .pm-card { padding: 24px 20px 20px; }
   .url { height: 30px; } .url-dots { display: none; } .url-pill { height: 20px; font-size: 11.5px; }
   .hd { height: 54px; gap: 6px; padding: 0 12px 0 14px; }

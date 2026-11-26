@@ -122,8 +122,24 @@ button.ib:hover { background: #ececec; }
 .btn.sm:hover { background: var(--soft); }
 .btn.busy { opacity: .5; }
 .ltc-b > .btn, .fm > .btn, .sig > .btn { margin-top: 16px; }
-.tap { transform: scale(.96); box-shadow: 0 0 0 4px rgba(13, 13, 13, .13); }
-input.tap, input.typing, textarea.typing { transform: none; box-shadow: none; }
+.tap { transform: scale(.96); box-shadow: 0 0 0 4px rgba(13, 13, 13, .2) !important; filter: brightness(.9); transition: transform .12s ease, box-shadow .12s ease, filter .12s ease; }
+/* Auto-play's touch point: a dot lands on the control, presses, and a ring spreads from it on release. */
+.cue { position: fixed; left: 0; top: 0; width: 0; height: 0; z-index: 400; pointer-events: none; }
+.cue i, .cue b { position: absolute; left: -17px; top: -17px; width: 34px; height: 34px; border-radius: 50%; opacity: 0; }
+.cue i { background: rgba(13, 13, 13, .3); border: 2px solid #fff; box-shadow: 0 2px 10px rgba(0, 0, 0, .3), 0 0 0 1px rgba(13, 13, 13, .55); transform: scale(1.5); transition: opacity .18s ease, transform .2s cubic-bezier(.2, .8, .3, 1); }
+.cue b { border: 2px solid rgba(13, 13, 13, .7); box-shadow: 0 0 0 1px rgba(255, 255, 255, .7), inset 0 0 0 1px rgba(255, 255, 255, .7); }
+.cue.show i { opacity: 1; transform: scale(1); }
+.cue.show.down i { transform: scale(.72); background: rgba(13, 13, 13, .5); }
+.cue.show.ring i { opacity: 0; transform: scale(1.15); transition-duration: .4s; }
+.cue.show.ring b { animation: cue-ring .55s cubic-bezier(.2, .7, .3, 1) forwards; }
+@keyframes cue-ring { from { opacity: .9; transform: scale(.7); } to { opacity: 0; transform: scale(2.5); } }
+/* A control that is still there after auto-play pressed it flashes once; anything that has just become the chosen one pulses. */
+.tapped { animation: tapped .8s ease-out; }
+@keyframes tapped { 0% { box-shadow: 0 0 0 0 rgba(13, 13, 13, .45); } 100% { box-shadow: 0 0 0 14px rgba(13, 13, 13, 0); } }
+.chosen, .of-r.sel { animation: chosen .7s cubic-bezier(.2, .8, .3, 1); }
+@keyframes chosen { 0% { transform: scale(1); } 35% { transform: scale(1.035); box-shadow: 0 0 0 6px rgba(8, 193, 119, .28); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .cue { display: none; } .tapped, .chosen, .of-r.sel { animation: none; } }
+input.tap, input.typing, textarea.typing { transform: none; box-shadow: none !important; filter: none; }
 .done-line { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 13.5px; font-weight: 600; color: var(--lt-d); animation: rise .3s ease; }
 .dl-ic, .rc-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--lt); color: #fff; }
 .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--lt-t); color: var(--lt-d); font-size: 11.5px; font-weight: 600; line-height: 1.5; white-space: nowrap; }
@@ -387,6 +403,19 @@ input.tap, input.typing, textarea.typing { transform: none; box-shadow: none; }
 .dev-caret[aria-expanded='true'] svg { transform: none; }
 .dev-combo button:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
 .dev-combo:has(.paused) { background: #77747f; } .dev-combo:has(.paused) button:hover { background: #686570; }
+/* the callout shown when the viewer taking over pauses auto-play: the control's colour, a white outline, outside the product */
+.dev-tip { position: absolute; left: 0; bottom: calc(100% + 12px); width: min(300px, calc(100vw - 28px)); padding: 14px 14px 12px; border-radius: 12px; background: var(--proto); color: #fff; box-shadow: 0 14px 38px rgba(0, 0, 0, .34), 0 0 0 3px rgba(255, 255, 255, .92); animation: tip-in .32s cubic-bezier(.2, .8, .3, 1); }
+.dev-tip[hidden] { display: none; }
+.dev-tip::after { content: ''; position: absolute; left: 26px; bottom: -7px; width: 14px; height: 14px; background: var(--proto); transform: rotate(45deg); border-radius: 2px; }
+.dev-tip .dev-tag { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 2px 7px; border-radius: 5px; background: rgba(255, 255, 255, .2); margin-bottom: 8px; }
+.dev-tip b { display: block; font-size: 15.5px; font-weight: 700; }
+.dev-tip p { font-size: 13px; line-height: 1.4; margin: 3px 0 11px; color: rgba(255, 255, 255, .92); }
+.dev-tip-b { display: flex; gap: 8px; flex-wrap: wrap; }
+.dev-tip button { border: 0; border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 13px; font-weight: 700; background: #fff; color: var(--proto); cursor: pointer; }
+.dev-tip button.q { background: rgba(255, 255, 255, .16); color: #fff; font-weight: 600; }
+.dev-tip button:hover { filter: brightness(.94); } .dev-tip button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@keyframes tip-in { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .dev-tip { animation: none; } }
 .dev-menu { position: absolute; bottom: calc(100% + 8px); left: 0; width: min(292px, calc(100vw - 24px)); padding: 12px; background: #fff; border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 12px 34px rgba(0, 0, 0, .2); color: var(--ink); }
 .dev-menu[hidden] { display: none; }
 .dev-t { margin: 0 0 10px; font-size: 11.5px; color: #77747f; }
@@ -462,6 +491,7 @@ input.tap, input.typing, textarea.typing { transform: none; box-shadow: none; }
   .appc { padding: 14px; gap: 12px; } .ap-ic { width: 46px; height: 46px; border-radius: 12px; } .ap-ic img { width: 26px; height: 26px; }
   .dev { left: auto; right: 12px; bottom: auto; top: 12px; }
   .dev-menu { bottom: auto; top: calc(100% + 10px); left: auto; right: 0; }
+  .dev-tip { bottom: auto; top: calc(100% + 12px); left: auto; right: 0; width: min(300px, calc(100vw - 24px)); } .dev-tip::after { bottom: auto; top: -7px; left: auto; right: 40px; }
   .dev-caret svg { transform: none; } .dev-caret[aria-expanded='true'] svg { transform: rotate(180deg); }
   .pm-acts { flex-direction: column-reverse; } .pm-b.ghost { flex: 1; }
   .pm-acts.three { grid-template-columns: 1fr; }

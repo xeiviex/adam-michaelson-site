@@ -75,6 +75,13 @@
     <button type="button" id="doReset" class="dev-reset">Restart</button>
     <p class="dev-n" id="devNote"></p>
   </div>
+  <!-- Shown when the viewer taking over inside the product pauses auto-play. Part of the prototype's own controls, not the product. -->
+  <div class="dev-tip" id="devTip" role="status" hidden>
+    <span class="dev-tag">Prototype</span>
+    <b>Auto-play paused</b>
+    <p>You touched the prototype, so it is yours to explore. Nothing here is real.</p>
+    <div class="dev-tip-b"><button type="button" id="devResume">Resume auto-play</button><button type="button" class="q" id="devTipX">Keep exploring</button></div>
+  </div>
   <div class="dev-combo">
     <button type="button" class="dev-main" id="devToggle" aria-pressed="true" aria-label="Auto-play is on. Pause"><span class="dev-lbl">Prototype</span><span class="dev-ic" id="devIc"></span></button>
     <button type="button" class="dev-caret" id="devBtn" aria-expanded="false" aria-controls="devMenu" aria-haspopup="true" aria-label="Prototype settings"><svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>

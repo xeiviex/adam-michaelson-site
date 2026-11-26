@@ -128,7 +128,7 @@ function autoSteps() {
   if (S.gdlg) return [];
   if (S.screen === 'search') return [{ wait: 1200 }, tap(`[data-a=open][data-v=${HERO_ID}]`, 2800)];
   if (S.screen === 'detail') return [tap('[data-a=photo][data-v="1"]', 2600), tap('[data-a=photo][data-v="3"]', 1900), tap('[data-a=photo][data-v="4"]', 1900), see('#specs', 1400), see('#history', 2400), tap('[data-a=start]', 2400)];
-  if (S.screen === 'done') return [see('.whatnext', 3200), { do: EMBED ? () => start(START_STAGE) : finale, read: EMBED ? 5000 : 5200 }];
+  if (S.screen === 'done') return [see('.whatnext', 3200), { do: EMBED ? () => start(START_STAGE) : finale, on: EMBED ? '[data-a=again]' : null, read: EMBED ? 5000 : 5200 }];
   const f = S.fin, n = S.ins;
   if (S.step === 'details') {
     if (S.det.stage === 'start') return [tap('[data-a=google]', 2600)];
@@ -174,6 +174,44 @@ function autoSteps() {
   if (S.step === 'review') return S.placing ? [] : [see('.rv-price', 3000), ...(S.agree ? [] : [tap('#agreeOrder', 2600)]), tap('[data-a=place]', 1200)];
   return [];
 }
+/* ---------- what the viewer sees when auto-play acts ----------
+   A touch point lands on the control, the control presses in, a ring spreads from the point as it is let go, and the
+   control flashes once afterwards if it is still there; one that has just become the chosen one pulses. Before any of that
+   the control is brought into view, only if it is not already comfortably in view, and the page is allowed to come to rest. */
+const cue = document.createElement('div'); cue.className = 'cue'; cue.setAttribute('aria-hidden', 'true'); cue.innerHTML = '<i></i><b></b>'; document.body.append(cue);
+const cueAt = (node) => { const r = node.getBoundingClientRect(); cue.style.left = `${r.left + Math.min(r.width / 2, Math.max(28, r.width - 34))}px`; cue.style.top = `${r.top + r.height / 2}px`; };
+const cueWait = (ms, live) => tick(Math.max(ms, 80 * SPEED), live); /* scales with ?speed, but never too brief to see */
+async function bringIn(node, live) {
+  if (main.contains(node)) {
+    const box = main.getBoundingClientRect(), r = node.getBoundingClientRect();
+    const top = Math.max(box.top, 0) + 24, bottom = Math.min(box.bottom, innerHeight) - 96;
+    if (r.top < top || r.bottom > bottom) node.scrollIntoView({ block: r.height > bottom - top ? 'start' : 'center', behavior: smooth() });
+  }
+  let last = null, still = 0;
+  for (let i = 0; i < 24 && still < 2; i++) { await tick(70 * SPEED, live); const y = node.getBoundingClientRect().top; still = last != null && Math.abs(y - last) < 0.5 ? still + 1 : 0; last = y; }
+}
+const CHOSEN = '.on, [aria-pressed="true"], [aria-current="true"], label:has(input:checked)';
+async function press(node, live, target, click = true) {
+  const box = (n) => (n.matches('input[type=checkbox]') ? n.closest('label') : n);
+  await bringIn(box(node), live);
+  if (!node.isConnected) return false;
+  const show = box(node);
+  cueAt(show); cue.className = 'cue show'; await cueWait(240, live);
+  show.classList.add('pressing'); cue.classList.add('down'); await cueWait(300, live);
+  show.classList.remove('pressing'); cueAt(show); cue.className = 'cue show ring';
+  setTimeout(() => { cue.className = 'cue'; }, 560);
+  if (!live()) return false;
+  if (!click) return true;
+  const key = lastKey;
+  node.click();
+  requestAnimationFrame(() => {
+    /* the screen is usually redrawn by the click: look the control up again, unless the click moved on to another view */
+    let n = node.isConnected ? node : lastKey === key && target ? find(target) : null; if (!n) return;
+    n = box(n); const cls = n.matches(CHOSEN) ? 'picked' : 'tapped';
+    n.classList.add(cls); setTimeout(() => n.classList.remove(cls), 900);
+  });
+  return true;
+}
 let modalOpen = false;
 function kick() {
   const gen = ++autoGen, my = run;
@@ -186,30 +224,30 @@ function kick() {
       const st = steps[i];
       if (!live()) return;
       if (st.wait) { await tick(st.wait, live); continue; }
-      if (st.do) { await tick(st.read, live); st.do(); return; }
+      if (st.do) {
+        await tick(st.read, live);
+        const on = st.on && find(st.on); if (on && !(await press(on, live, null, false))) return; /* a restart shows where it was pressed */
+        st.do(); return;
+      }
       const target = st.tap || st.type || st.see;
       let node = find(target), tries = 0;
       while (!node && ++tries <= 12) { await tick(100 * SPEED, live); node = find(target); }
       if (!node) continue; /* not on this screen (a listing with one photo, say): move on */
-      if (st.see) { node.scrollIntoView({ block: 'center', behavior: smooth() }); await tick(st.read, live); continue; }
+      if (st.see) { await bringIn(node, live); await tick(st.read, live); continue; }
       await tick(st.read == null ? 1500 : st.read, live);
       node = find(target) || node;
-      if (main.contains(node)) node.scrollIntoView({ block: 'center', behavior: smooth() });
       if (st.type) {
         if (node.value === st.text) continue;
+        await bringIn(node, live);
+        cueAt(node); cue.className = 'cue show'; await cueWait(240, live); cue.className = 'cue show ring'; setTimeout(() => { cue.className = 'cue'; }, 560);
         node.value = ''; node.focus({ preventScroll: true });
         for (const ch of st.text) { await tick(55, live); node.value += ch; node.dispatchEvent(new Event('input', { bubbles: true })); }
         await tick(300, live); node.blur();
-      } else {
-        const show = node.matches('input[type=checkbox]') ? node.closest('label') : node;
-        show.classList.add('pressing'); await tick(420, live); show.classList.remove('pressing');
-        if (!live()) return;
-        node.click();
-      }
+      } else if (!(await press(node, live, target))) return;
     }
   });
 }
-function setAuto(v) { S.auto = v; $$('.pressing').forEach((n) => n.classList.remove('pressing')); paintDev(); if (v) threadShow(false); kick(); }
+function setAuto(v) { S.auto = v; cue.className = 'cue'; $$('.pressing').forEach((n) => n.classList.remove('pressing')); paintDev(); if (v) { tip(false); threadShow(false); } kick(); }
 
 /* ---------- shell ---------- */
 const kt = $('#kt'), main = $('#main'), view = $('#view'), hd = $('#hd'), gov = $('#gov');
@@ -271,7 +309,7 @@ function setPhoto(i) {
   const img = $('#galImg'); if (!img) return;
   img.src = ph[S.photo].src; img.alt = `${carName(S.car)}. ${ph[S.photo].alt}`;
   $('#galN').textContent = DETAIL_T.photoCount(S.photo + 1, ph.length);
-  $$('[data-a=photo]', view).forEach((b) => { const on = Number(b.dataset.v) === S.photo; b.classList.toggle('on', on); b.setAttribute('aria-current', String(on)); if (on) b.scrollIntoView({ block: 'nearest', inline: 'nearest' }); });
+  $$('[data-a=photo]', view).forEach((b) => { const on = Number(b.dataset.v) === S.photo; b.classList.toggle('on', on); b.setAttribute('aria-current', String(on)); if (on) b.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: smooth() }); });
 }
 function detailHtml() {
   const c = S.car, T = DETAIL_T, ph = photosOf(c), below = c.market - c.price, on = S.saved.has(c.id);
@@ -655,7 +693,7 @@ async function reach(n, ok) {
   for (;;) {
     const p = pos();
     if (S.auto ? p.all : p.part) return;
-    if (S.auto) { box.scrollIntoView({ block: 'center', behavior: smooth() }); await tick(450, ok); return; }
+    if (S.auto) { await bringIn(box, ok); return; }
     await tick(150, ok);
   }
 }
@@ -837,7 +875,7 @@ async function finale() {
   resetAsk(); start('shop');
 }
 function start(stage) {
-  run++; autoGen++; hideModal(); S.gdlg = null;
+  run++; autoGen++; hideModal(); S.gdlg = null; cue.className = 'cue'; tip(false);
   preset(stage); lastKey = ''; lastScreen = ''; sumLast = {}; said.clear();
   paintDev(); render();
 }
@@ -970,6 +1008,11 @@ if (!EMBED) buildDock();
 const IC_PAUSE = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="3.5" y="2.5" width="3.2" height="11" rx="1" fill="currentColor"/><rect x="9.3" y="2.5" width="3.2" height="11" rx="1" fill="currentColor"/></svg>';
 const IC_PLAY = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 2.8v10.4a.6.6 0 0 0 .9.5l8.2-5.2a.6.6 0 0 0 0-1L5.400 2.300a.6.6 0 0 0-.9.5z" fill="currentColor"/></svg>';
 const devMenu = $('#devMenu'), devBtn = $('#devBtn');
+function tip(show) {
+  const t = $('#devTip'); clearTimeout(tip.t);
+  t.hidden = !show || EMBED;
+  if (show && !EMBED) { void t.offsetWidth; tip.t = setTimeout(() => tip(false), 14000); }
+}
 function paintDev() {
   const t = $('#devToggle');
   $('#devIc').innerHTML = S.auto ? IC_PAUSE : IC_PLAY;
@@ -977,7 +1020,11 @@ function paintDev() {
 }
 $('#devNote').textContent = PROTO.note; $('#devFine').textContent = PROTO.fiction; $('#devGoogle').textContent = PROTO.google; $('#doReset').textContent = PROTO.restart; $('#pbackT').textContent = PROTO.back; $('#devJumpL').textContent = PROTO.jumpLabel; devBtn.setAttribute('aria-label', PROTO.controls);
 $('#devJumps').innerHTML = Object.entries(PROTO.jumps).map(([k, v]) => `<button type="button" data-stage="${k}">${esc(v)}</button>`).join('');
-const setMenu = (open) => { devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); };
+/* The callout that says auto-play has stopped. It belongs to the prototype's controls, and it appears each time a touch
+   inside the product pauses auto-play. It goes when auto-play resumes, when it is dismissed, or after a while. */
+$('#devResume').addEventListener('click', () => setAuto(true));
+$('#devTipX').addEventListener('click', () => tip(false));
+const setMenu = (open) => { if (open) tip(false); devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); };
 devBtn.addEventListener('click', () => setMenu(devMenu.hidden));
 $('#devToggle').addEventListener('click', () => setAuto(!S.auto));
 $('#devJumps').addEventListener('click', (e) => { const b = e.target.closest('[data-stage]'); if (!b) return; setMenu(false); resetAsk(); start(b.dataset.stage); });
@@ -985,7 +1032,7 @@ $('#doReset').addEventListener('click', () => { setMenu(false); S.auto = true; r
 document.addEventListener('pointerdown', (e) => {
   if (!devMenu.hidden && !$('#dev').contains(e.target)) setMenu(false);
   /* a real tap inside the product means the viewer is driving: auto-play steps aside until they press play */
-  if (e.isTrusted && kt.contains(e.target) && S.auto && !EMBED) setAuto(false);
+  if (e.isTrusted && kt.contains(e.target) && S.auto && !EMBED) { setAuto(false); tip(true); }
 }, true);
 /* A tap anywhere else in the product puts an open answer away. */
 document.addEventListener('click', (e) => { if (e.isTrusted && !ASK.busy && kt.contains(e.target) && !dock.contains(e.target) && !e.target.closest('[data-a=ask]')) threadShow(false); }, true);
