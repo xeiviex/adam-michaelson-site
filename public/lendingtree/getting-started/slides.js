@@ -308,7 +308,7 @@ const econ = `
 <div class="ec">
   ${ECON.map((e, k) => { const max = e.close + e.serv, w = (n) => (n / max * 100).toFixed(1), d = 0.3 + k * 1.4; return `
   <section class="ec-p">
-    <h3 ${A(d)}>${e.name} <span>${e.eg}, per consumer request</span></h3>
+    <h3 ${A(d)}>${e.name} <span>${e.eg}</span></h3>
     <div class="ec-row a" style="--d:${(d + 0.15).toFixed(2)}"><span>Today, selling leads</span><div class="ec-b"><i class="lead a gx" style="--d:${(d + 0.25).toFixed(2)};width:${w(e.today)}%"></i><b>${e.fmt(e.today)}</b></div></div>
     <div class="ec-row a" style="--d:${(d + 0.5).toFixed(2)}"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:${(d + 0.6).toFixed(2)};width:${w(e.close)}%"><em>At close</em></i><i class="serv a gx" style="--d:${(d + 0.9).toFixed(2)};width:${w(e.serv)}%"><em>Servicing</em></i><b>${e.fmt(e.close + e.serv)}</b></div></div>
     <div class="ec-row a" style="--d:${(d + 1.0).toFixed(2)}"><span>Outcomes, with no lift in conversion</span><div class="ec-b"><i class="flat a gx" style="--d:${(d + 1.1).toFixed(2)};width:${w(e.flat)}%"></i><b>${e.fmt(e.flat)}</b></div></div>
