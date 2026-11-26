@@ -209,18 +209,14 @@ svg .a.gy { transform-origin: center bottom; }
 @keyframes gs-sto { 0%, 11% { opacity: 1; } 12%, 100% { opacity: 0; } }
 @keyframes gs-stt { 0%, 11% { color: var(--ink); } 12%, 100% { color: var(--muted); } }
 
-/* ---- what this will take: a three-layer stack ---- */
-.stk { display: grid; gap: .35em; font-size: .86em; }
-.stk-l { font: 600 .74em var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); } .stk-l.gap { margin-top: .5em; }
-.stk-r { display: grid; gap: .7em; } .stk-r.two { grid-template-columns: repeat(2, minmax(0, 1fr)); } .stk-r.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.nd { display: flex; gap: .8em; align-items: flex-start; background: var(--surface2); border-radius: 12px; padding: .6em .95em; }
-.nd > i { flex: none; width: 1.7em; height: 1.7em; border-radius: 50%; background: var(--acc); color: var(--on-acc); font: 700 .85em/1.7em var(--head); text-align: center; font-style: normal; }
-.nd b { display: block; font: 700 1.1em/1.2 var(--head); color: var(--ink); } .nd small { display: block; font-size: .9em; line-height: 1.35; color: var(--body); margin-top: .2em; }
-.stk-p { background: var(--ink); border-radius: 14px; padding: .7em .8em .8em; }
-.stk-p h3 { color: #3a6f96; margin-bottom: .6em; }
-.nd.on { background: #e6eaf0; } .nd.on b { color: var(--dark); } .nd.on small { color: #3a4450; } .nd.on > i { background: var(--dark); color: var(--ink); }
-.stk-c { display: grid; height: .8em; } .stk-c.two { grid-template-columns: repeat(2, 1fr); } .stk-c.three { grid-template-columns: repeat(3, 1fr); }
-.stk-c span { justify-self: center; width: 2px; background: var(--acc); }
+/* ---- what this will take: three layers, each resting on the one below ---- */
+.lyr { display: grid; gap: .55em; }
+.ly { display: grid; gap: 1em; background: var(--surface2); border-radius: 16px; padding: 1.5em 1.8em 1.9em; }
+.ly ul { list-style: none; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, .95fr) minmax(0, 1.15fr); gap: .5em 1.6em; }
+.ly li { font: 700 1.4em/1.15 var(--head); letter-spacing: -.015em; color: var(--ink); text-wrap: balance; }
+.ly.plat { background: var(--ink); } .ly.plat h3 { color: #3a6f96; } .ly.plat li { color: var(--dark); }
+.ly-f { display: grid; gap: .5em; text-align: center; margin-top: .4em; }
+.ly-g { color: var(--body); }
 
 /* ---- the economics ---- */
 .ec { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.2em; }
@@ -294,7 +290,7 @@ svg .a.gy { transform-origin: center bottom; }
   .t3 > li::after { clip-path: inset(0 0 100% 0); }
   .vis svg.org { display: none; } .vis svg.org.m { display: block; min-width: 0; max-height: none; }
   .vis svg.corec { display: none; } .vis svg.corec.m { display: block; min-width: 0; max-height: none; } .sup > div + div::before { display: none; }
-  .th3, .sup, .cards6, .vts, .need ol, .stk-r.two, .stk-r.three, .ec, .ec-f { grid-template-columns: minmax(0, 1fr); } .stk-c { display: none; } .ec, .ec-f { gap: 1.2em; }
+  .th3, .sup, .cards6, .vts, .need ol, .ly ul, .ec, .ec-f { grid-template-columns: minmax(0, 1fr); } .ly { padding: 1.1em 1.2em 1.3em; } .ly li { font-size: 1.3em; } .ly-f { text-align: left; } .ly-f .acct { text-align: left; } .ec, .ec-f { gap: 1.2em; }
   .base { padding-inline: 1.2em; white-space: normal; font-size: 1em; text-align: center; }
   .th3 > div, .th3 > div:first-child, .th3 > div:last-child { padding: 1.2em 0; border-left: 0; border-top: 1px solid var(--rule); } .th3 svg { min-width: 0; }
   .intg, .bets { grid-template-columns: minmax(0, 1fr); } .intg .arrow { display: none; }

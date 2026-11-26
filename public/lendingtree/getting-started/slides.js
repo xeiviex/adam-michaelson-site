@@ -294,38 +294,24 @@ const visiontypes = `
 <ol class="life a" style="--d:1.2">${LIFE.map((s, i) => `<li style="--k:${i}"><span>${s}</span></li>`).join('')}</ol>`;
 
 /* ------------------------------------------------------- what this will take */
-const nd = (d, n, t, sub, cls = '') => `<div ${A(d)} class="a nd ${cls}"><i>${n}</i><div><b>${t}</b><small>${sub}</small></div></div>`;
+/* Three layers, titles only: customer surfaces sit on the platform, which sits on signed partners.
+   Each layer arrives as its label, then its three titles together. The sentences are in the Details sheet. */
+const LAYERS = [
+  ['Where the customer is', ['AI assistants', 'Partner products', 'LendingTree website and app']],
+  ['LendingTree platform', ['The LendingTree agent', 'Closing and binding rails', 'One chosen partner'], 'plat'],
+  ['Who we need to sign', ['Data connections', 'Alpha lenders and carriers', 'A first embedded partner']],
+];
 const take = `
-<div class="stk">
-  <p class="stk-l a fade" style="--d:1.0">Where the customer is</p>
-  <div class="stk-r three">
-    ${nd(1.1, 1, 'AI assistants', 'OpenAI first, then Google, Anthropic and others')}
-    ${nd(1.3, 2, 'Partner products', 'Embedded in their purchase flow, three partners in 2027')}
-    ${nd(1.5, 3, 'LendingTree website and app', 'One account for loans, policies and linked accounts')}
-  </div>
-  <div class="stk-c three a fade" style="--d:.9"><span></span><span></span><span></span></div>
-  <div class="stk-p a" style="--d:.2">
-    <h3>LendingTree platform</h3>
-    <div class="stk-r three">
-      ${nd(0.4, 4, 'The LendingTree agent', 'MCP, API and an embedded SDK, with consent and an audit trail', 'on')}
-      ${nd(0.55, 5, 'Closing and binding rails', 'Disclosures, signature, funding, policy binding', 'on')}
-      ${nd(0.7, 6, 'One chosen partner', 'No flood of calls, texts and emails', 'on')}
-    </div>
-  </div>
-  <div class="stk-c three a fade" style="--d:1.8"><span></span><span></span><span></span></div>
-  <p class="stk-l a fade" style="--d:1.9">Who we need to sign</p>
-  <div class="stk-r three">
-    ${nd(2.0, 7, 'Data connections', 'Plaid, Finicity, property and credit, by consent')}
-    ${nd(2.2, 8, 'Alpha lenders and carriers', 'Firm offers, bindable quotes and applications through an API')}
-    ${nd(2.4, 9, 'A first embedded partner', 'Signed, integrated and live in 2027')}
-  </div>
-  <p class="stk-l gap a fade" style="--d:2.7">How we take it to market</p>
-  <div class="stk-r two">
-    ${nd(2.8, 10, 'An embedded partnerships team', 'A group within Partnerships that signs, launches and supports partners')}
-    ${nd(3.0, 11, 'A go-to-market for embedded', 'Who we target, the partner fee, the launch playbook, and how we measure it')}
-  </div>
+<div class="lyr">
+  ${LAYERS.map(([label, items, cls], k) => { const d = 0.2 + k * 0.9; return `<section class="ly ${cls || ''} a fade" style="--d:${d.toFixed(2)}">
+    <h3>${label}</h3>
+    <ul class="a fade" style="--d:${(d + 0.3).toFixed(2)}">${items.map((t) => `<li>${t}</li>`).join('')}</ul>
+  </section>`; }).join('\n  ')}
 </div>
-<p class="acct a fade" style="--d:3.4">First version: one loan product, one insurance product, one assistant, one embedded partner, a handful of lenders and carriers.</p>`;
+<div class="ly-f">
+  <p class="ly-g a fade" style="--d:2.9">To take it to market: an embedded partnerships team, and a go-to-market for embedded.</p>
+  <p class="acct a fade" style="--d:3.1">First version: one loan product, one insurance product, one assistant, one embedded partner, a handful of lenders and carriers.</p>
+</div>`;
 
 /* ------------------------------------------------------------- the economics */
 /* Per consumer request, from the model's default inputs. Lead prices and conversion rates are assumptions. */
@@ -464,18 +450,18 @@ const lnk = (xs) => `<ul class="lk">${xs.map((x) => `<li><a href="${x[0]}">${x[1
 const D = {
   take: `
     <h4>What the visiontypes assume, and a first version of each</h4>
-    ${tbl(['', 'What we would need', 'First version'], [
-      ['1', 'Assistant partnerships', 'OpenAI first, then Google, Anthropic and others: listing in their app programme, review, commercial terms, attribution.'],
-      ['2', 'Embedded partners', 'Companies who put LendingTree financing and insurance inside their own purchase flow. Three in 2027, ten in 2028, twenty in 2029. The partner is paid a fee, in place of what we spend to acquire a lead.'],
-      ['3', 'The customer account', 'One home on LendingTree’s website and app for loans, policies and linked accounts. Read-only to start (balances, due dates, renewals), then payments and claims.'],
-      ['4', 'The LendingTree agent: MCP, API and an embedded SDK', 'The tools an assistant or a partner calls: eligibility, offers and quotes, application status, servicing. With sign-in, consent and an audit trail. The embedded SDK is new technology we would need to build.'],
-      ['5', 'Closing and binding rails', 'Disclosures, e-signature, funding status, policy binding and ID card, with licensing and compliance signed off first.'],
-      ['6', 'One chosen partner', 'In these journeys the shopper picks who contacts them, so the request is not sold to several partners and the flood of calls, texts and emails stops.'],
-      ['7', 'Data connections', 'Aggregators such as Plaid and Finicity for bank, income and assets; property and vehicle data; a soft credit pull. All by consent.'],
-      ['8', 'Alpha lenders and carriers', 'Two or three of each who return firm offers and bindable quotes, and accept an application, through an API.'],
-      ['9', 'A first embedded partner', 'One company signed, integrated and live in 2027, as the reference for the next two that year.'],
-      ['10', 'An embedded partnerships team', 'A group within Partnerships dedicated to this: finding and signing partners, launching them, and supporting them once live.'],
-      ['11', 'A go-to-market for embedded', 'Which partners we target first, the fee we pay them, the launch playbook, and how we measure each partner. This is needed alongside the technology, not after it.'],
+    ${tbl(['What we would need', 'First version'], [
+      ['AI assistants', 'Assistant partnerships. OpenAI first, then Google, Anthropic and others: listing in their app programme, review, commercial terms, attribution.'],
+      ['Partner products', 'Embedded partners: companies who put LendingTree financing and insurance inside their own purchase flow. Three in 2027, ten in 2028, twenty in 2029. The partner is paid a fee, in place of what we spend to acquire a lead.'],
+      ['LendingTree website and app', 'The customer account: one home on LendingTree’s website and app for loans, policies and linked accounts. Read-only to start (balances, due dates, renewals), then payments and claims.'],
+      ['The LendingTree agent', 'MCP, API and an embedded SDK. The tools an assistant or a partner calls: eligibility, offers and quotes, application status, servicing. With sign-in, consent and an audit trail. The embedded SDK is new technology we would need to build.'],
+      ['Closing and binding rails', 'Disclosures, e-signature, funding status, policy binding and ID card, with licensing and compliance signed off first.'],
+      ['One chosen partner', 'In these journeys the shopper picks who contacts them, so the request is not sold to several partners and the flood of calls, texts and emails stops.'],
+      ['Data connections', 'Aggregators such as Plaid and Finicity for bank, income and assets; property and vehicle data; a soft credit pull. All by consent.'],
+      ['Alpha lenders and carriers', 'Two or three of each who return firm offers and bindable quotes, and accept an application, through an API.'],
+      ['A first embedded partner', 'One company signed, integrated and live in 2027, as the reference for the next two that year.'],
+      ['An embedded partnerships team', 'A group within Partnerships dedicated to this: finding and signing partners, launching them, and supporting them once live.'],
+      ['A go-to-market for embedded', 'Which partners we target first, the fee we pay them, the launch playbook, and how we measure each partner. This is needed alongside the technology, not after it.'],
     ])}
     <p>Some of this LendingTree has today. Finding out how much is part of my first two weeks.</p>`,
   economics: `
