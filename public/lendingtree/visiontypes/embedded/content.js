@@ -312,10 +312,11 @@ export const INS = {
     advisor: (rec, low, car) => `${rec.carrier} covers both vehicles for ${money(rec.total)} a year, ${money(rec.saving)} less than staying with ${CURRENT_POLICY.carrier}, with higher liability limits and half the deductible. It also bundles with the home policy you already have there. ${low.carrier} is ${money(rec.total - low.total)} a year cheaper, with the liability limits you have today. I would move both to ${rec.carrier}.`,
     stay: `Keep ${CURRENT_POLICY.carrier} and add the Tacoma`, stayNote: (n) => `${money(n)} a year`,
   },
+  when: { card: 'Delivery day' },
   confirm: {
     title: (q) => `Switch both vehicles to ${q.carrier}`, sub: 'Here is exactly what happens. You do not need to call anyone.',
-    steps: (q, car, when, refund) => [
-      ['Your new policy', `${q.carrier} covers the ${car.model} and the Highlander from ${when}, the day your truck arrives. ${money(q.total)} a year, or ${money(Math.round(q.total / 12))} a month.`],
+    steps: (q, car, refund) => [
+      ['Your new policy', `${q.carrier} covers the ${car.model} and the Highlander from the day your truck arrives. ${money(q.total)} a year, or ${money(Math.round(q.total / 12))} a month.`],
       ['Your old policy', `We cancel ${CURRENT_POLICY.carrier} for you on the same day, so there is no gap and no overlap. ${CURRENT_POLICY.carrier} refunds the unused part, about ${money(refund)}.`],
       ['Proof of insurance', `We send it to ${M} and to your lender. Your ID cards arrive by email in a minute.`],
     ],
@@ -325,10 +326,10 @@ export const INS = {
   },
   binding: { title: (q) => `Binding your ${q.carrier} policy`, lines: (q) => [`Starting your ${q.carrier} policy`, `Scheduling your ${CURRENT_POLICY.carrier} cancellation`, `Sending proof of insurance to ${M} and your lender`] },
   bound: {
-    title: 'You are covered', body: (q, when) => `Your ${q.carrier} policy is bound and starts ${when}. Both vehicles are on it.`,
-    rows: (q, when, refund, lender) => [
+    title: 'You are covered', body: (q) => `Your ${q.carrier} policy is bound and starts the day your truck arrives. Both vehicles are on it.`,
+    rows: (q, refund, lender) => [
       ['New policy', `${q.carrier}, ${money(q.total)} a year for both vehicles`],
-      ['Old policy', `${CURRENT_POLICY.carrier} cancels ${when}. About ${money(refund)} comes back to you.`],
+      ['Old policy', `${CURRENT_POLICY.carrier} cancels the same day. About ${money(refund)} comes back to you.`],
       ['Proof of insurance', lender ? `Sent to ${M} and ${lender}` : `Sent to ${M}`],
       ['You save', `${money(q.saving)} a year`],
     ],

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" data-no-scroll-hint>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>LendingTree embedded | Adam Michaelson</title>
+<meta name="description" content="A clickable prototype of LendingTree embedded inside another company's purchase flow: buying a truck on a marketplace, with the loan and the insurance handled in place.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0d1b2a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/lendingtree/visiontypes/embedded/embedded.css?v=1">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<script>(function(){var q=new URLSearchParams(location.search);if(q.get('embed')==='1')document.documentElement.classList.add('embed');})();</script>
+</head>
+<body>
+
+<!-- Prototype chrome: outside the product. -->
+<div class="pstrip" id="pstrip">
+  <a class="pback exitbar" href="/lendingtree/getting-started/#visiontypes"><span aria-hidden="true">&lsaquo;</span> <span id="pbackT">Back to the slides</span></a>
+</div>
+<div class="dev" id="dev">
+  <div class="dev-menu" id="devMenu" hidden>
+    <p id="devNote"></p>
+    <div class="dev-lbl2" id="devJumpL"></div>
+    <div class="dev-jumps" id="devJumps"></div>
+    <button type="button" id="doReset"></button>
+    <p class="dev-fine" id="devFine"></p>
+    <p class="dev-fine" id="devGoogle"></p>
+  </div>
+  <div class="dev-combo">
+    <button type="button" class="dev-main" id="devToggle" aria-pressed="true" aria-label="Auto-play is on. Pause"><span class="dev-lbl">Auto-play</span><span class="dev-ic" id="devIc"></span></button>
+    <button type="button" class="dev-caret" id="devBtn" aria-expanded="false" aria-controls="devMenu" aria-haspopup="true" aria-label="Prototype controls"><span class="dev-word">Prototype</span><svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+</div>
+
+<!-- The product: a fictional used-car marketplace, with LendingTree embedded in its purchase flow. -->
+<div class="kt" id="kt">
+  <div class="url" aria-hidden="true"><span class="url-dots"><i></i><i></i><i></i></span><span class="url-pill"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span id="urlT"></span></span></div>
+  <header class="hd" id="hd"></header>
+  <main id="main" tabindex="-1"><div id="view"></div></main>
+  <!-- The simulated Google account chooser. No real sign-in, no network. -->
+  <div class="gov" id="gov" hidden></div>
+  <div class="toast" id="toast" role="status"></div>
+  <!-- Ask a question during financing and insurance. Built by app.js; not in embed mode. -->
+  <div class="dock" id="dock" hidden></div>
+</div>
+
+<!-- More prototype chrome: the final interstitial. -->
+<div class="pmodal" id="pmodal" role="dialog" aria-modal="true" aria-labelledby="pmTitle" hidden>
+  <div class="pm-card">
+    <span class="pm-kick">Prototype</span>
+    <h2 id="pmTitle"></h2>
+    <p id="pmBody"></p>
+    <div class="pm-btns stack" id="pmBtns"></div>
+  </div>
+</div>
+
+<script type="module" src="/lendingtree/visiontypes/embedded/app.js?v=1"></script>
+</body>
+</html>

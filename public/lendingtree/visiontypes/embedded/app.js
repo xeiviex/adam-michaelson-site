@@ -603,11 +603,10 @@ function render() {
   } else view.innerHTML = S.screen === 'search' ? searchHtml() : S.screen === 'detail' ? detailHtml() : doneHtml();
   if (changed) {
     body.classList.remove('enter'); void body.offsetWidth; body.classList.add('enter');
-    const ltm = $('#ltm');
-    if (stepChanged || !ltm) main.scrollTo({ top: 0, behavior: 'auto' });
-    else if (main.scrollTop > ltm.offsetTop - 8 || ltm.getBoundingClientRect().top > main.getBoundingClientRect().bottom - 200) main.scrollTo({ top: Math.max(0, topOf(ltm) - 12), behavior: smooth() });
+    const ltm = $('#ltm'), target = stepChanged || !ltm ? 0 : Math.max(0, topOf(ltm) - 12);
+    if (stepChanged || !ltm || main.scrollTop > target) main.scrollTo({ top: target, behavior: stepChanged ? 'auto' : smooth() });
   }
-  if (focus && !S.auto) { const n = $(focus, kt); if (n && !n.disabled) n.focus({ preventScroll: true }); else if (changed) main.focus({ preventScroll: true }); }
+  if (focus && !S.auto) { const n = stepChanged ? null : $(focus, kt); if (n && !n.disabled) n.focus({ preventScroll: true }); else if (changed) main.focus({ preventScroll: true }); }
   lastKey = key; lastScreen = S.screen;
   paintGoogle(); paintDock(); kick();
 }
