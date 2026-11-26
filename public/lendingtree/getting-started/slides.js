@@ -87,33 +87,33 @@ const pulses = (leads, x, y0, bus, r, at = 4.4) => `<g class="pulses" style="--d
 }).join('')}</g>`;
 const teams = LEADS.map((cx, k) => [-74, 0, 74].map((dx, j) => `<rect ${A((2.0 + k * 0.15 + j * 0.05).toFixed(2))} class="tm${k === 2 ? ' hire' : ''}" x="${cx + dx - 31}" y="318" width="62" height="38" rx="7"/>`).join('')).join('');
 /* The same chain of command, redrawn tall for phones, where the wide version would have to scroll sideways. */
-const pb = (x, y, w, h, t, cls, d, sub) => `<g ${A(d)}><rect class="bx ${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="7"/><text class="pt ${cls}" x="${x + w / 2}" y="${y + h / 2 + (sub ? -2 : 4)}">${t}</text>${sub ? `<text class="ps" x="${x + w / 2}" y="${y + h / 2 + 12}">${sub}</text>` : ''}</g>`;
+const pb = (x, y, w, h, t, cls, d, sub) => `<g ${A(d, 'fade')}><rect class="bx ${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="7"/><text class="pt ${cls}" x="${x + w / 2}" y="${y + h / 2 + (sub ? -2 : 4)}">${t}</text>${sub ? `<text class="ps" x="${x + w / 2}" y="${y + h / 2 + 12}">${sub}</text>` : ''}</g>`;
 const PL = [65, 180, 295];
-const teamPhone = `
-<svg class="org m" viewBox="0 0 360 292" role="img" aria-label="Chain of command: the CPO, three leads and their teams, with the heads of technology, analytics and strategy, and marketing as partners">
-  <defs><marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#6cc3f5" stroke-width="1.6"/></marker></defs>
-  <path class="ln rule" ${A(0.9)} pathLength="1" d="M85 58V96M65 96H295M65 96V116M180 96V116M295 96V116"/>
-  <path class="ln rule" ${A(1.7)} pathLength="1" d="${PL.slice(0, 2).map((c) => `M${c} 162V180M${c - 34} 180H${c + 34}M${c - 34} 180V196M${c} 180V196M${c + 34} 180V196`).join('')}"/>
-  <path class="ln rule dsh" ${A(1.9)} d="M295 162V180M261 180H329M261 180V196M295 180V196M329 180V196"/>
-  <path class="ln acc" ${A(0.6)} pathLength="1" d="M150 34H190"/>
-  <text class="pl acc" ${A(0.7)} x="265" y="13">Partners: the heads of</text>
-  <g ${A(0.75)}><rect class="bx dk" x="190" y="18" width="150" height="60" rx="7"/><text class="pt sm" x="265" y="35">Technology</text><text class="pt sm" x="265" y="52">Analytics and strategy</text><text class="pt sm" x="265" y="69">Marketing</text></g>
-  ${pb(20, 12, 130, 46, 'CPO', 'wh', 0.2)}
-  ${pb(15, 116, 100, 46, 'Senior director', 'dk', 1.2, 'Product')}
-  ${pb(130, 116, 100, 46, 'Senior director', 'dk', 1.35, 'Product')}
-  ${pb(245, 116, 100, 46, 'Head of design', 'hire', 1.5, 'To hire')}
-  ${PL.map((c, k) => [-34, 0, 34].map((dx, j) => `<rect ${A((1.9 + k * 0.12 + j * 0.04).toFixed(2))} class="tm${k === 2 ? ' hire' : ''}" x="${c + dx - 13}" y="196" width="26" height="20" rx="4"/>`).join('')).join('')}
-  <path class="skip" ${A(2.8, 'fade')} d="M104 58C120 66 122.500 78 122.500 100V226" marker-end="url(#ahp)"/>
-  <path class="skip" ${A(3.1, 'fade')} d="M134 58C134 86 237.500 78 237.500 102V226" marker-end="url(#ahp)"/>
-  <text class="pl acc" ${A(2.9)} x="122" y="246">When a team is in trouble</text>
-  <text class="pl acc" ${A(3.2)} x="238" y="264">Coaching rising leaders</text>
-  ${pulses([[65, 116], [180, 116], [295, 116]], 85, 60, 96, 3)}
-  <text class="pl" ${A(2.4)} x="180" y="286">Solid lines: clarity down, feedback up</text>
-</svg>`;
-
 /* Build order for the chain of command (seconds): CPO, leads, lines to leads, teams, lines to teams, caption,
    running dots, the two dashed arrows, their labels, the partner lines and peers, then the day 30/60/90 strip. */
 const T = { cpo: 0.2, leads: 0.9, l1: 1.5, teams: 2.3, l2: 2.9, caption: 3.8, dots: 4.4, skip: 5.0, partner: 6.6, strip: 7.9 };
+const teamPhone = `
+<svg class="org m" viewBox="0 0 360 292" role="img" aria-label="Chain of command: the CPO, three leads and their teams, with the heads of technology, analytics and strategy, and marketing as partners">
+  <defs><marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#6cc3f5" stroke-width="1.6"/></marker></defs>
+  <path class="ln rule" ${A(T.l1)} pathLength="1" d="M85 58V96M65 96H295M65 96V116M180 96V116M295 96V116"/>
+  <path class="ln rule" ${A(T.l2)} pathLength="1" d="${PL.slice(0, 2).map((c) => `M${c} 162V180M${c - 34} 180H${c + 34}M${c - 34} 180V196M${c} 180V196M${c + 34} 180V196`).join('')}"/>
+  <path class="ln rule dsh" ${A(T.l2)} d="M295 162V180M261 180H329M261 180V196M295 180V196M329 180V196"/>
+  <path class="ln acc" ${A(T.partner)} pathLength="1" d="M150 34H190"/>
+  <text class="pl acc" ${A(T.partner + 0.3, 'fade')} x="265" y="13">Partners: the heads of</text>
+  <g ${A(T.partner + 0.6, 'fade')}><rect class="bx dk" x="190" y="18" width="150" height="60" rx="7"/><text class="pt sm" x="265" y="35">Technology</text><text class="pt sm" x="265" y="52">Analytics and strategy</text><text class="pt sm" x="265" y="69">Marketing</text></g>
+  ${pb(20, 12, 130, 46, 'CPO', 'wh', T.cpo)}
+  ${pb(15, 116, 100, 46, 'Senior director', 'dk', T.leads, 'Product')}
+  ${pb(130, 116, 100, 46, 'Senior director', 'dk', T.leads, 'Product')}
+  ${pb(245, 116, 100, 46, 'Head of design', 'hire', T.leads, 'To hire')}
+  ${PL.map((c, k) => [-34, 0, 34].map((dx, j) => `<rect ${A(T.teams, 'fade')} class="tm${k === 2 ? ' hire' : ''}" x="${c + dx - 13}" y="196" width="26" height="20" rx="4"/>`).join('')).join('')}
+  <path class="skip" ${A(T.skip, 'down')} d="M104 58C120 66 122.500 78 122.500 100V226" marker-end="url(#ahp)"/>
+  <path class="skip" ${A(T.skip, 'down')} d="M134 58C134 86 237.500 78 237.500 102V226" marker-end="url(#ahp)"/>
+  <text class="pl acc" ${A(T.skip + 0.9, 'fade')} x="122" y="246">When a team is in trouble</text>
+  <text class="pl acc" ${A(T.skip + 0.9, 'fade')} x="238" y="264">Coaching rising leaders</text>
+  ${pulses([[65, 116], [180, 116], [295, 116]], 85, 60, 96, 3)}
+  <text class="pl" ${A(T.caption, 'fade')} x="180" y="286">Solid lines: clarity down, feedback up</text>
+</svg>`;
+
 const team = `
 <svg class="org" viewBox="0 0 1200 410" role="img" aria-label="Chain of command: the CPO, three leads and their teams, with the heads of technology, analytics and strategy, and marketing as partners">
   <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#6cc3f5" stroke-width="1.6"/></marker></defs>
@@ -407,7 +407,7 @@ const TAKE = [
   ] },
   { label: 'How we take it to market', cls: 'gtm', items: [
     { key: 'team', title: 'An embedded partnerships team', line: 'Signs, launches and supports partners',
-      what: 'A group within Partnerships dedicated to this: finding and signing partners, launching them, and supporting them once live.',
+      what: 'A team dedicated to this: finding and signing partners, launching them, and supporting them once live.',
       hard: ['Launching a partner needs engineering, legal and compliance alongside the commercial lead.', 'Whether this is new roles or a change to existing ones is a decision to make with the head of Partnerships. To be confirmed in my first weeks.', 'Support does not end at launch, and it grows with each partner.'],
       first: 'A small group who own the first partner from signing through launch and support.',
       deps: 'A go-to-market for embedded, and partner products.' },
@@ -503,7 +503,7 @@ const card = (d, part, fig, line, by, cls = '') => `<article ${A(d)}><h3>${part}
 const outcomes = `
 <div class="cards6">
   ${card(0.2, 'Integration', 'Within 2 weeks', 'I will have completed ~30 interviews and delivered a synthesis with an updated plan', 'January 15', 'wd')}
-  ${card(0.5, 'Level up the team', 'Auditability', 'I’ll set expectations, train, measure, assess, and make changes as needed.', 'Day 90', 'wd')}
+  ${card(0.5, 'Level up the team', 'Auditability', 'I’ll set expectations, train, measure, assess, and make changes as needed', 'Day 90', 'wd')}
   ${card(0.8, 'Protect the core', '≥ Plan', 'I’ll deliver on the company’s planned targets and/or get alignment on adjustments', 'Every quarter')}
   ${card(1.1, 'Immediate impact', '$1M+', 'Profit booked through rapidly deployed / graduated experiments', 'Within year one')}
   ${card(1.4, 'Disruption: pods', '3 contenders', '3 pods of principals with viable disruptions online and producing', 'Within year one', 'wd')}
@@ -578,7 +578,7 @@ const D = {
       ['Data connections', 'Aggregators such as Plaid and Finicity for bank, income and assets; property and vehicle data; a soft credit pull. All by consent.'],
       ['Alpha lenders and carriers', 'Two or three of each who return firm offers and bindable quotes, and accept an application, through an API.'],
       ['A first embedded partner', 'One company signed, integrated and live in 2027, as the reference for the next two that year.'],
-      ['An embedded partnerships team', 'A group within Partnerships dedicated to this: finding and signing partners, launching them, and supporting them once live.'],
+      ['An embedded partnerships team', 'A team dedicated to this: finding and signing partners, launching them, and supporting them once live.'],
       ['A go-to-market for embedded', 'Which partners we target first, the fee we pay them, the launch playbook, and how we measure each partner. This is needed alongside the technology, not after it.'],
     ])}
     <p>Some of this LendingTree has today. Finding out how much is part of my first two weeks.</p>`,
