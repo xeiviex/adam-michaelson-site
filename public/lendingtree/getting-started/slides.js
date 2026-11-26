@@ -321,8 +321,8 @@ const TAKE = [
       first: 'Eligibility, and offers and quotes, for one loan product and one insurance product, through one assistant.',
       deps: 'Alpha lenders and carriers, data connections, and closing and binding rails.' },
     { key: 'rails', title: 'Closing and binding rails', line: 'Underwriting, funding, binding',
-      what: 'Everything needed to finish the transaction with the customer, not hand it off: disclosures, e-signature, funding status, policy binding and the ID card.',
-      hard: ['Home equity: US rules on referral fees for mortgage-type loans (RESPA Section 8) constrain fees paid to a referrer on close.', 'Insurance: being paid when a policy binds generally requires a producer licence.', 'Disclosures and licensing differ by product and by state.', 'Funding and binding happen in the lender’s or carrier’s systems, so status has to come back from them reliably.'],
+      what: 'Everything needed to finish the transaction with the customer, not hand it off: the lender’s or carrier’s underwriting decision, disclosures and signature, funding, and binding the policy with its ID card.',
+      hard: ['Home equity: US rules on referral fees for mortgage-type loans (RESPA Section 8) constrain fees paid to a referrer on close.', 'Insurance: being paid when a policy binds generally requires a producer licence.', 'Disclosures and licensing differ by product and by state.', 'Underwriting, funding and binding happen in the lender’s or carrier’s systems, so each decision and status has to come back from them reliably and quickly.'],
       first: 'One loan product and one insurance product, with licensing and compliance signed off first. Review with counsel comes before anything is built.',
       deps: 'Alpha lenders and carriers, and data connections.' },
     { key: 'chosen', title: 'One chosen partner', line: 'No flood of calls, texts and emails',
@@ -369,7 +369,7 @@ const take = `
   </section>`; }).join('\n  ')}
 </div>
 <div class="ly-f">
-  <p class="ly-g a fade" style="--d:3.2">I know this is a great deal of work, across technology, partners, legal and go-to-market. Each piece opens.</p>
+  <p class="ly-g a fade" style="--d:3.2">I know this is a great deal of work, across technology, partners, legal and go-to-market. Open any piece for the detail.</p>
   <p class="acct a fade" style="--d:3.35">First version: one loan product, one insurance product, one assistant, one embedded partner, a handful of lenders and carriers.</p>
 </div>`;
 
@@ -516,7 +516,7 @@ const D = {
       ['Partner products', 'Embedded partners: companies who put LendingTree financing and insurance inside their own purchase flow. Three in 2027, ten in 2028, twenty in 2029. The partner is paid a fee, in place of what we spend to acquire a lead.'],
       ['LendingTree website and app', 'The customer account: one home on LendingTree’s website and app for loans, policies and linked accounts. Read-only to start (balances, due dates, renewals), then payments and claims.'],
       ['The LendingTree agent', 'MCP, API and an embedded SDK. The tools an assistant or a partner calls: eligibility, offers and quotes, application status, servicing. With sign-in, consent and an audit trail. The embedded SDK is new technology we would need to build.'],
-      ['Closing and binding rails', 'Disclosures, e-signature, funding status, policy binding and ID card, with licensing and compliance signed off first.'],
+      ['Closing and binding rails', 'The underwriting decision, disclosures and signature, funding, and policy binding with the ID card, with licensing and compliance signed off first.'],
       ['One chosen partner', 'In these journeys the shopper picks who contacts them, so the request is not sold to several partners and the flood of calls, texts and emails stops.'],
       ['Data connections', 'Aggregators such as Plaid and Finicity for bank, income and assets; property and vehicle data; a soft credit pull. All by consent.'],
       ['Alpha lenders and carriers', 'Two or three of each who return firm offers and bindable quotes, and accept an application, through an API.'],
