@@ -284,7 +284,7 @@ const VTS = [
 const visiontypes = `
 <div class="car hs a" style="--d:.2" data-car>
   <div class="stage"><div class="ring">
-    ${VTS.map((v, i) => `<a class="fr" href="${v.url}" data-pos="${i}" draggable="false" aria-label="Open ${v.title}">
+    ${VTS.map((v, i) => `<a class="fr" href="${v.url}" data-pos="${i}" draggable="false" aria-label="${v.title}">
       <div class="fh"><h3><span class="lg">${v.mark}</span>${v.title}</h3><p>${v.sub}</p></div>
       <div class="desk"><i></i><div class="scr"><iframe title="${v.title}, desktop" data-src="${v.url}?embed=1" loading="lazy" tabindex="-1"></iframe></div></div>
       <div class="phone"><div class="scr"><iframe title="${v.title}, mobile" data-src="${v.url}?embed=1&${v.q}" loading="lazy" tabindex="-1"></iframe></div></div>

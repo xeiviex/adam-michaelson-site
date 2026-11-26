@@ -1,7 +1,7 @@
 /* Draws /lendingtree/getting-started/ from slides.js. Same model as /lendingtree/: one slide, one drawing, a Details sheet.
    The drawing's motion is CSS: a slide gets .on when it is shown, and anything with class "a" builds in after --d seconds.
    Arriving on a slide replays its build. Press R to replay the current slide. */
-import { SLIDES } from './slides.js?v=65';
+import { SLIDES } from './slides.js?v=66';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const $ = (s) => document.querySelector(s);
@@ -20,7 +20,7 @@ dots.innerHTML = SLIDES.map((s, i) => `<li><a href="#${s.id}" data-go="${i}" ari
 
 /* The visiontypes carousel. Every few seconds it turns, all three moving together: the one in front moves left and back,
    dimming as it goes; the one behind on the right comes forward into the light; the one behind on the left crosses behind
-   them to the right. Pressing and holding pauses the turning; a tap opens the one tapped; a sideways swipe turns it. */
+   them to the right. Pressing and holding pauses the turning; a tap on one behind brings it forward and a tap on the one in front opens it; a sideways swipe turns it. */
 trackEl.querySelectorAll('[data-car]').forEach((car) => {
   const cards = [...car.querySelectorAll('.fr')], n = cards.length, slide = car.closest('.slide');
   const T = 1500, DWELL = 4800, EASE = 'cubic-bezier(.45, .05, .25, 1)';
@@ -64,7 +64,11 @@ trackEl.querySelectorAll('[data-car]').forEach((car) => {
     else if (held > 350 || Math.hypot(dx, dy) > 10) block = true; // a hold or a drag, not a tap
   };
   addEventListener('pointerup', up); addEventListener('pointercancel', up);
-  stage.addEventListener('click', (e) => { if (block) { e.preventDefault(); block = false; } });
+  stage.addEventListener('click', (e) => {
+    if (block) { e.preventDefault(); block = false; return; }
+    const c = e.target.closest('.fr'); // a tap on one behind brings it to the front; only the one in front opens
+    if (c && c.dataset.pos !== '0') { e.preventDefault(); turn(c.dataset.pos === '1' ? 1 : -1); }
+  });
   stage.addEventListener('contextmenu', (e) => { if (e.pointerType === 'touch' || down) e.preventDefault(); });
   stage.addEventListener('dragstart', (e) => e.preventDefault());
 });
