@@ -42,7 +42,7 @@ const open = `
   <div class="th3">
     <div>${g1(0.9)}<b ${A(0.9)}>Protect the core</b><small ${A(1.0)}>Core targets, partner with Sarah</small></div>
     <div>${g2(2.0)}<b ${A(2.0)}>Deliver new profit</b><small ${A(2.1)}>$1M+ in year one</small></div>
-    <div>${g3(3.4)}<b ${A(3.4)}>Disrupt ourselves</b><small ${A(3.5)}>Three pods + research-led reset</small></div>
+    <div>${g3(3.4)}<b ${A(3.4)}>Disrupt ourselves</b><small ${A(3.5)}>Three pods + the next chapter</small></div>
   </div>
   ${base(5.0)}
 </div>`;
@@ -242,7 +242,7 @@ const podRow = (p, k) => {
 };
 const RS = [['Stakeholder interviews', 0.5, -1], ['Market research', 1.5, 1], ['Provisional vision', 3, -1], ['Contextual inquiry', 4, 1], ['Synthesis', 5, -1], ['Concept design', 6, 1], ['Validation', 7, -1], ['Go-to-market', 8, 1]];
 const disruption = `
-<svg class="dis" viewBox="0 0 1200 524" role="img" aria-label="Three independent pods running repeating cycles through the year, and a research-led reset that reaches a phase gate in month nine and an alpha in month twelve">
+<svg class="dis" viewBox="0 0 1200 524" role="img" aria-label="Three independent pods running repeating cycles through the year, and the next chapter, which reaches a phase gate in month nine and an alpha in month twelve">
   ${Array.from({ length: 12 }, (_, i) => `<text class="lb mo" x="${mx(i + 0.5)}" y="26">${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}</text>`).join('')}
   <path class="axis" d="M${M0} 38H1170"/>
   ${/* last of all: the Day 90 label fades in, then its dotted line draws from top to bottom */''}<text class="lb acc sm" ${A(6.0, 'fade')} x="${mx(3)}" y="62">Day 90</text><path class="tick mk" ${A(6.6, 'down')} d="M${mx(3)} 38V44M${mx(3)} 72V454"/>
@@ -257,7 +257,7 @@ const disruption = `
     <circle class="stn ev" cx="${M0 + 266}" cy="246" r="5.5"/><text class="lb sm" x="${M0 + 280}" y="251" text-anchor="start">Evidence review</text>
     ${dia(M0 + 420, 246, 'go')}<text class="lb sm" x="${M0 + 436}" y="251" text-anchor="start">Decision: scale, pivot or stop. Then again.</text>
   </g>
-  <text class="hd" ${A(3.0)} x="18" y="300" text-anchor="start">Research-led reset</text>
+  <text class="hd" ${A(3.0)} x="18" y="300" text-anchor="start">The next chapter</text>
   <text class="lb" ${A(3.0)} x="18" y="320" text-anchor="start">Led by me</text>
   <path class="ln res" ${A(3.2)} pathLength="1" d="M${M0} 344H${mx(8.5) - 12}"/>
   <path class="ln res2" ${A(4.9)} pathLength="1" d="M${mx(8.5) + 12} 344H${mx(12) - 10}"/>
@@ -466,7 +466,7 @@ const LANES = [
     ['First bets', 'Choose, test, decide', 1, 7, 'f'],
     ['Owners scale the winners', '', 7, 25, 'o', '$1M+'],
   ]],
-  ['Disruption', 'Three pods and a research-led reset', [
+  ['Disruption', 'Three pods and the next chapter', [
     ['Pods', 'Staff and start', 1, 7, 'o', 'Running'],
     ['Pods', 'Test, review, decide, repeat', 7, 25, 'f'],
     ['Next chapter', 'Interviews, market research, internal reflection', 1, 5, 'f'],
@@ -587,7 +587,7 @@ const D = {
   disruption: `
     <h4>Three independent pods</h4>
     ${ul(['Three people each: a PM, a designer and an engineer, all at principal level.', 'Staffed from inside where someone fits and can be freed up; otherwise hired or contracted.', '100% allocated, and running by day 90. Internally staffed pods can start sooner.', 'Accountable only for their charter. I give them no brief.', 'Each cycle: an open charter, the smallest credible test, an evidence review, and a decision to scale, pivot or stop.'])}
-    <h4>The research-led reset</h4>
+    <h4>The next chapter</h4>
     ${tbl(['Step', 'When'], [['Stakeholder interviews', 'Month 1'], ['Market research and internal reflection', 'Months 1 to 2'], ['Contextual inquiry with lenders, carriers, partners and shoppers', 'Months 2 to 4'], ['Provisional vision and strategy', 'Month 3, day 90'], ['Synthesis', 'Month 5'], ['Concept design', 'Month 6'], ['Validation', 'Month 7'], ['Go-to-market plan', 'Month 8'], ['Executive phase gate', 'Month 9'], ['Alpha in market', 'Month 12']])}
     <p>I lead this, with a team staffed internally wherever possible. The two hypotheses are there to be invalidated, not defended.</p>
     ${lnk([['/lendingtree/#mcp', 'LendingTree in AI-native channels'], ['/product/contextual-inquiry/', 'Contextual inquiry']])}`,
@@ -598,7 +598,7 @@ const D = {
       ['Team leadership', 'Choosing and coaching the leads; expectations and assessments', 'Day-to-day team management, to the leads'],
       ['Protecting the core', 'The KPI review and roadblocks that need my level', 'Running the core roadmap, to the senior directors, with Sarah’s help in the transition'],
       ['Immediate impact', 'Choosing the bets and the kill or scale calls', 'Build, launch and monitoring, to an owner per bet'],
-      ['Disruption', 'Leading the research-led effort', 'Each pod, to its principals'],
+      ['Disruption', 'Leading the next chapter', 'Each pod, to its principals'],
     ])}
     <h4>Share of my week</h4>
     ${tbl(['', ...PH], [['General onboarding', '10%', '', '', '', '', ''], ['Integration', '60%', '20%', '', '', '', ''], ['Team leadership', '10%', '20%', '25%', '20%', '25%', '20%'], ['Protecting the core', '10%', '20%', '20%', '15%', '20%', '20%'], ['Immediate impact', '', '15%', '25%', '25%', '', ''], ['Disruption', '', '5%', '10%', '20%', '40%', '50%'], ['Unplanned', '10%', '20%', '20%', '20%', '15%', '10%']])}`,
@@ -643,7 +643,7 @@ const RAW = [
   { id: 'team', name: 'Team leadership', title: 'Team leadership', sub: 'A clear chain of command, and a team that keeps getting stronger', draw: team, details: D.team, links: [['/product/', 'How I do product']] },
   { id: 'core', name: 'Protecting the core', title: 'Protecting the core', sub: 'Safe with me, and growing', draw: core, details: D.core },
   { id: 'impact', name: 'Immediate impact', title: 'Immediate impact', sub: 'New profit in year one, from bets that earn their place', draw: impact, details: D.impact, links: [['/lendingtree/choice/', 'The Power of Choice'], ['/lendingtree/companion/', 'A Companion'], ['/lendingtree/outcomes/', 'Aligned Outcomes']] },
-  { id: 'disruption', name: 'Disruption', title: 'Disruption', sub: 'Put LendingTree out of business: three pods and a research-led reset', draw: disruption, details: D.disruption },
+  { id: 'disruption', name: 'Disruption', title: 'Disruption', sub: 'Put LendingTree out of business: three pods and the next chapter', draw: disruption, details: D.disruption },
   { id: 'visiontypes', name: 'Visiontypes', title: 'Visiontypes', sub: 'Where this could go, across the whole customer lifecycle', draw: visiontypes, links: VTS.map((v) => [v.url, v.title]) },
   { id: 'take', name: 'What this will take', title: 'What this will take', sub: 'What the visiontypes assume, and the first version of each', draw: take, details: D.take, topics: TAKE_TOPICS },
   { id: 'economics', name: 'The economics', title: 'The economics', sub: 'Selling leads against being paid on outcomes', draw: econ, details: D.economics, topics: ECON_TOPICS, links: [[MODEL, 'Open the model', 'pri']] },

@@ -73,13 +73,13 @@ export const TRACKS = [
     ],
   },
   {
-    id: 'disruption', name: 'Disruption', sub: 'Three independent pods and a research-led reset',
+    id: 'disruption', name: 'Disruption', sub: 'Three independent pods and the next chapter',
     card: { value: '3 × 3', unit: 'three pods of three principals, running', by: 'Day 90', status: 'draft',
-      points: ['Research-led reset: provisional vision at day 90', 'Executive phase gate in month 9', 'Alpha in market in month 12'] },
+      points: ['The next chapter: provisional vision at day 90', 'Executive phase gate in month 9', 'Alpha in market in month 12'] },
     bars: [
       { s: 1, e: 12, row: 1, label: 'Pods: staff and start', light: true },
       { s: 13, e: 48, row: 1, label: 'Pods: test, review, decide, repeat' },
-      { s: 1, e: 16, row: 2, label: 'Research: interviews, market, contextual inquiry' },
+      { s: 1, e: 16, row: 2, label: 'Next chapter: interviews, market, contextual inquiry' },
       { s: 17, e: 32, row: 2, label: 'Synthesis, concept, validation, go-to-market' },
       { s: 33, e: 36, row: 2, label: 'Phase gate', short: 'Gate' },
       { s: 37, e: 48, row: 2, label: 'Build the alpha' },
@@ -114,6 +114,6 @@ export const ALLOC = [
   { id: 'team', pct: [10, 20, 25, 20, 25, 20], keep: 'Choosing and coaching the leads; expectations and assessments.', give: 'Day-to-day team management, to the leads.' },
   { id: 'core', pct: [10, 20, 20, 15, 20, 20], keep: 'The KPI review and roadblocks that need my level.', give: 'Running the core roadmap, to the senior directors, with Sarah\u2019s help in the transition.' },
   { id: 'impact', pct: [0, 15, 25, 25, 0, 0], keep: 'Choosing the bets and the kill or scale calls.', give: 'Build, launch and monitoring, to an owner per bet.' },
-  { id: 'disruption', pct: [0, 5, 10, 20, 40, 50], keep: 'Leading the research-led effort.', give: 'Each pod, to its principals.' },
+  { id: 'disruption', pct: [0, 5, 10, 20, 40, 50], keep: 'Leading the next chapter.', give: 'Each pod, to its principals.' },
   { id: 'buffer', name: 'Unplanned', pct: [10, 20, 20, 20, 15, 10] },
 ];
