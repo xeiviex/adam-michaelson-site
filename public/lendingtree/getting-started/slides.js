@@ -7,7 +7,7 @@
 const A = (d, cls = '') => `class="a ${cls}" style="--d:${d}"`;
 /* A is LendingTree's own website and app; B is the same journey inside an assistant. */
 /* The financial model behind the economics slide (a Google Sheet; it must be shared for viewers to open it). */
-const MODEL = 'https://docs.google.com/spreadsheets/d/1MzWRB0WyozGMEUpipABAj_KLjYb9K9g1v6TYUeNTjd0/edit';
+const MODEL = 'https://docs.google.com/spreadsheets/d/1ThgH0lIsIwzAx7juTF14XVXN2BI6ckaR_FFasPzPLII/edit';
 const VT_A = '/lendingtree/visiontypes/lifecycle/';
 const VT_B = '/lendingtree/visiontypes/assistant/';
 
@@ -314,12 +314,19 @@ const econ = `
     <div class="ec-row a" style="--d:${(d + 0.5).toFixed(2)}"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:${(d + 0.6).toFixed(2)};width:${w(e.close)}%"><em>At close</em></i><i class="serv a gx" style="--d:${(d + 0.9).toFixed(2)};width:${w(e.serv)}%"><em>Servicing</em></i><b>${e.fmt(e.close + e.serv)}</b></div></div>
     <div class="ec-row a" style="--d:${(d + 1.0).toFixed(2)}"><span>Outcomes, with no lift in conversion</span><div class="ec-b"><i class="flat a gx" style="--d:${(d + 1.1).toFixed(2)};width:${w(e.flat)}%"></i><b>${e.fmt(e.flat)}</b></div></div>
   </section>`; }).join('')}
+  <section class="ec-p">
+    <h3 ${A(3.1)}>Embedded <span>Example: a financed used car</span></h3>
+    <p class="ec-u a fade" style="--d:3.2">Revenue per purchase</p>
+    <div class="ec-row a" style="--d:3.25"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:3.35;width:57.7%"><em>At close</em></i><i class="serv a gx" style="--d:3.65;width:42.3%"><em>Servicing</em></i><b>$2,346</b></div></div>
+    <div class="ec-row a" style="--d:3.8"><span>Paid to the partner, 2% of the loan</span><div class="ec-b"><i class="flat a gx" style="--d:3.9;width:23.1%"></i><b>$541</b></div></div>
+    <div class="ec-row a" style="--d:4.1"><span>Partners live</span><p class="ec-n"><b>3</b> in 2027<i></i><b>10</b> in 2028<i></i><b>20</b> in 2029</p></div>
+  </section>
 </div>
 <div class="ec-f">
-  <div class="ec-t a" style="--d:3.4"><h3>The terms</h3><p>5% of the loan or first-year premium at close or bind. 15% of interest while we service a loan. A monthly fee per policy in force. Each request goes to one chosen partner.</p></div>
-  <div class="ec-ramp a" style="--d:3.7"><h3>Share of volume on outcomes</h3><ol>${[['Start', 1], ['6 months', 10], ['1 year', 50], ['2 years', 100]].map((r, i) => `<li><i class="a gy" style="--d:${(3.9 + i * 0.2).toFixed(1)};height:${Math.max(r[1], 4)}%"></i><b>${r[1]}%</b><span>${r[0]}</span></li>`).join('')}</ol></div>
+  <div class="ec-t a" style="--d:4.5"><h3>The terms</h3><p>5% of the loan or first-year premium at close or bind. 15% of interest while we service a loan. A monthly fee per policy in force. Each request goes to one chosen partner. Embedded partners are paid 2% in place of our marketing spend.</p></div>
+  <div class="ec-ramp a" style="--d:4.8"><h3>Share of volume on outcomes</h3><ol>${[['Start', 1], ['6 months', 10], ['1 year', 50], ['2 years', 100]].map((r, i) => `<li><i class="a gy" style="--d:${(5.0 + i * 0.2).toFixed(1)};height:${Math.max(r[1], 4)}%"></i><b>${r[1]}%</b><span>${r[0]}</span></li>`).join('')}</ol></div>
 </div>
-<p class="ec-w a fade" style="--d:4.8">Lead prices and conversion rates are my assumptions, informed by my experience at Lendio, since LendingTree does not publish them. Being paid on close in home equity, and on bind in insurance, needs legal review first.</p>`;
+<p class="ec-w a fade" style="--d:5.9">Lead prices and conversion rates are my assumptions, informed by my experience at Lendio, since LendingTree does not publish them. Being paid on close in home equity, and on bind in insurance, needs legal review first.</p>`;
 
 /* ------------------------------------------------------------------ 8 time */
 const PH = ['Jan 1–15', 'Jan 16–31', 'February', 'March', 'Apr–Jun', 'Jul–Dec'];
@@ -448,6 +455,14 @@ const D = {
       ['Outcomes, with no lift in conversion', '$175', '$17'],
       ['Break-even', 'A 1.8% funded rate per request', 'About double today’s assumed bind rate per lead'],
     ])}
+    <h4>Embedded: per financed used-car purchase</h4>
+    ${tbl(['', 'Revenue', 'After the partner fee and cost to serve'], [
+      ['Loan only', '$2,346 ($1,354 at close, $993 from servicing)', '$1,337'],
+      ['Loan and an insurance policy', '$2,653', '$1,542'],
+    ])}
+    <p>The partner is paid 2% of the loan, about $541, in place of marketing spend. With three partners in 2027, ten in 2028 and twenty in 2029, and an assumed 500 financed purchases per partner each month, the model shows about $221M of revenue over three years, with the cost of building the embedded technology paid back early in 2028. Acquisition cost is about 23% of revenue here, against 70% to 77% on leads today.</p>
+    <h4>Across LendingTree’s products</h4>
+    <p>The model has a section for each of eight product types and an aggregate. The terms do not fit every product equally. They fit small business loans and insurance best. A 5% fee on a mortgage is about $21,000 a loan, which is not realistic and is the hardest legal case. Personal loans earn less on these terms than on leads. Leaving mortgage out, a request earns about $85 on outcomes against $42 on leads, and about $31 with no lift in conversion.</p>
     <h4>What is assumed</h4>
     ${ul(['Price per lead, leads sold per request, and funded and bind rates are assumptions, informed by my experience at Lendio. LendingTree does not publish them, and every comparison moves with them.', 'Marketing cost per request comes from LendingTree’s reported segment margins and is charged equally to both models.', 'The default outcome case assumes one chosen partner closes as many requests as three lead buyers do today. The no-lift row shows the case where it does not.', 'Sending each request to one partner gives up two thirds of today’s lead revenue per request.'])}
     <h4>Over 36 months on the ramp</h4>

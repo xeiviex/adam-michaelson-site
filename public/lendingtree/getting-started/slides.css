@@ -198,11 +198,12 @@ svg .a.gy { transform-origin: center bottom; }
 .stk-c span { justify-self: center; width: 2px; background: var(--acc); }
 
 /* ---- the economics ---- */
-.ec { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.6em; }
+.ec { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.2em; }
+.ec-n { display: flex; align-items: baseline; flex-wrap: wrap; gap: .1em .5em; height: 2.1em; color: var(--body); font-size: .95em; } .ec-n b { font: 700 1.4em var(--head); color: var(--ink); margin-right: .1em; } .ec-n i { width: .3em; height: .3em; border-radius: 50%; background: var(--muted); align-self: center; }
 .ec-p h3 { font: 700 1.25em var(--head); letter-spacing: 0; text-transform: none; color: var(--ink); margin-bottom: .2em; }
 .ec-u { font: 600 .74em var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .9em; } .ec-p h3 span { font: 400 .68em var(--sans); color: var(--muted); margin-left: .5em; }
 .ec-row { display: grid; gap: .25em; margin-bottom: .75em; } .ec-row > span { font-size: .9em; color: var(--body); }
-.ec-b { display: flex; align-items: center; height: 2.1em; padding-right: 4.2em; position: relative; }
+.ec-b { display: flex; align-items: center; height: 2.1em; padding-right: 5.2em; position: relative; }
 .ec-b i { display: block; height: 100%; flex: none; } .ec-b i:first-child { border-radius: 5px 0 0 5px; } .ec-b i:last-of-type { border-radius: 0 5px 5px 0; } .ec-b i:first-child:last-of-type { border-radius: 5px; }
 .ec-b .lead { background: var(--muted); } .ec-b .close { background: var(--acc); } .ec-b .serv { background: #1d5f8a; } .ec-b .flat { border: 2px solid var(--acc); background: var(--acc-soft); }
 .ec-b em { font: 600 .72em/2.9 var(--sans); font-style: normal; padding-left: .7em; white-space: nowrap; overflow: hidden; display: block; color: var(--on-acc); } .ec-b .serv em { color: var(--ink); }
