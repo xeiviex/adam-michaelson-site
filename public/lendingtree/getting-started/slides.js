@@ -28,7 +28,7 @@ const g2 = (d) => `<svg viewBox="0 0 300 124" aria-hidden="true">
   <circle ${A(d + 1.8, 'pop')} class="goal" cx="286" cy="24" r="8"/>
 </svg>`;
 const g3 = (d) => `<svg viewBox="0 0 300 124" aria-hidden="true">
-  ${[[16, 14], [44, 48], [72, 82]].map((r, k) => { let o = ''; for (let i = 0, x = r[1]; x <= 290; x += 34, i++) o += i % 4 === 3 ? `<g ${A((d + k * 0.2 + i * 0.06).toFixed(2), 'pop')}>${dm(x, r[0], 'go')}</g>` : `<circle ${A((d + k * 0.2 + i * 0.06).toFixed(2), 'pop')} class="stn${i % 4 === 0 ? ' open' : ''}" cx="${x}" cy="${r[0]}" r="5"/>`; return o; }).join('')}
+  ${[[16, 14], [44, 48], [72, 82]].map((r, k) => { let o = ''; for (let i = 0, x = r[1]; x <= 290; x += 34, i++) o += i % 4 === 3 ? `<g ${A((d + k * 0.2 + i * 0.06).toFixed(2), 'pop')}>${dm(x, r[0], 'go')}</g>` : `<circle ${A((d + k * 0.2 + i * 0.06).toFixed(2), 'pop')} class="stn${i % 4 === 0 ? ' open' : i % 4 === 2 ? ' ev' : ''}" cx="${x}" cy="${r[0]}" r="5"/>`; return o; }).join('')}
   <path class="ln res" ${A(d + 0.9)} pathLength="1" d="M10 108H214"/>
   <g ${A(d + 1.6, 'pop')}>${dm(224, 108, 'gate')}</g>
   <path class="ln res2" ${A(d + 1.7)} pathLength="1" d="M234 108H280"/>
@@ -218,7 +218,7 @@ const podRow = (p, k) => {
   let i = 0;
   for (let m = p.s; m <= 12.01; m += 0.75, i++) {
     const x = mx(m), d = (1.0 + k * 0.5 + i * 0.07).toFixed(2);
-    out += i % 4 === 3 ? `<g ${A(d, 'pop')}>${dia(x, p.y, 'go')}</g>` : `<circle ${A(d, 'pop')} class="stn${i % 4 === 0 ? ' open' : ''}" cx="${x}" cy="${p.y}" r="5.5"/>`;
+    out += i % 4 === 3 ? `<g ${A(d, 'pop')}>${dia(x, p.y, 'go')}</g>` : `<circle ${A(d, 'pop')} class="stn${i % 4 === 0 ? ' open' : i % 4 === 2 ? ' ev' : ''}" cx="${x}" cy="${p.y}" r="5.5"/>`;
   }
   return out;
 };
@@ -236,7 +236,7 @@ const disruption = `
     <rect class="ko" x="${mx(3) - 8}" y="234" width="16" height="24"/>
     <circle class="stn open" cx="${M0 + 6}" cy="246" r="5.5"/><text class="lb sm" x="${M0 + 20}" y="251" text-anchor="start">Open charter</text>
     <circle class="stn" cx="${M0 + 136}" cy="246" r="5.5"/><text class="lb sm" x="${M0 + 150}" y="251" text-anchor="start">Smallest test</text>
-    <circle class="stn" cx="${M0 + 266}" cy="246" r="5.5"/><text class="lb sm" x="${M0 + 280}" y="251" text-anchor="start">Evidence review</text>
+    <circle class="stn ev" cx="${M0 + 266}" cy="246" r="5.5"/><text class="lb sm" x="${M0 + 280}" y="251" text-anchor="start">Evidence review</text>
     ${dia(M0 + 420, 246, 'go')}<text class="lb sm" x="${M0 + 436}" y="251" text-anchor="start">Decision: scale, pivot or stop. Then again.</text>
   </g>
   <text class="hd" ${A(3.0)} x="18" y="300" text-anchor="start">Research-led reset</text>
