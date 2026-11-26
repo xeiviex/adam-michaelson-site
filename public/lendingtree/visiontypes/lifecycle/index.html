@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/lendingtree/visiontypes/lifecycle/lifecycle.css?v=8">
+<link rel="stylesheet" href="/lendingtree/visiontypes/lifecycle/lifecycle.css?v=10">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -31,6 +31,13 @@
     <div class="dev-jumps" id="devJumps"></div>
     <button type="button" id="doReset"></button>
     <p class="dev-fine" id="devFine"></p>
+  </div>
+  <!-- Shown when a touch inside the product pauses auto-play. Part of the prototype's own controls, not the product. -->
+  <div class="dev-tip" id="devTip" role="status" hidden>
+    <span class="dev-tag">Prototype</span>
+    <b>Auto-play paused</b>
+    <p>You touched the prototype, so it is yours to explore. Nothing here is real.</p>
+    <div class="dev-tip-b"><button type="button" id="devResume">Resume auto-play</button><button type="button" class="q" id="devTipX">Keep exploring</button></div>
   </div>
   <div class="dev-combo">
     <button type="button" class="dev-main" id="devToggle" aria-pressed="true" aria-label="Auto-play is on. Pause"><span class="dev-lbl">Auto-play</span><span class="dev-ic" id="devIc"></span></button>
@@ -75,6 +82,6 @@
   </div>
 </div>
 
-<script type="module" src="/lendingtree/visiontypes/lifecycle/app.js?v=9"></script>
+<script type="module" src="/lendingtree/visiontypes/lifecycle/app.js?v=10"></script>
 </body>
 </html>

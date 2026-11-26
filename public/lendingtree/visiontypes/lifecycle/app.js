@@ -164,7 +164,7 @@ function kick() {
     } catch (e) { if (!(e instanceof Cancel)) throw e; }
   })();
 }
-function setAuto(v) { S.auto = v; autoGen++; cue.className = 'cue'; $$('.pressing').forEach((n) => n.classList.remove('pressing')); paintDev(); if (v) { threadShow(false); kick(); } }
+function setAuto(v) { S.auto = v; autoGen++; cue.className = 'cue'; $$('.pressing').forEach((n) => n.classList.remove('pressing')); paintDev(); if (v) { tip(false); threadShow(false); kick(); } }
 
 /* ---------- shell: views, tabs, lifecycle strip, toast ---------- */
 const main = $('#main'), stream = $('#stream'), sheet = $('#sheet'), scrim = $('#scrim');
@@ -1062,7 +1062,17 @@ function paintDev() {
 }
 $('#devNote').textContent = PROTO.note; $('#devFine').textContent = PROTO.fiction; $('#doReset').textContent = PROTO.restart; $('#pbackT').textContent = PROTO.back;
 $('#devJumps').innerHTML = Object.entries(PROTO.jumps).map(([k, v]) => `<button type="button" data-stage="${k}">${v}</button>`).join('');
-const setMenu = (open) => { devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); };
+/* The callout that says auto-play has stopped. It belongs to the prototype's controls, and it appears each time a touch
+   inside the product pauses auto-play. It goes when auto-play resumes, when it is dismissed, or after a while. */
+const devTip = $('#devTip');
+function tip(show) {
+  clearTimeout(tip.t);
+  devTip.hidden = !show;
+  if (show) { devTip.classList.add('in'); void devTip.offsetWidth; tip.t = setTimeout(() => tip(false), 14000); }
+}
+$('#devResume').addEventListener('click', () => setAuto(true));
+$('#devTipX').addEventListener('click', () => tip(false));
+const setMenu = (open) => { if (open) tip(false); devMenu.hidden = !open; devBtn.setAttribute('aria-expanded', String(open)); };
 devBtn.addEventListener('click', () => setMenu(devMenu.hidden));
 $('#devToggle').addEventListener('click', () => setAuto(!S.auto));
 $('#devPath').addEventListener('click', (e) => { const b = e.target.closest('[data-path]'); if (!b) return; S.path = b.dataset.path; setMenu(false); resetAsk(); start('shop'); });
@@ -1075,7 +1085,7 @@ document.addEventListener('pointerdown', (e) => {
   if (!$('#lt').contains(e.target)) return;
   lastTouch = Date.now();
   /* a real tap inside the product means the viewer is driving: auto-play steps aside until they press play */
-  if (S.auto && !EMBED) setAuto(false);
+  if (S.auto && !EMBED) { setAuto(false); tip(true); }
 }, true);
 /* A tap anywhere else in the product puts an open answer away. On click, not on press, so the page cannot shift under the tap. */
 document.addEventListener('click', (e) => {
