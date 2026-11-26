@@ -281,3 +281,7 @@ svg .a.gy { transform-origin: center bottom; }
 @media (prefers-reduced-motion: reduce) { .ln.dsh, .ln.plan { opacity: 1; } }
 
 .vis svg .lb.acc .thin { font-weight: 400; }
+
+/* closing recap: the three pillars at full size, each with its year-one figure */
+.cl .th3 small.fg { font-size: 1.4em; margin-top: .3em; white-space: nowrap; }
+.cl .th3 > div { padding-block: 1.2em 1.6em; }

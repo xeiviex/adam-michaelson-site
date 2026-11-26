@@ -401,7 +401,7 @@ const plan = `
 /* ----------------------------------------------------------------- 11 close */
 const close = `
 <div class="cl">
-  <div class="th sm">
+  <div class="th">
     <div class="th3">
       <div><b ${A(0.8)}>Protect the core</b><small class="fg a" style="--d:.9">≥ Plan</small></div>
       <div><b ${A(1.2)}>Deliver new profit</b><small class="fg a" style="--d:1.3">$1M+</small></div>
@@ -409,16 +409,7 @@ const close = `
     </div>
     ${base}
   </div>
-  <div class="need">
-    <h3 ${A(2.2)}>What I need</h3>
-    <ol>
-      <li ${A(2.5)}>An executive assistant or chief of staff</li>
-      <li ${A(2.8)}>A head of design hire</li>
-      <li ${A(3.1)}>Nine principal-level people for the three pods</li>
-      <li ${A(3.4)}>A team for the research-led effort, staffed internally</li>
-    </ol>
-  </div>
-  <div class="inv a" style="--d:4.0">
+  <div class="inv a" style="--d:2.6">
     <p>See where this could go.</p>
     <a class="btn pri" href="${VT_A}">Open visiontype A</a><a class="btn pri" href="${VT_B}">Open visiontype B</a>
   </div>
@@ -530,6 +521,6 @@ const RAW = [
   { id: 'time', name: 'My time', title: 'My time', sub: 'Balance carefully, delegate everything I can', draw: time, details: D.time },
   { id: 'outcomes', name: 'Year-one outcomes', title: 'Year-one outcomes', sub: 'My commitments', draw: outcomes, details: D.outcomes },
   { id: 'plan', name: 'Year-one plan', title: 'Year-one plan', sub: 'Assumes a January 1 start', draw: plan, details: D.outcomes },
-  { id: 'close', name: 'What I need', title: 'What I need', sub: 'Four asks, and an invitation', draw: close },
+  { id: 'close', name: 'Recap', title: 'The year, in three lines', sub: 'And a look at where it could go', draw: close },
 ];
 export const SLIDES = RAW.map((x) => ({ ...x, draw: fold(x.draw) }));
