@@ -399,7 +399,8 @@ html.embed .pstrip, html.embed .dev { display: none; }
 .dock-form button:disabled { background: #eef2f6; color: #a0abb9; cursor: default; }
 .dock-pill { display: none; }
 .dock-thread { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 20px; box-shadow: 0 2px 6px rgba(13,27,42,.05), 0 18px 50px rgba(13,27,42,.18); overflow: hidden; animation: rise .28s ease both; }
-.dock-log { position: relative; max-height: min(320px, 40vh); overflow-y: auto; overscroll-behavior: contain; padding: 18px 50px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+.dock-log { position: relative; max-height: min(320px, 40vh); overflow-y: auto; overscroll-behavior: contain; padding: 16px 50px 16px 16px; display: flex; flex-direction: column; gap: 16px; }
+.dock-log > * { flex: none; }
 .dock-log .msg.g { max-width: none; gap: 10px; animation: rise .3s ease both; }
 .dock-log .g-t { font-size: 15px; min-width: 0; overflow-wrap: anywhere; }
 .dock-log .msg.me { max-width: 88%; }
@@ -419,6 +420,7 @@ input.ready { animation: readyline 1.2s ease-in-out 2; }
 @media (min-width: 761px) {
   /* the website: dialogs and toasts leave room for the ask field */
   html:not(.embed) .sheet { top: calc(50% - 36px); max-height: min(calc(100% - 144px), 720px); }
+  html:not(.embed) .sheet.on { transform: translate(-50%, calc(-50% - var(--lift, 0px))); }
   html:not(.embed) .toast { bottom: 88px; }
 }
 @media (max-width: 760px) {
@@ -430,10 +432,11 @@ input.ready { animation: readyline 1.2s ease-in-out 2; }
   .dock-form { display: none; height: 50px; }
   .dock.open .dock-form { display: flex; }
   .dock.open .dock-pill, .dock.open .dock-back { display: none; }
-  .dock-log { max-height: min(300px, 36vh); padding: 16px 46px 16px 14px; }
+  .dock-log { max-height: min(300px, 36vh); padding: 16px 46px 16px 14px; gap: 16px; }
   .dock-form input { font-size: 16px; }
   /* over a sheet, Ask moves into the sheet's own header */
   .lt:has(.sheet:not([hidden])) .dock:not(.open) { display: none; }
+  .lt:has(.sheet:not([hidden])) .dock { bottom: calc(14px + env(safe-area-inset-bottom)); }
   .sask { position: absolute; z-index: 2; top: 18px; right: 60px; display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 13px 0 4px; border: 0; border-radius: 999px; background: #eef2f6; color: var(--ink); font-weight: 600; font-size: 13.5px; }
   .sask img { width: 26px; height: 26px; padding: 5px; border-radius: 50%; background: #fff; }
   .sheet h3 { padding-right: 118px; } .flow-done h3 { padding-right: 0; }

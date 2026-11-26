@@ -77,7 +77,7 @@ const sleep = (ms) => { const my = run; return tick(ms, () => my === run); };
 function wait(register, auto, opts = {}) {
   const my = run;
   return new Promise((resolve) => {
-    const tok = { auto, hint: opts.hint, kind: opts.kind };
+    const tok = { auto, hint: opts.hint, frame: opts.frame, kind: opts.kind };
     tok.finish = (v) => { if (my !== run || cur !== tok) return; cur = null; autoGen++; resolve(v); };
     cur = tok; register(tok.finish); kick(); keyFocus(tok);
   });
@@ -380,7 +380,7 @@ async function signing(G, terms, o, onSigned) {
   await wait((fin) => {
     btn.addEventListener('click', () => fin());
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !btn.disabled) fin(); });
-  }, [{ type: () => input, text: name, read: 4200 }, { tap: () => btn, read: 800 }], { hint: () => (btn.disabled ? input : btn) });
+  }, [{ type: () => input, text: name, read: 4200 }, { tap: () => btn, read: 800 }], { hint: () => (btn.disabled ? input : btn), frame: () => btn });
   input.readOnly = true; onSigned();
   btn.disabled = true; btn.classList.add('busy'); btn.innerHTML = '<span class="spin" aria-hidden="true"></span>'; await sleep(1100);
 }
@@ -546,12 +546,12 @@ function openSheet(html, onClose) {
   if (!sheet.hidden) closeSheet();
   sheetFrom = document.activeElement; sheetOnClose = onClose || null;
   sheet.innerHTML = `<div class="grab" aria-hidden="true"></div>${EMBED ? '' : `<button type="button" class="sask" data-act="ask" aria-label="${esc(SHELL.ask.label)}"><img src="${LEAF}" alt="">${esc(SHELL.ask.short)}</button>`}<button type="button" class="sx" data-act="close-sheet" aria-label="Close">${ic('x', 18, 2.2)}</button><div class="sheet-in">${html}</div>`;
-  sheet.hidden = false; scrim.hidden = false; sheet.scrollTop = 0;
+  sheet.hidden = false; scrim.hidden = false; sheet.scrollTop = 0; fitDock();
   requestAnimationFrame(() => { sheet.classList.add('on'); scrim.classList.add('on'); });
   if (!S.auto) sheet.querySelector('.sx').focus({ preventScroll: true });
   return $('.sheet-in', sheet);
 }
-function setSheet(html) { const b = $('.sheet-in', sheet); b.innerHTML = html; sheet.scrollTop = 0; return b; }
+function setSheet(html) { const b = $('.sheet-in', sheet); b.innerHTML = html; sheet.scrollTop = 0; fitDock(); return b; }
 function closeSheet(silent) {
   if (sheet.hidden) return;
   sheet.hidden = true; scrim.hidden = true; sheet.classList.remove('on'); scrim.classList.remove('on');
@@ -965,7 +965,14 @@ function threadShow(on) {
   fitDock();
 }
 /* while an answer is open, the page can scroll far enough that nothing is stuck underneath it */
-function fitDock() { const lt = $('#lt'), on = dock.classList.contains('has-thread'); lt.classList.toggle('asking', on); if (on) lt.style.setProperty('--dock-h', `${dock.offsetHeight}px`); }
+function fitDock() {
+  const lt = $('#lt'), on = dock.classList.contains('has-thread');
+  lt.classList.toggle('asking', on); if (on) lt.style.setProperty('--dock-h', `${dock.offsetHeight}px`);
+  /* on the website a dialog slides up to stay clear of the answer (on the app the answer sits over the sheet) */
+  let lift = 0;
+  if (on && !sheet.hidden && matchMedia('(min-width: 761px)').matches) { const top = sheet.offsetTop - sheet.offsetHeight / 2; lift = Math.max(0, Math.min(top - 12, top + sheet.offsetHeight + 14 - dock.offsetTop)); }
+  sheet.style.setProperty('--lift', `${lift}px`);
+}
 function resetAsk() { ASK.gen++; ASK.msgs = []; ASK.busy = false; if (dock.hidden) return; $('#dockLog').innerHTML = ''; $('#dockIn').value = ''; paintAsk(); threadShow(false); dock.classList.remove('open'); }
 /* What the guide is told: where the journey is, plus anything the visitor has wandered off to look at. */
 function askContext() {
@@ -981,15 +988,17 @@ async function submitAsk(text) {
   const q = el('<div class="msg me"><span></span></div>'); q.firstChild.textContent = text;
   const a = el(`<div class="msg g"><img class="g-av" src="${LEAF}" alt=""><div class="g-t"><span class="dots" role="img" aria-label="${esc(SHELL.ask.thinking)}"><i></i><i></i><i></i></span></div></div>`);
   log.append(q, a); $('#dockIn').value = ''; ASK.busy = true; paintAsk();
-  dock.classList.add('open'); threadShow(true); log.scrollTop = log.scrollHeight;
+  /* the panel is only as tall as the latest exchange; earlier ones are a scroll away */
+  const frame = () => { const pad = parseFloat(getComputedStyle(log).paddingTop); log.style.height = `${a.offsetTop + a.offsetHeight - q.offsetTop + pad * 2}px`; log.scrollTop = q.offsetTop - pad; fitDock(); };
+  dock.classList.add('open'); threadShow(true); frame();
   ASK.msgs.push({ role: 'user', content: text });
-  const req = { surface: 'lifecycle', path: S.path, ...askContext(), selected: S.sel, held: S.held, messages: ASK.msgs.slice(-12) };
+  const req = { surface: 'lifecycle', path: S.path, ...askContext(), selected: S.sel, held: S.held, messages: ASK.msgs.slice(-11) }; /* odd, so it opens on a question */
   ASK.last = req;
   const [out] = await Promise.all([MOCK ? mockAsk(req) : ask(req), pause(700)]);
   if (my !== ASK.gen) return;
   ASK.msgs.push({ role: 'assistant', content: out.text });
   $('.g-t', a).innerHTML = `<p>${esc(out.text)}</p>`;
-  fitDock(); log.scrollTop = q.offsetTop - 2;
+  frame();
   await pause(out.action === 'continue' ? 350 : 1100); /* long enough to read the reply before the screen changes */
   if (my !== ASK.gen) return;
   ASK.busy = false; paintAsk();
@@ -1008,7 +1017,7 @@ function markReady() {
   if (sheet.hidden && S.view !== S.flow) return; /* the way back is offered beside the ask field instead */
   const n = hintNode(); if (!n) return;
   if (main.contains(n)) {
-    const r = n.getBoundingClientRect(), m = main.getBoundingClientRect(), d = dock.hidden ? null : dock.getBoundingClientRect();
+    const r = ((cur.frame && cur.frame()) || n).getBoundingClientRect(), m = main.getBoundingClientRect(), d = dock.hidden ? null : dock.getBoundingClientRect();
     const floor = d && r.right > d.left && r.left < d.right ? d.top - 20 : m.bottom - 20;
     const by = r.height > floor - m.top - 12 || r.top < m.top + 12 ? r.top - m.top - 12 : r.bottom > floor ? r.bottom - floor : 0;
     if (by) main.scrollBy({ top: by, behavior: smooth() });

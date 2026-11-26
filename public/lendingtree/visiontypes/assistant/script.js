@@ -86,9 +86,13 @@ export function matchChoice(text, options) {
   if (NO.test(core)) { const neg = options.filter((o) => o.neg); return neg.length === 1 ? neg[0] : null; }
   const named = options.filter((o) => o.names && (o.names.includes(name) || o.names.includes(core)));
   if (named.length) return named.length === 1 ? named[0] : null;
-  const words = core.split(' ').filter(Boolean);
+  /* the reply's own words, give or take a leading "yes" or "ok": "sure, take a look", "ok confirm" */
+  const flat = (x) => plain(x).replace(/'/g, ''), bare = flat(core.replace(/^((yes|yeah|yep|ok|okay|sure) )+/, ''));
+  const said = options.filter((o) => [o.label, o.say].some((x) => x && flat(x) === bare));
+  if (said.length === 1) return said[0];
+  const words = bare.split(' ').filter(Boolean);
   if (words.length < 2) return null;
-  const close = options.filter((o) => { const w = plain(o.label + ' ' + (o.say || '')).split(' '); return words.every((x) => w.includes(x)); });
+  const close = options.filter((o) => { const w = flat(o.label + ' ' + (o.say || '')).split(' '); return words.every((x) => w.includes(x)); });
   return close.length === 1 ? close[0] : null;
 }
 /* On the opening screen: a starter, or a short statement about a project, a loan or insurance. Otherwise the agent answers. */
@@ -551,7 +555,7 @@ export const AGENT = {
   topics: [
     { re: /\b(my (loans?|accounts?|polic(y|ies)|balances?|payments?|mortgage)|balance|owe|what do i have|what i have|autopay|automatic payment|transfer)\b/i, line: 'Looking at your accounts', done: 'Checked your accounts' },
     { re: /\b(quotes?|premiums?|deductibles?|coverage|liability|carriers?|polic(y|ies)|insur\w*|geico|state farm|liberty|progressive|claims?)\b/i, line: 'Checking your quotes and coverage', done: 'Checked your quotes and coverage' },
-    { re: /\b(offers?|rates?|apr|lenders?|heloc|home equity|borrow|limit|fees?|closing costs?|figure|rocket|bank of america|funds?|funding|payments?|interest|loans?|credit)\b/i, line: 'Checking your offers', done: 'Checked your offers' },
+    { re: /\b(offers?|rates?|apr|lenders?|heloc|home equity|borrow|limit|fees?|closing costs?|rocket|bank of america|funds?|funding|payments?|interest|loans?|credit)\b/i, line: 'Checking your offers', done: 'Checked your offers' },
     { re: /\b(next|steps?|how long|happens|sign|signing|application|apply|approved?|documents?|verify|cancel|change my mind)\b/i, line: 'Checking what comes next', done: 'Checked your next steps' },
   ],
   offline: 'Not reachable right now',
@@ -587,15 +591,15 @@ export function holdings(path, S) {
   if (path === 'insurance') {
     const mine = S.held && S.main ? S.main.raw : null;
     const rows = POLICIES.map((p) => (p.id === 'auto' && mine
-      ? { name: mine.carrier, icon: mine.icon, kind: 'Auto · ' + p.covers, big: money(mine.premium), sub: 'a year · new policy' }
-      : { name: p.carrier, icon: p.icon, kind: p.type + ' · ' + p.covers, big: money(p.premium), sub: 'a ' + p.per + (/\d/.test(p.renews) && !/term/i.test(p.renews) ? ' · renews ' + p.renews : '') }));
+      ? { name: mine.carrier, icon: mine.icon, kind: 'Auto · ' + p.covers, big: money(mine.premium), sub: 'a year' }
+      : { name: (/\((.+)\)/.exec(p.carrier) || [0, p.carrier])[1], icon: p.icon, kind: p.type + ' · ' + (/^Employer/.test(p.carrier) ? 'Employer plan' : p.covers), big: money(p.premium), sub: 'a ' + p.per }));
     return { t: 'holdings', context: 'Your policies', rows, foot: rows.length + ' policies in one place.' };
   }
   const drawn = S.v.amount || HELOC.balance;
   const list = LOANS.filter((l) => !l.isNew || S.held).map((l) => (l.isNew
     ? { ...l, lender: S.main ? S.main.name : l.lender, balance: drawn, rate: S.main ? S.main.raw.apr : l.rate, payment: S.v.amount ? Math.round(payment(drawn, S.main ? S.main.raw.apr : l.rate)) : l.payment }
     : l));
-  const rows = list.map((l) => ({ name: l.lender, kind: l.type + ' · ' + l.rate + '%', big: money(l.balance), sub: money(l.payment) + ' a month, due ' + l.due }));
+  const rows = list.map((l) => ({ name: l.lender, kind: l.type + ' · ' + l.rate + '%', big: money(l.balance), sub: money(l.payment) + ' a month' }));
   return { t: 'holdings', context: 'Your loans', rows, foot: 'You owe ' + money(list.reduce((n, l) => n + l.balance, 0)) + ' across ' + list.length + ' loans.' };
 }
 
@@ -641,7 +645,7 @@ export function noteFor(scenes, at, path, waiting, S, val) {
     if (s.t === 'goto') { name = s.scene; i = 0; continue; }
     next = describe(s, S, val); i++;
   }
-  const on = waiting && cur ? describe(cur, S, val) : 'the assistant is partway through its turn';
+  const on = (waiting && cur && describe(cur, S, val)) || 'the assistant is partway through its turn';
   const card = cur && (cur.title || cur.context);
   const back = !waiting ? 'Let’s keep going.' : cur.t === 'choice' ? 'Pick whichever reply fits when you are ready.' : 'The ' + (card ? q(val(card)) + ' card' : 'card') + ' is right here when you are ready.';
   return { stage, step: 'On screen: ' + on + '.' + (next ? ' Next in the script: ' + next + '.' : ''), back };

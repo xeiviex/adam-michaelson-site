@@ -92,8 +92,10 @@ function follow() {
   if (!stick) return;
   const max = scroller.scrollHeight - scroller.clientHeight;
   let to = max;
-  const tall = focusEl && focusEl.isConnected ? (focusSpan ? col.offsetHeight - focusEl.offsetTop : focusEl.offsetHeight) : 0;
-  if (tall > scroller.clientHeight - 24) to = Math.min(max, focusEl.offsetTop + col.offsetTop - 12);
+  const on = focusEl && focusEl.isConnected;
+  if (on && focusSpan) {   /* an answer with a card under it: keep the answer in view when both do not fit */
+    if (col.offsetHeight - focusEl.offsetTop > scroller.clientHeight - 24) to = Math.min(max, Math.round(scroller.scrollTop + focusEl.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 12));
+  } else if (on && focusEl.offsetHeight > scroller.clientHeight - 24) to = Math.min(max, focusEl.offsetTop + col.offsetTop - 12);
   if (Math.abs(scroller.scrollTop - to) > 1) scroller.scrollTo({ top: to, behavior: smooth() });
 }
 new ResizeObserver(follow).observe(col);
@@ -211,7 +213,7 @@ async function awaitUser(p, wait, also) {
     if (settled) return out;
     if (!asideQ.length) continue;
     parked.push(p);
-    try { await aside(asideQ.shift(), p); } finally { if (my === run) parked.pop(); }
+    try { await aside(takeAsides(), p); } finally { if (my === run) parked.pop(); }
     alive(my);
     if (settled) return out;
     if (p.kind === 'choice' || p.kind === 'opener') markTurnEnd();
@@ -221,7 +223,7 @@ function paintSuggest() {
   suggest.textContent = '';
   if (!pending || cfg.auto) return;
   if (pending.kind === 'choice') pending.opts.filter((o) => o.chip !== false).forEach((o) => suggest.append(h('button', { type: 'button', class: 'sg', onclick: () => submitChoice(o, o.say || o.label) }, o.label)));
-  else if (pending.kind === 'opener' && !heroEl) OPENERS.forEach((o) => suggest.append(h('button', { type: 'button', class: 'sg', onclick: () => { autoTok++; setInput(''); pending.done(o.text); } }, o.text)));
+  else if (pending.kind === 'opener' && !heroEl) OPENERS.filter((o) => o.primary).forEach((o) => suggest.append(h('button', { type: 'button', class: 'sg', onclick: () => { autoTok++; setInput(''); pending.done(o.text); } }, o.text)));
 }
 function setInput(v) { input.value = v; resize(); }
 function submitChoice(o, text) {
@@ -367,7 +369,8 @@ function pushAside(text) {
   asideQ.push(text);
   const w = wakers; wakers = []; w.forEach((r) => r());
 }
-async function drain() { while (asideQ.length) await aside(asideQ.shift(), null); }
+const takeAsides = () => asideQ.splice(0).join('\n');   /* messages sent back to back are answered together */
+async function drain() { while (asideQ.length) await aside(takeAsides(), null); }
 const contextFor = (p) => (p && p.note ? p.note : noteFor(scenes, at, cfg.path, !!p, S, val));
 
 /* TEST AID ONLY (?mock=1): canned replies in place of the live agent, so every action can be tried without the network. */
