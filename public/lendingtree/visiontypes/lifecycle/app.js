@@ -5,6 +5,7 @@
 import { PERSON, BRAND, BANKS, LOANS, POLICIES, AUTO_CURRENT, HELOC_ESTIMATE, LIFECYCLE, money, lenderIcon } from '../shared/data.js';
 import { PROTO, SHELL, LANDING, PATHS, HOME, FLOWS, NOW, parseFund } from './content.js?v=8';
 import { ask } from '../shared/agent.js';
+import { away, watchAttention, attentionReset } from '../shared/attention.js?v=1';
 
 /* ---------- small helpers ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -68,7 +69,7 @@ async function tick(ms, ok) {
     const step = Math.min(left, 60);
     await new Promise((r) => setTimeout(r, step));
     if (!ok()) throw new Cancel();
-    if (!document.hidden) left -= step; /* time stands still while the tab is hidden */
+    if (!away()) left -= step; /* time stands still while the viewer is away */
   }
 }
 const sleep = (ms) => { const my = run; return tick(ms, () => my === run); };
@@ -164,7 +165,7 @@ function kick() {
     } catch (e) { if (!(e instanceof Cancel)) throw e; }
   })();
 }
-function setAuto(v) { S.auto = v; autoGen++; cue.className = 'cue'; $$('.pressing').forEach((n) => n.classList.remove('pressing')); paintDev(); if (v) { tip(false); threadShow(false); kick(); } }
+function setAuto(v) { attentionReset(); S.auto = v; autoGen++; cue.className = 'cue'; $$('.pressing').forEach((n) => n.classList.remove('pressing')); paintDev(); if (v) { tip(false); threadShow(false); kick(); } }
 
 /* ---------- shell: views, tabs, lifecycle strip, toast ---------- */
 const main = $('#main'), stream = $('#stream'), sheet = $('#sheet'), scrim = $('#scrim');
@@ -1145,3 +1146,6 @@ document.addEventListener('keydown', (e) => {
 
 resetState();
 start(START_STAGE);
+
+/* Auto-play stands still while the viewer is away (another tab, another window) and says so; it picks up when they are back. */
+watchAttention({ active: () => S.auto, embed: EMBED });

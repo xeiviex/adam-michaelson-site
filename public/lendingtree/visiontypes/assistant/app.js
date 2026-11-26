@@ -13,6 +13,7 @@ import * as CARDS from './cards.js?v=8';
 import { getScenes, findOffer, routeOpener, matchChoice, matchOpener, noteFor, holdings, OPENERS, TITLES, HERO, PROTO_NOTE, DEFAULT_SEL, SERVICING, MODALS, AGENT, NOTES } from './script.js?v=8';
 import { PERSON, BRAND } from '../shared/data.js';
 import { ask } from '../shared/agent.js';
+import { away, watchAttention, attentionReset } from '../shared/attention.js?v=1';
 
 /* ---------- settings ---------- */
 const Q = new URLSearchParams(location.search);
@@ -63,7 +64,7 @@ let asideQ = [], wakers = [], parked = [], busy = false, early = null, holdWake 
 const hurry = () => asideQ.length > 0 || !!early;   /* someone is waiting on us: stop lingering */
 function sleep(ms, my = run) {
   return new Promise((res, rej) => {
-    const end = () => { if (my !== run) return rej(CANCEL); if (document.hidden) return setTimeout(end, 300); res(); };
+    const end = () => { if (my !== run) return rej(CANCEL); if (away()) return setTimeout(end, 300); res(); };
     setTimeout(end, Math.max(0, ms / cfg.speed));
   });
 }
@@ -637,7 +638,7 @@ function paintDev() {
   $$('.seg', devMenu).forEach((g) => $$('button', g).forEach((b) => b.setAttribute('aria-pressed', String(cfg[g.dataset.k] === b.dataset.v))));
 }
 function setAuto(v, keep) {
-  cfg.auto = v; autoTok++; cueOff();
+  attentionReset(); cfg.auto = v; autoTok++; cueOff();
   if (v) tip(false);
   if (!v && input.classList.contains('auto')) { input.classList.remove('auto'); setInput(keep || ''); }
   paintDev(); paintSuggest(); syncUrl();
@@ -666,3 +667,6 @@ $('#doReset').addEventListener('click', () => { cfg.stage = 'shop'; start(); set
 
 start();
 if (!cfg.embed && matchMedia('(min-width: 900px)').matches && !cfg.auto) input.focus({ preventScroll: true });
+
+/* Auto-play stands still while the viewer is away (another tab, another window) and says so; it picks up when they are back. */
+watchAttention({ active: () => cfg.auto, embed: cfg.embed });
