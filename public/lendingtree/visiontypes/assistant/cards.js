@@ -3,7 +3,7 @@
      wait   a promise that resolves when the person finishes the card (cards without one do not block the conversation)
      auto   how auto-play completes it, the way a person would. It gets A = { pause, tap, type, slide }.
    ctx = { val (resolve copy that may be a function of state), S (state), pick (choose an offer), pause (a cancellable sleep) } */
-import { h, $, $$, icon, ico, LEAF, carrierIcon, reduced } from './kit.js?v=7';
+import { h, $, $$, icon, ico, LEAF, carrierIcon, reduced } from './kit.js?v=8';
 import { BANKS, BRAND, money, lenderIcon } from '../shared/data.js';
 
 const check = (size) => icon('check', size || 14, 2.6);

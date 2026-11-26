@@ -8,9 +8,9 @@
 
    URL: ?path=loan|insurance  ?entry=user|agent  ?stage=shop|servicing  ?auto=0|1  ?embed=1  ?speed=<number>
         ?mock=1 swaps the live agent for canned replies (a test aid, see mockAsk below) */
-import { h, $, $$, icon, reduced, parseRich, GPT_MARK, LEAF } from './kit.js?v=7';
-import * as CARDS from './cards.js?v=7';
-import { getScenes, findOffer, routeOpener, matchChoice, matchOpener, noteFor, holdings, OPENERS, TITLES, HERO, PROTO_NOTE, DEFAULT_SEL, SERVICING, MODALS, AGENT, NOTES } from './script.js?v=7';
+import { h, $, $$, icon, reduced, parseRich, GPT_MARK, LEAF } from './kit.js?v=8';
+import * as CARDS from './cards.js?v=8';
+import { getScenes, findOffer, routeOpener, matchChoice, matchOpener, noteFor, holdings, OPENERS, TITLES, HERO, PROTO_NOTE, DEFAULT_SEL, SERVICING, MODALS, AGENT, NOTES } from './script.js?v=8';
 import { PERSON, BRAND } from '../shared/data.js';
 import { ask } from '../shared/agent.js';
 
