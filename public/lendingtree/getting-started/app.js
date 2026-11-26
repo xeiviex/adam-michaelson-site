@@ -1,7 +1,7 @@
 /* Draws /lendingtree/getting-started/ from slides.js. Same model as /lendingtree/: one slide, one drawing, a Details sheet.
    The drawing's motion is CSS: a slide gets .on when it is shown, and anything with class "a" builds in after --d seconds.
    Arriving on a slide replays its build. Press R to replay the current slide. */
-import { SLIDES } from './slides.js?v=48';
+import { SLIDES } from './slides.js?v=50';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const $ = (s) => document.querySelector(s);
@@ -18,13 +18,14 @@ const ids = SLIDES.map((s) => s.id);
 const dots = $('#dots');
 dots.innerHTML = SLIDES.map((s, i) => `<li><a href="#${s.id}" data-go="${i}" aria-label="Slide ${i + 1}: ${esc(s.name)}"><span></span></a></li>`).join('');
 
-/* The visiontypes carousel. Every few seconds it turns: the one in front drifts left and back, fading out as it goes and
-   fading in again once it is behind, so nothing is cut off as the next one grows into its place from the right. The one
-   that was on the left fades out there and in again on the right. Pressing and holding pauses the turning; a tap opens
-   the one tapped; a sideways swipe turns it by hand. */
+/* The visiontypes carousel. Every few seconds it turns, all three moving together: the one in front moves left and back,
+   dimming as it goes; the one behind on the right comes forward into the light; the one behind on the left crosses behind
+   them to the right. The one leaving stays on top until the strip of it that will end up underneath has dissolved, so its
+   edge is never cut off; only then does it drop behind. Pressing and holding pauses the turning; a tap opens the one
+   tapped; a sideways swipe turns it by hand. */
 trackEl.querySelectorAll('[data-car]').forEach((car) => {
   const cards = [...car.querySelectorAll('.fr')], n = cards.length, slide = car.closest('.slide');
-  const T = 1300, DWELL = 4800, EASE = 'cubic-bezier(.45, .05, .25, 1)';
+  const T = 1500, DWELL = 4800, EASE = 'cubic-bezier(.45, .05, .25, 1)';
   const tf = ['translateX(4.5%) scale(1)', 'translateX(70%) scale(.72)', 'translateX(-66%) scale(.72)']; // as in slides.css
   let cur = 0, down = null, block = false, busy = false, waited = 0;
   const turn = (dir) => {
@@ -36,12 +37,17 @@ trackEl.querySelectorAll('[data-car]').forEach((car) => {
     busy = true; setTimeout(() => { busy = false; }, T);
     cards.forEach((c, i) => {
       const a = from[i], b = +c.dataset.pos;
-      if (a === 0) { // leaving the front: stays on top while it fades out, drops behind while unseen, then fades back in
-        c.style.zIndex = 4; setTimeout(() => { c.style.zIndex = ''; }, T / 2);
-        c.animate([{ transform: tf[a], opacity: 1, easing: EASE }, { opacity: 0, offset: 0.46 }, { opacity: 0, offset: 0.56 }, { transform: tf[b], opacity: 1 }], { duration: T });
-        c.animate([{ transform: tf[a] }, { transform: tf[b] }], { duration: T, easing: EASE });
-      } else if (b === 0) c.animate([{ transform: tf[a] }, { transform: tf[b] }], { duration: T, easing: EASE }); // coming forward
-      else c.animate([{ transform: tf[a], opacity: 1 }, { transform: tf[a], opacity: 0, offset: 0.38 }, { transform: tf[b], opacity: 0, offset: 0.62 }, { transform: tf[b], opacity: 1 }], { duration: T }); // changing sides, unseen
+      c.animate([{ transform: tf[a] }, { transform: tf[b] }], { duration: T, easing: EASE });
+      if (a !== 0 && b !== 0) { c.style.zIndex = 0; setTimeout(() => { c.style.zIndex = ''; }, T); } // crossing behind both
+      if (a !== 0) return;
+      // Leaving the front. About a fifth of it, on the side nearest the newcomer, overlaps the newcomer all the way through
+      // the turn. That strip dissolves (a soft mask slides over it), then the card drops behind, then the mask lifts.
+      const rev = b === 1, p0 = rev ? '66.67% 0' : '33.33% 0', p1 = rev ? '53.33% 0' : '46.67% 0';
+      c.classList.add('leaving'); c.classList.toggle('back', rev); c.style.zIndex = 4;
+      setTimeout(() => { c.style.zIndex = ''; }, T * 0.6);
+      setTimeout(() => { c.classList.remove('leaving', 'back'); }, T);
+      const k = [{ offset: 0, p: p0 }, { offset: 0.1, p: p0 }, { offset: 0.54, p: p1 }, { offset: 0.66, p: p1 }, { offset: 1, p: p0 }];
+      c.animate(k.map((x) => ({ offset: x.offset, maskPosition: x.p, webkitMaskPosition: x.p })), { duration: T });
     });
   };
   setInterval(() => { // counts only while the slide is showing and nothing is holding it

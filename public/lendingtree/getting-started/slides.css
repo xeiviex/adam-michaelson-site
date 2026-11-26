@@ -168,7 +168,7 @@ svg .a.gy { transform-origin: center bottom; }
 /* ---- 7 visiontypes ---- */
 /* a carousel of the three: the current one in front, the others smaller and behind, each overlapped by a quarter.
    Each carries its logo and title; the line under the title shows only in front. app.js animates the turn. */
-.car { --turn: 1.3s; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; container-type: inline-size; }
+.car { --turn: 1.5s; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; container-type: inline-size; }
 .stage { overflow-x: clip; padding: .2em 0 1.9em; touch-action: pan-y; }
 .ring { display: grid; justify-items: center; --cw: min(46cqw, 62vh); }
 .ring .fr { grid-area: 1 / 1; width: var(--cw); z-index: 1; -webkit-user-drag: none; }
@@ -184,6 +184,9 @@ svg .a.gy { transform-origin: center bottom; }
 .fh p { font-size: .74em; color: var(--muted); margin: .35em 0 0; opacity: 0; transition: opacity calc(var(--turn) * .5) ease; }
 .fr[data-pos="0"] .fh p { opacity: 1; transition-delay: calc(var(--turn) * .5); }
 .car.hold .fr[data-pos="0"] .desk { border-color: var(--acc); }
+/* while one leaves the front, a soft mask can slide over the edge of it that the newcomer will cover (app.js moves it) */
+.ring .fr.leaving { -webkit-mask: linear-gradient(to right, #000 50%, transparent 54.25%) 33.33% 0 / 400% 100% no-repeat; mask: linear-gradient(to right, #000 50%, transparent 54.25%) 33.33% 0 / 400% 100% no-repeat; }
+.ring .fr.leaving.back { -webkit-mask: linear-gradient(to left, #000 50%, transparent 54.25%) 66.67% 0 / 400% 100% no-repeat; mask: linear-gradient(to left, #000 50%, transparent 54.25%) 66.67% 0 / 400% 100% no-repeat; }
 @media (prefers-reduced-motion: reduce) { .ring .fr::after, .fh p { transition: none; } }
 .fr { position: relative; padding-right: 9%; display: block; text-decoration: none; color: inherit; cursor: pointer; }
 .fr:hover .desk, .fr:focus-visible .desk { border-color: var(--ink); } .fr:hover .phone, .fr:focus-visible .phone { border-color: #55606e; }
