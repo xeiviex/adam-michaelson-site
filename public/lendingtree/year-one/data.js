@@ -16,7 +16,7 @@ export const CHECKPOINTS = { 1: 'Day 30', 2: 'Day 60', 3: 'Day 90', 6: 'Month 6'
 export const TRACKS = [
   {
     id: 'integration', name: 'Integration', sub: 'People, culture, strategy, work in flight, commitments',
-    card: { value: '~30', unit: 'leaders interviewed', by: 'January 15', status: 'draft',
+    card: { value: 'Within 2 weeks', unit: 'about 30 interviews done, and a synthesis delivered with an updated plan', by: 'January 15', status: 'draft',
       points: ['The C-team, VPs and my direct reports', 'A synthesis with key findings and next steps, read out to everyone interviewed'] },
     bars: [
       { s: 1, e: 2, row: 1, label: 'Stakeholder interviews' },
@@ -28,8 +28,8 @@ export const TRACKS = [
     ],
   },
   {
-    id: 'team', name: 'Team leadership', sub: 'A clear chain of command and a stronger team',
-    card: { value: '100%', unit: 'of teams led by a named, accountable lead', by: 'Day 60', status: 'draft',
+    id: 'team', name: 'Level up the team', sub: 'A clear chain of command and a stronger team',
+    card: { value: 'Auditability', unit: 'expectations set, then training, measurement, assessment and changes as needed', by: 'Day 90', status: 'draft',
       points: ['Written expectations for every role by day 30', 'Every team member assessed by day 60', 'Changes made by day 90'] },
     bars: [
       { s: 1, e: 4, row: 1, label: 'Set expectations', short: 'Expect' },
@@ -44,8 +44,8 @@ export const TRACKS = [
     ],
   },
   {
-    id: 'core', name: 'Protecting the core', sub: 'Safe, and growing',
-    card: { value: '≥ Plan', unit: 'on the company plan’s core targets', by: 'Every quarter', status: 'open',
+    id: 'core', name: 'Protect the core', sub: 'Safe, and growing',
+    card: { value: '≥ Plan', unit: 'on the company’s planned targets, or alignment on adjustments', by: 'Every quarter', status: 'open',
       points: ['Jointly accountable with the leaders who own them today', 'Roadblocks removed; in-flight work scored on ROI'] },
     bars: [
       { s: 1, e: 4, row: 1, label: 'Learn, baseline KPIs', short: 'Baseline', light: true },
@@ -60,7 +60,7 @@ export const TRACKS = [
   },
   {
     id: 'impact', name: 'Immediate impact', sub: 'New profit, proven by experiment',
-    card: { value: '$1M+', unit: 'in new profit, booked and as a run rate', by: 'Within year one', status: 'draft',
+    card: { value: '$1M+', unit: 'in profit booked through rapidly deployed, graduated experiments', by: 'Within year one', status: 'draft',
       points: ['Every bet has a written kill rule and a decision date', 'After day 90 an owner runs each bet, or we stop it'] },
     bars: [
       { s: 1, e: 12, row: 1, label: 'First bets: choose, test, decide' },
@@ -74,8 +74,8 @@ export const TRACKS = [
   },
   {
     id: 'disruption', name: 'Disruption', sub: 'Three independent pods and the next chapter',
-    card: { value: '3 × 3', unit: 'three pods of three principals, running', by: 'Day 90', status: 'draft',
-      points: ['The next chapter: provisional vision at day 90', 'Executive phase gate in month 9', 'Alpha in market in month 12'] },
+    card: { value: '3 contenders', unit: 'three pods of principals with viable disruptions online and producing', by: 'Within year one', status: 'draft',
+      points: ['Pods staffed and running by day 90', 'The next chapter: deep research complete, concept validated, alpha in market in month 12'] },
     bars: [
       { s: 1, e: 12, row: 1, label: 'Pods: staff and start', light: true },
       { s: 13, e: 48, row: 1, label: 'Pods: test, review, decide, repeat' },

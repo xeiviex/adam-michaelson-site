@@ -1,7 +1,7 @@
 /* Draws /lendingtree/getting-started/ from slides.js. Same model as /lendingtree/: one slide, one drawing, a Details sheet.
    The drawing's motion is CSS: a slide gets .on when it is shown, and anything with class "a" builds in after --d seconds.
    Arriving on a slide replays its build. Press R to replay the current slide. */
-import { SLIDES } from './slides.js?v=66';
+import { SLIDES } from './slides.js?v=67';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const $ = (s) => document.querySelector(s);
@@ -20,48 +20,68 @@ dots.innerHTML = SLIDES.map((s, i) => `<li><a href="#${s.id}" data-go="${i}" ari
 
 /* The visiontypes carousel. Every few seconds it turns, all three moving together: the one in front moves left and back,
    dimming as it goes; the one behind on the right comes forward into the light; the one behind on the left crosses behind
-   them to the right. Pressing and holding pauses the turning; a tap on one behind brings it forward and a tap on the one in front opens it; a sideways swipe turns it. */
+   them to the right. Pressing and holding pauses the turning. Dragging sideways moves the previews with the pointer and
+   turns the carousel that way. A tap on one behind brings it forward, and a tap on the one in front opens it. */
 trackEl.querySelectorAll('[data-car]').forEach((car) => {
-  const cards = [...car.querySelectorAll('.fr')], n = cards.length, slide = car.closest('.slide');
+  const cards = [...car.querySelectorAll('.fr')], n = cards.length, slide = car.closest('.slide'), stage = car.querySelector('.stage');
   const T = 1500, DWELL = 4800, EASE = 'cubic-bezier(.45, .05, .25, 1)';
   const tf = ['translateX(4.5%) scale(1)', 'translateX(70%) scale(.72)', 'translateX(-66%) scale(.72)']; // as in slides.css
-  let cur = 0, down = null, block = false, busy = false, waited = 0;
-  const turn = (dir) => {
-    if (busy) return;
-    const from = cards.map((c) => +c.dataset.pos);
-    cur = (((cur + dir) % n) + n) % n; waited = 0;
-    cards.forEach((c, i) => { c.dataset.pos = (i - cur + n) % n; }); // 0 front, 1 behind on the right, 2 behind on the left
-    if (still) return;
-    busy = true; setTimeout(() => { busy = false; }, T);
+  let cur = 0, down = null, block = false, busy = false, waited = 0, drag = null;
+  const place = () => cards.forEach((c, i) => { c.dataset.pos = (i - cur + n) % n; }); // 0 front, 1 behind on the right, 2 behind on the left
+  /* Start a turn. With scrub, the animations are created paused so a drag can move them by hand. Returns what a drag needs. */
+  const turn = (dir, scrub = false) => {
+    if (busy) return null;
+    const from = cards.map((c) => +c.dataset.pos), was = cur;
+    cur = (((cur + dir) % n) + n) % n; waited = 0; place();
+    if (still) return null;
+    busy = true;
+    const anims = [], undo = [];
+    const opts = { duration: T, easing: scrub ? 'linear' : EASE, fill: 'both' };
     cards.forEach((c, i) => {
       const a = from[i], b = +c.dataset.pos;
-      c.animate([{ transform: tf[a] }, { transform: tf[b] }], { duration: T, easing: EASE });
-      if (a !== 0 && b !== 0) { c.style.zIndex = 0; setTimeout(() => { c.style.zIndex = ''; }, T); } // crossing behind both
+      anims.push(c.animate([{ transform: tf[a] }, { transform: tf[b] }], opts));
+      if (a !== 0 && b !== 0) { c.style.zIndex = 0; undo.push(() => { c.style.zIndex = ''; }); } // crossing behind both
       if (b !== 0) return;
       // Coming forward. It is on top from the first frame, but the edge of it that was tucked behind the old front starts
       // hidden by a soft mask, which then slides off. So it appears to come out from behind, nothing is cut off, and the
       // mask ends fully open, leaving nothing to clear away.
       const rev = a === 2, p0 = rev ? '43.33% 0' : '56.67% 0', p1 = rev ? '26.67% 0' : '73.33% 0';
-      c.classList.add('arriving'); c.classList.toggle('back', rev);
-      setTimeout(() => { c.classList.remove('arriving', 'back'); }, T);
+      c.classList.add('arriving'); c.classList.toggle('back', rev); undo.push(() => c.classList.remove('arriving', 'back'));
       const k = [{ offset: 0, p: p0 }, { offset: 0.08, p: p0 }, { offset: 0.6, p: p1 }, { offset: 1, p: p1 }];
-      c.animate(k.map((x) => ({ offset: x.offset, maskPosition: x.p, webkitMaskPosition: x.p })), { duration: T });
+      anims.push(c.animate(k.map((x) => ({ offset: x.offset, maskPosition: x.p, webkitMaskPosition: x.p })), { duration: T, fill: 'both' }));
     });
+    const done = (back) => { if (back) { cur = was; place(); } anims.forEach((x) => x.cancel()); undo.forEach((f) => f()); busy = false; waited = 0; };
+    const run = (back) => { anims.forEach((x) => { x.playbackRate = back ? -1.6 : (scrub ? 1.6 : 1); x.play(); }); Promise.all(anims.map((x) => x.finished)).then(() => done(back), () => {}); };
+    if (scrub) anims.forEach((x) => x.pause()); else run(false);
+    return { dir, anims, run, done };
   };
   setInterval(() => { // counts only while the slide is showing and nothing is holding it
     if (!slide.classList.contains('on') || document.hidden) { waited = 0; return; }
     if (down || busy) return;
     waited += 200; if (waited >= DWELL) turn(1);
   }, 200);
-  const stage = car.querySelector('.stage');
   stage.addEventListener('pointerdown', (e) => { if (e.button) return; down = { x: e.clientX, y: e.clientY, t: performance.now() }; block = false; car.classList.add('hold'); });
+  /* Dragging: once the pointer has clearly moved sideways, the turn follows it. A full turn is about half a preview's width. */
+  addEventListener('pointermove', (e) => {
+    if (!down || still) return;
+    const dx = e.clientX - down.x, dy = e.clientY - down.y;
+    if (!drag) {
+      if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+      const d = turn(dx < 0 ? 1 : -1, true); if (!d) return;
+      drag = d; drag.span = Math.max(120, cards[0].getBoundingClientRect().width * 0.55); block = true;
+      try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    const along = drag.dir === 1 ? -dx : dx; // how far the pointer has gone in the turn's direction
+    drag.p = Math.max(0, Math.min(0.98, along / drag.span));
+    drag.anims.forEach((x) => { x.currentTime = drag.p * T; });
+  });
   const up = (e) => {
     if (!down) return;
     const dx = e.clientX - down.x, dy = e.clientY - down.y, held = performance.now() - down.t; down = null;
     car.classList.remove('hold');
+    if (drag) { const d = drag; drag = null; block = true; d.run(e.type === 'pointercancel' || d.p < 0.22); return; } // let go early and it settles back
     if (e.type === 'pointercancel') { block = true; return; }
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.4) { block = true; turn(dx < 0 ? 1 : -1); }
-    else if (held > 350 || Math.hypot(dx, dy) > 10) block = true; // a hold or a drag, not a tap
+    if (held > 350 || Math.hypot(dx, dy) > 10) block = true; // a hold, not a tap
   };
   addEventListener('pointerup', up); addEventListener('pointercancel', up);
   stage.addEventListener('click', (e) => {
