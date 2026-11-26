@@ -360,3 +360,13 @@ svg .a.gy { transform-origin: center bottom; }
 .ec-all i::before, .ec-all i::after { content: ''; position: absolute; left: 50%; top: 50%; width: .6em; height: 1.5px; margin: -.75px 0 0 -.3em; background: currentColor; } .ec-all i::after { transform: rotate(90deg); }
 .ec-all:hover, .ec-all:focus-visible { color: var(--ink); } .ec-all:focus-visible { outline: 2px solid var(--acc-hi); outline-offset: 2px; }
 @media (min-width: 761px) { dialog.dlg.topic:has(table) { width: min(1040px, calc(100vw - 32px)); } }
+
+/* Details and the other slide buttons sit at the top right, level with the title, not at the foot of the slide. */
+.sb { position: relative; }
+.rail { position: absolute; right: 0; top: calc(clamp(14px, 3.4vh, 40px) + 1.3em); z-index: 2; }
+@media (max-width: 760px) {
+  /* phones: no room beside the title, so the buttons take their own row straight under it, on the right */
+  .sb { grid-template-rows: auto auto minmax(0, 1fr); }
+  .rail { position: static; grid-row: 2; padding-top: 0; justify-content: flex-end; }
+  .sb > .vis { grid-row: 3; }
+}
