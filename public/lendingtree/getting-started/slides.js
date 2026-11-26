@@ -75,11 +75,11 @@ const integration = `
 </div>`;
 
 /* ------------------------------------------------------------------ 3 team */
-const box = (x, y, w, h, t, cls, d, sub) => `<g ${A(d)}><rect class="bx ${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/><text class="bt ${cls}" x="${x + w / 2}" y="${y + h / 2 + (sub ? -3 : 5)}">${t}</text>${sub ? `<text class="bs ${cls}" x="${x + w / 2}" y="${y + h / 2 + 15}">${sub}</text>` : ''}</g>`;
+const box = (x, y, w, h, t, cls, d, sub) => `<g ${A(d, 'fade')}><rect class="bx ${cls}" x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/><text class="bt ${cls}" x="${x + w / 2}" y="${y + h / 2 + (sub ? -3 : 5)}">${t}</text>${sub ? `<text class="bs ${cls}" x="${x + w / 2}" y="${y + h / 2 + 15}">${sub}</text>` : ''}</g>`;
 const LEADS = [300, 600, 900];
 /* Clarity down (blue) and feedback up (white): a dot travels the line between the CPO and each lead, in both directions.
    The motion is SVG's own animateMotion, looping; the group is only shown once the slide's lines have drawn. */
-const pulses = (leads, x, y0, bus, r) => `<g class="pulses" aria-hidden="true">${leads.map(([lx, ly], i) => {
+const pulses = (leads, x, y0, bus, r, at = 4.4) => `<g class="pulses" style="--d:${at}" aria-hidden="true">${leads.map(([lx, ly], i) => {
   const down = `M${x} ${y0}V${bus}H${lx}V${ly - 2}`, up = `M${lx} ${ly - 2}V${bus}H${x}V${y0}`;
   const dot = (cls, path, begin) => `<circle class="pulse ${cls}" r="${r}" opacity="0"><animateMotion dur="2.6s" begin="${begin}s" repeatCount="indefinite" path="${path}"/><animate attributeName="opacity" dur="2.6s" begin="${begin}s" repeatCount="indefinite" values="0;1;1;0" keyTimes="0;0.12;0.86;1"/></circle>`;
   return dot('dn', down, (i * 0.45).toFixed(2)) + dot('up', up, (1.3 + i * 0.45).toFixed(2));
@@ -110,36 +110,48 @@ const teamPhone = `
   <text class="pl" ${A(2.4)} x="180" y="286">Solid lines: clarity down, feedback up</text>
 </svg>`;
 
+/* Build order for the chain of command (seconds): CPO, leads, lines to leads, teams, lines to teams, caption,
+   running dots, the two dashed arrows, their labels, the partner lines and peers, then the day 30/60/90 strip. */
+const T = { cpo: 0.2, leads: 0.9, l1: 1.5, teams: 2.3, l2: 2.9, caption: 3.8, dots: 4.4, skip: 5.0, partner: 6.6, strip: 7.9 };
 const team = `
 <svg class="org" viewBox="0 0 1200 410" role="img" aria-label="Chain of command: the CPO, three leads and their teams, with the heads of technology, analytics and strategy, and marketing as partners">
   <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="#6cc3f5" stroke-width="1.6"/></marker></defs>
-  <path class="ln rule" ${A(0.9)} pathLength="1" d="M600 78V124M300 124H900M300 124V170M600 124V170M900 124V170"/>
-  <path class="ln rule" ${A(1.8)} pathLength="1" d="M300 234V276M226 276H374M226 276V318M300 276V318M374 276V318M600 234V276M526 276H674M526 276V318M600 276V318M674 276V318"/>
-  <path class="ln rule dsh" ${A(2.1)} d="M900 234V276M826 276H974M826 276V318M900 276V318M974 276V318"/>
-  <path class="ln acc" ${A(0.6)} pathLength="1" d="M320 44H500"/>
-  <text class="lb acc" ${A(0.7)} x="410" y="34">Partner</text>
-  ${box(100, 12, 220, 64, 'Head of technology', 'dk', 0.5)}
-  <path class="ln acc" ${A(0.75)} pathLength="1" d="M700 44H800M800 27V61M800 27H836M800 61H836"/>
-  <text class="lb acc" ${A(0.85)} x="750" y="34">Partners</text>
-  ${box(836, 10, 304, 32, 'Head of analytics and strategy', 'dk sm', 0.9)}
-  ${box(836, 46, 304, 32, 'Head of marketing', 'dk sm', 1.0)}
-  ${box(500, 12, 200, 66, 'CPO', 'wh', 0.2)}
-  ${box(185, 170, 230, 64, 'Senior director', 'dk', 1.2, 'Product')}
-  ${box(485, 170, 230, 64, 'Senior director', 'dk', 1.35, 'Product')}
-  ${box(785, 170, 230, 64, 'Head of design', 'hire', 1.5, 'To hire')}
-  ${teams}
-  <text class="lb" ${A(2.5)} x="362" y="114">Clarity down, feedback up</text>
+  ${/* 3. lines down from the CPO to the leads, all three at once */''}
+  ${[300, 600].map((c) => `<path class="ln rule" ${A(T.l1)} pathLength="1" d="M600 78V124H${c}V170"/>`).join('')}
+  <path class="ln rule" ${A(T.l1)} pathLength="1" d="M600 78V124H900V170"/>
+  ${/* 5. lines down from each lead to its teams, all at once */''}
+  ${[300, 600].map((c) => [-74, 0, 74].map((dx) => `<path class="ln rule" ${A(T.l2)} pathLength="1" d="M${c} 234V276H${c + dx}V318"/>`).join('')).join('')}
+  <path class="ln rule dsh" ${A(T.l2)} d="M900 234V276M826 276H974M826 276V318M900 276V318M974 276V318"/>
+  ${/* 10. partner lines out from the CPO, both sides at once, then the peers */''}
+  <path class="ln acc" ${A(T.partner)} pathLength="1" d="M500 44H320"/>
+  <path class="ln acc" ${A(T.partner)} pathLength="1" d="M700 44H800V27H836"/>
+  <path class="ln acc" ${A(T.partner)} pathLength="1" d="M700 44H800V61H836"/>
+  <text class="lb acc" ${A(T.partner + 0.3, 'fade')} x="410" y="34">Partner</text>
+  <text class="lb acc" ${A(T.partner + 0.3, 'fade')} x="750" y="34">Partners</text>
+  ${box(100, 12, 220, 64, 'Head of technology', 'dk', T.partner + 0.6)}
+  ${box(836, 10, 304, 32, 'Head of analytics and strategy', 'dk sm', T.partner + 0.6)}
+  ${box(836, 46, 304, 32, 'Head of marketing', 'dk sm', T.partner + 0.6)}
+  ${/* 1. the CPO, then 2. the leads together */''}
+  ${box(500, 12, 200, 66, 'CPO', 'wh', T.cpo)}
+  ${box(185, 170, 230, 64, 'Senior director', 'dk', T.leads, 'Product')}
+  ${box(485, 170, 230, 64, 'Senior director', 'dk', T.leads, 'Product')}
+  ${box(785, 170, 230, 64, 'Head of design', 'hire', T.leads, 'To hire')}
+  ${/* 4. the teams, all together */''}
+  ${LEADS.map((cx, k) => [-74, 0, 74].map((dx) => `<rect ${A(T.teams, 'fade')} class="tm${k === 2 ? ' hire' : ''}" x="${cx + dx - 31}" y="318" width="62" height="38" rx="7"/>`).join('')).join('')}
+  ${/* 6. the caption, then 7. the dots start running */''}
+  <text class="lb" ${A(T.caption, 'fade')} x="362" y="114">Clarity down, feedback up</text>
   ${pulses([[300, 170], [600, 170], [900, 170]], 600, 80, 124, 4)}
-  <path class="skip" ${A(3.2, 'fade')} d="M540 78C470 96 450 130 450 176V330" marker-end="url(#ah)"/>
-  <path class="skip" ${A(3.6, 'fade')} d="M660 78C730 96 750 130 750 176V330" marker-end="url(#ah)"/>
-  <text class="lb acc" ${A(3.3)} x="450" y="384">When a team is in trouble</text>
-  <text class="lb acc" ${A(3.7)} x="750" y="384">Coaching rising leaders</text>
+  ${/* 8. the two dashed arrows draw downward together, then 9. their labels */''}
+  <path class="skip" ${A(T.skip, 'down')} d="M540 78C470 96 450 130 450 176V330" marker-end="url(#ah)"/>
+  <path class="skip" ${A(T.skip, 'down')} d="M660 78C730 96 750 130 750 176V330" marker-end="url(#ah)"/>
+  <text class="lb acc" ${A(T.skip + 0.9, 'fade')} x="450" y="384">When a team is in trouble</text>
+  <text class="lb acc" ${A(T.skip + 0.9, 'fade')} x="750" y="384">Coaching rising leaders</text>
 </svg>
 ${teamPhone}
 <ol class="trk t3">
-  <li class="on link" style="--d:4.2"><div class="st"><em>By day 30</em><b>Set expectations</b><small>Outputs and outcomes for every role</small></div></li>
-  <li class="on link" style="--d:4.8"><div class="st"><em>By day 60</em><b>Assess</b><small>Every team member, one on one</small></div></li>
-  <li class="on link" style="--d:5.4"><div class="st"><em>By day 90</em><b>Act</b><small>Develop, redeploy or hire</small></div></li>
+  <li class="on link" style="--d:${T.strip}"><div class="st"><em>By day 30</em><b>Set expectations</b><small>Outputs and outcomes for every role</small></div></li>
+  <li class="on link" style="--d:${T.strip + 0.6}"><div class="st"><em>By day 60</em><b>Assess</b><small>Every team member, one on one</small></div></li>
+  <li class="on link" style="--d:${T.strip + 1.2}"><div class="st"><em>By day 90</em><b>Act</b><small>Develop, redeploy or hire</small></div></li>
 </ol>`;
 
 /* ------------------------------------------------------------------ 4 core */

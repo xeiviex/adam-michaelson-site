@@ -14,6 +14,8 @@
 .on .a.fade { animation-name: gs-fade; }
 .on .a.drop { animation-name: gs-drop; animation-duration: .7s; }
 .on .a.pop { animation-name: gs-pop; animation-duration: .35s; }
+/* a line that draws downward: revealed from the top, with room left for its arrowhead */
+.on .a.down { animation-name: gs-down; animation-duration: .8s; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
 .on .a.wipe { animation-name: gs-wipex; animation-duration: .4s; animation-timing-function: cubic-bezier(.4, 0, .2, 1); }
 /* a figure arriving at the end of a line: it slides out from the line's end and settles, with no change of text */
 .on .a.land { animation-name: gs-land; animation-duration: .6s; }
@@ -29,6 +31,7 @@ svg .a.gy { transform-origin: center bottom; }
 @keyframes gs-drop { 0% { opacity: 0; transform: translateY(-1.6em); } 70% { opacity: 1; transform: translateY(.12em); } 100% { opacity: 1; transform: none; } }
 @keyframes gs-land { from { opacity: 0; transform: translateX(-14px) scale(.9); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
 @keyframes gs-wipex { from { opacity: 1; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(0); } }
+@keyframes gs-down { from { opacity: 1; clip-path: inset(-12px -12px 100% -12px); } to { opacity: 1; clip-path: inset(-12px); } }
 @keyframes gs-pop { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: none; } }
 @keyframes gs-gx { from { opacity: 0; transform: scaleX(0); } 20% { opacity: 1; } to { opacity: 1; transform: none; } }
 @keyframes gs-gy { from { opacity: 0; transform: scaleY(0); } 20% { opacity: 1; } to { opacity: 1; transform: none; } }
@@ -106,7 +109,7 @@ svg .a.gy { transform-origin: center bottom; }
 .tm { fill: var(--surface2); } .tm.hire { fill: none; stroke: var(--rule); stroke-dasharray: 4 4; }
 .ln.dsh { stroke-dasharray: 4 5; stroke-dashoffset: 0; } .on .ln.dsh.a { animation-name: gs-fade; animation-fill-mode: forwards; }
 .pulse.dn { fill: var(--acc-hi); } .pulse.up { fill: var(--ink); }
-.pulses { opacity: 0; } .on .pulses { animation: gs-fade .5s 2.6s forwards; }
+.pulses { opacity: 0; } .on .pulses { animation: gs-fade .5s calc(var(--d, 4.4) * 1s) forwards; }
 .t3 { max-width: 60em; margin-inline: auto; width: 100%; }
 /* the day 30, 60, 90 line draws left to right: each segment wipes in from the previous dot, then its dot lands, then its words fade in */
 .t3 > li::before, .t3 > li .st { opacity: 0; }
@@ -305,3 +308,6 @@ svg .a.gy { transform-origin: center bottom; }
 /* three previews: reserve two lines for each description so the frames line up */
 .vt p { min-height: 2.9em; }
 @media (max-width: 760px) { .vt p { min-height: 0; } }
+
+/* chain of command: each line draws quickly, so the levels read as steps */
+.on .org .ln.rule.a, .on .org .ln.acc.a { animation-duration: .55s; }
