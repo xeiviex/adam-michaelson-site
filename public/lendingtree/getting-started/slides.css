@@ -349,3 +349,6 @@ svg .a.gy { transform-origin: center bottom; }
 .on .org .ln.rule.a, .on .org .ln.acc.a { animation-duration: .55s; }
 
 .on .tick.mk.a.down { animation-duration: 1.1s; }
+
+/* outcome card headlines are one size, small enough that the longest stays on one line */
+.cards6 .fig { font-size: 2.35em; white-space: nowrap; padding-block: .12em; }
