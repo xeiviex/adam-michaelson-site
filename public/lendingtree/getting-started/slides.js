@@ -398,12 +398,12 @@ const time = `${timeChart()}
 const card = (d, part, fig, line, by, cls = '') => `<article ${A(d)}><h3>${part}</h3><b class="fig ${cls}">${fig}</b><p>${line}</p><em>${by}</em></article>`;
 const outcomes = `
 <div class="cards6">
-  ${card(0.2, 'Integration', '~30', 'Leaders interviewed; synthesis read out to all', 'January 15')}
-  ${card(0.5, 'Team leadership', '30 · 60 · 90', 'Expectations, assessments, changes; every team with a named lead', 'Day 90')}
-  ${card(0.8, 'Protecting the core', '≥ Plan', 'The company plan’s core targets, jointly accountable', 'Every quarter')}
-  ${card(1.1, 'Immediate impact', '$1M+', 'Profit booked, and annual run rate', 'Within year one')}
+  ${card(0.2, 'Integration', '~30', 'Leaders interviewed; I’ll read out the synthesis to the participants', 'January 15')}
+  ${card(0.5, 'Level up the team', '30 · 60 · 90', 'Set expectations, train collectively and one-on-one, assess, and make changes as needed', 'Day 90')}
+  ${card(0.8, 'Protect the core', '≥ Plan', 'I’ll deliver on the company’s planned targets and/or get alignment on adjustments', 'Every quarter')}
+  ${card(1.1, 'Immediate impact', '$1M+', 'Profit booked through rapidly deployed / graduated experiments', 'Within year one')}
   ${card(1.4, 'Disruption: pods', '3 × 3', 'Three pods of three principals, 100% allocated and running', 'Day 90')}
-  ${card(1.7, 'Disruption: research', 'M9 · M12', 'Executive phase gate; alpha in market', 'Months 9 and 12')}
+  ${card(1.7, 'Disruption: next chapter', 'M9 · M12', 'Executive phase gate; alpha in market', 'Months 9 and 12')}
 </div>`;
 
 /* ------------------------------------------------------------------ 10 plan */
@@ -422,12 +422,12 @@ const LANES = [
   ['Disruption', 'Three pods and a research-led reset', [
     ['Pods', 'Staff and start', 1, 7, 'o', 'Running'],
     ['Pods', 'Test, review, decide, repeat', 7, 25, 'f'],
-    ['Research', 'Interviews, market research, internal reflection', 1, 5, 'f'],
-    ['Research', 'Contextual inquiry', 3, 9, 'f'],
-    ['Research', 'Provisional vision', 5, 7, 'f', 'Day 90'],
-    ['Research', 'Synthesis, concept design, validation, go-to-market', 9, 17, 'f'],
-    ['Research', 'Phase gate', 17, 19, 'g', 'Commit'],
-    ['Research', 'Build the alpha', 19, 25, 'f', 'Alpha'],
+    ['Next chapter', 'Interviews, market research, internal reflection', 1, 5, 'f'],
+    ['Next chapter', 'Contextual inquiry', 3, 9, 'f'],
+    ['Next chapter', 'Provisional vision', 5, 7, 'f', 'Day 90'],
+    ['Next chapter', 'Synthesis, concept design, validation, go-to-market', 9, 17, 'f'],
+    ['Next chapter', 'Phase gate', 17, 19, 'g', 'Commit'],
+    ['Next chapter', 'Build the alpha', 19, 25, 'f', 'Alpha'],
   ]],
 ];
 let pr = 0;
