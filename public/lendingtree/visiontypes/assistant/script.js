@@ -3,14 +3,18 @@
    A path (loan or insurance) is a set of named scenes. A scene is a list of steps the engine (app.js) plays in order:
      { t: 'bot', text, flag? }            the assistant speaks. **bold** and blank-line paragraphs are supported.
      { t: 'choice', options }             the person replies. Each option: label, say (what is typed), auto (auto-play picks it),
-                                          go (jump to a scene), set (merge into state), neg / match (how typed text maps to it),
-                                          pick (an offer id, so the Choose button on a card can answer), chip: false (hide the chip).
+                                          go (jump to a scene), set (merge into state), neg (a decline), names (other ways to
+                                          type it), yes (a plain "yes" means this one), pick (an offer id, so the Choose button on
+                                          a card can answer), chip: false (hide the chip).
      { t: 'tool', lines, done }           the "Working with LendingTree" status.
      { t: 'offers' | 'compare' | 'review' | 'form' | 'checklist' | 'contract' | 'celebrate' | 'app' | 'receipt' | 'payoff' }
                                           embedded cards. See cards.js for what each one reads.
      { t: 'divider', text }               time passing.
      { t: 'goto', scene }  { t: 'modal', kind }
-   Any text can be a function of the state S (S.v holds form answers, S.offer the chosen offer). */
+   Any text can be a function of the state S (S.v holds form answers, S.offer the chosen offer).
+
+   Typed text that is plainly one of the current replies takes that reply (matchChoice, matchOpener). Anything else goes to
+   the live agent; the last section of this file holds what the engine needs for that. */
 
 import { PERSON, BRAND, ASSISTANTS, BANKS, LOANS, POLICIES, HELOC_OFFERS, HELOC_ESTIMATE, AUTO_QUOTES, AUTO_CURRENT, money } from '../shared/data.js';
 
@@ -33,7 +37,6 @@ const TOOL = 'Working with ' + BRAND.name;
 export const TITLES = { loan: 'Backyard deck plans', insurance: 'Car insurance options', other: ['Trip packing list', 'Weekend meal prep ideas', 'Explain compound interest', 'Birthday ideas for Sam'] };
 export const HERO = 'What can I help with?';
 export const PROTO_NOTE = 'Drawn as ' + ASSISTANTS[0] + '. It could just as easily be ' + ASSISTANTS.slice(1).join(', ') + ' or another assistant. All offers are fictional.';
-export const BUSY_REPLY = 'Happy to get into that. Finish the step above first and I’ll pick it right back up.';
 
 /* ---------- how a conversation can start ---------- */
 export const OPENERS = [
@@ -50,23 +53,55 @@ export const OPENERS = [
   { text: 'Help me find better insurance', path: 'insurance',
     lead: 'Happy to. The one that stands out is your auto policy: ' + money(AUTO_CURRENT.premium) + ' a year with ' + AUTO_CURRENT.carrier + ' for the Highlander, renewing on ' + AUTO_POLICY.renews + '.' },
 ];
-/* Typed openers that are not one of the starters land on the nearest path. */
+/* A typed opener that states what the person wants lands on the nearest path. */
+const INS_WORDS = /insur|progressive|geico|state farm|polic|coverage|premium|deductible|tacoma|truck|car\b|claim/;
+const LOAN_WORDS = /\b(loan|borrow|heloc|home equity|line of credit|deck|remodel|renovat\w*|kitchen|bathroom|addition|roof|mortgage|refinanc\w*|house)\b/;
+const plain = (s) => String(s).toLowerCase().replace(/[’‘]/g, '\'').replace(/[^a-z0-9$' ]+/g, ' ').replace(/\s+/g, ' ').trim();
 export function routeOpener(text) {
-  const t = text.toLowerCase();
-  const known = OPENERS.find((o) => o.text.toLowerCase().replace(/’/g, '\'') === t.replace(/’/g, '\'').replace(/[.!?]+$/, ''));
+  const t = plain(text);
+  const known = OPENERS.find((o) => plain(o.text) === t);
   if (known) return known;
-  const ins = /insur|progressive|geico|state farm|polic|coverage|premium|deductible|tacoma|truck|car\b|claim/.test(t);
-  return ins
+  return INS_WORDS.test(t)
     ? { path: 'insurance', lead: 'I can help with that. A good place to start is your auto policy: ' + money(AUTO_CURRENT.premium) + ' a year with ' + AUTO_CURRENT.carrier + ' for the Highlander.' }
     : { path: 'loan', why: 'your plans', lead: 'I can help with that. If it comes down to paying for it, your home gives you a strong option: it is worth about ' + money(PERSON.homeValue) + ' and has plenty of equity.' };
 }
 
-const YES = /\b(yes|yeah|yep|sure|ok|okay|please|go|do it|sounds good|let'?s|show|look)\b/i;
-const NO = /\b(no|not now|not right now|later|think|maybe|wait|hold off|nah|skip|cancel)\b/i;
-export const matchChoice = (text, options) => {
-  const t = text.replace(/’/g, '\'');
-  return options.find((o) => o.match && o.match.test(t)) || (NO.test(t) && options.find((o) => o.neg)) || (YES.test(t) && options.find((o) => !o.neg)) || options.find((o) => o.auto) || options[0];
-};
+/* ---------- is typed text one of the replies on offer? ----------
+   Deliberately conservative. A reply is taken only when the text is plainly that reply: the same words, a bare yes or no
+   where that can mean only one thing, or the name of an option. Questions and everything else return null and go to the
+   live agent. */
+const ASKING = /\?|^(what|what's|why|how|when|who|where|which|is|are|am|can|could|does|do i|do you|did|should|would|will|tell|explain|compare)\b/;
+const LEAVING = /\b(start over|restart|new chat|instead)\b/;
+const YES = /^(yes|yeah|yep|yup|ok|okay|sure|absolutely|definitely|of course|sounds good|go ahead|do it|go for it|let's do it|let's go|sure thing|why not)$/;
+const NO = /^(no|nope|nah|no thanks|no thank you|not now|not right now|not yet|maybe later|later|skip|skip it|pass|i'll pass|never mind|nevermind|((i want to|i need to|i'd like to|let me|i'll) )?think (about it|it over))$/;
+const FILLER = /\b(please|thanks|thank you|then|i think|i guess|just)\b/g;
+const CHOOSING = /\b(let's|lets|i'll|i will|i'd like|i would like|i want|i choose|i pick|i like|go with|going with|go for|take|choose|pick|start with|initiate with|the|one|option|offer|quote|to|yes|yeah|ok|okay|sure)\b/g;
+export function matchChoice(text, options) {
+  const t = plain(text);
+  const same = options.find((o) => [o.label, o.say].some((x) => x && plain(x) === t));
+  if (same) return same;
+  if (!t || ASKING.test(String(text).toLowerCase().trim()) || LEAVING.test(t) || t.split(' ').length > 8) return null;
+  const core = plain(t.replace(FILLER, ' ')), name = plain(core.replace(CHOOSING, ' '));
+  if (YES.test(core)) { const open = options.filter((o) => !o.neg && o.chip !== false); return options.find((o) => o.yes) || (open.length === 1 ? open[0] : null); }
+  if (NO.test(core)) { const neg = options.filter((o) => o.neg); return neg.length === 1 ? neg[0] : null; }
+  const named = options.filter((o) => o.names && (o.names.includes(name) || o.names.includes(core)));
+  if (named.length) return named.length === 1 ? named[0] : null;
+  /* the reply's own words, give or take a leading "yes" or "ok": "sure, take a look", "ok confirm" */
+  const flat = (x) => plain(x).replace(/'/g, ''), bare = flat(core.replace(/^((yes|yeah|yep|ok|okay|sure) )+/, ''));
+  const said = options.filter((o) => [o.label, o.say].some((x) => x && flat(x) === bare));
+  if (said.length === 1) return said[0];
+  const words = bare.split(' ').filter(Boolean);
+  if (words.length < 2) return null;
+  const close = options.filter((o) => { const w = flat(o.label + ' ' + (o.say || '')).split(' '); return words.every((x) => w.includes(x)); });
+  return close.length === 1 ? close[0] : null;
+}
+/* On the opening screen: a starter, or a short statement about a project, a loan or insurance. Otherwise the agent answers. */
+export function matchOpener(text) {
+  const t = plain(text);
+  if (OPENERS.some((o) => plain(o.text) === t)) return true;
+  if (!t || ASKING.test(String(text).toLowerCase().trim()) || LEAVING.test(t) || t.split(' ').length > 14) return false;
+  return INS_WORDS.test(t) || LOAN_WORDS.test(t);
+}
 
 /* ---------- offers, shaped for the offers card ---------- */
 const MONO = { figure: ['F', '#1f2937'], rocket: ['R', '#c8102e'], bofa: ['B', '#0b3a82'] };
@@ -92,9 +127,10 @@ const ROCKET = HELOC_OFFERS.find((o) => o.id === 'rocket');
 
 const lenderName = (S) => (S.offer ? S.offer.name : HELOC.lender);
 const mainName = (S) => (S.main ? S.main.name : HELOC.lender);   /* the lender or carrier chosen in the shopping pass */
+const ALIAS = { bofa: ['bofa', 'boa', 'bank of america'], rocket: ['rocket'], statefarm: ['state farm'], liberty: ['liberty'] };
 const pickOptions = (list, verb, go, set) => list.map((o) => ({
   label: verb + ' ' + o.name, say: 'Let’s go with ' + o.name + '.', pick: o.id, go, set: { sel: o.id, ...(set || {}) },
-  match: new RegExp(o.name.split(' ')[0], 'i'),
+  names: [o.name.toLowerCase(), ...(ALIAS[o.id] || [])],
 }));
 const THINK = { label: 'I want to think about it', say: 'I want to think about it.', neg: true, go: 'think' };
 const END_SHOP = { t: 'modal', kind: 'interstitial' };
@@ -154,7 +190,7 @@ function loanScenes() {
       { t: 'compare', kind: 'loan', context: 'Rate and time to fund', list: offers, best: 'figure', caption: 'Lower and further left is better.' },
       { t: 'bot', text: (S) => 'If you want to get going on ' + (S.why || 'your plans') + ' soon, my pick is ' + fig.lender + '. You only pay interest on what you draw, and you can pay it down early with no penalty.' },
       { t: 'choice', options: [
-        ...pickOptions(HELOC_OFFERS.map((o) => ({ id: o.id, name: o.lender })), 'Go with', 'apply').map((o, i) => ({ ...o, auto: i === 0 })),
+        ...pickOptions(HELOC_OFFERS.map((o) => ({ id: o.id, name: o.lender })), 'Go with', 'apply').map((o, i) => ({ ...o, auto: i === 0, yes: i === 0 })),
         THINK,
       ] },
     ],
@@ -237,8 +273,8 @@ function loanScenes() {
       { t: 'tool', lines: ['Reviewing your loan with the ' + BRAND.agent, 'Checking current rates and specials', 'Comparing against your home value'], done: '1 opportunity found' },
       { t: 'bot', flag: { text: 'Intelligence from ' + BRAND.name }, text: 'Looks like ' + ROCKET.lender + ' is running a special on HELOCs right now for existing customers. Based on your mortgage status and the value of your home, it looks like you could get up to ' + money(ROCKET.limit) + ' more at a lower rate than you have today, which could be enough to redo your bathroom.\n\nWant me to shop that around or initiate with Rocket?' },
       { t: 'choice', options: [
-        { label: 'Shop it around', say: 'Shop it around.', auto: true, match: /shop|around|compare/i },
-        { label: 'Start with Rocket', say: 'Start with Rocket.', go: 'crossConfirm', set: { sel: 'rocket', list: 'refi' }, match: /rocket|initiate|start/i },
+        { label: 'Shop it around', say: 'Shop it around.', auto: true, names: ['shop it around', 'shop around', 'shop', 'compare', 'compare them'] },
+        { label: 'Start with Rocket', say: 'Start with Rocket.', go: 'crossConfirm', set: { sel: 'rocket', list: 'refi' }, names: ['rocket', 'rocket mortgage', 'initiate', 'initiate with rocket'] },
         { label: 'Not right now', say: 'Not right now.', neg: true, go: 'crossNo' },
       ] },
       { t: 'bot', text: (S) => 'On it. Since you already have a line with ' + mainName(S) + ', I can reuse everything from last time: your documents, your bank link and your income verification.' },
@@ -246,7 +282,7 @@ function loanScenes() {
       { t: 'offers', context: 'Upgrade your line', list: () => REFI_OFFERS.map((o) => loanOffer(o, HELOC.balance, { stats: [money(o.limit) + ' limit', money(o.limit - HELOC.balance) + ' available', o.fund, o.fee] })), cta: 'Choose', listKey: 'refi', foot: 'Each option pays off your current ' + money(HELOC.balance) + ' balance.' },
       { t: 'bot', text: 'Rocket’s special is the strongest: a lower rate on what you already owe, about ' + money(payment(HELOC.balance, HELOC.rate) - payment(HELOC.balance, REFI_OFFERS[0].apr)) + ' less a month, plus ' + money(REFI_OFFERS[0].limit - HELOC.balance) + ' you can draw on for the bathroom whenever you are ready.' },
       { t: 'choice', options: [
-        ...pickOptions(REFI_OFFERS.map((o) => ({ id: o.id, name: o.lender })), 'Go with', 'crossConfirm', { list: 'refi' }).map((o, i) => ({ ...o, auto: i === 0 })),
+        ...pickOptions(REFI_OFFERS.map((o) => ({ id: o.id, name: o.lender })), 'Go with', 'crossConfirm', { list: 'refi' }).map((o, i) => ({ ...o, auto: i === 0, yes: i === 0 })),
         { label: 'Keep what I have', say: 'I’ll keep what I have.', neg: true, go: 'crossNo' },
       ] },
     ],
@@ -322,7 +358,7 @@ function insuranceScenes() {
       { t: 'compare', kind: 'ins', context: 'Price and coverage', credit: QW, list: quotes, best: 'statefarm', current: AUTO_CURRENT, caption: 'Yearly price, next to what each one covers.' },
       { t: 'bot', text: 'My pick is ' + sf.carrier + ': ' + money(AUTO_CURRENT.premium - sf.premium) + ' less a year than today, with more protection if something goes wrong. If price is all that matters, ' + geico.carrier + ' saves ' + money(AUTO_CURRENT.premium - geico.premium) + '.' },
       { t: 'choice', options: [
-        ...pickOptions([sf, geico, AUTO_QUOTES[2]].map((o) => ({ id: o.id, name: o.carrier })), 'Go with', 'apply').map((o, i) => ({ ...o, auto: i === 0 })),
+        ...pickOptions([sf, geico, AUTO_QUOTES[2]].map((o) => ({ id: o.id, name: o.carrier })), 'Go with', 'apply').map((o, i) => ({ ...o, auto: i === 0, yes: i === 0 })),
         THINK,
       ] },
     ],
@@ -419,8 +455,8 @@ function insuranceScenes() {
       { t: 'tool', lines: ['Reviewing your policy with the ' + BRAND.agent, 'Checking current prices and specials', 'Looking across your loans and your home'], done: 'Coverage looks right. 1 opportunity found', credit: null },
       { t: 'bot', flag: { text: 'Intelligence from ' + BRAND.name }, text: 'Your auto policy is still the best price for what it covers, so nothing to change there.\n\nOne thing did come up. Looks like ' + ROCKET.lender + ' is running a special on HELOCs right now for existing customers, and based on your mortgage status and the value of your home, it looks like you could get up to ' + money(ROCKET.limit) + ', which could be enough to redo your bathroom. Want me to shop that around or initiate with Rocket?' },
       { t: 'choice', options: [
-        { label: 'Shop it around', say: 'Shop it around.', auto: true, match: /shop|around|compare/i },
-        { label: 'Start with Rocket', say: 'Start with Rocket.', go: 'crossConfirm', set: { sel: 'rocket', list: 'heloc' }, match: /rocket|initiate|start/i },
+        { label: 'Shop it around', say: 'Shop it around.', auto: true, names: ['shop it around', 'shop around', 'shop', 'compare', 'compare them'] },
+        { label: 'Start with Rocket', say: 'Start with Rocket.', go: 'crossConfirm', set: { sel: 'rocket', list: 'heloc' }, names: ['rocket', 'rocket mortgage', 'initiate', 'initiate with rocket'] },
         { label: 'Not right now', say: 'Not right now.', neg: true, go: 'crossNo' },
       ] },
       { t: 'bot', text: 'On it. Since you already have a policy through ' + BRAND.name + ', I can reuse what you shared then: who you are, your address, your income and your bank link.' },
@@ -428,7 +464,7 @@ function insuranceScenes() {
       { t: 'offers', context: 'Home equity offers', list: helocOffers, cta: 'Choose', listKey: 'heloc', foot: 'Checking these did not affect your credit.' },
       { t: 'bot', text: 'Rocket’s special has the lowest rate, and because they already hold your mortgage there is less to verify. ' + HELOC_OFFERS[0].lender + ' is faster if the bathroom can’t wait.' },
       { t: 'choice', options: [
-        ...pickOptions([ROCKET, HELOC_OFFERS[0], HELOC_OFFERS[2]].map((o) => ({ id: o.id, name: o.lender })), 'Go with', 'crossConfirm', { list: 'heloc' }).map((o, i) => ({ ...o, auto: i === 0 })),
+        ...pickOptions([ROCKET, HELOC_OFFERS[0], HELOC_OFFERS[2]].map((o) => ({ id: o.id, name: o.lender })), 'Go with', 'crossConfirm', { list: 'heloc' }).map((o, i) => ({ ...o, auto: i === 0, yes: i === 0 })),
         { label: 'Not right now', say: 'Not right now.', neg: true, go: 'crossNo' },
       ] },
     ],
@@ -506,6 +542,111 @@ export const SERVICING = (path) => [
 ];
 export const MODALS = {
   interstitial: { title: 'That is the shopping journey', text: 'From the first question to a signed agreement, without leaving the conversation. Next comes life after closing.', a: 'Restart', b: 'Jump ahead to servicing' },
-  final: { title: 'That is the whole journey', text: 'Shopping, closing, servicing and the next offer, all inside the assistant with ' + BRAND.name + ' behind it.', a: 'Restart', b: (path) => (path === 'loan' ? 'Try the insurance path' : 'Try the loan path') },
+  final: { title: 'That is the whole journey', text: 'Shopping, closing, servicing and the next offer, all inside the assistant with ' + BRAND.name + ' behind it. Now it is your turn: type anything and it will answer.', a: 'Restart', b: (path) => (path === 'loan' ? 'Try the insurance path' : 'Try the loan path'), c: 'Play with it yourself' },
   picker: 'Choose a servicing moment',
 };
+
+/* ====================================================================================================================
+   THE LIVE AGENT: what the engine needs when the person types something that is not one of the replies on offer
+   ==================================================================================================================== */
+const SAVED_APP = { t: 'tool', label: BRAND.name, lines: ['Saving your application'], done: 'Application saved. Nothing submitted' };
+export const AGENT = {
+  /* when a question is about one of these, the "Working with LendingTree" status shows briefly before the answer */
+  topics: [
+    { re: /\b(my (loans?|accounts?|polic(y|ies)|balances?|payments?|mortgage)|balance|owe|what do i have|what i have|autopay|automatic payment|transfer)\b/i, line: 'Looking at your accounts', done: 'Checked your accounts' },
+    { re: /\b(quotes?|premiums?|deductibles?|coverage|liability|carriers?|polic(y|ies)|insur\w*|geico|state farm|liberty|progressive|claims?)\b/i, line: 'Checking your quotes and coverage', done: 'Checked your quotes and coverage' },
+    { re: /\b(offers?|rates?|apr|lenders?|heloc|home equity|borrow|limit|fees?|closing costs?|rocket|bank of america|funds?|funding|payments?|interest|loans?|credit)\b/i, line: 'Checking your offers', done: 'Checked your offers' },
+    { re: /\b(next|steps?|how long|happens|sign|signing|application|apply|approved?|documents?|verify|cancel|change my mind)\b/i, line: 'Checking what comes next', done: 'Checked your next steps' },
+  ],
+  offline: 'Not reachable right now',
+  /* switching to the other kind of shopping, in the same chat */
+  switchLead: {
+    loan: { why: 'your plans', lead: 'If you need to pay for something, your home gives you a strong option: it is worth about ' + money(PERSON.homeValue) + ' and you owe ' + money(PERSON.mortgageBalance) + '.' },
+    insurance: { lead: 'The place to start is your auto policy: ' + money(AUTO_CURRENT.premium) + ' a year with ' + AUTO_CURRENT.carrier + ' for the Highlander, renewing on ' + AUTO_POLICY.renews + '.' },
+  },
+  /* after showing what they hold */
+  homeBack: 'Whenever you are ready, we can get back to where we were.',
+  /* a calm stop: nothing submitted, and a way to pick it back up */
+  hold: {
+    options: [
+      { label: 'Pick up where we left off', say: 'Let’s pick up where we left off.', auto: true, yes: true, names: ['resume', 'continue', 'ready', 'i\'m ready', 'im ready', 'i\'m back', 'back', 'keep going', 'carry on', 'go on'] },
+      { label: 'Start a new chat', say: 'Start a new chat.', fresh: true },
+    ],
+    back: 'Welcome back. Everything is just as you left it.',
+    /* which "saved" status fits the point they stopped at: the script's own ending when there is one */
+    tool(scenes, scene, declineScene, S) {
+      const from = (name) => (scenes[name] || []).find((x) => x.t === 'tool');
+      if (declineScene) return from(declineScene) || null;
+      if (S.held) return null;
+      if (scene === 'pitch' || scene === 'agentOpen') return from('notNow');
+      if (scene === 'intake') return from(S.offersShown ? 'think' : 'notNow');
+      if (scene === 'apply' || scene === 'sign') return SAVED_APP;
+      return null;
+    },
+  },
+};
+
+/* What the person holds, shaped for the holdings card. */
+export function holdings(path, S) {
+  if (path === 'insurance') {
+    const mine = S.held && S.main ? S.main.raw : null;
+    const rows = POLICIES.map((p) => (p.id === 'auto' && mine
+      ? { name: mine.carrier, icon: mine.icon, kind: 'Auto · ' + p.covers, big: money(mine.premium), sub: 'a year' }
+      : { name: (/\((.+)\)/.exec(p.carrier) || [0, p.carrier])[1], icon: p.icon, kind: p.type + ' · ' + (/^Employer/.test(p.carrier) ? 'Employer plan' : p.covers), big: money(p.premium), sub: 'a ' + p.per }));
+    return { t: 'holdings', context: 'Your policies', rows, foot: rows.length + ' policies in one place.' };
+  }
+  const drawn = S.v.amount || HELOC.balance;
+  const list = LOANS.filter((l) => !l.isNew || S.held).map((l) => (l.isNew
+    ? { ...l, lender: S.main ? S.main.name : l.lender, balance: drawn, rate: S.main ? S.main.raw.apr : l.rate, payment: S.v.amount ? Math.round(payment(drawn, S.main ? S.main.raw.apr : l.rate)) : l.payment }
+    : l));
+  const rows = list.map((l) => ({ name: l.lender, kind: l.type + ' · ' + l.rate + '%', big: money(l.balance), sub: money(l.payment) + ' a month' }));
+  return { t: 'holdings', context: 'Your loans', rows, foot: 'You owe ' + money(list.reduce((n, l) => n + l.balance, 0)) + ' across ' + list.length + ' loans.' };
+}
+
+/* Context for the agent: where the person is, what is on screen and what the script does next.
+   Returns { stage, step, back }. stage and step go to the agent; back is a short pointer to the current step. */
+const q = (x) => '“' + x + '”';
+const STAGES = {
+  pitch: 'opening', agentOpen: 'opening', notNow: 'declined for now', intake: 'intake', think: 'thinking it over', apply: 'application', sign: 'signing',
+  svcTransfer: 'servicing: a payment is due and the balance is low', svcTransferNo: 'servicing',
+  svcSpecific: (path) => (path === 'insurance' ? 'servicing: starting a claim' : 'servicing: extra payments'), svcSpecificNo: 'servicing',
+  cross: 'check-in at six months with a new offer', crossConfirm: 'signing the new offer', crossNo: 'check-in at six months',
+};
+function describe(s, S, val) {
+  switch (s.t) {
+    case 'choice': return 'a question from the assistant with suggested replies: ' + s.options.filter((o) => o.chip !== false).map((o) => o.label).join(' / ');
+    case 'form': return 'the form ' + q(val(s.title)) + ' (' + s.fields.map((f) => val(f.label)).join('; ') + '), sent with the ' + q(s.submit) + ' button';
+    case 'review': return 'the pre-filled application to check, confirmed with the ' + q(s.cta) + ' button';
+    case 'checklist': return 'the ' + q(val(s.title)) + ' card (' + s.items.map((i) => i.title).join(', ') + '), approved with the ' + q(s.cta) + ' button';
+    case 'contract': return 'the plain-language summary of the agreement. To sign: tick the box, type their name, press ' + q(s.cta);
+    case 'payoff': return 'the extra payments card: pick an amount, then press ' + q(s.cta);
+    case 'offers': return 'three options on the ' + q(val(s.context)) + ' card, each with a Choose button';
+    case 'celebrate': return 'confirmation that it is done';
+    case 'app': return 'the optional ' + BRAND.app + ' card';
+    case 'modal': return s.kind === 'final' ? 'the end of the journey' : 'the end of shopping, then servicing';
+    default: return '';
+  }
+}
+export const NOTES = {
+  opener: { stage: 'opening screen, nothing started', step: 'An empty chat with starter ideas such as ' + OPENERS.filter((o) => o.primary).map((o) => q(o.text)).join(' and ') + '. Saying what they want to pay for (leads to home equity offers) or insure (leads to auto quotes) starts the conversation.', back: 'Tell me what you are working on, or pick one of the ideas below.' },
+  picker: (path) => ({ stage: 'servicing', step: 'A chooser of servicing moments is on screen: ' + SERVICING(path).map((x) => x.label).join(' / ') + '. They pick one to play it.', back: 'Pick a moment below whenever you like.' }),
+  hold: (was) => ({ stage: 'paused, nothing submitted', step: 'They chose to stop for now. Suggested replies: ' + AGENT.hold.options.map((o) => o.label).join(' / ') + '. Picking up returns to: ' + was.step, back: 'Just say the word and we will pick up where we left off.' }),
+};
+export function noteFor(scenes, at, path, waiting, S, val) {
+  const list = scenes[at.name] || [], cur = list[at.i];
+  let stage = STAGES[at.name] || 'conversation';
+  if (typeof stage === 'function') stage = stage(path);
+  if (at.name === 'intake' && S.offersShown) stage = 'offers shown, choosing one';
+  if (at.name === 'sign' && S.held) stage = 'closed';
+  let name = at.name, i = waiting ? at.i + 1 : at.i, next = '';
+  for (let n = 0; n < 14 && !next; n++) {
+    const s = (scenes[name] || [])[i];
+    if (!s) break;
+    if (s.t === 'goto') { name = s.scene; i = 0; continue; }
+    next = describe(s, S, val); i++;
+  }
+  const on = (waiting && cur && describe(cur, S, val)) || 'the assistant is partway through its turn';
+  const card = cur && (cur.title || cur.context);
+  const back = !waiting ? 'Let’s keep going.' : cur.t === 'choice' ? 'Pick whichever reply fits when you are ready.' : 'The ' + (card ? q(val(card)) + ' card' : 'card') + ' is right here when you are ready.';
+  return { stage, step: 'On screen: ' + on + '.' + (next ? ' Next in the script: ' + next + '.' : ''), back };
+}
