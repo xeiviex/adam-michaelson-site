@@ -51,8 +51,13 @@ svg .a.gy { transform-origin: center bottom; }
 .th { display: grid; gap: 1.6em; }
 /* three pillars as open columns divided by hairlines, each led by a miniature of its own slide */
 .th3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.th3 > div { padding: .4em 2.2em 1em; display: flex; flex-direction: column; gap: .45em; border-left: 1px solid var(--rule); }
-.th3 > div:first-child { padding-left: 0; border-left: 0; } .th3 > div:last-child { padding-right: 0; }
+.th3 > div { padding: .4em 2.2em 1em; display: flex; flex-direction: column; gap: .45em; position: relative; }
+.th3 > div:first-child { padding-left: 0; } .th3 > div:last-child { padding-right: 0; }
+/* the rules between the columns draw from top to bottom, together, as the slide arrives */
+.th3 > div + div::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--rule); transform: scaleY(0); transform-origin: 50% 0; }
+.on .th3 > div + div::before { animation: gs-rule .8s cubic-bezier(.4, 0, .2, 1) .2s forwards; }
+@keyframes gs-rule { to { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .th3 > div + div::before { transform: none; animation: none; } }
 .vis .th3 svg { height: 9.5em; width: auto; max-width: 100%; align-self: flex-start; margin-bottom: 1.3em; }
 .th3 b { font: 700 2.1em/1.08 var(--head); color: var(--ink); letter-spacing: -.018em; }
 .th3 small { font-size: 1.12em; color: var(--body); }
@@ -308,7 +313,7 @@ svg .a.gy { transform-origin: center bottom; }
   .vis svg.corec { display: none; } .vis svg.corec.m { display: block; min-width: 0; max-height: none; } .sup > div + div::before { display: none; }
   .th3, .sup, .cards6, .vts, .need ol, .ly ul, .ec, .ec-f { grid-template-columns: minmax(0, 1fr); } .ly { padding: .8em .5em .4em; } .ly ul { gap: 0; } .cp { min-height: 44px; padding-block: .55em; justify-content: center; } .cp b { font-size: 1.12em; } .cp small { display: none; } .cp i { top: 50%; margin-top: -.62em; } .ly-f, .ly-f .acct { text-align: left; } .ec, .ec-f { gap: 1.2em; }
   .base { padding-inline: 1.2em; white-space: normal; font-size: 1em; text-align: center; }
-  .th3 > div, .th3 > div:first-child, .th3 > div:last-child { padding: 1.2em 0; border-left: 0; border-top: 1px solid var(--rule); } .th3 svg { min-width: 0; }
+  .th3 > div, .th3 > div:first-child, .th3 > div:last-child { padding: 1.2em 0; border-left: 0; border-top: 1px solid var(--rule); } .th3 > div + div::before { display: none; } .th3 svg { min-width: 0; }
   .intg, .bets { grid-template-columns: minmax(0, 1fr); } .intg .arrow { display: none; }
   .who { grid-auto-flow: column; } .vis svg.brace { display: none; min-width: 0; }
   /* phones: the same carousel, the middle one wider and the other two running off the edges */
