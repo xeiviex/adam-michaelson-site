@@ -285,3 +285,8 @@ svg .a.gy { transform-origin: center bottom; }
 /* closing recap: the three pillars at full size, each with its year-one figure */
 .cl .th3 small.fg { font-size: 1.4em; margin-top: .3em; white-space: nowrap; }
 .cl .th3 > div { padding-block: 1.2em 1.6em; }
+
+/* a rail link that is the slide's main call to action */
+.rail a.btn.link.pri { background: var(--acc); border-color: var(--acc); color: var(--on-acc); font-weight: 700; text-decoration: none; }
+.rail a.btn.link.pri:hover { background: var(--acc-hi); border-color: var(--acc-hi); }
+.rail a.btn.link.pri::after { color: inherit; }
