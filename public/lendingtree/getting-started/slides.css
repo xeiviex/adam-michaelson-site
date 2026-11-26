@@ -106,6 +106,14 @@ svg .a.gy { transform-origin: center bottom; }
 .pulse.dn { fill: var(--acc-hi); } .pulse.up { fill: var(--ink); }
 .pulses { opacity: 0; } .on .pulses { animation: gs-fade .5s 2.6s forwards; }
 .t3 { max-width: 60em; margin-inline: auto; width: 100%; }
+/* the day 30, 60, 90 line draws left to right: each segment wipes in from the previous dot, then its dot lands, then its words fade in */
+.t3 > li::before, .t3 > li .st { opacity: 0; }
+.t3 > li::after { clip-path: inset(0 100% 0 0); }
+.slide.on .t3 > li::after { animation: gs-wipe .5s cubic-bezier(.4, 0, .2, 1) forwards; animation-delay: calc(var(--d) * 1s - .5s); }
+.slide.on .t3 > li::before { animation: gs-pop .35s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--d) * 1s); }
+.slide.on .t3 > li .st { animation: gs-fade .5s both; animation-delay: calc(var(--d) * 1s + .15s); }
+@keyframes gs-wipe { to { clip-path: inset(0); } }
+@media (prefers-reduced-motion: reduce) { .t3 > li::before, .t3 > li .st { opacity: 1; animation: none !important; } .t3 > li::after { clip-path: none; animation: none !important; } }
 .vis svg.org.m { display: none; }
 .vis svg .pt { font: 700 11.5px var(--head); fill: var(--ink); } .vis svg .pt.wh { fill: var(--dark); font-size: 15px; } .vis svg .pt.hire { fill: var(--body); } .vis svg .pt.sm { font: 600 10.5px var(--sans); }
 .vis svg .ps { font-size: 9.5px; fill: var(--muted); } .vis svg .pl { font-size: 10.5px; fill: var(--muted); } .vis svg .pl.acc { fill: var(--acc-hi); font-weight: 600; }
@@ -224,6 +232,7 @@ svg .a.gy { transform-origin: center bottom; }
   .dots { gap: 4px; } .dots a { width: 12px; }
   .vis { min-width: 0; max-width: 100%; }
   .vis svg { min-width: 700px; } .vis { overflow-x: auto; }
+  .t3 > li::after { clip-path: inset(0 0 100% 0); }
   .vis svg.org { display: none; } .vis svg.org.m { display: block; min-width: 0; max-height: none; }
   .vis svg.corec { display: none; } .vis svg.corec.m { display: block; min-width: 0; max-height: none; } .sup > div + div::before { display: none; }
   .th3, .sup, .cards6, .vts, .need ol { grid-template-columns: minmax(0, 1fr); }

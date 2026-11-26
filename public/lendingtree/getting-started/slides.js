@@ -130,9 +130,9 @@ const team = `
 </svg>
 ${teamPhone}
 <ol class="trk t3">
-  <li class="on link a" style="--d:4.2"><div class="st"><em>By day 30</em><b>Set expectations</b><small>Outputs and outcomes for every role</small></div></li>
-  <li class="on link a" style="--d:4.5"><div class="st"><em>By day 60</em><b>Assess</b><small>Every team member, one on one</small></div></li>
-  <li class="on link a" style="--d:4.8"><div class="st"><em>By day 90</em><b>Act</b><small>Develop, redeploy or hire</small></div></li>
+  <li class="on link" style="--d:4.2"><div class="st"><em>By day 30</em><b>Set expectations</b><small>Outputs and outcomes for every role</small></div></li>
+  <li class="on link" style="--d:4.8"><div class="st"><em>By day 60</em><b>Assess</b><small>Every team member, one on one</small></div></li>
+  <li class="on link" style="--d:5.4"><div class="st"><em>By day 90</em><b>Act</b><small>Develop, redeploy or hire</small></div></li>
 </ol>`;
 
 /* ------------------------------------------------------------------ 4 core */
