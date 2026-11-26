@@ -207,7 +207,8 @@ const impact = `
 
 /* ------------------------------------------------------------ 6 disruption */
 const M0 = 250, MW = (1170 - 250) / 12, mx = (m) => M0 + m * MW; // m = months from January 1
-const PODS = [{ n: 'Pod A', y: 108, s: 0.7 }, { n: 'Pod B', y: 154, s: 1.6 }, { n: 'Pod C', y: 200, s: 2.6 }];
+/* Starts are three quarters of a month apart, the same as the station spacing, so each pod has a station exactly on the Day 90 line. */
+const PODS = [{ n: 'Pod A', y: 108, s: 0.75 }, { n: 'Pod B', y: 154, s: 1.5 }, { n: 'Pod C', y: 200, s: 2.25 }];
 const podRow = (p, k) => {
   let out = `<text class="lb wh" ${A(0.4 + k * 0.5)} x="18" y="${p.y + 5}" text-anchor="start">${p.n}</text>`;
   out += [0, 1, 2].map((j) => `<circle ${A((0.5 + k * 0.5 + j * 0.06).toFixed(2), 'pop')} class="ppl" cx="${96 + j * 20}" cy="${p.y}" r="6"/>`).join('');
