@@ -103,6 +103,31 @@ function keyFocus(tok) {
     if (n) n.focus({ preventScroll: true });
   });
 }
+/* ---------- what the viewer sees when auto-play acts ----------
+   A touch point lands on the control, the control presses in, a ring spreads from the point as it is let go, and the
+   control flashes once afterwards if it is still there (a choice that stays selected). Before any of that the control is
+   brought into view, only if it is not already comfortably in view, and the page is allowed to come to rest. */
+const cue = document.createElement('div'); cue.className = 'cue'; cue.setAttribute('aria-hidden', 'true'); cue.innerHTML = '<i></i><b></b>'; document.body.append(cue);
+const cueAt = (node) => { const r = node.getBoundingClientRect(); cue.style.left = `${r.left + Math.min(r.width / 2, Math.max(28, r.width - 34))}px`; cue.style.top = `${r.top + r.height / 2}px`; };
+async function bringIn(node, live) {
+  const box = (node.closest('.sheet') || main).getBoundingClientRect(), r = node.getBoundingClientRect();
+  const top = Math.max(box.top, 0) + 24, bottom = Math.min(box.bottom, innerHeight) - 96;
+  if (r.top < top || r.bottom > bottom) node.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' });
+  let last = null, still = 0;
+  for (let i = 0; i < 24 && still < 2; i++) { await tick(70 * SPEED, live); const y = node.getBoundingClientRect().top; still = last != null && Math.abs(y - last) < 0.5 ? still + 1 : 0; last = y; }
+}
+async function press(node, live) {
+  await bringIn(node, live);
+  if (!node.isConnected) return false;
+  cueAt(node); cue.className = 'cue show'; await tick(240 * SPEED, live);
+  node.classList.add('pressing'); cue.classList.add('down'); await tick(300 * SPEED, live);
+  node.classList.remove('pressing'); cueAt(node); cue.className = 'cue show ring';
+  setTimeout(() => { cue.className = 'cue'; }, 560);
+  if (!live()) return false;
+  node.click();
+  requestAnimationFrame(() => { if (!node.isConnected) return; node.classList.add('tapped'); setTimeout(() => node.classList.remove('tapped'), 900); });
+  return true;
+}
 function kick() {
   if (!S.auto || !cur || !cur.auto) return;
   const tok = cur, gen = ++autoGen, my = run;
@@ -125,22 +150,21 @@ function kick() {
         await tick(st.read == null ? 1500 : st.read, live);
         node = find(target) || node;
         const view = node.closest('.view'); if (view && view.hidden) go(view.id.slice(2));
-        node.scrollIntoView({ block: 'center', behavior: reduced() ? 'auto' : 'smooth' });
         if (st.type) {
           if (node.value === st.text) continue;
+          await bringIn(node, live);
+          cueAt(node); cue.className = 'cue show'; await tick(240 * SPEED, live); cue.className = 'cue show ring'; setTimeout(() => { cue.className = 'cue'; }, 560);
           node.value = ''; node.focus({ preventScroll: true });
           for (const ch of st.text) { await tick(55, live); node.value += ch; node.dispatchEvent(new Event('input', { bubbles: true })); }
           await tick(300, live);
         } else {
-          node.classList.add('pressing'); await tick(420, live); node.classList.remove('pressing');
-          if (!live()) return;
-          node.click();
+          if (!(await press(node, live))) return;
         }
       }
     } catch (e) { if (!(e instanceof Cancel)) throw e; }
   })();
 }
-function setAuto(v) { S.auto = v; autoGen++; $$('.pressing').forEach((n) => n.classList.remove('pressing')); paintDev(); if (v) { threadShow(false); kick(); } }
+function setAuto(v) { S.auto = v; autoGen++; cue.className = 'cue'; $$('.pressing').forEach((n) => n.classList.remove('pressing')); paintDev(); if (v) { threadShow(false); kick(); } }
 
 /* ---------- shell: views, tabs, lifecycle strip, toast ---------- */
 const main = $('#main'), stream = $('#stream'), sheet = $('#sheet'), scrim = $('#scrim');
@@ -826,7 +850,7 @@ function modal(M, buttons, secs = 0, dismiss) {
     cdTimer = setInterval(() => {
       if (pm.hidden || !S.auto) { clearInterval(cdTimer); cd.hidden = true; return; }
       n--; if (n > 0) return paint();
-      clearInterval(cdTimer); $('#pmBtns button').click();
+      clearInterval(cdTimer); const b = $('#pmBtns button'), my = run; if (b) press(b, () => my === run && S.auto && !pm.hidden).catch(() => {});
     }, 1000 / SPEED);
   }
   return wait((fin) => {
