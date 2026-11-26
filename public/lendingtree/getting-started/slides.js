@@ -7,7 +7,7 @@
 const A = (d, cls = '') => `class="a ${cls}" style="--d:${d}"`;
 /* A is LendingTree's own website and app; B is the same journey inside an assistant. */
 /* The financial model behind the economics slide (a Google Sheet; it must be shared for viewers to open it). */
-const MODEL = 'https://docs.google.com/spreadsheets/d/1LmkZxZ4h1CQvXU9iJhrIu7MxAvyAgw5la24MGb_6zOA/edit';
+const MODEL = 'https://docs.google.com/spreadsheets/d/1glW9gqsHZVuckE-SjVn55BDVfIpuT7_-Wo7HdigRQBk/edit';
 const VT_A = '/lendingtree/visiontypes/lifecycle/';
 const VT_B = '/lendingtree/visiontypes/assistant/';
 const VT_C = '/lendingtree/visiontypes/embedded/';
@@ -376,8 +376,8 @@ const take = `
 /* ------------------------------------------------------------- the economics */
 /* Per consumer request, from the model's default inputs. Lead prices and conversion rates are assumptions. */
 const ECON = [
-  { name: 'Loans', eg: 'Example: a home equity line', today: 120, close: 248, serv: 137, tot: 386, flat: 129, fmt: (n) => '$' + n },
-  { name: 'Insurance', eg: 'Example: an auto policy', today: 36, close: 108, serv: 14, flat: 41, fmt: (n) => '$' + n },
+  { key: 'loans', all: 'All loan products', name: 'Loans', eg: 'Example: a mortgage', today: 120, close: 429, serv: 269, tot: 697, flat: 232, fmt: (n) => '$' + n },
+  { key: 'insurance', all: 'All insurance products', name: 'Insurance', eg: 'Example: an auto policy', today: 36, close: 108, serv: 14, flat: 41, fmt: (n) => '$' + n },
 ];
 const econ = `
 <div class="ec">
@@ -388,6 +388,7 @@ const econ = `
     <div class="ec-row a" style="--d:${(d + 0.15).toFixed(2)}"><span>Today, selling leads</span><div class="ec-b"><i class="lead a gx" style="--d:${(d + 0.25).toFixed(2)};width:${w(e.today)}%"></i><b>${e.fmt(e.today)}</b></div></div>
     <div class="ec-row a" style="--d:${(d + 0.5).toFixed(2)}"><span>Paid on outcomes</span><div class="ec-b"><i class="close a gx" style="--d:${(d + 0.6).toFixed(2)};width:${w(e.close)}%"><em>At close</em></i><i class="serv a gx" style="--d:${(d + 0.9).toFixed(2)};width:${w(e.serv)}%"${e.serv / max < 0.24 ? ' title="Servicing"' : ''}>${e.serv / max < 0.24 ? '' : '<em>Servicing</em>'}</i><b>${e.fmt(e.tot || e.close + e.serv)}</b></div></div>
     <div class="ec-row a" style="--d:${(d + 1.0).toFixed(2)}"><span>Outcomes, with no lift in conversion</span><div class="ec-b"><i class="flat a gx" style="--d:${(d + 1.1).toFixed(2)};width:${w(e.flat)}%"></i><b>${e.fmt(e.flat)}</b></div></div>
+    <button type="button" class="ec-all a fade" style="--d:${(d + 1.3).toFixed(2)}" data-topic="economics:${e.key}" aria-haspopup="dialog">${e.all}<i aria-hidden="true"></i></button>
   </section>`; }).join('')}
   <section class="ec-p">
     <h3 ${A(3.1)}>Embedded <span>Example: a financed used car</span></h3>
@@ -398,10 +399,10 @@ const econ = `
   </section>
 </div>
 <div class="ec-f">
-  <div class="ec-t a" style="--d:4.5"><h3>The terms</h3><p>5% of the loan at close. $450 per policy at bind. 15% of interest while we service a loan. A monthly fee per policy in force. We service 70% from the start, and 10% of those move to the lender or carrier each year. Each request goes to one chosen partner. Embedded partners are paid 2% in place of our marketing spend.</p></div>
+  <div class="ec-t a" style="--d:4.5"><h3>The terms</h3><p>A fee at close or bind, set by product: 1.25% of a mortgage, $450 per auto policy. A share of interest while we service a loan, or a monthly fee per policy. We service 70% from the start, and 10% of those move to the lender or carrier each year. Each request goes to one chosen partner. Embedded partners are paid 2% in place of our marketing spend.</p></div>
   <div class="ec-ramp a" style="--d:4.8"><h3>Share of volume on outcomes</h3><ol>${[['Start', 1], ['6 months', 10], ['1 year', 50], ['2 years', 100]].map((r, i) => `<li><i class="a gy" style="--d:${(5.0 + i * 0.2).toFixed(1)};height:${Math.max(r[1], 4)}%"></i><b>${r[1]}%</b><span>${r[0]}</span></li>`).join('')}</ol></div>
 </div>
-<p class="ec-w a fade" style="--d:5.9">Lead prices and conversion rates are my assumptions, informed by my experience at Lendio, since LendingTree does not publish them. Being paid on close in home equity, and on bind in insurance, needs legal review first.</p>`;
+<p class="ec-w a fade" style="--d:5.9">Lead prices and conversion rates are my assumptions, informed by my experience at Lendio, since LendingTree does not publish them. Being paid on close in mortgage, and on bind in insurance, needs legal review first.</p>`;
 
 /* ------------------------------------------------------------------ 8 time */
 const PH = ['Jan 1–15', 'Jan 16–31', 'February', 'March', 'Apr–Jun', 'Jul–Dec'];
@@ -525,32 +526,30 @@ const D = {
     ])}
     <p>Some of this LendingTree has today. Finding out how much is part of my first two weeks.</p>`,
   economics: `
-    <p>The slide shows one example of each kind of product: a home equity line for loans, and an auto policy for insurance. The economics differ a good deal by product, because the fee is a share of the amount. The model has a section for each product type and an aggregate.</p>
-    <h4>Per consumer request, at the model’s default inputs</h4>
-    ${tbl(['', 'Home equity line', 'Auto insurance'], [
+    <p>The slide shows one example of each kind of product: a mortgage for loans, and an auto policy for insurance. The fee at close or bind is set by product, roughly in line with what each market pays to close, so the economics differ a good deal from one product to the next. “All loan products” and “All insurance products” on the slide show every product, and the model has the same tables.</p>
+    <h4>Per shopper, at the model’s default inputs</h4>
+    ${tbl(['', 'Mortgage', 'Auto insurance'], [
       ['Today, selling leads', '$120 (three leads at $40)', '$36 (three leads at $12)'],
-      ['Paid on outcomes', '$386 ($248 at close, $137 from servicing)', '$122 ($108 at bind, $14 from servicing)'],
-      ['Outcomes, with no lift in conversion', '$129', '$41'],
-      ['Break-even', 'A 2.5% funded rate per request, below today’s assumed 2.7% per lead', 'A 7.1% bind rate per request, below today’s assumed 8% per lead'],
+      ['Paid on outcomes', '$697 ($429 at close, $269 from servicing)', '$122 ($108 at bind, $14 from servicing)'],
+      ['Outcomes, with no lift in conversion', '$232', '$41'],
+      ['Break-even', 'A 1.4% funded rate per shopper, below today’s assumed 2.7% per lead', 'A 7.1% bind rate per shopper, below today’s assumed 8% per lead'],
     ])}
+    <h4>A year of revenue, all eight products</h4>
+    <p>On the model’s volumes, a year with every shopper on outcomes earns about $2.6B, against about $1.0B selling leads. With no lift in conversion it earns about $0.9B, which is below today. Auto insurance is about three quarters of the gain. Home equity only matches leads, and personal loans earn less than they do today.</p>
     <h4>Embedded: per financed used-car purchase</h4>
     ${tbl(['', 'Revenue', 'After the partner fee and cost to serve'], [
       ['Loan only', '$1,947 ($1,354 at close, $594 from servicing)', '$1,143'],
       ['Loan and an insurance policy', '$2,477', '$1,586'],
     ])}
-    <p>The partner is paid 2% of the loan, about $541, in place of marketing spend. With three partners in 2027, ten in 2028 and twenty in 2029, and an assumed 500 financed purchases per partner each month, the model shows about $214M of revenue over three years, with the cost of building the embedded technology paid back early in 2028. Acquisition cost is about 28% of revenue here, against 70% to 77% on leads today.</p>
-    <h4>Across LendingTree’s products</h4>
-    <p>The model has a section for each of eight product types and an aggregate. The terms do not fit every product equally. They fit small business loans and insurance best. A 5% fee on a mortgage is about $21,000 a loan, which is not realistic and is the hardest legal case. Personal loans earn less on these terms than on leads. Leaving mortgage out, a request earns about $116 on outcomes against $42 on leads, and about $40 with no lift in conversion, which is slightly below today.</p>
+    <p>The partner is paid 2% of the loan, about $541, in place of marketing spend. For that reason the embedded example uses a higher fee than auto loans on LendingTree’s own site: 5% of the loan at close and 15% of interest. With three partners in 2027, ten in 2028 and twenty in 2029, and an assumed 500 financed purchases per partner each month, the purchases made in those three years are worth about $280M of revenue over their life, and about $157M after partner fees, cost to serve, building the technology and onboarding partners.</p>
     <h4>What is assumed</h4>
-    ${ul(['Price per lead, leads sold per request, and funded and bind rates are assumptions, informed by my experience at Lendio. LendingTree does not publish them, and every comparison moves with them.', 'Marketing cost per request comes from LendingTree’s reported segment margins and is charged equally to both models.', 'The default outcome case assumes one chosen partner closes as many requests as three lead buyers do today. The no-lift row shows the case where it does not.', 'Sending each request to one partner gives up two thirds of today’s lead revenue per request.'])}
-    <h4>Over 36 months on the ramp</h4>
-    <p>With illustrative volumes, home equity and auto insurance together earn about $4.1B on the ramp against about $1.8B staying on leads. Most of the difference is auto insurance, and it rests on carriers paying $450 for a bound policy where the model assumes they pay about $150 in lead fees today.</p>
+    ${ul(['Price per lead, leads sold per shopper, and funded and bind rates are assumptions, informed by my experience at Lendio. LendingTree does not publish them, and every comparison moves with them.', 'The default outcome case assumes one chosen partner closes as many shoppers as three lead buyers do today. The no-lift row shows the case where it does not.', 'Sending each request to one partner gives up two thirds of today’s lead revenue per shopper.', 'The fees are starting points for a negotiation, not agreed terms.'])}
     <h4>How much we service</h4>
     <p>Servicing revenue is counted on 70% of funded loans and bound policies from the start, because some lenders and carriers will keep servicing and some customers will go straight to them. Of those we service, 10% a year are assumed to move to the lender or carrier, at which point our servicing fee stops. Both figures are assumptions and are inputs in the model. Cost to serve is counted on the same share.</p>
     <h4>Why $450 for insurance</h4>
     <p>Each shopper is sold about three times today, so one fee has to replace three lead sales. Public estimates of what a carrier spends to win an auto policy run from about $450 for direct writers to about $900 through independent agents. The fee is set about 25% under an assumed $600. It is paid once, with no renewal commission.</p>
     <h4>To review with counsel before anything else</h4>
-    ${ul(['Home equity: US rules on referral fees for mortgage-type loans (RESPA Section 8) constrain fees paid to a referrer on close.', 'Insurance: being paid when a policy binds generally requires a producer licence.', 'The proposed terms are large next to market norms: 5% at close is about five times a typical origination fee, 15% of interest is several times a typical servicing fee, and $450 a policy is about 20% of a first-year premium, above a typical new-business commission of 10% to 15%.'])}`,
+    ${ul(['Home equity: US rules on referral fees for mortgage-type loans (RESPA Section 8) constrain fees paid to a referrer on close.', 'Insurance: being paid when a policy binds generally requires a producer licence.', 'Mortgage and home equity: the same rules apply to both, and mortgage is the hardest case.', '$450 a policy is about 20% of a first-year premium, above a typical new-business commission of 10% to 15%, though it is paid once with no renewal commission.'])}`,
   integration: `
     <h4>Who, and how</h4>
     ${ul(['The C-team, VP-level leaders (a short list if there are many) and my direct reports: 20 at minimum, 30 at most.', 'No more than six a day. 60 minutes with key stakeholders, 30 with roles further from product.', 'In person where I can, in Charlotte, Seattle and Denver. Otherwise by Zoom.', 'Others, such as board members and directors, are added as the interviews point to them.', 'Everyone gets a fresh conversation, including the leaders I met while interviewing. These are different questions.'])}
@@ -618,6 +617,26 @@ const fold = (h) => h
   .replace(/class="([^"]*)"\s+class="a ([^"]*)"/g, 'class="$1 a $2"')
   .replace(/class="a ([^"]*)" (style="[^"]*") class="([^"]*)"/g, 'class="$3 a $1" $2');
 
+/* The economics slide: every product, behind "All loan products" and "All insurance products". Figures from the model. */
+const ECON_HEAD = ['Product', 'Fee at close or bind', 'Per shopper: selling leads', 'Per shopper: on outcomes', 'Per shopper: no lift', 'A year: leads', 'A year: outcomes'];
+const ECON_TOPICS = {
+  loans: { title: 'Loans: all products', body: `
+    ${tbl(ECON_HEAD, [
+      ['Mortgage', '1.25% ($5,291)', '$120', '$697', '$232', '$42M', '$244M'],
+      ['Small business loans', '6% ($3,000)', '$150', '$401', '$134', '$90M', '$240M'],
+      ['Home equity', '1.5% of the draw ($920)', '$120', '$120', '$40', '$110M', '$110M'],
+      ['Auto loans', '2% ($541)', '$45', '$96', '$32', '$15M', '$32M'],
+      ['Personal loans', '3% ($201)', '$60', '$23', '$8', '$114M', '$44M'],
+      ['Credit cards', '$200 per approved card', '$8', '$10', '$10', '$14M', '$17M'],
+    ])}
+    <p>Fees are set by product, roughly in line with what each market pays to close. “On outcomes” counts the fee at close and servicing, and assumes one chosen partner closes as many shoppers as three lead buyers do today. “No lift” assumes it closes only as many as one does. Lead prices and close rates are my assumptions.</p>` },
+  insurance: { title: 'Insurance: all products', body: `
+    ${tbl(ECON_HEAD, [
+      ['Auto insurance', '$450 per policy', '$36', '$122', '$41', '$498M', '$1,694M'],
+      ['Home insurance', '12.5% of premium ($303)', '$36', '$67', '$22', '$135M', '$252M'],
+    ])}
+    <p>“On outcomes” counts the fee at bind and a monthly servicing fee per policy, and assumes one chosen partner binds as many shoppers as three lead buyers do today. “No lift” assumes it binds only as many as one does. Health insurance is not modelled. Lead prices and bind rates are my assumptions.</p>` },
+};
 const RAW = [
   { id: 'thesis', name: 'My first year', title: 'My first year at LendingTree', sub: 'How I will get started, what I will deliver in year one, and where it could go', draw: open },
   { id: 'integration', name: 'Integration', title: 'Integration', sub: 'Two weeks of stakeholder interviews, then a readout', draw: integration, details: D.integration },
@@ -627,7 +646,7 @@ const RAW = [
   { id: 'disruption', name: 'Disruption', title: 'Disruption', sub: 'Put LendingTree out of business: three pods and a research-led reset', draw: disruption, details: D.disruption },
   { id: 'visiontypes', name: 'Visiontypes', title: 'Visiontypes', sub: 'Where this could go, across the whole customer lifecycle', draw: visiontypes, links: VTS.map((v) => [v.url, v.title]) },
   { id: 'take', name: 'What this will take', title: 'What this will take', sub: 'What the visiontypes assume, and the first version of each', draw: take, details: D.take, topics: TAKE_TOPICS },
-  { id: 'economics', name: 'The economics', title: 'The economics', sub: 'Selling leads against being paid on outcomes', draw: econ, details: D.economics, links: [[MODEL, 'Open the model', 'pri']] },
+  { id: 'economics', name: 'The economics', title: 'The economics', sub: 'Selling leads against being paid on outcomes', draw: econ, details: D.economics, topics: ECON_TOPICS, links: [[MODEL, 'Open the model', 'pri']] },
   { id: 'time', name: 'My time', title: 'My time', sub: 'Balance carefully, delegate everything I can', draw: time, details: D.time },
   { id: 'outcomes', name: 'Year-one outcomes', title: 'Year-one outcomes', sub: 'My commitments', draw: outcomes, details: D.outcomes },
   { id: 'plan', name: 'Year-one plan', title: 'Year-one plan', sub: 'Assumes a January 1 start', draw: plan, details: D.outcomes },

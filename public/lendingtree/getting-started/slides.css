@@ -352,3 +352,11 @@ svg .a.gy { transform-origin: center bottom; }
 
 /* outcome card headlines are one size, small enough that the longest stays on one line */
 .cards6 .fig { font-size: 2.35em; white-space: nowrap; padding-block: .12em; }
+
+/* economics: the link from each example to every product of that kind */
+.ec-p { position: relative; }
+.ec-all { position: absolute; right: 1.2em; top: 1.72em; display: inline-flex; align-items: center; gap: .5em; padding: .2em; background: none; border: 0; font: 600 .86em var(--sans); color: var(--acc-hi); cursor: pointer; border-radius: 6px; }
+.ec-all i { position: relative; width: 1.25em; height: 1.25em; border-radius: 50%; border: 1.5px solid currentColor; transition: background-color .15s, color .15s; }
+.ec-all i::before, .ec-all i::after { content: ''; position: absolute; left: 50%; top: 50%; width: .6em; height: 1.5px; margin: -.75px 0 0 -.3em; background: currentColor; } .ec-all i::after { transform: rotate(90deg); }
+.ec-all:hover, .ec-all:focus-visible { color: var(--ink); } .ec-all:focus-visible { outline: 2px solid var(--acc-hi); outline-offset: 2px; }
+@media (min-width: 761px) { dialog.dlg.topic:has(table) { width: min(1040px, calc(100vw - 32px)); } }
