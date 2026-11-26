@@ -182,6 +182,7 @@ svg .a.gy { transform-origin: center bottom; }
 .on .life li::before { animation: gs-st 13.5s linear calc(1.2s + var(--k) * 1.5s) infinite; }
 .on .life li span { animation: gs-stt 13.5s linear calc(1.2s + var(--k) * 1.5s) infinite; }
 @keyframes gs-st { 0%, 11% { background: var(--acc); border-color: var(--acc); box-shadow: 0 0 0 .35em var(--acc-soft); } 12%, 100% { background: var(--bg); border-color: var(--muted); box-shadow: none; } }
+@keyframes gs-sto { 0%, 11% { opacity: 1; } 12%, 100% { opacity: 0; } }
 @keyframes gs-stt { 0%, 11% { color: var(--ink); } 12%, 100% { color: var(--muted); } }
 
 /* ---- what this will take: a three-layer stack ---- */
@@ -274,7 +275,11 @@ svg .a.gy { transform-origin: center bottom; }
   .th3 > div, .th3 > div:first-child, .th3 > div:last-child { padding: 1.2em 0; border-left: 0; border-top: 1px solid var(--rule); } .th3 svg { min-width: 0; }
   .intg, .bets { grid-template-columns: minmax(0, 1fr); } .intg .arrow { display: none; }
   .who { grid-auto-flow: column; } .vis svg.brace { display: none; min-width: 0; }
-  .life { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 1em; } .life li::after { display: none; }
+  /* phones: the nine stations stay on one connected line; only the current station's name shows, centred beneath it */
+  .life { padding-bottom: 2.4em; }
+  .life li { padding: 0; height: 1em; font-size: 1em; }
+  .life li span { position: absolute; top: 1.7em; left: calc(var(--k) * -100%); width: 900%; text-align: center; white-space: nowrap; font-weight: 600; font-size: 1.1em; opacity: 0; color: var(--ink); }
+  .on .life li span { animation-name: gs-sto; }
   .gnl, .gnr { grid-template-columns: minmax(0, 1fr); gap: .2em; } .gnr { padding: .4em 0; } .gng { height: 1em; } .gnt { white-space: normal; flex-wrap: wrap; }
 }
 
