@@ -181,6 +181,7 @@ function kick() {
   const steps = autoSteps();
   const live = () => my === run && gen === autoGen && S.auto && !modalOpen;
   seq(async () => {
+    while (speech) { await speech; if (!live()) return; } /* let LendingTree finish what it is saying first */
     for (let i = 0; i < steps.length; i++) {
       const st = steps[i];
       if (!live()) return;
@@ -609,10 +610,87 @@ function render() {
   }
   if (focus && !S.auto) { const n = stepChanged ? null : $(focus, kt); if (n && !n.disabled) n.focus({ preventScroll: true }); else if (changed) main.focus({ preventScroll: true }); }
   lastKey = key; lastScreen = S.screen;
+  converse(key);
   paintGoogle(); paintDock(); kick();
 }
 const topOf = (n) => n.getBoundingClientRect().top - main.getBoundingClientRect().top + main.scrollTop;
 const syncCta = (sel, ok) => { const b = $(sel, view); if (b) b.disabled = !ok; };
+
+/* ---------- LendingTree speaking: three dots, then the words type in ----------
+   Only the LendingTree module talks this way. The marketplace's own pages, and the cards, tables, fields and buttons inside
+   the module, are never typed: the module's other content waits (in its final place) until the sentence that introduces it
+   has finished, then fades up. Each message is typed once per run; coming back to a step shows it as it was left. */
+const SAY = { dots: 900, per: 15, min: 350, max: 1800, gap: 140 };
+const SAY_INTRO = ':scope > h2, :scope > .sub, :scope > .app-h > h2, :scope > .party > h2, :scope > .party > p, :scope > .party > div > h2, :scope > .party > div > p';
+const SAY_LATER = '.have-p, .advisor p, :scope > .approved';
+const said = new Set();
+let sayGen = 0, speech = null;
+/* Hide a message's words where they stand, so its lines and height are final before the first letter shows. */
+function veil(node) {
+  const w = document.createTreeWalker(node, NodeFilter.SHOW_TEXT), texts = [];
+  while (w.nextNode()) if (w.currentNode.nodeValue.trim()) texts.push(w.currentNode);
+  return texts.map((t) => { const s = el('<span class="tw"><span class="tw-on"></span><span class="tw-off"></span></span>'); s.lastChild.textContent = t.nodeValue; t.replaceWith(s); return { s, text: t.nodeValue }; });
+}
+function unveil(parts) { for (const p of parts) if (p.s) { if (p.s.isConnected) p.s.replaceWith(document.createTextNode(p.text)); p.s = null; } }
+async function typeOut(parts, ok) {
+  const len = parts.reduce((n, p) => n + p.text.length, 0); if (!len) return;
+  const step = Math.min(SAY.max, Math.max(SAY.min, len * SAY.per)) / len, chunk = Math.max(1, Math.ceil((16 * SPEED) / step)); /* a few letters a frame */
+  for (let i = 0; i < len;) {
+    i = Math.min(len, i + chunk);
+    let left = i;
+    for (const p of parts) { const k = Math.max(0, Math.min(p.text.length, left)); p.s.firstChild.textContent = p.text.slice(0, k); p.s.lastChild.textContent = p.text.slice(k); p.s.classList.toggle('tw-cur', left > 0 && left <= p.text.length); left -= p.text.length; }
+    await tick(step * chunk, ok);
+  }
+  unveil(parts);
+}
+async function sayDots(parts, ok) {
+  const d = el('<span class="lt-dots" aria-hidden="true"><i></i><i></i><i></i></span>'), at = parts[0] && parts[0].s; if (!at) return;
+  at.append(d);
+  try { await tick(SAY.dots, ok); } finally { d.remove(); }
+}
+/* A later message (the advisor's reasoning, say) may sit below the fold: auto-play brings it into view, a person scrolls to it. */
+async function reach(n, ok) {
+  const box = n.closest('.advisor') || n;
+  const pos = () => { const r = box.getBoundingClientRect(), m = main.getBoundingClientRect(); return { part: r.top < m.bottom - 48 && r.bottom > m.top + 8, all: r.top >= m.top && r.bottom <= m.bottom - 8 }; };
+  for (;;) {
+    const p = pos();
+    if (S.auto ? p.all : p.part) return;
+    if (S.auto) { box.scrollIntoView({ block: 'center', behavior: smooth() }); await tick(450, ok); return; }
+    await tick(150, ok);
+  }
+}
+function converse(key) {
+  const my = ++sayGen, box = $('.ltm-b', view), ok = () => my === sayGen;
+  if (!box) return;
+  const fresh_ = (n) => { const id = `${key}|${n.textContent}`; if (said.has(id)) return false; said.add(id); return true; };
+  const intro = $$(SAY_INTRO, box).filter(fresh_), later = $$(SAY_LATER, box).filter(fresh_);
+  if (reduced() || !(intro.length + later.length)) return;
+  const holds = [];
+  if (intro.length) (function walk(p) { for (const c of p.children) { if (intro.includes(c) || c.matches('.seal')) continue; if (intro.some((n) => c.contains(n))) walk(c); else holds.push(c); } })(box);
+  const veiled = (list) => list.map((n) => ({ n, parts: veil(n) })), first = veiled(intro), rest = veiled(later);
+  holds.forEach((h) => h.classList.add('lt-hold'));
+  box.setAttribute('aria-busy', 'true');
+  let finish; const mine = new Promise((r) => { finish = r; }); speech = mine;
+  const show = (anim) => holds.forEach((h) => { if (h.classList.contains('lt-hold')) { h.classList.remove('lt-hold'); if (anim) h.classList.add('lt-show'); } });
+  seq(async () => {
+    try {
+      if (first.length) {
+        await sayDots(first[0].parts, ok);
+        for (const m of first) { await typeOut(m.parts, ok); await tick(SAY.gap, ok); }
+        show(true);
+        if (rest.length) await tick(260, ok);
+      }
+      for (const m of rest) { await reach(m.n, ok); await sayDots(m.parts, ok); await typeOut(m.parts, ok); await tick(SAY.gap, ok); }
+    } finally {
+      /* done, or cut short by a restart or the next screen: never leave a half-typed message behind */
+      [...first, ...rest].forEach((m) => unveil(m.parts)); show(false); $$('.lt-dots', box).forEach((d) => d.remove()); box.removeAttribute('aria-busy');
+      if (speech === mine) speech = null;
+      finish();
+    }
+  });
+}
+/* For timed sequences that must not redraw the screen while a message is still typing. */
+async function spoken() { const my = run; while (speech) { await speech; if (my !== run) throw new Cancel(); } }
 
 /* ---------- what each control does ---------- */
 function goStep(id) { if (!canGo(id)) return; S.step = id; S.sumOpen = false; render(); }
@@ -624,7 +702,7 @@ function runChecking() {
 function runStips() {
   const f = S.fin; f.stage = 'stips'; f.busy = f.stips.identity ? null : 'identity'; render();
   if (f.stips.identity) return;
-  seq(async () => { await sleep(1500); f.stips.identity = true; f.busy = null; if (f.verified) f.stips.income = true; render(); });
+  seq(async () => { await spoken(); await sleep(1500); f.stips.identity = true; f.busy = null; if (f.verified) f.stips.income = true; render(); });
 }
 function runInsurance(choice) {
   const n = S.ins; n.line = 0; n.agree = false;
@@ -641,7 +719,7 @@ const act = {
   photo(n) { setPhoto(Number(n.dataset.v)); },
   'photo-step'(n) { setPhoto(S.photo + Number(n.dataset.v)); },
   feats() { S.featAll = !S.featAll; render(); },
-  start() { const car = S.car, saved = S.saved, auto = S.auto; Object.assign(S, fresh(), { car, saved, auto, screen: 'checkout' }); render(); },
+  start() { const car = S.car, saved = S.saved, auto = S.auto; Object.assign(S, fresh(), { car, saved, auto, screen: 'checkout' }); said.clear(); render(); },
   exit() { S.screen = 'detail'; render(); },
   again() { start('shop'); },
   goto(n) { goStep(n.dataset.v); },
@@ -760,7 +838,7 @@ async function finale() {
 }
 function start(stage) {
   run++; autoGen++; hideModal(); S.gdlg = null;
-  preset(stage); lastKey = ''; lastScreen = ''; sumLast = {};
+  preset(stage); lastKey = ''; lastScreen = ''; sumLast = {}; said.clear();
   paintDev(); render();
 }
 
@@ -847,11 +925,17 @@ async function submitAsk(text) {
   const path = askPath(), ctx = askContext();
   const req = { surface: 'embedded', path, stage: ctx.stage, step: ctx.step.slice(0, 300), selected: path === 'loan' ? S.fin.offer : S.ins.quote, held: path === 'loan' ? S.fin.approved : !!S.ins.result, messages: ASK.msgs.slice(-11) }; /* odd, so it opens on a question */
   ASK.last = req;
-  const [out] = await Promise.all([MOCK ? mockAsk(req) : ask(req), pause(700)]);
+  const [out] = await Promise.all([MOCK ? mockAsk(req) : ask(req), pause(900)]);
   if (my !== ASK.gen) return;
   ASK.msgs.push({ role: 'assistant', content: out.text });
-  $('.g-t', a).innerHTML = `<p>${esc(out.text)}</p>`;
+  /* the words type in for the eye; a screen reader gets the whole answer once */
+  $('.g-t', a).innerHTML = `<p aria-hidden="true">${esc(out.text)}</p><span class="vh">${esc(out.text)}</span>`;
   frame();
+  if (!reduced()) {
+    const parts = veil($('p', a));
+    try { await typeOut(parts, () => my === ASK.gen); } catch (e) { if (!(e instanceof Cancel)) throw e; } finally { unveil(parts); }
+    if (my !== ASK.gen) return;
+  }
   await pause(out.action === 'continue' ? 350 : 1100); /* long enough to read the reply before the screen changes */
   if (my !== ASK.gen) return;
   ASK.busy = false; paintAsk();
