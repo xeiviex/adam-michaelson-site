@@ -289,14 +289,19 @@ const take = `
     </div>
   </div>
   <div class="stk-c three a fade" style="--d:1.8"><span></span><span></span><span></span></div>
+  <p class="stk-l a fade" style="--d:1.9">Who we need to sign</p>
   <div class="stk-r three">
     ${nd(2.0, 7, 'Data connections', 'Plaid, Finicity, property and credit, by consent')}
-    ${nd(2.2, 8, 'Alpha lenders', 'Firm offers and applications through an API')}
-    ${nd(2.4, 8, 'Alpha carriers', 'Bindable quotes and policies through an API')}
+    ${nd(2.2, 8, 'Alpha lenders and carriers', 'Firm offers, bindable quotes and applications through an API')}
+    ${nd(2.4, 9, 'A first embedded partner', 'Signed, integrated and live in 2027')}
   </div>
-  <p class="stk-l a fade" style="--d:1.9">What it connects to</p>
+  <p class="stk-l gap a fade" style="--d:2.7">How we take it to market</p>
+  <div class="stk-r two">
+    ${nd(2.8, 10, 'An embedded partnerships team', 'A group within Partnerships that signs, launches and supports partners')}
+    ${nd(3.0, 11, 'A go-to-market for embedded', 'Who we target, the partner fee, the launch playbook, and how we measure it')}
+  </div>
 </div>
-<p class="acct a fade" style="--d:3.0">First version: one loan product, one insurance product, one assistant, one embedded partner, a handful of lenders and carriers.</p>`;
+<p class="acct a fade" style="--d:3.4">First version: one loan product, one insurance product, one assistant, one embedded partner, a handful of lenders and carriers.</p>`;
 
 /* ------------------------------------------------------------- the economics */
 /* Per consumer request, from the model's default inputs. Lead prices and conversion rates are assumptions. */
@@ -444,6 +449,9 @@ const D = {
       ['6', 'One chosen partner', 'In these journeys the shopper picks who contacts them, so the request is not sold to several partners and the flood of calls, texts and emails stops.'],
       ['7', 'Data connections', 'Aggregators such as Plaid and Finicity for bank, income and assets; property and vehicle data; a soft credit pull. All by consent.'],
       ['8', 'Alpha lenders and carriers', 'Two or three of each who return firm offers and bindable quotes, and accept an application, through an API.'],
+      ['9', 'A first embedded partner', 'One company signed, integrated and live in 2027, as the reference for the next two that year.'],
+      ['10', 'An embedded partnerships team', 'A group within Partnerships dedicated to this: finding and signing partners, launching them, and supporting them once live.'],
+      ['11', 'A go-to-market for embedded', 'Which partners we target first, the fee we pay them, the launch playbook, and how we measure each partner. This is needed alongside the technology, not after it.'],
     ])}
     <p>Some of this LendingTree has today. Finding out how much is part of my first two weeks.</p>`,
   economics: `
