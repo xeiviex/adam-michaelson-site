@@ -1,7 +1,7 @@
 /* Draws /lendingtree/getting-started/ from slides.js. Same model as /lendingtree/: one slide, one drawing, a Details sheet.
    The drawing's motion is CSS: a slide gets .on when it is shown, and anything with class "a" builds in after --d seconds.
    Arriving on a slide replays its build. Press R to replay the current slide. */
-import { SLIDES } from './slides.js?v=52';
+import { SLIDES } from './slides.js?v=53';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const $ = (s) => document.querySelector(s);
@@ -20,9 +20,7 @@ dots.innerHTML = SLIDES.map((s, i) => `<li><a href="#${s.id}" data-go="${i}" ari
 
 /* The visiontypes carousel. Every few seconds it turns, all three moving together: the one in front moves left and back,
    dimming as it goes; the one behind on the right comes forward into the light; the one behind on the left crosses behind
-   them to the right. The one leaving stays on top until the strip of it that will end up underneath has dissolved, so its
-   edge is never cut off; only then does it drop behind. Pressing and holding pauses the turning; a tap opens the one
-   tapped; a sideways swipe turns it by hand. */
+   them to the right. Pressing and holding pauses the turning; a tap opens the one tapped; a sideways swipe turns it. */
 trackEl.querySelectorAll('[data-car]').forEach((car) => {
   const cards = [...car.querySelectorAll('.fr')], n = cards.length, slide = car.closest('.slide');
   const T = 1500, DWELL = 4800, EASE = 'cubic-bezier(.45, .05, .25, 1)';
@@ -39,14 +37,14 @@ trackEl.querySelectorAll('[data-car]').forEach((car) => {
       const a = from[i], b = +c.dataset.pos;
       c.animate([{ transform: tf[a] }, { transform: tf[b] }], { duration: T, easing: EASE });
       if (a !== 0 && b !== 0) { c.style.zIndex = 0; setTimeout(() => { c.style.zIndex = ''; }, T); } // crossing behind both
-      if (a !== 0) return;
-      // Leaving the front. About a fifth of it, on the side nearest the newcomer, overlaps the newcomer all the way through
-      // the turn. That strip dissolves (a soft mask slides over it), then the card drops behind, then the mask lifts.
-      const rev = b === 1, p0 = rev ? '66.67% 0' : '33.33% 0', p1 = rev ? '53.33% 0' : '46.67% 0';
-      c.classList.add('leaving'); c.classList.toggle('back', rev); c.style.zIndex = 4;
-      setTimeout(() => { c.style.zIndex = ''; }, T * 0.6);
-      setTimeout(() => { c.classList.remove('leaving', 'back'); }, T);
-      const k = [{ offset: 0, p: p0 }, { offset: 0.1, p: p0 }, { offset: 0.54, p: p1 }, { offset: 0.66, p: p1 }, { offset: 1, p: p0 }];
+      if (b !== 0) return;
+      // Coming forward. It is on top from the first frame, but the edge of it that was tucked behind the old front starts
+      // hidden by a soft mask, which then slides off. So it appears to come out from behind, nothing is cut off, and the
+      // mask ends fully open, leaving nothing to clear away.
+      const rev = a === 2, p0 = rev ? '43.33% 0' : '56.67% 0', p1 = rev ? '26.67% 0' : '73.33% 0';
+      c.classList.add('arriving'); c.classList.toggle('back', rev);
+      setTimeout(() => { c.classList.remove('arriving', 'back'); }, T);
+      const k = [{ offset: 0, p: p0 }, { offset: 0.08, p: p0 }, { offset: 0.6, p: p1 }, { offset: 1, p: p1 }];
       c.animate(k.map((x) => ({ offset: x.offset, maskPosition: x.p, webkitMaskPosition: x.p })), { duration: T });
     });
   };

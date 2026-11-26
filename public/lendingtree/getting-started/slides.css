@@ -189,9 +189,9 @@ svg .a.gy { transform-origin: center bottom; }
 .fh p { font-size: .74em; color: var(--muted); margin: .35em 0 0; opacity: 0; transition: opacity calc(var(--turn) * .5) ease; }
 .fr[data-pos="0"] .fh p { opacity: 1; transition-delay: calc(var(--turn) * .5); }
 .car.hold .fr[data-pos="0"] .desk { border-color: var(--acc); }
-/* while one leaves the front, a soft mask can slide over the edge of it that the newcomer will cover (app.js moves it) */
-.ring .fr.leaving { -webkit-mask: linear-gradient(to right, #000 50%, transparent 54.25%) 33.33% 0 / 400% 100% no-repeat; mask: linear-gradient(to right, #000 50%, transparent 54.25%) 33.33% 0 / 400% 100% no-repeat; }
-.ring .fr.leaving.back { -webkit-mask: linear-gradient(to left, #000 50%, transparent 54.25%) 66.67% 0 / 400% 100% no-repeat; mask: linear-gradient(to left, #000 50%, transparent 54.25%) 66.67% 0 / 400% 100% no-repeat; }
+/* while one comes forward, a soft mask hides the edge of it that was tucked behind the old front, then slides off (app.js) */
+.ring .fr.arriving { -webkit-mask: linear-gradient(to right, transparent 50%, #000 54%) 56.67% 0 / 400% 100% no-repeat; mask: linear-gradient(to right, transparent 50%, #000 54%) 56.67% 0 / 400% 100% no-repeat; }
+.ring .fr.arriving.back { -webkit-mask: linear-gradient(to left, transparent 50%, #000 54%) 43.33% 0 / 400% 100% no-repeat; mask: linear-gradient(to left, transparent 50%, #000 54%) 43.33% 0 / 400% 100% no-repeat; }
 @media (prefers-reduced-motion: reduce) { .ring .fr::after, .fh p { transition: none; } }
 .fr { position: relative; padding-right: 9%; display: block; text-decoration: none; color: inherit; cursor: pointer; }
 .fr:hover .desk, .fr:focus-visible .desk { border-color: var(--ink); } .fr:hover .phone, .fr:focus-visible .phone { border-color: #55606e; }
