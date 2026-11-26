@@ -871,7 +871,7 @@ function doAction(action) {
 }
 /* Bring the control that carries the flow on into view, clear of the answer, and pulse it. */
 function markReady() {
-  const st = autoSteps().find((x) => (x.tap || x.type) && find(x.tap || x.type)); if (!st) return;
+  const st = autoSteps().reverse().find((x) => (x.tap || x.type) && find(x.tap || x.type)); if (!st) return; /* the button that carries the step on, or what unlocks it */
   let n = find(st.tap || st.type); if (n.matches('input[type=checkbox]')) n = n.closest('label');
   const r = n.getBoundingClientRect(), m = main.getBoundingClientRect(), d = dock.hidden ? null : dock.getBoundingClientRect();
   const floor = d && r.right > d.left && r.left < d.right ? d.top - 20 : m.bottom - 90;
@@ -914,6 +914,13 @@ document.addEventListener('keydown', (e) => {
   if (e.isTrusted && kt.contains(e.target) && S.auto && !EMBED && (e.key === 'Enter' || e.key === ' ' || e.key.length === 1)) setAuto(false);
 });
 gov.addEventListener('click', (e) => { if (e.target === gov && S.gdlg !== 'working') act['g-close'](); });
+/* keep the keyboard inside the dialog while it is open */
+gov.addEventListener('keydown', (e) => {
+  if (e.key !== 'Tab') return;
+  const f = $$('button', gov).filter((b) => !b.disabled); if (!f.length) return void e.preventDefault();
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
 
 Object.assign(S, fresh());
 start(START_STAGE);

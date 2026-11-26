@@ -82,7 +82,7 @@ export const APPLICANT = {
 export const AUTO_LOAN_OFFERS = [
   { id: 'bofa', lender: 'Bank of America', apr: 6.19, term: 72, tag: 'Lowest payment', fee: 'No origination fee', firstPayment: 30, perk: 'Rate includes a 0.25% autopay discount' },
   { id: 'chase', lender: 'Chase', apr: 5.89, term: 60, tag: 'Least interest', fee: 'No origination fee', firstPayment: 30, perk: 'Pay it off a year sooner' },
-  { id: 'ally', lender: 'Ally', apr: 6.74, term: 72, tag: 'First payment in 60 days', fee: 'No origination fee', firstPayment: 60, perk: 'Skip a payment once a year' },
+  { id: 'ally', lender: 'Ally', apr: 6.74, term: 72, tag: 'Starts in 60 days', fee: 'No origination fee', firstPayment: 60, perk: 'Nothing to pay for the first 60 days' },
 ];
 /* Which offer the advisor recommends, by the term the person asked for. */
 export const LOAN_RECOMMEND = { 48: 'chase', 60: 'chase', 72: 'bofa' };

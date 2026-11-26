@@ -10,6 +10,7 @@ const A = (d, cls = '') => `class="a ${cls}" style="--d:${d}"`;
 const MODEL = 'https://docs.google.com/spreadsheets/d/1ThgH0lIsIwzAx7juTF14XVXN2BI6ckaR_FFasPzPLII/edit';
 const VT_A = '/lendingtree/visiontypes/lifecycle/';
 const VT_B = '/lendingtree/visiontypes/assistant/';
+const VT_C = '/lendingtree/visiontypes/embedded/';
 
 /* ------------------------------------------------------------------ 1 open */
 /* Each pillar is drawn as a miniature of its own slide later in the deck: the core line held above plan (slide 4),
@@ -254,20 +255,21 @@ const disruption = `
 
 /* ----------------------------------------------------------- 7 visiontypes */
 const LIFE = ['Lead', 'MQL', 'Application', 'Offers and quotes', 'Review and selection', 'Funding or binding', 'Servicing', 'Regular engagement', 'Renewal or upgrade'];
-const frames = (url, label, sub, d) => `
+const frames = (url, label, sub, d, phoneQ = 'path=insurance') => `
   <div class="vt a" style="--d:${d}">
     <h3>${label}</h3><p>${sub}</p>
     <a class="fr" href="${url}" aria-label="Open ${label.slice(3)}">
       <div class="desk"><i></i><div class="scr"><iframe title="${label}, desktop" data-src="${url}?embed=1" loading="lazy" tabindex="-1"></iframe></div></div>
-      <div class="phone"><div class="scr"><iframe title="${label}, mobile" data-src="${url}?embed=1&path=insurance" loading="lazy" tabindex="-1"></iframe></div></div>
+      <div class="phone"><div class="scr"><iframe title="${label}, mobile" data-src="${url}?embed=1&${phoneQ}" loading="lazy" tabindex="-1"></iframe></div></div>
     </a>
   </div>`;
 const visiontypes = `
 <div class="vts">
   ${frames(VT_A, 'A. LendingTree website and app', 'The whole journey on LendingTree’s own surfaces.', 0.2)}
-  ${frames(VT_B, 'B. Inside ChatGPT', 'The same journey in an assistant. It could as easily be Muse, Grok or Instinct.', 0.5)}
+  ${frames(VT_B, 'B. Inside ChatGPT', 'The same journey in an assistant such as ChatGPT, Muse or Grok.', 0.5)}
+  ${frames(VT_C, 'C. Embedded in a partner', 'Financing and insurance inside a car marketplace’s checkout.', 0.8, 'stage=insurance')}
 </div>
-<ol class="life a" style="--d:.9">${LIFE.map((s, i) => `<li style="--k:${i}"><span>${s}</span></li>`).join('')}</ol>`;
+<ol class="life a" style="--d:1.2">${LIFE.map((s, i) => `<li style="--k:${i}"><span>${s}</span></li>`).join('')}</ol>`;
 
 /* ------------------------------------------------------- what this will take */
 const nd = (d, n, t, sub, cls = '') => `<div ${A(d)} class="a nd ${cls}"><i>${n}</i><div><b>${t}</b><small>${sub}</small></div></div>`;
@@ -427,7 +429,7 @@ const close = `
   </div>
   <div class="inv a" style="--d:2.6">
     <p>See where this could go.</p>
-    <a class="btn pri" href="${VT_A}">Open visiontype A</a><a class="btn pri" href="${VT_B}">Open visiontype B</a>
+    <a class="btn pri" href="${VT_A}">Open visiontype A</a><a class="btn pri" href="${VT_B}">Open visiontype B</a><a class="btn pri" href="${VT_C}">Open visiontype C</a>
   </div>
 </div>`;
 
@@ -544,7 +546,7 @@ const RAW = [
   { id: 'core', name: 'Protecting the core', title: 'Protecting the core', sub: 'Safe with me, and growing', draw: core, details: D.core },
   { id: 'impact', name: 'Immediate impact', title: 'Immediate impact', sub: 'New profit in year one, from bets that earn their place', draw: impact, details: D.impact, links: [['/lendingtree/choice/', 'The Power of Choice'], ['/lendingtree/companion/', 'A Companion'], ['/lendingtree/outcomes/', 'Aligned Outcomes']] },
   { id: 'disruption', name: 'Disruption', title: 'Disruption', sub: 'Put LendingTree out of business: three pods and a research-led reset', draw: disruption, details: D.disruption },
-  { id: 'visiontypes', name: 'Visiontypes', title: 'Visiontypes', sub: 'Where this could go, across the whole customer lifecycle', draw: visiontypes, links: [[VT_A, 'Open visiontype A'], [VT_B, 'Open visiontype B']] },
+  { id: 'visiontypes', name: 'Visiontypes', title: 'Visiontypes', sub: 'Where this could go, across the whole customer lifecycle', draw: visiontypes, links: [[VT_A, 'Open visiontype A'], [VT_B, 'Open visiontype B'], [VT_C, 'Open visiontype C']] },
   { id: 'take', name: 'What this will take', title: 'What this will take', sub: 'What the visiontypes assume, and the first version of each', draw: take, details: D.take },
   { id: 'economics', name: 'The economics', title: 'The economics', sub: 'Selling leads against being paid on outcomes', draw: econ, details: D.economics, links: [[MODEL, 'Open the model', 'pri']] },
   { id: 'time', name: 'My time', title: 'My time', sub: 'Balance carefully, delegate everything I can', draw: time, details: D.time },

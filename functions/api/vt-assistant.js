@@ -1,6 +1,6 @@
 /* LendingTree visiontypes: the live agent behind both prototypes, so a visitor can play with them and ask anything.
    POST { surface, path, stage, step, selected, held, messages: [{role, content}] } -> { text, action }
-     surface  "lifecycle" (LendingTree website and app) or "assistant" (inside ChatGPT)
+     surface  "lifecycle" (LendingTree website and app), "assistant" (inside ChatGPT) or "embedded" (inside a car marketplace's purchase flow)
      path     "loan" or "insurance"
      stage    where the person is in the journey (a short label the prototype sends, such as "offers" or "servicing")
      step     one line on what is on screen and what the next step of the flow is
@@ -16,6 +16,7 @@
    The sample data is imported here, not taken from the request, so a caller cannot change what the agent believes. */
 import Anthropic from "@anthropic-ai/sdk";
 import { PERSON, BANKS, LOANS, POLICIES, HELOC_OFFERS, HELOC_ESTIMATE, AUTO_QUOTES, AUTO_CURRENT, LIFECYCLE } from "../../public/lendingtree/visiontypes/shared/data.js";
+import * as EMB from "../../public/lendingtree/visiontypes/embedded/data.js";
 
 const ACTIONS = ["continue", "pause", "loan", "insurance", "home", "restart"];
 
@@ -23,6 +24,15 @@ const FACTS = JSON.stringify({
   person: PERSON, bank_accounts: BANKS, loans_already_held: LOANS.filter((l) => !l.isNew), policies_held: POLICIES,
   home_equity_offers: HELOC_OFFERS, home_equity_estimate: HELOC_ESTIMATE,
   auto_insurance_quotes: AUTO_QUOTES, current_auto_policy: AUTO_CURRENT, lifecycle: LIFECYCLE,
+}, null, 1);
+
+/* The embedded visiontype: buying a used truck on a car marketplace, financed and insured in the purchase flow. */
+const EMB_CAR = EMB.LISTINGS.find((c) => c.id === EMB.HERO_ID) || EMB.LISTINGS[0];
+const EMB_FACTS = JSON.stringify({
+  person: PERSON, marketplace: EMB.MARKET, vehicle: EMB_CAR, price_breakdown: EMB.priceBreakdown(EMB_CAR), fees: EMB.FEES,
+  financing_defaults: EMB.FINANCE, applicant: EMB.APPLICANT, auto_loan_offers: EMB.AUTO_LOAN_OFFERS, recommended_lender_by_term_months: EMB.LOAN_RECOMMEND,
+  current_auto_policy: EMB.CURRENT_POLICY, cost_to_add_the_truck_to_the_current_policy_per_year: EMB.ADD_TO_CURRENT, current_policy_with_the_truck_added: EMB.CURRENT_WITH_TACOMA,
+  two_vehicle_quotes: EMB.TWO_CAR_QUOTES, recommended_carrier: EMB.INSURANCE_RECOMMEND, delivery: EMB.DELIVERY,
 }, null, 1);
 
 const BASE = `You are the LendingTree agent in a product prototype ("visiontype") that shows how LendingTree could guide a person through the whole lifecycle of a loan or an insurance policy: shopping, comparing, applying, signing, then servicing and renewal. Everything is sample data for a fictional person, Alex Rivera. Nothing here is a real offer.
@@ -40,9 +50,10 @@ Reply with a single JSON object and nothing else: {"text": "<what you say>", "ac
 Use "continue" unless rule 4 applies. "pause" = stop or think about it. "loan" or "insurance" = switch to shopping for that. "home" = show what they already hold. "restart" = start over.
 
 Facts (sample data):
-${FACTS}`;
+`;
 
 const SURFACE = {
+  embedded: "You are speaking inside the purchase flow of an independent used-car marketplace, in a financing and insurance module provided by LendingTree. The person is buying a truck there and has not left that site. Speak as LendingTree's guide inside that flow. The action \"home\" here means showing the order summary.",
   lifecycle: "You are speaking inside LendingTree's own website and app, as LendingTree's guide. Speak as LendingTree (\"I\" or \"we\").",
   assistant: "You are speaking inside a general consumer AI assistant (shown as ChatGPT) that has connected to LendingTree through MCP. Speak as the assistant, an advisor who brings in the LendingTree agent for offers, quotes and account data. Credit LendingTree when you use its data.",
 };
@@ -87,22 +98,25 @@ export async function onRequestPost({ request, env }) {
   while (messages.length && messages[0].role !== "user") messages.shift();
   if (!messages.length || messages[messages.length - 1].role !== "user") return json({ error: "bad_request" }, 400);
 
-  const surface = body.surface === "assistant" ? "assistant" : "lifecycle";
+  const surface = body.surface === "assistant" ? "assistant" : body.surface === "embedded" ? "embedded" : "lifecycle";
+  const emb = surface === "embedded";
   const path = body.path === "insurance" ? "insurance" : "loan";
-  const picks = path === "loan" ? HELOC_OFFERS : AUTO_QUOTES;
+  const picks = emb ? (path === "loan" ? EMB.AUTO_LOAN_OFFERS : EMB.TWO_CAR_QUOTES) : path === "loan" ? HELOC_OFFERS : AUTO_QUOTES;
   const chosen = picks.find((o) => o.id === body.selected);
   const context = [
     SURFACE[surface],
-    `The person is on the ${path === "loan" ? "loan path (a home equity line for a backyard deck)" : "insurance path (replacing their Progressive auto policy)"}.`,
+    emb
+      ? `The person is on the ${path === "loan" ? "financing step (an auto loan for the truck they are buying)" : "insurance step (adding the truck to their Progressive policy, or moving both vehicles to another carrier)"}.`
+      : `The person is on the ${path === "loan" ? "loan path (a home equity line for a backyard deck)" : "insurance path (replacing their Progressive auto policy)"}.`,
     `Stage: ${clip(body.stage, 60) || "unknown"}.`,
     clip(body.step, 300) ? `What is on screen and what comes next: ${clip(body.step, 300)}` : "",
     chosen ? `They have chosen ${chosen.lender || chosen.carrier}.` : "They have not chosen an offer yet.",
-    body.held ? `They have already closed or bound in this session, so that ${path === "loan" ? "home equity line" : "auto policy"} is now something they hold.` : "",
+    body.held ? `They have already closed or bound in this session, so that ${path === "loan" ? (emb ? "auto loan" : "home equity line") : "auto policy"} is now something they hold.` : "",
   ].filter(Boolean).join("\n");
 
   try {
     const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
-    const res = await client.messages.create({ model: env.LT_MODEL || "claude-sonnet-5-5", max_tokens: 400, system: BASE + "\n\nContext for this reply:\n" + context, messages });
+    const res = await client.messages.create({ model: env.LT_MODEL || "claude-sonnet-5-5", max_tokens: 400, system: BASE + (emb ? EMB_FACTS : FACTS) + "\n\nContext for this reply:\n" + context, messages });
     const out = parseReply(res.content.filter((b) => b.type === "text").map((b) => b.text).join(""));
     if (!out) return json({ error: "empty" }, 502);
     return json(out);
