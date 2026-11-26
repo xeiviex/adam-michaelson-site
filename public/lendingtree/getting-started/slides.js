@@ -225,12 +225,13 @@ const disruption = `
 <svg class="dis" viewBox="0 0 1200 524" role="img" aria-label="Three independent pods running repeating cycles through the year, and a research-led reset that reaches a phase gate in month nine and an alpha in month twelve">
   ${Array.from({ length: 12 }, (_, i) => `<text class="lb mo" x="${mx(i + 0.5)}" y="26">${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}</text>`).join('')}
   <path class="axis" d="M${M0} 38H1170"/>
-  <path class="tick mk" d="M${mx(3)} 38V44M${mx(3)} 82V278M${mx(3)} 380V454"/><text class="lb acc sm" x="${mx(3)}" y="62">Day 90</text>
+  <path class="tick mk" d="M${mx(3)} 38V44M${mx(3)} 72V454"/><text class="lb acc sm" x="${mx(3)}" y="62">Day 90</text>
   <text class="hd" ${A(0.2)} x="18" y="66" text-anchor="start">Three independent pods</text>
   <text class="lb sm" ${A(0.3)} x="18" y="86" text-anchor="start"><tspan x="18">PM · Designer · Engineer,</tspan><tspan x="18" dy="17">all at principal level.</tspan><tspan x="18" dy="17">No brief from me.</tspan><tspan x="18" dy="17">They eat what they kill.</tspan></text>
   <g transform="translate(0 54)">
   ${PODS.map(podRow).join('')}
   <g ${A(2.6, 'fade')}>
+    <rect class="ko" x="${mx(3) - 8}" y="234" width="16" height="24"/>
     <circle class="stn open" cx="${M0 + 6}" cy="246" r="5.5"/><text class="lb sm" x="${M0 + 20}" y="251" text-anchor="start">Open charter</text>
     <circle class="stn" cx="${M0 + 136}" cy="246" r="5.5"/><text class="lb sm" x="${M0 + 150}" y="251" text-anchor="start">Smallest test</text>
     <circle class="stn" cx="${M0 + 266}" cy="246" r="5.5"/><text class="lb sm" x="${M0 + 280}" y="251" text-anchor="start">Evidence review</text>
@@ -240,7 +241,7 @@ const disruption = `
   <text class="lb" ${A(3.0)} x="18" y="320" text-anchor="start">Led by me</text>
   <path class="ln res" ${A(3.2)} pathLength="1" d="M${M0} 344H${mx(8.5) - 12}"/>
   <path class="ln res2" ${A(4.9)} pathLength="1" d="M${mx(8.5) + 12} 344H${mx(12) - 10}"/>
-  ${RS.map((r, i) => `<g ${A((3.3 + i * 0.18).toFixed(2), 'pop')}><circle class="stn res" cx="${mx(r[1])}" cy="344" r="6"/><text class="lb sm${r[0] === 'Provisional vision' ? ' wh' : ''}" x="${mx(r[1])}" y="${r[2] < 0 ? 326 : 370}">${r[0]}</text></g>`).join('')}
+  ${RS.map((r, i) => `<g ${A((3.3 + i * 0.18).toFixed(2), 'pop')}><circle class="stn res" cx="${mx(r[1])}" cy="344" r="6"/>${r[0] === 'Provisional vision' ? `<rect class="ko" x="${mx(r[1]) - 64}" y="313" width="128" height="18"/>` : ''}<text class="lb sm${r[0] === 'Provisional vision' ? ' wh' : ''}" x="${mx(r[1])}" y="${r[2] < 0 ? 326 : 370}">${r[0]}</text></g>`).join('')}
   <g ${A(4.8, 'pop')}>${dia(mx(8.5), 344, 'gate')}<text class="lb wh" x="${mx(8.5)}" y="322">Phase gate</text></g>
   <g ${A(5.4, 'pop')}><circle class="goal" cx="${mx(12) - 2}" cy="344" r="10"/><text class="lb wh" x="${mx(12)}" y="322" text-anchor="end">Alpha in market</text></g>
   <path class="skip" ${A(4.2, 'fade')} d="M${M0 + 30} 418V362" marker-end="url(#ah)"/>

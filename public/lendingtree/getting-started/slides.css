@@ -157,6 +157,8 @@ svg .a.gy { transform-origin: center bottom; }
 .stn { fill: var(--bg); stroke: var(--muted); stroke-width: 2; } .stn.open { stroke-dasharray: 3 3; } .stn.res { stroke: var(--acc-hi); }
 .ln.res { stroke: var(--acc); stroke-width: 3; } .on .ln.res.a { animation-duration: 1.6s; } .ln.res2 { stroke: var(--ink); stroke-width: 3; }
 .chip { fill: none; stroke: var(--rule); }
+/* a patch of background that arrives with a label, so the label interrupts a line that was drawn unbroken before it */
+.ko { fill: var(--bg); }
 
 /* ---- 7 visiontypes ---- */
 .vts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.4em; }
