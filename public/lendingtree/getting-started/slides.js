@@ -35,7 +35,8 @@ const g3 = (d) => `<svg viewBox="0 0 300 124" aria-hidden="true">
   <path class="ln res2" ${A(d + 1.7)} pathLength="1" d="M234 108H280"/>
   <circle ${A(d + 2.1, 'pop')} class="goal" cx="286" cy="108" r="7"/>
 </svg>`;
-const base = `<div class="base a gx" style="--d:.2"><span>Raise the bar</span><i aria-hidden="true"></i><span>Learn fast</span><i aria-hidden="true"></i><span>Lead the team</span></div>`;
+/* The white bar fades in after the three columns; then its words and dots fade in one by one, left to right. */
+const base = (d) => `<div class="base a fade" style="--d:${d}">${['Raise the bar', 'Learn fast', 'Lead the team'].map((t, i) => `${i ? `<i ${A((d + 0.25 + i * 0.7).toFixed(2), 'fade')} aria-hidden="true"></i>` : ''}<span ${A((d + 0.6 + i * 0.7).toFixed(2), 'fade')}>${t}</span>`).join('')}</div>`;
 const open = `
 <div class="th">
   <div class="th3">
@@ -43,7 +44,7 @@ const open = `
     <div>${g2(2.0)}<b ${A(2.0)}>Deliver new profit</b><small ${A(2.1)}>$1M+ in year one</small></div>
     <div>${g3(3.4)}<b ${A(3.4)}>Disrupt ourselves</b><small ${A(3.5)}>Three pods + research-led reset</small></div>
   </div>
-  ${base}
+  ${base(5.0)}
 </div>`;
 
 /* ----------------------------------------------------------- 2 integration */
@@ -244,7 +245,7 @@ const disruption = `
 <svg class="dis" viewBox="0 0 1200 524" role="img" aria-label="Three independent pods running repeating cycles through the year, and a research-led reset that reaches a phase gate in month nine and an alpha in month twelve">
   ${Array.from({ length: 12 }, (_, i) => `<text class="lb mo" x="${mx(i + 0.5)}" y="26">${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}</text>`).join('')}
   <path class="axis" d="M${M0} 38H1170"/>
-  <path class="tick mk" d="M${mx(3)} 38V44M${mx(3)} 72V454"/><text class="lb acc sm" x="${mx(3)}" y="62">Day 90</text>
+  ${/* last of all: the Day 90 label fades in, then its dotted line draws from top to bottom */''}<text class="lb acc sm" ${A(6.0, 'fade')} x="${mx(3)}" y="62">Day 90</text><path class="tick mk" ${A(6.6, 'down')} d="M${mx(3)} 38V44M${mx(3)} 72V454"/>
   <text class="hd" ${A(0.2)} x="18" y="66" text-anchor="start">Three independent pods</text>
   <text class="lb sm" ${A(0.3)} x="18" y="86" text-anchor="start"><tspan x="18">PM · Designer · Engineer,</tspan><tspan x="18" dy="17">all at principal level.</tspan><tspan x="18" dy="17">No brief from me.</tspan><tspan x="18" dy="17">They eat what they kill.</tspan></text>
   <g transform="translate(0 54)">
@@ -271,19 +272,24 @@ const disruption = `
 
 /* ----------------------------------------------------------- 7 visiontypes */
 const LIFE = ['Lead', 'MQL', 'Application', 'Offers and quotes', 'Review and selection', 'Funding or binding', 'Servicing', 'Regular engagement', 'Renewal or upgrade'];
-const frames = (url, label, sub, d, phoneQ = 'path=insurance') => `
-  <div class="vt a" style="--d:${d}">
-    <h3>${label}</h3><p>${sub}</p>
-    <a class="fr" href="${url}" aria-label="Open ${label.slice(3)}">
-      <div class="desk"><i></i><div class="scr"><iframe title="${label}, desktop" data-src="${url}?embed=1" loading="lazy" tabindex="-1"></iframe></div></div>
-      <div class="phone"><div class="scr"><iframe title="${label}, mobile" data-src="${url}?embed=1&${phoneQ}" loading="lazy" tabindex="-1"></iframe></div></div>
-    </a>
-  </div>`;
+/* The three visiontypes, as a carousel: the middle one is in front, the other two sit behind it on either side.
+   app.js turns it, pauses it while it is held, and lets a tap open the one tapped. */
+const EMB_MARK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="9.5" y="9.5" width="8.5" height="8.5" rx="2.2" fill="var(--acc)"/></svg>';
+const VTS = [
+  { url: VT_A, title: 'LendingTree website and app', sub: 'The whole journey on LendingTree’s own surfaces.', mark: '<img src="/lendingtree/img/lt-leaf.png" alt="">', q: 'path=insurance' },
+  { url: VT_B, title: 'Inside ChatGPT', sub: 'The same journey in an assistant such as ChatGPT, Muse or Grok.', mark: '<img src="/lendingtree/img/chatgpt-mark.png" alt="">', q: 'path=insurance' },
+  { url: VT_C, title: 'Embedded in a partner', sub: 'Financing and insurance inside a car marketplace’s checkout.', mark: EMB_MARK, q: 'stage=insurance' },
+];
 const visiontypes = `
-<div class="vts">
-  ${frames(VT_A, 'A. LendingTree website and app', 'The whole journey on LendingTree’s own surfaces.', 0.2)}
-  ${frames(VT_B, 'B. Inside ChatGPT', 'The same journey in an assistant such as ChatGPT, Muse or Grok.', 0.5)}
-  ${frames(VT_C, 'C. Embedded in a partner', 'Financing and insurance inside a car marketplace’s checkout.', 0.8, 'stage=insurance')}
+<div class="car hs a" style="--d:.2" data-car>
+  <div class="ctabs">${VTS.map((v, i) => `<button type="button" class="ctab${i ? '' : ' cur'}" data-k="${i}" aria-pressed="${i ? 'false' : 'true'}"><span class="lg">${v.mark}</span><b>${v.title}</b><i></i></button>`).join('')}</div>
+  <p class="cap">${VTS.map((v, i) => `<span${i ? '' : ' class="cur"'}>${v.sub}</span>`).join('')}</p>
+  <div class="stage"><div class="ring">
+    ${VTS.map((v, i) => `<a class="fr" href="${v.url}" data-pos="${i}" draggable="false" aria-label="Open ${v.title}">
+      <div class="desk"><i></i><div class="scr"><iframe title="${v.title}, desktop" data-src="${v.url}?embed=1" loading="lazy" tabindex="-1"></iframe></div></div>
+      <div class="phone"><div class="scr"><iframe title="${v.title}, mobile" data-src="${v.url}?embed=1&${v.q}" loading="lazy" tabindex="-1"></iframe></div></div>
+    </a>`).join('')}
+  </div></div>
 </div>
 <ol class="life a" style="--d:1.2">${LIFE.map((s, i) => `<li style="--k:${i}"><span>${s}</span></li>`).join('')}</ol>`;
 
@@ -441,11 +447,11 @@ const close = `
       <div><b ${A(1.2)}>Deliver new profit</b><small class="fg a" style="--d:1.3">$1M+</small></div>
       <div><b ${A(1.6)}>Disrupt ourselves</b><small class="fg a" style="--d:1.7">3 pods · M9 gate · M12 alpha</small></div>
     </div>
-    ${base}
+    ${base(2.0)}
   </div>
-  <div class="inv a" style="--d:2.6">
+  <div class="inv a" style="--d:4.6">
     <p>See where this could go.</p>
-    <a class="btn pri" href="${VT_A}">Open visiontype A</a><a class="btn pri" href="${VT_B}">Open visiontype B</a><a class="btn pri" href="${VT_C}">Open visiontype C</a>
+    ${VTS.map((v) => `<a class="btn pri" href="${v.url}">${v.title}</a>`).join('')}
   </div>
 </div>`;
 
@@ -562,7 +568,7 @@ const RAW = [
   { id: 'core', name: 'Protecting the core', title: 'Protecting the core', sub: 'Safe with me, and growing', draw: core, details: D.core },
   { id: 'impact', name: 'Immediate impact', title: 'Immediate impact', sub: 'New profit in year one, from bets that earn their place', draw: impact, details: D.impact, links: [['/lendingtree/choice/', 'The Power of Choice'], ['/lendingtree/companion/', 'A Companion'], ['/lendingtree/outcomes/', 'Aligned Outcomes']] },
   { id: 'disruption', name: 'Disruption', title: 'Disruption', sub: 'Put LendingTree out of business: three pods and a research-led reset', draw: disruption, details: D.disruption },
-  { id: 'visiontypes', name: 'Visiontypes', title: 'Visiontypes', sub: 'Where this could go, across the whole customer lifecycle', draw: visiontypes, links: [[VT_A, 'Open visiontype A'], [VT_B, 'Open visiontype B'], [VT_C, 'Open visiontype C']] },
+  { id: 'visiontypes', name: 'Visiontypes', title: 'Visiontypes', sub: 'Where this could go, across the whole customer lifecycle', draw: visiontypes, links: VTS.map((v) => [v.url, v.title]) },
   { id: 'take', name: 'What this will take', title: 'What this will take', sub: 'What the visiontypes assume, and the first version of each', draw: take, details: D.take },
   { id: 'economics', name: 'The economics', title: 'The economics', sub: 'Selling leads against being paid on outcomes', draw: econ, details: D.economics, links: [[MODEL, 'Open the model', 'pri']] },
   { id: 'time', name: 'My time', title: 'My time', sub: 'Balance carefully, delegate everything I can', draw: time, details: D.time },

@@ -58,7 +58,7 @@ svg .a.gy { transform-origin: center bottom; }
 .th3 small { font-size: 1.12em; color: var(--body); }
 .vis .th3 svg .stn { stroke-width: 1.8; }
 /* The three foundations read as one line across the bar, not as a caption for the card above each */
-.base { background: var(--ink); color: var(--dark); border-radius: 14px; padding: 1.15em 19%; display: flex; align-items: center; justify-content: space-between; gap: .9em; font: 700 1.25em var(--head); white-space: nowrap; }
+.base { background: var(--ink); color: var(--dark); border-radius: 14px; padding: calc(1.15em - 5px) 19%; display: flex; align-items: center; justify-content: space-between; gap: .9em; font: 700 1.25em var(--head); white-space: nowrap; }
 .base i { flex: none; width: .32em; height: .32em; border-radius: 50%; background: #8a94a3; }
 .th.sm { gap: 1em; } .th.sm .th3 > div { padding-block: .2em .4em; gap: .2em; } .th.sm .th3 b { font-size: 1.25em; } .th.sm .base { padding-block: .6em; font-size: .95em; }
 .th3 small.fg { font: 700 1.5em var(--head); color: var(--acc-hi); }
@@ -166,9 +166,29 @@ svg .a.gy { transform-origin: center bottom; }
 .ko { fill: var(--bg); }
 
 /* ---- 7 visiontypes ---- */
-.vts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2em; }
-.vt h3 { font: 700 1.1em var(--head); letter-spacing: 0; text-transform: none; color: var(--ink); }
-.vt p { font-size: .9em; color: var(--muted); margin: .2em 0 .9em; }
+/* a carousel of the three: the current one in front, the others smaller and behind, each overlapped by a quarter.
+   translateZ only orders them (there is no perspective), so the one leaving and the one arriving cross in depth mid-turn. */
+.car { container-type: inline-size; --turn: 1.1s; --dwell: 5.5s; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.ctabs { display: flex; justify-content: center; gap: .5em; }
+.ctab { position: relative; display: flex; align-items: center; gap: .55em; padding: .5em .95em; border: 1px solid transparent; border-radius: 999px; background: none; color: var(--muted); font: inherit; cursor: pointer; overflow: hidden; transition: color .4s, border-color .4s, background-color .4s; }
+.ctab b { font: 700 1em var(--head); white-space: nowrap; }
+.ctab .lg { width: 1.35em; height: 1.35em; flex: none; display: grid; place-items: center; opacity: .6; transition: opacity .4s; } .ctab .lg > * { width: 100%; height: 100%; object-fit: contain; display: block; }
+.ctab:hover { color: var(--ink); } .ctab.cur { color: var(--ink); border-color: var(--rule); background: var(--surface2); } .ctab.cur .lg { opacity: 1; }
+.ctab i { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--acc); transform: scaleX(0); transform-origin: 0 50%; }
+.on .ctab.cur i { animation: car-dwell var(--dwell) linear forwards; } .car.hold .ctab.cur i { animation-play-state: paused; }
+@keyframes car-dwell { to { transform: scaleX(1); } }
+.cap { display: grid; justify-items: center; text-align: center; font-size: .9em; color: var(--muted); margin: .7em 0 .9em; }
+.cap span { grid-area: 1 / 1; opacity: 0; transition: opacity .5s; } .cap span.cur { opacity: 1; }
+.stage { overflow-x: clip; padding: .5em 0 1.9em; touch-action: pan-y; }
+.ring { display: grid; justify-items: center; transform-style: preserve-3d; --cw: min(46cqw, 68vh); pointer-events: none; }
+.ring .fr { grid-area: 1 / 1; pointer-events: auto; width: var(--cw); transition: transform var(--turn) cubic-bezier(.45, .05, .25, 1); -webkit-user-drag: none; }
+.ring .fr::after { content: ''; position: absolute; inset: -2% -1% -8%; background: var(--bg); opacity: 0; pointer-events: none; transition: opacity var(--turn) ease; z-index: 3; }
+.ring .fr[data-pos="0"] { transform: translate3d(4.5%, 0, 200px) scale(1); }
+.ring .fr[data-pos="1"] { transform: translate3d(70%, 0, 0) scale(.72); }
+.ring .fr[data-pos="2"] { transform: translate3d(-66%, 0, 0) scale(.72); }
+.ring .fr[data-pos="1"]::after, .ring .fr[data-pos="2"]::after { opacity: .5; }
+.car.hold .fr[data-pos="0"] .desk { border-color: var(--acc); }
+@media (prefers-reduced-motion: reduce) { .ring .fr, .ring .fr::after { transition: none; } }
 .fr { position: relative; padding-right: 9%; display: block; text-decoration: none; color: inherit; cursor: pointer; }
 .fr:hover .desk, .fr:focus-visible .desk { border-color: var(--ink); } .fr:hover .phone, .fr:focus-visible .phone { border-color: #55606e; }
 .desk { border: 1px solid var(--rule); border-radius: 10px; background: #fff; overflow: hidden; }
@@ -280,6 +300,8 @@ svg .a.gy { transform-origin: center bottom; }
   .th3 > div, .th3 > div:first-child, .th3 > div:last-child { padding: 1.2em 0; border-left: 0; border-top: 1px solid var(--rule); } .th3 svg { min-width: 0; }
   .intg, .bets { grid-template-columns: minmax(0, 1fr); } .intg .arrow { display: none; }
   .who { grid-auto-flow: column; } .vis svg.brace { display: none; min-width: 0; }
+  /* phones: the same carousel, the middle one wider and the other two running off the edges; only the current title is spelled out */
+  .ring { --cw: 70cqw; } .ctab:not(.cur) b { display: none; } .ctabs { font-size: .8em; gap: .15em; } .ctab { padding: .5em .6em; } .ctab.cur { padding-inline: .9em; } .cap { min-height: 2.7em; align-items: center; }
   /* phones: the nine stations stay on one connected line; only the current station's name shows, centred beneath it */
   .life { padding-bottom: 2.4em; }
   .life li { padding: 0; height: 1em; font-size: 1em; }
@@ -306,8 +328,9 @@ svg .a.gy { transform-origin: center bottom; }
 .gs-take .vis { gap: .9em; }
 
 /* three previews: reserve two lines for each description so the frames line up */
-.vt p { min-height: 2.9em; }
-@media (max-width: 760px) { .vt p { min-height: 0; } }
 
 /* chain of command: each line draws quickly, so the levels read as steps */
 .on .org .ln.rule.a, .on .org .ln.acc.a { animation-duration: .55s; }
+
+.on .tick.mk.a.down { animation-duration: 1.1s; }
+.vis .ctab .lg svg { min-width: 0; max-height: none; }

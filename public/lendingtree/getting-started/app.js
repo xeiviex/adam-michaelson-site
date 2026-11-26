@@ -1,7 +1,7 @@
 /* Draws /lendingtree/getting-started/ from slides.js. Same model as /lendingtree/: one slide, one drawing, a Details sheet.
    The drawing's motion is CSS: a slide gets .on when it is shown, and anything with class "a" builds in after --d seconds.
    Arriving on a slide replays its build. Press R to replay the current slide. */
-import { SLIDES } from './slides.js?v=42';
+import { SLIDES } from './slides.js?v=44';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const $ = (s) => document.querySelector(s);
@@ -17,6 +17,36 @@ const slides = [...trackEl.querySelectorAll('.slide')];
 const ids = SLIDES.map((s) => s.id);
 const dots = $('#dots');
 dots.innerHTML = SLIDES.map((s, i) => `<li><a href="#${s.id}" data-go="${i}" aria-label="Slide ${i + 1}: ${esc(s.name)}"><span></span></a></li>`).join('');
+
+/* The visiontypes carousel. It turns by itself: each tab carries a thin line that fills while its visiontype is in front,
+   and the carousel moves on when the line is full. Pressing and holding pauses that line, so the turn waits.
+   A tap opens the one tapped, a sideways swipe turns it by hand, and a tab brings its visiontype to the front. */
+trackEl.querySelectorAll('[data-car]').forEach((car) => {
+  const cards = [...car.querySelectorAll('.fr')], tabs = [...car.querySelectorAll('.ctab')], caps = [...car.querySelectorAll('.cap span')], n = cards.length;
+  let cur = 0, down = null, block = false;
+  const set = (k) => {
+    cur = ((k % n) + n) % n;
+    cards.forEach((c, i) => { c.dataset.pos = (i - cur + n) % n; }); // 0 front, 1 behind on the right, 2 behind on the left
+    tabs.forEach((t, i) => { t.classList.toggle('cur', i === cur); t.setAttribute('aria-pressed', i === cur ? 'true' : 'false'); });
+    caps.forEach((c, i) => c.classList.toggle('cur', i === cur));
+  };
+  car.addEventListener('animationend', (e) => { if (e.animationName === 'car-dwell') set(cur + 1); });
+  tabs.forEach((t, i) => t.addEventListener('click', () => set(i)));
+  const stage = car.querySelector('.stage');
+  stage.addEventListener('pointerdown', (e) => { if (e.button) return; down = { x: e.clientX, y: e.clientY, t: performance.now() }; block = false; car.classList.add('hold'); });
+  const up = (e) => {
+    if (!down) return;
+    const dx = e.clientX - down.x, dy = e.clientY - down.y, held = performance.now() - down.t; down = null;
+    car.classList.remove('hold');
+    if (e.type === 'pointercancel') { block = true; return; }
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.4) { block = true; set(cur + (dx < 0 ? 1 : -1)); }
+    else if (held > 350 || Math.hypot(dx, dy) > 10) block = true; // a hold or a drag, not a tap
+  };
+  addEventListener('pointerup', up); addEventListener('pointercancel', up);
+  stage.addEventListener('click', (e) => { if (block) { e.preventDefault(); block = false; } });
+  stage.addEventListener('contextmenu', (e) => { if (e.pointerType === 'touch' || down) e.preventDefault(); });
+  stage.addEventListener('dragstart', (e) => e.preventDefault());
+});
 
 const live = $('#live'), status = $('#status'), where = $('#where'), prevB = $('#prev'), nextB = $('#next');
 let idx = 0, ready = false, sayT, timers = [];
