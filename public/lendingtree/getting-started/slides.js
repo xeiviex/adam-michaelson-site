@@ -273,19 +273,19 @@ const disruption = `
 /* ----------------------------------------------------------- 7 visiontypes */
 const LIFE = ['Lead', 'MQL', 'Application', 'Offers and quotes', 'Review and selection', 'Funding or binding', 'Servicing', 'Regular engagement', 'Renewal or upgrade'];
 /* The three visiontypes, as a carousel: the middle one is in front, the other two sit behind it on either side.
+   Each carries its own logo and title; the line under the title shows only on the one in front.
    app.js turns it, pauses it while it is held, and lets a tap open the one tapped. */
 const EMB_MARK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="9.5" y="9.5" width="8.5" height="8.5" rx="2.2" fill="var(--acc)"/></svg>';
 const VTS = [
   { url: VT_A, title: 'LendingTree website and app', sub: 'The whole journey on LendingTree’s own surfaces.', mark: '<img src="/lendingtree/img/lt-leaf.png" alt="">', q: 'path=insurance' },
-  { url: VT_B, title: 'Inside ChatGPT', sub: 'The same journey in an assistant such as ChatGPT, Muse or Grok.', mark: '<img src="/lendingtree/img/chatgpt-mark.png" alt="">', q: 'path=insurance' },
+  { url: VT_B, title: 'Inside ChatGPT', sub: 'The same journey in ChatGPT, Muse or Grok.', mark: '<img src="/lendingtree/img/chatgpt-mark.png" alt="">', q: 'path=insurance' },
   { url: VT_C, title: 'Embedded in a partner', sub: 'Financing and insurance inside a car marketplace’s checkout.', mark: EMB_MARK, q: 'stage=insurance' },
 ];
 const visiontypes = `
 <div class="car hs a" style="--d:.2" data-car>
-  <div class="ctabs">${VTS.map((v, i) => `<button type="button" class="ctab${i ? '' : ' cur'}" data-k="${i}" aria-pressed="${i ? 'false' : 'true'}"><span class="lg">${v.mark}</span><b>${v.title}</b><i></i></button>`).join('')}</div>
-  <p class="cap">${VTS.map((v, i) => `<span${i ? '' : ' class="cur"'}>${v.sub}</span>`).join('')}</p>
   <div class="stage"><div class="ring">
     ${VTS.map((v, i) => `<a class="fr" href="${v.url}" data-pos="${i}" draggable="false" aria-label="Open ${v.title}">
+      <div class="fh"><h3><span class="lg">${v.mark}</span>${v.title}</h3><p>${v.sub}</p></div>
       <div class="desk"><i></i><div class="scr"><iframe title="${v.title}, desktop" data-src="${v.url}?embed=1" loading="lazy" tabindex="-1"></iframe></div></div>
       <div class="phone"><div class="scr"><iframe title="${v.title}, mobile" data-src="${v.url}?embed=1&${v.q}" loading="lazy" tabindex="-1"></iframe></div></div>
     </a>`).join('')}

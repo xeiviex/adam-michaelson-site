@@ -1,7 +1,7 @@
 /* Draws /lendingtree/getting-started/ from slides.js. Same model as /lendingtree/: one slide, one drawing, a Details sheet.
    The drawing's motion is CSS: a slide gets .on when it is shown, and anything with class "a" builds in after --d seconds.
    Arriving on a slide replays its build. Press R to replay the current slide. */
-import { SLIDES } from './slides.js?v=44';
+import { SLIDES } from './slides.js?v=46';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const $ = (s) => document.querySelector(s);
@@ -18,20 +18,37 @@ const ids = SLIDES.map((s) => s.id);
 const dots = $('#dots');
 dots.innerHTML = SLIDES.map((s, i) => `<li><a href="#${s.id}" data-go="${i}" aria-label="Slide ${i + 1}: ${esc(s.name)}"><span></span></a></li>`).join('');
 
-/* The visiontypes carousel. It turns by itself: each tab carries a thin line that fills while its visiontype is in front,
-   and the carousel moves on when the line is full. Pressing and holding pauses that line, so the turn waits.
-   A tap opens the one tapped, a sideways swipe turns it by hand, and a tab brings its visiontype to the front. */
+/* The visiontypes carousel. Every few seconds it turns: the one in front drifts left and back, fading out as it goes and
+   fading in again once it is behind, so nothing is cut off as the next one grows into its place from the right. The one
+   that was on the left fades out there and in again on the right. Pressing and holding pauses the turning; a tap opens
+   the one tapped; a sideways swipe turns it by hand. */
 trackEl.querySelectorAll('[data-car]').forEach((car) => {
-  const cards = [...car.querySelectorAll('.fr')], tabs = [...car.querySelectorAll('.ctab')], caps = [...car.querySelectorAll('.cap span')], n = cards.length;
-  let cur = 0, down = null, block = false;
-  const set = (k) => {
-    cur = ((k % n) + n) % n;
+  const cards = [...car.querySelectorAll('.fr')], n = cards.length, slide = car.closest('.slide');
+  const T = 1300, DWELL = 4800, EASE = 'cubic-bezier(.45, .05, .25, 1)';
+  const tf = ['translateX(4.5%) scale(1)', 'translateX(70%) scale(.72)', 'translateX(-66%) scale(.72)']; // as in slides.css
+  let cur = 0, down = null, block = false, busy = false, waited = 0;
+  const turn = (dir) => {
+    if (busy) return;
+    const from = cards.map((c) => +c.dataset.pos);
+    cur = (((cur + dir) % n) + n) % n; waited = 0;
     cards.forEach((c, i) => { c.dataset.pos = (i - cur + n) % n; }); // 0 front, 1 behind on the right, 2 behind on the left
-    tabs.forEach((t, i) => { t.classList.toggle('cur', i === cur); t.setAttribute('aria-pressed', i === cur ? 'true' : 'false'); });
-    caps.forEach((c, i) => c.classList.toggle('cur', i === cur));
+    if (still) return;
+    busy = true; setTimeout(() => { busy = false; }, T);
+    cards.forEach((c, i) => {
+      const a = from[i], b = +c.dataset.pos;
+      if (a === 0) { // leaving the front: stays on top while it fades out, drops behind while unseen, then fades back in
+        c.style.zIndex = 4; setTimeout(() => { c.style.zIndex = ''; }, T / 2);
+        c.animate([{ transform: tf[a], opacity: 1, easing: EASE }, { opacity: 0, offset: 0.46 }, { opacity: 0, offset: 0.56 }, { transform: tf[b], opacity: 1 }], { duration: T });
+        c.animate([{ transform: tf[a] }, { transform: tf[b] }], { duration: T, easing: EASE });
+      } else if (b === 0) c.animate([{ transform: tf[a] }, { transform: tf[b] }], { duration: T, easing: EASE }); // coming forward
+      else c.animate([{ transform: tf[a], opacity: 1 }, { transform: tf[a], opacity: 0, offset: 0.38 }, { transform: tf[b], opacity: 0, offset: 0.62 }, { transform: tf[b], opacity: 1 }], { duration: T }); // changing sides, unseen
+    });
   };
-  car.addEventListener('animationend', (e) => { if (e.animationName === 'car-dwell') set(cur + 1); });
-  tabs.forEach((t, i) => t.addEventListener('click', () => set(i)));
+  setInterval(() => { // counts only while the slide is showing and nothing is holding it
+    if (!slide.classList.contains('on') || document.hidden) { waited = 0; return; }
+    if (down || busy) return;
+    waited += 200; if (waited >= DWELL) turn(1);
+  }, 200);
   const stage = car.querySelector('.stage');
   stage.addEventListener('pointerdown', (e) => { if (e.button) return; down = { x: e.clientX, y: e.clientY, t: performance.now() }; block = false; car.classList.add('hold'); });
   const up = (e) => {
@@ -39,7 +56,7 @@ trackEl.querySelectorAll('[data-car]').forEach((car) => {
     const dx = e.clientX - down.x, dy = e.clientY - down.y, held = performance.now() - down.t; down = null;
     car.classList.remove('hold');
     if (e.type === 'pointercancel') { block = true; return; }
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.4) { block = true; set(cur + (dx < 0 ? 1 : -1)); }
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.4) { block = true; turn(dx < 0 ? 1 : -1); }
     else if (held > 350 || Math.hypot(dx, dy) > 10) block = true; // a hold or a drag, not a tap
   };
   addEventListener('pointerup', up); addEventListener('pointercancel', up);

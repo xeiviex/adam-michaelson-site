@@ -167,28 +167,24 @@ svg .a.gy { transform-origin: center bottom; }
 
 /* ---- 7 visiontypes ---- */
 /* a carousel of the three: the current one in front, the others smaller and behind, each overlapped by a quarter.
-   translateZ only orders them (there is no perspective), so the one leaving and the one arriving cross in depth mid-turn. */
-.car { container-type: inline-size; --turn: 1.1s; --dwell: 5.5s; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
-.ctabs { display: flex; justify-content: center; gap: .5em; }
-.ctab { position: relative; display: flex; align-items: center; gap: .55em; padding: .5em .95em; border: 1px solid transparent; border-radius: 999px; background: none; color: var(--muted); font: inherit; cursor: pointer; overflow: hidden; transition: color .4s, border-color .4s, background-color .4s; }
-.ctab b { font: 700 1em var(--head); white-space: nowrap; }
-.ctab .lg { width: 1.35em; height: 1.35em; flex: none; display: grid; place-items: center; opacity: .6; transition: opacity .4s; } .ctab .lg > * { width: 100%; height: 100%; object-fit: contain; display: block; }
-.ctab:hover { color: var(--ink); } .ctab.cur { color: var(--ink); border-color: var(--rule); background: var(--surface2); } .ctab.cur .lg { opacity: 1; }
-.ctab i { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: var(--acc); transform: scaleX(0); transform-origin: 0 50%; }
-.on .ctab.cur i { animation: car-dwell var(--dwell) linear forwards; } .car.hold .ctab.cur i { animation-play-state: paused; }
-@keyframes car-dwell { to { transform: scaleX(1); } }
-.cap { display: grid; justify-items: center; text-align: center; font-size: .9em; color: var(--muted); margin: .7em 0 .9em; }
-.cap span { grid-area: 1 / 1; opacity: 0; transition: opacity .5s; } .cap span.cur { opacity: 1; }
-.stage { overflow-x: clip; padding: .5em 0 1.9em; touch-action: pan-y; }
-.ring { display: grid; justify-items: center; transform-style: preserve-3d; --cw: min(46cqw, 68vh); pointer-events: none; }
-.ring .fr { grid-area: 1 / 1; pointer-events: auto; width: var(--cw); transition: transform var(--turn) cubic-bezier(.45, .05, .25, 1); -webkit-user-drag: none; }
+   Each carries its logo and title; the line under the title shows only in front. app.js animates the turn. */
+.car { --turn: 1.3s; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; container-type: inline-size; }
+.stage { overflow-x: clip; padding: .2em 0 1.9em; touch-action: pan-y; }
+.ring { display: grid; justify-items: center; --cw: min(46cqw, 62vh); }
+.ring .fr { grid-area: 1 / 1; width: var(--cw); z-index: 1; -webkit-user-drag: none; }
 .ring .fr::after { content: ''; position: absolute; inset: -2% -1% -8%; background: var(--bg); opacity: 0; pointer-events: none; transition: opacity var(--turn) ease; z-index: 3; }
-.ring .fr[data-pos="0"] { transform: translate3d(4.5%, 0, 200px) scale(1); }
-.ring .fr[data-pos="1"] { transform: translate3d(70%, 0, 0) scale(.72); }
-.ring .fr[data-pos="2"] { transform: translate3d(-66%, 0, 0) scale(.72); }
+.ring .fr[data-pos="0"] { transform: translateX(4.5%) scale(1); z-index: 3; }
+.ring .fr[data-pos="1"] { transform: translateX(70%) scale(.72); }
+.ring .fr[data-pos="2"] { transform: translateX(-66%) scale(.72); }
 .ring .fr[data-pos="1"]::after, .ring .fr[data-pos="2"]::after { opacity: .5; }
+.fh { text-align: center; margin: 0 0 .8em; font-size: clamp(12.5px, calc(var(--cw) * .034), 23px); }
+.fh h3 { display: flex; align-items: center; justify-content: center; gap: .5em; font: 700 1em var(--head); letter-spacing: 0; text-transform: none; color: var(--ink); white-space: nowrap; }
+.fh .lg { width: 1.2em; height: 1.2em; flex: none; display: block; } .fh .lg > * { width: 100%; height: 100%; object-fit: contain; display: block; }
+.vis .fh .lg svg { min-width: 0; max-height: none; }
+.fh p { font-size: .74em; color: var(--muted); margin: .35em 0 0; opacity: 0; transition: opacity calc(var(--turn) * .5) ease; }
+.fr[data-pos="0"] .fh p { opacity: 1; transition-delay: calc(var(--turn) * .5); }
 .car.hold .fr[data-pos="0"] .desk { border-color: var(--acc); }
-@media (prefers-reduced-motion: reduce) { .ring .fr, .ring .fr::after { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ring .fr::after, .fh p { transition: none; } }
 .fr { position: relative; padding-right: 9%; display: block; text-decoration: none; color: inherit; cursor: pointer; }
 .fr:hover .desk, .fr:focus-visible .desk { border-color: var(--ink); } .fr:hover .phone, .fr:focus-visible .phone { border-color: #55606e; }
 .desk { border: 1px solid var(--rule); border-radius: 10px; background: #fff; overflow: hidden; }
@@ -300,8 +296,8 @@ svg .a.gy { transform-origin: center bottom; }
   .th3 > div, .th3 > div:first-child, .th3 > div:last-child { padding: 1.2em 0; border-left: 0; border-top: 1px solid var(--rule); } .th3 svg { min-width: 0; }
   .intg, .bets { grid-template-columns: minmax(0, 1fr); } .intg .arrow { display: none; }
   .who { grid-auto-flow: column; } .vis svg.brace { display: none; min-width: 0; }
-  /* phones: the same carousel, the middle one wider and the other two running off the edges; only the current title is spelled out */
-  .ring { --cw: 70cqw; } .ctab:not(.cur) b { display: none; } .ctabs { font-size: .8em; gap: .15em; } .ctab { padding: .5em .6em; } .ctab.cur { padding-inline: .9em; } .cap { min-height: 2.7em; align-items: center; }
+  /* phones: the same carousel, the middle one wider and the other two running off the edges */
+  .ring { --cw: 72cqw; } .fh p { min-height: 2.6em; }
   /* phones: the nine stations stay on one connected line; only the current station's name shows, centred beneath it */
   .life { padding-bottom: 2.4em; }
   .life li { padding: 0; height: 1em; font-size: 1em; }
@@ -333,4 +329,3 @@ svg .a.gy { transform-origin: center bottom; }
 .on .org .ln.rule.a, .on .org .ln.acc.a { animation-duration: .55s; }
 
 .on .tick.mk.a.down { animation-duration: 1.1s; }
-.vis .ctab .lg svg { min-width: 0; max-height: none; }
