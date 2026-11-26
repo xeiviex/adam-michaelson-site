@@ -6,6 +6,8 @@
 
 const A = (d, cls = '') => `class="a ${cls}" style="--d:${d}"`;
 /* A is LendingTree's own website and app; B is the same journey inside an assistant. */
+/* The financial model behind the economics slide (a Google Sheet; it must be shared for viewers to open it). */
+const MODEL = 'https://docs.google.com/spreadsheets/d/1MzWRB0WyozGMEUpipABAj_KLjYb9K9g1v6TYUeNTjd0/edit';
 const VT_A = '/lendingtree/visiontypes/lifecycle/';
 const VT_B = '/lendingtree/visiontypes/assistant/';
 
@@ -520,7 +522,7 @@ const RAW = [
   { id: 'disruption', name: 'Disruption', title: 'Disruption', sub: 'Put LendingTree out of business: three pods and a research-led reset', draw: disruption, details: D.disruption },
   { id: 'visiontypes', name: 'Visiontypes', title: 'Visiontypes', sub: 'Where this could go, across the whole customer lifecycle', draw: visiontypes, links: [[VT_A, 'Open visiontype A'], [VT_B, 'Open visiontype B']] },
   { id: 'take', name: 'What this will take', title: 'What this will take', sub: 'What the visiontypes assume, and the first version of each', draw: take, details: D.take },
-  { id: 'economics', name: 'The economics', title: 'The economics', sub: 'Selling leads against being paid on outcomes', draw: econ, details: D.economics },
+  { id: 'economics', name: 'The economics', title: 'The economics', sub: 'Selling leads against being paid on outcomes', draw: econ, details: D.economics, links: [[MODEL, 'Open the model', 'pri']] },
   { id: 'time', name: 'My time', title: 'My time', sub: 'Balance carefully, delegate everything I can', draw: time, details: D.time },
   { id: 'outcomes', name: 'Year-one outcomes', title: 'Year-one outcomes', sub: 'My commitments', draw: outcomes, details: D.outcomes },
   { id: 'plan', name: 'Year-one plan', title: 'Year-one plan', sub: 'Assumes a January 1 start', draw: plan, details: D.outcomes },
